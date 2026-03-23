@@ -1,0 +1,171 @@
+/* ===== CONTENEDOR DE BOTÓN CON TOOLTIP ===== */
+.btn-con-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-header {
+    background: white;
+    color: #2c1b4e;
+    border: 2px solid #e0d0f0;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-header i {
+    font-size: 18px;
+    color: #9b59b6;
+    transition: 0.2s;
+}
+
+.btn-header:hover {
+    background: #f3e9ff;
+    border-color: #9b59b6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(155, 89, 182, 0.2);
+}
+
+/* Botón de ayuda (especial) */
+.btn-header.btn-ayuda {
+    background: #2c1b4e;
+    color: white;
+    border-color: #2c1b4e;
+}
+
+.btn-header.btn-ayuda i {
+    color: white;
+}
+
+.btn-header.btn-ayuda:hover {
+    background: #3f2a68;
+    border-color: #3f2a68;
+}
+
+/* ===== TOOLTIP PARA BOTONES ===== */
+.btn-con-tooltip .tooltip {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c1b4e;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 2px solid white;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Flechita del tooltip */
+.btn-con-tooltip .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #2c1b4e transparent transparent transparent;
+}
+
+.btn-con-tooltip:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 120%;
+}
+
+/* ===== TOOLTIP PARA REDES SOCIALES ===== */
+.red-social {
+    position: relative;
+    display: inline-block;
+}
+
+.red-social i {
+    font-size: 32px;
+    color: white;
+    background: #362553;
+    padding: 16px;
+    border-radius: 50%;
+    transition: 0.2s;
+    cursor: pointer;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.red-social i:hover {
+    background: #5d3c8a;
+    transform: scale(1.15) translateY(-5px);
+}
+
+/* Colores de marca al hacer hover */
+.red-social i.fa-facebook:hover { background: #1877f2; }
+.red-social i.fa-tiktok:hover { background: #000000; }
+.red-social i.fa-youtube:hover { background: #ff0000; }
+.red-social i.fa-whatsapp:hover { background: #25d366; }
+.red-social i.fa-instagram:hover { background: #e4405f; }
+
+/* Tooltip para redes sociales */
+.red-social .tooltip {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c1b4e;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 2px solid white;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.red-social .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #2c1b4e transparent transparent transparent;
+}
+
+.red-social:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 120%;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 700px) {
+    .btn-con-tooltip .tooltip,
+    .red-social .tooltip {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+}

@@ -1,0 +1,39 @@
+/* ===== MEJORAS EXTRA ===== */
+@keyframes flotar {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+.swal-popup-mega-redondo {
+    animation: flotar 4s ease-in-out infinite !important;
+}
+
+/* Efecto de brillo en el botón */
+.swal-boton-gigante {
+    position: relative;
+    overflow: hidden;
+}
+
+.swal-boton-gigante::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    transform: rotate(30deg);
+    animation: brillo 3s infinite;
+}
+
+@keyframes brillo {
+    0% { left: -60%; }
+    20% { left: 100%; }
+    100% { left: 100%; }
+}

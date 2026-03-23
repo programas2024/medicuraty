@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · Galería</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/galeria.css">
+
+    
+</head>
+<body>
+    <div class="contenedor">
+        
+        <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                </a>
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo  Galería</h1>
+                <p><i class="fas fa-spa"></i> espacio visual de reflexión</p>
+            </div>
+            
+            <!-- Botones normales + INICIO -->
+            <div class="botones-header" id="botonesHeader">
+                <!-- Botón Inicio -->
+                <div class="btn-con-tooltip">
+                    <a href="index.html" class="btn-header" style="text-decoration: none;">
+                        <i class="fas fa-home"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <span class="tooltip">Volver al inicio</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnAgradecimientos">
+                        <i class="fas fa-heart"></i>
+                        <span>Agradecimientos</span>
+                    </button>
+                    <span class="tooltip">Agradecimientos</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnMision">
+                        <i class="fas fa-bullseye"></i>
+                        <span>Misión</span>
+                    </button>
+                    <span class="tooltip">Misión</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnSoporte">
+                        <i class="fas fa-headset"></i>
+                        <span>Soporte</span>
+                    </button>
+                    <span class="tooltip">Soporte</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header btn-ayuda" id="btnAyuda">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Ayuda</span>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE CATEGORÍAS CON HAMBURGUESA -->
+        <div class="categorias-contenedor">
+            <!-- Botón hamburguesa (solo móvil) -->
+            <button class="categorias-hamburguesa" id="categoriasHamburguesa">
+                <i class="fas fa-bars"></i>
+                <span>Categorías de galería</span>
+            </button>
+            
+            <!-- MENÚ HORIZONTAL (se oculta en móvil) -->
+            <div class="menu-horizontal" id="menuHorizontal">
+                <button class="menu-btn-categoria" onclick="mostrarSeccion('completa')" style="border-left: 5px solid #9b59b6;">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i>
+                    <span>Galería completa</span>
+                </button>
+                <button class="menu-btn-categoria" onclick="mostrarSeccion('destacados')" style="border-left: 5px solid #f39c12;">
+                    <i class="fas fa-star" style="color: #f39c12;"></i>
+                    <span>Destacados</span>
+                </button>
+                <button class="menu-btn-categoria" onclick="mostrarSeccion('recientes')" style="border-left: 5px solid #27ae60;">
+                    <i class="fas fa-clock" style="color: #27ae60;"></i>
+                    <span>Recientes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MENÚ HAMBURGUESA MÓVIL -->
+        <div class="menu-categorias-movil" id="menuCategoriasMovil">
+            <div class="menu-categorias-header">
+                <h3><i class="fas fa-images"></i> Categorías</h3>
+                <button class="cerrar-categorias" id="cerrarCategorias">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-categorias-botones">
+                <button class="categoria-movil-btn" onclick="mostrarSeccion('completa')" style="border-left-color: #9b59b6;">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i>
+                    <span>Galería completa</span>
+                </button>
+                <button class="categoria-movil-btn" onclick="mostrarSeccion('destacados')" style="border-left-color: #f39c12;">
+                    <i class="fas fa-star" style="color: #f39c12;"></i>
+                    <span>Destacados</span>
+                </button>
+                <button class="categoria-movil-btn" onclick="mostrarSeccion('recientes')" style="border-left-color: #27ae60;">
+                    <i class="fas fa-clock" style="color: #27ae60;"></i>
+                    <span>Recientes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- CONTENEDORES DE IMÁGENES (CADA UNO EN SU SECCIÓN) -->
+        <div class="galeria-contenido" id="galeriaContenido">
+            
+            <!-- SECCIÓN COMPLETA (se muestra por defecto) -->
+            <div class="galeria-seccion-blanca" id="seccionCompleta">
+                <h3 class="galeria-subtitulo">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i> Galería completa
+                </h3>
+                <div class="galeria-grid" id="gridCompleta"></div>
+            </div>
+            
+            <!-- SECCIÓN DESTACADOS (oculta por defecto) -->
+            <div class="galeria-seccion-blanca" id="seccionDestacados" style="display: none;">
+                <h3 class="galeria-subtitulo">
+                    <i class="fas fa-star" style="color: #f39c12;"></i> Destacados
+                </h3>
+                <div class="galeria-grid" id="gridDestacados"></div>
+            </div>
+            
+            <!-- SECCIÓN RECIENTES (oculta por defecto) -->
+            <div class="galeria-seccion-blanca" id="seccionRecientes" style="display: none;">
+                <h3 class="galeria-subtitulo">
+                    <i class="fas fa-clock" style="color: #27ae60;"></i> Recientes
+                </h3>
+                <div class="galeria-grid" id="gridRecientes"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · galería visual <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2025 · imágenes de reflexión <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="js/sweetalert.js"></script>
+    <script src="js/sweetaler2.js"></script>
+    <script src="js/app2.js"></script>
+     <script src="js/galeswafire.js"></script>
+    <!-- Script de galería -->
+    <script>
+        // ===== BASE DE DATOS DE IMÁGENES (RUTAS ORIGINALES) =====
+        const imagenesGaleria = [
+            // Destacados (5 imágenes)
+            { id: 1, url: 'imganes/camalio.png', titulo: 'Crecimiento personal', categoria: 'destacados' },
+            { id: 2, url: 'imganes/gatoperro.jpeg', titulo: 'La lealtad', categoria: 'destacados' },
+            { id: 3, url: 'imganes/koala.jpeg', titulo: 'Constancia', categoria: 'destacados' },
+            { id: 4, url: 'imganes/gavilan.jpeg', titulo: 'Liderazgo', categoria: 'destacados' },
+            { id: 5, url: 'imganes/ave.png', titulo: 'Paz interior', categoria: 'destacados' },
+            
+            // Recientes (4 imágenes)
+            { id: 6, url: 'imganes/cerdo.png', titulo: 'Valorate', categoria: 'recientes' },
+            { id: 7, url: 'imganes/pavo.jpeg', titulo: 'Superación', categoria: 'recientes' },
+            { id: 8, url: 'imganes/pulpo.jpeg', titulo: 'Gratitud', categoria: 'recientes' },
+            { id: 9, url: 'imganes/mono.jpeg', titulo: 'Esperanza', categoria: 'recientes' },
+            
+            // Completas (resto)
+            { id: 10, url: 'imganes/mariquita.jpeg', titulo: 'Felicidad', categoria: 'completa' },
+            { id: 11, url: 'imganes/elefante.jpeg', titulo: 'Paz interior', categoria: 'completa' },
+            { id: 12, url: 'imganes/pato.jpeg', titulo: 'Motivación', categoria: 'completa' },
+       
+             { id: 12, url: 'imganes/camalio.png', titulo: 'Crecimiento personal', categoria: 'completa' },
+            { id: 22, url: 'imganes/gatoperro.jpeg', titulo: 'La lealtad', categoria: 'completa' },
+            { id: 32, url: 'imganes/koala.jpeg', titulo: 'Constancia', categoria: 'completa' },
+            { id: 42, url: 'imganes/gavilan.jpeg', titulo: 'Liderazgo', categoria: 'completa' },
+            { id: 52, url: 'imganes/ave.png', titulo: 'Paz interior', categoria: 'completa' },
+            
+            // Recientes (4 imágenes)
+            { id: 62, url: 'imganes/cerdo.png', titulo: 'Valorate', categoria: 'completa' },
+            { id: 72, url: 'imganes/pavo.jpeg', titulo: 'Superación', categoria: 'completa' },
+            { id: 82, url: 'imganes/pulpo.jpeg', titulo: 'Gratitud', categoria: 'completa' },
+            { id: 92, url: 'imganes/mono.jpeg', titulo: 'Esperanza', categoria: 'completa' },
+            ];
+
+        // Elementos DOM
+        const seccionCompleta = document.getElementById('seccionCompleta');
+        const seccionDestacados = document.getElementById('seccionDestacados');
+        const seccionRecientes = document.getElementById('seccionRecientes');
+        
+        const gridCompleta = document.getElementById('gridCompleta');
+        const gridDestacados = document.getElementById('gridDestacados');
+        const gridRecientes = document.getElementById('gridRecientes');
+        
+        const menuHamburguesa = document.getElementById('categoriasHamburguesa');
+        const menuMovil = document.getElementById('menuCategoriasMovil');
+        const cerrarMenu = document.getElementById('cerrarCategorias');
+
+        // ===== FUNCIÓN DE ZOOM =====
+        function abrirImagenZoom(url, titulo) {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: titulo,
+                title: titulo,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'swal-popup-redondo'
+                }
+            });
+        }
+
+        // ===== CARGAR IMÁGENES EN CADA GRID =====
+        function cargarImagenes() {
+            // Cargar completas
+            let htmlCompleta = '';
+            imagenesGaleria.filter(img => img.categoria === 'completa').forEach(img => {
+                htmlCompleta += `
+                    <div class="galeria-item" onclick="abrirImagenZoom('${img.url}', '${img.titulo}')">
+                        <img src="${img.url}" alt="${img.titulo}" loading="lazy">
+                        <div class="galeria-caption"><i class="fas fa-search-plus"></i> ${img.titulo}</div>
+                    </div>
+                `;
+            });
+            gridCompleta.innerHTML = htmlCompleta;
+
+            // Cargar destacados
+            let htmlDestacados = '';
+            imagenesGaleria.filter(img => img.categoria === 'destacados').forEach(img => {
+                htmlDestacados += `
+                    <div class="galeria-item" onclick="abrirImagenZoom('${img.url}', '${img.titulo}')">
+                        <img src="${img.url}" alt="${img.titulo}" loading="lazy">
+                        <div class="galeria-caption"><i class="fas fa-search-plus"></i> ${img.titulo}</div>
+                    </div>
+                `;
+            });
+            gridDestacados.innerHTML = htmlDestacados;
+
+            // Cargar recientes
+            let htmlRecientes = '';
+            imagenesGaleria.filter(img => img.categoria === 'recientes').forEach(img => {
+                htmlRecientes += `
+                    <div class="galeria-item" onclick="abrirImagenZoom('${img.url}', '${img.titulo}')">
+                        <img src="${img.url}" alt="${img.titulo}" loading="lazy">
+                        <div class="galeria-caption"><i class="fas fa-search-plus"></i> ${img.titulo}</div>
+                    </div>
+                `;
+            });
+            gridRecientes.innerHTML = htmlRecientes;
+        }
+
+        // ===== FUNCIÓN PARA MOSTRAR SOLO LA SECCIÓN SELECCIONADA =====
+        function mostrarSeccion(seccion) {
+            // Ocultar todas las secciones
+            seccionCompleta.style.display = 'none';
+            seccionDestacados.style.display = 'none';
+            seccionRecientes.style.display = 'none';
+            
+            // Mostrar la sección seleccionada
+            if (seccion === 'completa') {
+                seccionCompleta.style.display = 'block';
+            } else if (seccion === 'destacados') {
+                seccionDestacados.style.display = 'block';
+            } else if (seccion === 'recientes') {
+                seccionRecientes.style.display = 'block';
+            }
+            
+            // Cerrar menú móvil
+            menuMovil.classList.remove('mostrar');
+            overlay.classList.remove('mostrar');
+            document.body.style.overflow = '';
+        }
+
+        // ===== MENÚ HAMBURGUESA =====
+        const overlay = document.createElement('div');
+        overlay.className = 'categorias-overlay';
+        document.body.appendChild(overlay);
+        
+        menuHamburguesa.addEventListener('click', () => {
+            menuMovil.classList.add('mostrar');
+            overlay.classList.add('mostrar');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        function cerrarMenuMovil() {
+            menuMovil.classList.remove('mostrar');
+            overlay.classList.remove('mostrar');
+            document.body.style.overflow = '';
+        }
+        
+        cerrarMenu.addEventListener('click', cerrarMenuMovil);
+        overlay.addEventListener('click', cerrarMenuMovil);
+
+        // ===== INICIALIZAR =====
+        cargarImagenes();
+        // Por defecto mostrar completas
+        mostrarSeccion('completa');
+
+        // ===== HACER FUNCIONES GLOBALES =====
+        window.mostrarSeccion = mostrarSeccion;
+        window.abrirImagenZoom = abrirImagenZoom;
+    </script>
+</body>
+</html>

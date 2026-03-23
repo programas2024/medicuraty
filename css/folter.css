@@ -1,0 +1,54 @@
+/* ===== FOOTER ===== */
+.footer {
+    margin-top: 60px;
+    background: #1c102e;
+    border-radius: 50px 50px 30px 30px;
+    padding: 40px 30px 30px;
+    text-align: center;
+    color: white;
+}
+
+.footer i {
+    color: #f9acc7;
+    margin: 0 5px;
+}
+
+.footer-redes {
+    margin: 25px 0;
+}
+
+.footer-redes {
+    margin: 25px 0;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.footer-redes i {
+    font-size: 32px;
+    margin: 0 5px;
+    color: white;
+    background: #362553;
+    padding: 16px;
+    border-radius: 50%;
+    transition: 0.2s;
+    cursor: pointer;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-redes i:hover {
+    background: #5d3c8a;
+    transform: scale(1.15) translateY(-5px);
+}
+
+/* Colores específicos al hacer hover (opcional) */
+.footer-redes i.fa-facebook:hover { background: #1877f2; }
+.footer-redes i.fa-tiktok:hover { background: #000000; }
+.footer-redes i.fa-youtube:hover { background: #ff0000; }
+.footer-redes i.fa-whatsapp:hover { background: #25d366; }
+.footer-redes i.fa-instagram:hover { background: #e4405f; }

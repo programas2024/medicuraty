@@ -14,18 +14,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function generarBotonesCategorias() {
         let html = '';
         categorias.forEach(cat => {
-            html += `
-                <button class="categoria-movil-btn" onclick="mostrarCategoriaMovil('${cat.id}')"
-                        style="border-left-color: ${cat.color};">
-                    <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
-                    <span>${cat.nombre}</span>
-                </button>
-            `;
+            if (cat.id === 'galeria') {
+                // ✅ GALERÍA: Redirige a galeria.html
+                html += `
+                    <button class="categoria-movil-btn" onclick="window.location.href='galeria.html'"
+                            style="border-left-color: ${cat.color};">
+                        <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                        <span>${cat.nombre}</span>
+                    </button>
+                `;
+            } else {
+                // OTRAS CATEGORÍAS: Muestran SweetAlert
+                html += `
+                    <button class="categoria-movil-btn" onclick="mostrarCategoriaMovil('${cat.id}')"
+                            style="border-left-color: ${cat.color};">
+                        <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                        <span>${cat.nombre}</span>
+                    </button>
+                `;
+            }
         });
         contenedorBotones.innerHTML = html;
     }
     
-    // Función para mostrar categoría en móvil
+    // Función para mostrar categoría en móvil (SOLO PARA NO GALERÍA)
     window.mostrarCategoriaMovil = function(catId) {
         const categoria = categorias.find(c => c.id === catId);
         if (categoria) {

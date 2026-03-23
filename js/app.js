@@ -121,7 +121,7 @@ window.seleccionarTemaDesdeAlert = function(id) {
     if (tema) mostrarTema(tema);
 };
 
-// ===== FUNCIÓN PARA MOSTRAR TEMA =====
+// ===== FUNCIÓN PARA MOSTRAR TEMA CON IMAGEN PERSONALIZADA =====
 function mostrarTema(tema) {
     if (tema.cat === 'galeria') {
         if (typeof window.mostrarGaleria === 'function') {
@@ -134,15 +134,433 @@ function mostrarTema(tema) {
     
     const categoria = categorias.find(c => c.id === tema.cat);
     const colorBorde = categoria ? categoria.color : '#8e44ad';
+
+    // VALORES (11 temas)
+    if (tema.id === 1) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/apreciate.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 2) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/persona_individual.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 3) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/respeto.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 4) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/honestidad.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 5) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/confianza.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 6) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/amigo_verdad.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 7) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/compartir.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 8) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/detalles.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 9) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/discrecion.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 10) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/persona_leal.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 11) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/aprecia.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
     
-    temaPrincipal.innerHTML = `
-        <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
-        <h2>${tema.nombre}</h2>
-        <div class="categoria-tag" style="background: ${categoria?.colorFondo || '#2b174e'}">${tema.cat}</div>
-        <div class="descripcion">${tema.desc}</div>
-    `;
+    // CRECIMIENTO (9 temas)
+    } else if (tema.id === 12) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/tu_momento.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 13) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/persistencia.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 14) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/comunicacion_asertiva.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 15) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/criticas.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 16) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/oportunidades.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 17) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/progratinar.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 18) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/trabajo.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 19) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/dedicacion.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 20) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/camino_exito.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    
+    // EMOCIONES (4 temas)
+    } else if (tema.id === 21) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/autocontrol.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 22) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/emocion_poderosa.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 23) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/emociones.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 24) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/bullying.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    
+    // LIDERAZGO (4 temas)
+    } else if (tema.id === 25) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/lider.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 26) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/moral_etica.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 27) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/liderazgo.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 28) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/profesionales.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    
+    // ESPECIAL (3 temas)
+    } else if (tema.id === 29) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/frase_dia.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 30) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/dia_mujer.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else if (tema.id === 31) {
+        temaPrincipal.innerHTML = `
+            <div class="tema-personalizado">
+                <div class="tema-personalizado-texto">
+                    <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+                    <h2>${tema.nombre}</h2>
+                    <div class="descripcion-personalizada">${tema.desc}</div>
+                </div>
+                <div class="tema-personalizado-imagen">
+                    <img src="imganes/aprecio_mujer.png" alt="${tema.nombre}" loading="lazy">
+                </div>
+            </div>
+        `;
+    } else {
+        // Diseño normal para los demás temas (por si acaso)
+        temaPrincipal.innerHTML = `
+            <div class="icono-gigante"><i class="fas ${tema.icono}" style="color: ${colorBorde}"></i></div>
+            <h2>${tema.nombre}</h2>
+            <div class="categoria-tag" style="background: ${categoria?.colorFondo || '#2b174e'}">${tema.cat}</div>
+            <div class="descripcion">${tema.desc}</div>
+        `;
+    }
+    
     temaPrincipal.style.borderLeftColor = colorBorde;
 }
+
+
 
 // ===== FUNCIÓN PARA CERRAR SUBMENÚS =====
 function cerrarTodosSubmenus() {

@@ -698,3 +698,112 @@ body {
     margin: 8px 0;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+/* ===== DISEÑO PERSONALIZADO PARA TODOS LOS TEMAS ===== */
+.tema-personalizado {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.tema-personalizado-texto {
+    flex: 1;
+    text-align: center;
+    padding: 20px;
+}
+
+.tema-personalizado-texto .icono-gigante {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.tema-personalizado-texto h2 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #121826;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.descripcion-personalizada {
+    font-size: 22px;
+    color: #231c36;
+    line-height: 1.7;
+    background: #f3ebff;
+    padding: 35px;
+    border-radius: 60px;
+    border: 2px dashed #9f88c6;
+    text-align: center;
+}
+
+.tema-personalizado-imagen {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.tema-personalizado-imagen img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 40px;
+    box-shadow: 0 25px 40px -18px #422f6a;
+    transition: transform 0.3s ease;
+    border: 3px solid white;
+    object-fit: cover;
+}
+
+.tema-personalizado-imagen img:hover {
+    transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tema-personalizado {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .tema-personalizado-texto {
+        order: 2;
+        padding: 0;
+    }
+    
+    .tema-personalizado-imagen {
+        order: 1;
+        width: 80%;
+        margin: 0 auto;
+    }
+    
+    .tema-personalizado-texto h2 {
+        font-size: 36px;
+    }
+    
+    .descripcion-personalizada {
+        font-size: 18px;
+        padding: 25px;
+    }
+    
+    .tema-personalizado-imagen img {
+        max-height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tema-personalizado-imagen {
+        width: 100%;
+    }
+    
+    .tema-personalizado-texto h2 {
+        font-size: 28px;
+    }
+}

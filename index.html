@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · crece cada día</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/galeria.css">
+    <link rel="stylesheet" href="css/swafire.css"> <!-- NUEVO -->
+    
+</head>
+<body>
+    <div class="contenedor">
+        
+        <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <img src="imganes/logosmedi.png" alt="Medicurativo">
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+            
+            <!-- Botones normales (SIEMPRE VISIBLES) -->
+            <div class="botones-header" id="botonesHeader">
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnAgradecimientos">
+                        <i class="fas fa-heart"></i>
+                        <span>Agradecimientos</span>
+                    </button>
+                    <span class="tooltip">Agradecimientos</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnMision">
+                        <i class="fas fa-bullseye"></i>
+                        <span>Misión</span>
+                    </button>
+                    <span class="tooltip">Misión</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnSoporte">
+                        <i class="fas fa-headset"></i>
+                        <span>Soporte</span>
+                    </button>
+                    <span class="tooltip">Soporte</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header btn-ayuda" id="btnAyuda">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Ayuda</span>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE CATEGORÍAS CON HAMBURGUESA -->
+        <div class="categorias-contenedor">
+            <!-- Botón hamburguesa para categorías (solo móvil) -->
+            <button class="categorias-hamburguesa" id="categoriasHamburguesa">
+                <i class="fas fa-bars"></i>
+                <span>Categorías</span>
+            </button>
+            
+            <!-- MENÚ HORIZONTAL DE CATEGORÍAS (se oculta en móvil) -->
+            <div class="menu-horizontal" id="menuHorizontal"></div>
+        </div>
+
+        <!-- MENÚ HAMBURGUESA DE CATEGORÍAS (solo móvil) -->
+        <div class="menu-categorias-movil" id="menuCategoriasMovil">
+            <div class="menu-categorias-header">
+                <h3><i class="fas fa-heart"></i> Categorías</h3>
+                <button class="cerrar-categorias" id="cerrarCategorias">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-categorias-botones" id="categoriasMovilBotones">
+                <!-- Los botones se generan con JS -->
+            </div>
+        </div>
+
+        <!-- TEMA SELECCIONADO -->
+        <div class="tema-principal" id="temaPrincipal">
+            <div class="placeholder-text">
+                <i class="fas fa-hand-pointer"></i>
+                <p>Haz clic en cualquier tema del menú</p>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · canal oficial <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2025 · todos los temas <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Nuestros archivos JS -->
+    <script src="js/sweetalert.js"></script>
+    <script src="js/sweetaler2.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/galeria.js"></script>
+    <script src="js/categorias.js"></script> <!-- NUEVO -->
+</body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · crece cada día</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/galeria.css">
+    <link rel="stylesheet" href="css/swafire.css"> <!-- NUEVO -->
+    
+</head>
+<body>
+    <div class="contenedor">
+        
+        <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <img src="imganes/logosmedi.png" alt="Medicurativo">
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+            
+            <!-- Botones normales (SIEMPRE VISIBLES) -->
+            <div class="botones-header" id="botonesHeader">
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnAgradecimientos">
+                        <i class="fas fa-heart"></i>
+                        <span>Agradecimientos</span>
+                    </button>
+                    <span class="tooltip">Agradecimientos</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnMision">
+                        <i class="fas fa-bullseye"></i>
+                        <span>Misión</span>
+                    </button>
+                    <span class="tooltip">Misión</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header" id="btnSoporte">
+                        <i class="fas fa-headset"></i>
+                        <span>Soporte</span>
+                    </button>
+                    <span class="tooltip">Soporte</span>
+                </div>
+                
+                <div class="btn-con-tooltip">
+                    <button class="btn-header btn-ayuda" id="btnAyuda">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Ayuda</span>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE CATEGORÍAS CON HAMBURGUESA -->
+        <div class="categorias-contenedor">
+            <!-- Botón hamburguesa para categorías (solo móvil) -->
+            <button class="categorias-hamburguesa" id="categoriasHamburguesa">
+                <i class="fas fa-bars"></i>
+                <span>Categorías</span>
+            </button>
+            
+            <!-- MENÚ HORIZONTAL DE CATEGORÍAS (se oculta en móvil) -->
+            <div class="menu-horizontal" id="menuHorizontal"></div>
+        </div>
+
+        <!-- MENÚ HAMBURGUESA DE CATEGORÍAS (solo móvil) -->
+        <div class="menu-categorias-movil" id="menuCategoriasMovil">
+            <div class="menu-categorias-header">
+                <h3><i class="fas fa-heart"></i> Categorías</h3>
+                <button class="cerrar-categorias" id="cerrarCategorias">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-categorias-botones" id="categoriasMovilBotones">
+                <!-- Los botones se generan con JS -->
+            </div>
+        </div>
+
+        <!-- TEMA SELECCIONADO -->
+        <div class="tema-principal" id="temaPrincipal">
+            <div class="placeholder-text">
+                <i class="fas fa-hand-pointer"></i>
+                <p>Haz clic en cualquier tema del menú</p>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · canal oficial <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2025 · todos los temas <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Nuestros archivos JS -->
+    <script src="js/sweetalert.js"></script>
+    <script src="js/sweetaler2.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/galeria.js"></script>
+    <script src="js/categorias.js"></script> <!-- NUEVO -->
+</body>
+</html>

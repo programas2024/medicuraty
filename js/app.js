@@ -1,5 +1,6 @@
 // Hacer temaPrincipal global
 // ===== BASE DE DATOS =====
+
 const temas = [
     // Valores (11 temas)
     { id: 1, nombre: "Apreciate", cat: "valores", icono: "fa-star", desc: "El primer paso para sanar es valorarte a ti mismo." },

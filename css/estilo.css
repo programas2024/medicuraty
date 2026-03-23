@@ -7,7 +7,7 @@
 
 
 body {
-    background: #c5c4c4;
+    background: #ffffff;
 
     padding: 25px 20px;
     min-height: 100vh;
@@ -22,7 +22,7 @@ body {
 
 /* ===== HEADER CON BOTONES ===== */
 .header {
-    background: rgb(255, 255, 255);
+    background: rgb(228, 226, 226);
     border-radius: 40px;
     padding: 15px 25px;
     display: flex;

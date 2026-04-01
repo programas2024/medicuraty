@@ -158,7 +158,7 @@ function mostrarTema(tema) {
                     <div class="descripcion-personalizada">${tema.desc}</div>
                 </div>
                 <div class="tema-personalizado-imagen">
-                    <img src="imganes/individual.png" alt="${tema.nombre}" loading="lazy">
+                    <img src="imganes/indivudual.png" alt="${tema.nombre}" loading="lazy">
                 </div>
             </div>
         `;

@@ -367,6 +367,21 @@ window.addEventListener('resize', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    // --- Verificación de Sesión y Saludo ---
+    async function verificarSesion() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const contenedorSaludo = document.getElementById('contenedorSaludo');
+        const spanNombre = document.getElementById('usuarioNombreLogueado');
+
+        if (session && contenedorSaludo && spanNombre) {
+            const nombre = session.user.user_metadata?.nombre || "Usuario";
+            spanNombre.textContent = nombre;
+            contenedorSaludo.style.display = 'block';
+        }
+    }
+
+    verificarSesion();
+
     // --- Manejo de errores de Supabase en la URL (#error=...) ---
     const hash = window.location.hash;
     if (hash && hash.includes('error')) {
@@ -460,6 +475,53 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('btnMision')?.addEventListener('click', window.mostrarMision);
     document.getElementById('btnSoporte')?.addEventListener('click', window.mostrarSoporte);
     document.getElementById('btnAgradecimientos')?.addEventListener('click', window.mostrarAgradecimientos);
+    
+    // --- Lógica de Perfil de Usuario ---
+    document.getElementById('btnPerfil')?.addEventListener('click', async () => {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+
+        if (!session) {
+            return Swal.fire({
+                title: 'Mi Cuenta',
+                text: 'Inicia sesión para ver tu perfil y personalizar tu experiencia.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Ir a Login',
+                confirmButtonColor: '#9b59b6'
+            }).then(r => r.isConfirmed && (window.location.href = 'login.html'));
+        }
+
+        const nombre = session.user.user_metadata?.nombre || "No definido";
+        const correo = session.user.email;
+        const generoId = session.user.user_metadata?.genero_id;
+        const generoTexto = generoId == 1 ? "Hombre 👨" : (generoId == 2 ? "Mujer 👩" : "No especificado");
+
+        Swal.fire({
+            title: 'Mi Perfil Medicurativo',
+            html: `
+                <div style="text-align: left; padding: 10px;">
+                    <div style="background: #f8f2ff; padding: 20px; border-radius: 30px; margin-bottom: 15px; border: 2px solid #e0d0f0;">
+                        <p><strong><i class="fas fa-user"></i> Nombre:</strong> ${nombre}</p>
+                        <p><strong><i class="fas fa-envelope"></i> Correo:</strong> ${correo}</p>
+                        <p><strong><i class="fas fa-venus-mars"></i> Género:</strong> ${generoTexto}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button onclick="window.location.href='restablecer.html'" class="swal2-confirm swal2-styled" style="background-color: #9b59b6; border-radius: 30px; margin: 0;">Editar Contraseña</button>
+                        <button id="btnLogout" class="swal2-deny swal2-styled" style="background-color: #e84393; border-radius: 30px; margin: 0;">Cerrar Sesión</button>
+                    </div>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: { popup: 'swal-popup-redondo' },
+            didOpen: () => {
+                document.getElementById('btnLogout').addEventListener('click', async () => {
+                    await supabaseClient.auth.signOut();
+                    window.location.href = 'index.html';
+                });
+            }
+        });
+    });
 
     // --- Lógica de Calificación ---
     document.getElementById('btnCalificar')?.addEventListener('click', async () => {

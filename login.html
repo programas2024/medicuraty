@@ -318,10 +318,10 @@
             // Si el login no es automático (por confirmación de email), avisamos
             if (authData.user && !authData.session) {
                 Swal.fire('¡Casi listo!', 'Cuenta creada. Por favor, revisa tu correo para confirmar tu registro.', 'info')
-                    .then(() => window.location.href = 'principal.html');
+                    .then(() => window.location.href = 'login.html');
             } else if (authData.user) {
                 Swal.fire('¡Éxito!', 'Cuenta creada correctamente.', 'success')
-                    .then(() => window.location.href = 'principal.html');
+                    .then(() => window.location.href = 'login.html');
             }
         });
 

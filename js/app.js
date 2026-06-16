@@ -698,15 +698,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2000);
 
-    window.addEventListener('load', () => {
-        const loader = document.getElementById('loader-wrapper');
-        if (loader) {
-            setTimeout(() => {
-                loader.classList.add('fade-out');
-                clearInterval(msgInterval);
-            }, 2000); 
-        }
-    });
+    // --- Retirada inmediata del Banner ---
+    // No esperamos a 'window.load' (que espera imágenes). 
+    // Usamos un pequeño delay de 500ms para que el usuario vea el logo y luego entramos.
+    const loader = document.getElementById('loader-wrapper');
+    if (loader) {
+        setTimeout(() => {
+            loader.classList.add('fade-out');
+            clearInterval(msgInterval);
+        }, 800); // 800ms es suficiente para una bienvenida elegante pero veloz
+    }
 
     construirMenuAdaptable();
 });

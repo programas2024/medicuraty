@@ -74,6 +74,24 @@
         const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Verificar si el usuario tiene permiso de estar aquí
+        window.addEventListener('load', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            // Si no hay sesión, es porque no viene del correo de recuperación
+            if (!session) {
+                Swal.fire({
+                    title: 'Acceso no autorizado',
+                    text: 'Para cambiar tu contraseña, debes solicitar un enlace desde el login.',
+                    icon: 'warning',
+                    confirmButtonColor: '#9b59b6',
+                    allowOutsideClick: false
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+
         function toggleVisibility(id, icon) {
             const input = document.getElementById(id);
             if (input.type === 'password') {

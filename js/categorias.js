@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Generar botones de categorías para móvil
     function generarBotonesCategorias() {
+        const listaCategorias = window.categorias || [];
         let html = '';
-        categorias.forEach(cat => {
+        listaCategorias.forEach(cat => {
             if (cat.id === 'galeria') {
                 // ✅ GALERÍA: Redirige a galeria.html
                 html += `
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     overlay.addEventListener('click', cerrarMenu);
     
     // Generar botones
-    if (typeof categorias !== 'undefined') {
+    if (window.categorias) {
         generarBotonesCategorias();
     } else {
         // Esperar a que cargue app.js

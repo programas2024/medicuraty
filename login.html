@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · Cuenta</title>
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <!-- SweetAlert2 para notificaciones -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            min-height: 60vh;
+        }
+        .auth-card {
+            background: white;
+            padding: 40px;
+            border-radius: 50px;
+            box-shadow: 0 20px 40px rgba(44, 27, 78, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 3px solid #f3e9ff;
+        }
+        .auth-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .auth-input {
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 2px solid #e0d0f0;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .auth-input:focus {
+            border-color: #9b59b6;
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.1);
+        }
+        .auth-btn {
+            background: #9b59b6;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .auth-btn:hover {
+            background: #2c1b4e;
+            transform: translateY(-2px);
+        }
+        .auth-toggle {
+            margin-top: 20px;
+            color: #9b59b6;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        /* Estilos para los campos de contraseña con iconos */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .password-wrapper .auth-input {
+            width: 100%;
+            padding-right: 50px; /* Espacio para el ojo */
+        }
+        .password-wrapper .auth-input#regPass {
+            padding-right: 95px; /* Más espacio para los 3 iconos en el generador */
+        }
+        .toggle-pass {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9b59b6;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .pass-actions {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 12px;
+        }
+        .pass-actions i {
+            color: #9b59b6;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .pass-actions i:hover { color: #2c1b4e; transform: scale(1.2); }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="header">
+            <div class="logo">
+                <a href="index.html"><img src="imganes/logosmedi.png" alt="Medicurativo"></a>
+            </div>
+            <div class="titulo">
+                <h1>Mi Cuenta</h1>
+                <p><i class="fas fa-lock"></i> Acceso seguro a Medicurativo</p>
+            </div>
+            <div class="header-utils">
+                <a href="index.html" class="btn-icon-only" style="display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fas fa-home"></i></a>
+            </div>
+        </div>
+
+        <div class="auth-container">
+            <div class="auth-card animacion-entrada" id="loginCard">
+                <img src="imganes/logosmedi.png" class="auth-logo" alt="Logo">
+                <h2 style="color: #2c1b4e;">¡Hola de nuevo!</h2>
+                <form class="auth-form" id="formLogin">
+                    <input type="email" id="loginEmail" class="auth-input" placeholder="Correo electrónico" required>
+                    <div class="password-wrapper">
+                        <input type="password" class="auth-input" id="loginPass" placeholder="Contraseña" required>
+                        <i class="fas fa-eye toggle-pass" onclick="toggleVisibility('loginPass', this)"></i>
+                    </div>
+                    <button type="submit" class="auth-btn">Iniciar Sesión</button>
+                </form>
+                <p class="auth-toggle" onclick="toggleAuth()">¿No tienes cuenta? Regístrate aquí</p>
+            </div>
+
+            <div class="auth-card animacion-entrada" id="registerCard" style="display: none;">
+                <img src="imganes/logosmedi.png" class="auth-logo" alt="Logo">
+                <h2 style="color: #2c1b4e;">Crea tu cuenta</h2>
+                <form class="auth-form" id="formRegister">
+                    <input type="text" id="regNombre" class="auth-input" placeholder="Nombre completo" required>
+                    <input type="email" id="regEmail" class="auth-input" placeholder="Correo electrónico" required>
+                    <select id="regGenero" class="auth-input" required>
+                        <option value="" disabled selected>Género</option>
+                        <option value="1">Hombre</option>
+                        <option value="2">Mujer</option>
+                    </select>
+                    
+                    <div class="password-wrapper">
+                        <input type="password" class="auth-input" id="regPass" placeholder="Contraseña" required>
+                        <div class="pass-actions">
+                            <i class="fas fa-magic" title="Generar segura" onclick="generarPassword()"></i>
+                            <i class="fas fa-copy" title="Copiar" onclick="copiarPassword()"></i>
+                            <i class="fas fa-eye" title="Ver" onclick="toggleVisibility('regPass', this)"></i>
+                        </div>
+                    </div>
+                    <div class="password-wrapper">
+                        <input type="password" class="auth-input" id="confirmPass" placeholder="Confirmar contraseña" required>
+                        <i class="fas fa-eye toggle-pass" onclick="toggleVisibility('confirmPass', this)"></i>
+                    </div>
+                    <button type="submit" class="auth-btn">Registrarme</button>
+                </form>
+                <p class="auth-toggle" onclick="toggleAuth()">¿Ya tienes cuenta? Entra aquí</p>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · canal oficial <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2026 · todos los temas <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+
+    <script>
+        // Configuración Supabase
+        const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
+        const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        function toggleAuth() {
+            const login = document.getElementById('loginCard');
+            const register = document.getElementById('registerCard');
+            if (login.style.display === 'none') {
+                login.style.display = 'block';
+                register.style.display = 'none';
+            } else {
+                login.style.display = 'none';
+                register.style.display = 'block';
+            }
+        }
+
+        function toggleVisibility(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function generarPassword() {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let retVal = "";
+            for (let i = 0; i < 12; ++i) {
+                retVal += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            
+            const p1 = document.getElementById("regPass");
+            const p2 = document.getElementById("confirmPass");
+            p1.value = retVal;
+            p2.value = retVal;
+            
+            // Cambiamos a tipo texto para que el usuario vea qué se generó
+            p1.type = "text";
+            p2.type = "text";
+
+            Swal.fire({
+                title: '¡Contraseña Generada!',
+                text: 'Se ha creado una clave segura para ti. ¡No olvides copiarla!',
+                icon: 'info',
+                timer: 2000,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+        }
+
+        function copiarPassword() {
+            const pass = document.getElementById("regPass").value;
+            if (!pass) return;
+            navigator.clipboard.writeText(pass).then(() => {
+                Swal.fire({
+                    title: '¡Copiado!',
+                    text: 'Contraseña lista en el portapapeles',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: { popup: 'swal-popup-redondo' }
+                });
+            });
+        }
+
+        // Lógica de Registro
+        document.getElementById('formRegister').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPass').value;
+            const confirm = document.getElementById('confirmPass').value;
+            const nombre = document.getElementById('regNombre').value;
+            const genero_id = document.getElementById('regGenero').value;
+
+            if (password !== confirm) {
+                return Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+            }
+
+            Swal.showLoading();
+            
+            // Pasamos los datos extra en 'options.data' para que el Trigger los reciba
+            const { data: authData, error: authError } = await supabaseClient.auth.signUp({ 
+                email, 
+                password,
+                options: {
+                    data: {
+                        nombre: nombre,
+                        genero_id: parseInt(genero_id)
+                    }
+                }
+            });
+
+            if (authError) return Swal.fire('Error', authError.message, 'error');
+
+            // Si el login no es automático (por confirmación de email), avisamos
+            if (authData.user && !authData.session) {
+                Swal.fire('¡Casi listo!', 'Cuenta creada. Por favor, revisa tu correo para confirmar tu registro.', 'info')
+                    .then(() => window.location.href = 'index.html');
+            } else if (authData.user) {
+                Swal.fire('¡Éxito!', 'Cuenta creada correctamente.', 'success')
+                    .then(() => window.location.href = 'index.html');
+            }
+        });
+
+        // Lógica de Login
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPass').value;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) return Swal.fire('Error', error.message, 'error');
+            
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

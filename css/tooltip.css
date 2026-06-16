@@ -57,9 +57,9 @@
     transform: translateX(-50%);
     background: #2c1b4e;
     color: white;
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 14px;
     font-weight: 600;
     white-space: nowrap;
     visibility: hidden;

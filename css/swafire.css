@@ -37,3 +37,28 @@
     20% { left: 100%; }
     100% { left: 100%; }
 }
+
+/* Estrellas interactivas */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse; /* Permite iluminar de izquierda a derecha con CSS */
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.star-rating i {
+    font-size: 2.5rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.star-rating i:hover,
+.star-rating i:hover ~ i,
+.star-rating i.active,
+.star-rating i.active ~ i {
+    color: #f1c40f;
+    transform: scale(1.1);
+    font-weight: 900; /* Solid star */
+}

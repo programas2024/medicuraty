@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicurativo · crece cada día</title>
+    <!-- Favicon para evitar el error 404 -->
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -19,6 +21,17 @@
     
 </head>
 <body>
+    <!-- PANTALLA DE CARGA (Splash Screen) -->
+    <div id="loader-wrapper">
+        <div id="loader-content">
+            <img src="imganes/logosmedi.png" alt="Logo" class="loader-logo">
+            <p id="loader-message">Bienvenido a Medicurativo...</p>
+            <div class="loader-bar-container">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="contenedor">
         
         <!-- HEADER CON BOTONES -->
@@ -30,49 +43,76 @@
                 <h1>Medicurativo</h1>
                 <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
             </div>
-            
-            <!-- Botones normales (SIEMPRE VISIBLES) -->
-            <div class="botones-header" id="botonesHeader">
-                <div class="btn-con-tooltip">
-                    <button class="btn-header" id="btnAgradecimientos">
-                        <i class="fas fa-heart"></i>
-                        <span>Agradecimientos</span>
-                    </button>
-                    <span class="tooltip">Agradecimientos</span>
+            <!-- Utilidades de la App -->
+            <div class="header-utils">
+                <!-- Label de Promedio -->
+                <div id="badgePromedio" style="display: none; align-items: center; background: white; border: 2px solid #f1c40f; padding: 5px 15px; border-radius: 30px; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: default;">
+                    <span style="font-weight: 700; color: #2c1b4e; font-size: 13px;">Calificación:</span>
+                    <span id="valorPromedio" style="color: #f1c40f; font-weight: 800; font-size: 16px;">0.0</span>
+                    <i class="fas fa-star" style="color: #f1c40f;"></i>
                 </div>
-                
+
                 <div class="btn-con-tooltip">
-                    <button class="btn-header" id="btnMision">
-                        <i class="fas fa-bullseye"></i>
-                        <span>Misión</span>
+                    <button class="btn-icon-only" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
                     </button>
-                    <span class="tooltip">Misión</span>
+                    <span class="tooltip">Cambiar Modo</span>
                 </div>
-                
                 <div class="btn-con-tooltip">
-                    <button class="btn-header" id="btnSoporte">
-                        <i class="fas fa-headset"></i>
-                        <span>Soporte</span>
-                    </button>
-                    <span class="tooltip">Soporte</span>
-                </div>
-                
-                <div class="btn-con-tooltip">
-                    <button class="btn-header btn-ayuda" id="btnAyuda">
+                    <button class="btn-icon-only" id="btnAyuda">
                         <i class="fas fa-question-circle"></i>
-                        <span>Ayuda</span>
                     </button>
                     <span class="tooltip">Ayuda</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnCalificar" style="color: #f1c40f;">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <span class="tooltip">Calificanos</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnVerOpiniones" style="color: #9b59b6;">
+                        <i class="fas fa-comment-dots"></i>
+                    </button>
+                    <span class="tooltip">Ver Opiniones</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <a href="login.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <span class="tooltip">Mi Cuenta</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NUEVA BARRA DE ACCESO RÁPIDO -->
+        <div class="nav-principal">
+            <div class="buscador-destacado">
+                <i class="fas fa-search"></i>
+                <input type="text" id="inputBusqueda" placeholder="¿Qué necesitas leer hoy? (ej: Respeto, Éxito...)">
+                <div id="sugerenciasBusqueda" class="sugerencias-container"></div>
+            </div>
+            <div class="botones-info">
+                <div class="btn-con-tooltip">
+                    <button class="btn-info" id="btnMision"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
+                    <span class="tooltip">Nuestra Misión</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-info" id="btnSoporte"><i class="fas fa-headset"></i> <span>Soporte</span></button>
+                    <span class="tooltip">Soporte Técnico</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-info" id="btnAgradecimientos"><i class="fas fa-heart"></i> <span>Gracias</span></button>
+                    <span class="tooltip">Agradecimientos</span>
                 </div>
             </div>
         </div>
 
         <!-- CONTENEDOR DE CATEGORÍAS CON HAMBURGUESA -->
         <div class="categorias-contenedor">
-            <!-- Botón hamburguesa para categorías (solo móvil) -->
             <button class="categorias-hamburguesa" id="categoriasHamburguesa">
                 <i class="fas fa-bars"></i>
-                <span>Categorías</span>
+                <span>Explorar por Categoría</span>
             </button>
             
             <!-- MENÚ HORIZONTAL DE CATEGORÍAS (se oculta en móvil) -->
@@ -128,7 +168,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <i class="fas fa-feather"></i> 2025 · todos los temas <i class="fas fa-feather"></i>
+                <i class="fas fa-feather"></i> 2026 · todos los temas <i class="fas fa-feather"></i>
             </div>
         </footer>
     </div>
@@ -137,11 +177,17 @@
     
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <!-- Nuestros archivos JS -->
     <script src="js/sweetalert.js"></script>
     <script src="js/sweetaler2.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/performance.js"></script>
+    <script src="js/compartir.js"></script>
     <script src="js/galeria.js"></script>
     <script src="js/categorias.js"></script> <!-- NUEVO -->
 </body>

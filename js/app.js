@@ -151,7 +151,7 @@ function mostrarTema(tema) {
     const tieneImagen = tema.imagen && tema.imagen.trim() !== '';
     const imagenHTML = tieneImagen ? `
         <div class="tema-personalizado-imagen">
-            <img src="imganes/${tema.imagen}" alt="${tema.nombre}" onerror="this.src='imganes/logosmedi.png'">
+            <img src="imganes/${tema.imagen}" alt="${tema.nombre}" loading="lazy" onerror="this.src='imganes/logosmedi.png'">
         </div>` : '';
 
     temaPrincipal.innerHTML = `

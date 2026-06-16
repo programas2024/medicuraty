@@ -119,14 +119,14 @@
     <div class="contenedor">
         <div class="header">
             <div class="logo">
-                <a href="index.html"><img src="imganes/logosmedi.png" alt="Medicurativo"></a>
+                <a href="principal.html"><img src="imganes/logosmedi.png" alt="Medicurativo"></a>
             </div>
             <div class="titulo">
                 <h1>Mi Cuenta</h1>
                 <p><i class="fas fa-lock"></i> Acceso seguro a Medicurativo</p>
             </div>
             <div class="header-utils">
-                <a href="index.html" class="btn-icon-only" style="display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fas fa-home"></i></a>
+                <a href="principal.html" class="btn-icon-only" style="display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fas fa-home"></i></a>
             </div>
         </div>
 
@@ -140,6 +140,7 @@
                         <input type="password" class="auth-input" id="loginPass" placeholder="Contraseña" required>
                         <i class="fas fa-eye toggle-pass" onclick="toggleVisibility('loginPass', this)"></i>
                     </div>
+                    <p class="auth-toggle" style="margin-top: 0; font-size: 14px;" onclick="recuperarPassword()">¿Olvidaste tu contraseña?</p>
                     <button type="submit" class="auth-btn">Iniciar Sesión</button>
                 </form>
                 <p class="auth-toggle" onclick="toggleAuth()">¿No tienes cuenta? Regístrate aquí</p>
@@ -153,6 +154,7 @@
                     <input type="email" id="regEmail" class="auth-input" placeholder="Correo electrónico" required>
                     <select id="regGenero" class="auth-input" required>
                         <option value="" disabled selected>Género</option>
+                        <!-- Si en tu tabla el ID es 3, aquí pones 3 -->
                         <option value="1">Hombre</option>
                         <option value="2">Mujer</option>
                     </select>
@@ -293,6 +295,8 @@
 
             Swal.showLoading();
             
+            const valGenero = genero_id ? parseInt(genero_id) : null;
+
             // Pasamos los datos extra en 'options.data' para que el Trigger los reciba
             const { data: authData, error: authError } = await supabaseClient.auth.signUp({ 
                 email, 
@@ -301,20 +305,23 @@
                     emailRedirectTo: 'https://programas2024.github.io/medicuraty/',
                     data: {
                         nombre: nombre,
-                        genero_id: parseInt(genero_id)
+                        genero_id: valGenero
                     }
                 }
             });
 
-            if (authError) return Swal.fire('Error', authError.message, 'error');
+            if (authError) {
+                console.error("Error de registro:", authError);
+                return Swal.fire('Error', authError.message || "No pudimos crear tu cuenta", 'error');
+            }
 
             // Si el login no es automático (por confirmación de email), avisamos
             if (authData.user && !authData.session) {
                 Swal.fire('¡Casi listo!', 'Cuenta creada. Por favor, revisa tu correo para confirmar tu registro.', 'info')
-                    .then(() => window.location.href = 'index.html');
+                    .then(() => window.location.href = 'principal.html');
             } else if (authData.user) {
                 Swal.fire('¡Éxito!', 'Cuenta creada correctamente.', 'success')
-                    .then(() => window.location.href = 'index.html');
+                    .then(() => window.location.href = 'principal.html');
             }
         });
 
@@ -324,12 +331,72 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPass').value;
 
+            // 1. Mostrar SweetAlert de espera con frase bonita y logo
+            Swal.fire({
+                title: 'Iniciando sesión',
+                text: '“Tu bienestar es el mejor camino para ser feliz”. Conectando...',
+                imageUrl: 'imganes/logosmedi.png',
+                imageWidth: 100,
+                imageHeight: 100,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-            if (error) return Swal.fire('Error', error.message, 'error');
+            if (error) return Swal.fire('Error', error.message || 'Credenciales incorrectas', 'error');
             
-            window.location.href = 'index.html';
+            // 2. Alerta de bienvenida personalizada
+            const usuarioNombre = data.user.user_metadata?.nombre || "Usuario";
+            
+            Swal.fire({
+                title: '¡Bienvenido!',
+                text: `Hola ${usuarioNombre} (${data.user.email}), qué alegría tenerte de vuelta.`,
+                icon: 'success',
+                timer: 2500,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo' }
+            }).then(() => {
+                // 3. Redirección automática a principal.html
+                window.location.href = 'principal.html';
+            });
         });
+
+        // Lógica para recuperar contraseña
+        async function recuperarPassword() {
+            const { value: email } = await Swal.fire({
+                title: 'Recuperar Contraseña',
+                input: 'email',
+                inputLabel: 'Ingresa tu correo electrónico',
+                inputPlaceholder: 'tu-correo@ejemplo.com',
+                confirmButtonText: 'Enviar enlace',
+                confirmButtonColor: '#9b59b6',
+                showCancelButton: true,
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+
+            if (email) {
+                Swal.showLoading();
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://programas2024.github.io/medicuraty/restablecer.html',
+                });
+
+                if (error) {
+                    Swal.fire('Error', error.message, 'error');
+                } else {
+                    Swal.fire({
+                        title: '¡Correo enviado!',
+                        text: 'Revisa tu bandeja de entrada para restablecer tu contraseña.',
+                        icon: 'success',
+                        customClass: { popup: 'swal-popup-redondo' }
+                    });
+                }
+            }
+        }
     </script>
 </body>
 </html>

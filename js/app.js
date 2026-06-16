@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 Swal.fire({
                     title: '¡Recibido!',
-                    text: `¡Gracias ${result.value.username}! Recibimos tus ${result.value.rating} estrellas. Estamos muy felices.`,
+                    text: `¡Gracias ${session.user.user_metadata?.nombre || 'amigo'}! Recibimos tus ${result.value.rating} estrellas. Estamos muy felices.`,
                     imageUrl: 'imganes/logosmedi.png',
                     imageWidth: 100,
                     imageHeight: 100,

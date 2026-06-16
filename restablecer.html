@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · Restablecer Contraseña</title>
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .auth-container { display: flex; justify-content: center; align-items: center; padding: 40px 20px; min-height: 60vh; }
+        .auth-card { background: white; padding: 40px; border-radius: 50px; box-shadow: 0 20px 40px rgba(44, 27, 78, 0.1); width: 100%; max-width: 450px; text-align: center; border: 3px solid #f3e9ff; }
+        .auth-logo { width: 100px; height: 100px; margin-bottom: 20px; }
+        .auth-form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .auth-input { padding: 15px 25px; border-radius: 30px; border: 2px solid #e0d0f0; outline: none; font-size: 16px; transition: 0.3s; }
+        .auth-input:focus { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.1); }
+        .auth-btn { background: #9b59b6; color: white; border: none; padding: 15px; border-radius: 30px; font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .auth-btn:hover { background: #2c1b4e; transform: translateY(-2px); }
+        .auth-toggle { margin-top: 20px; color: #9b59b6; cursor: pointer; font-weight: 600; text-decoration: underline; }
+        .password-wrapper { position: relative; width: 100%; }
+        .password-wrapper .auth-input { width: 100%; padding-right: 50px; }
+        .toggle-pass { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #9b59b6; cursor: pointer; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="header">
+            <div class="logo">
+                <a href="principal.html"><img src="imganes/logosmedi.png" alt="Medicurativo"></a>
+            </div>
+            <div class="titulo">
+                <h1>Seguridad</h1>
+                <p><i class="fas fa-key"></i> Restablecer tu contraseña</p>
+            </div>
+            <div class="header-utils">
+                <a href="principal.html" class="btn-icon-only" style="display: flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fas fa-home"></i></a>
+            </div>
+        </div>
+
+        <div class="auth-container">
+            <div class="auth-card animacion-entrada">
+                <img src="imganes/logosmedi.png" class="auth-logo" alt="Logo">
+                <h2 style="color: #2c1b4e;">Nueva Contraseña</h2>
+                <p style="color: #4a2d6e; margin-top: 10px;">Ingresa y confirma tu nueva clave de acceso para Medicurativo.</p>
+                
+                <form class="auth-form" id="formReset">
+                    <div class="password-wrapper">
+                        <input type="password" class="auth-input" id="newPass" placeholder="Nueva contraseña" required minlength="6">
+                        <i class="fas fa-eye toggle-pass" onclick="toggleVisibility('newPass', this)"></i>
+                    </div>
+                    <div class="password-wrapper">
+                        <input type="password" class="auth-input" id="confirmNewPass" placeholder="Confirmar contraseña" required minlength="6">
+                        <i class="fas fa-eye toggle-pass" onclick="toggleVisibility('confirmNewPass', this)"></i>
+                    </div>
+                    <button type="submit" class="auth-btn">Actualizar Contraseña</button>
+                </form>
+                
+                <p class="auth-toggle" onclick="window.location.href='login.html'">Volver al Login</p>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div><i class="fas fa-heart"></i> Medicurativo · canal oficial <i class="fas fa-heart"></i></div>
+            <div class="copyright"><i class="fas fa-feather"></i> 2026 · tu bienestar es lo primero <i class="fas fa-feather"></i></div>
+        </footer>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
+        const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        function toggleVisibility(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        document.getElementById('formReset').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPass = document.getElementById('newPass').value;
+            const confirmPass = document.getElementById('confirmNewPass').value;
+
+            if (newPass !== confirmPass) {
+                return Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+            }
+
+            Swal.fire({ title: 'Actualizando...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+            const { data, error } = await supabaseClient.auth.updateUser({ password: newPass });
+
+            if (error) {
+                Swal.fire('Error', error.message, 'error');
+            } else {
+                Swal.fire({
+                    title: '¡Clave actualizada!',
+                    text: 'Tu contraseña ha sido cambiada con éxito. Ya puedes iniciar sesión.',
+                    icon: 'success',
+                    confirmButtonColor: '#9b59b6'
+                }).then(() => { window.location.href = 'login.html'; });
+            }
+        });
+    </script>
+</body>
+</html>

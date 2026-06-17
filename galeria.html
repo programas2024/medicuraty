@@ -81,21 +81,27 @@
                 </div>
             </div>
 
-            <div class="botones-info-wrapper">
-                <p>Cada imagen puede ser una pausa bonita para volver a ti.</p>
+            <!-- Se agrega la clase galeria-layout y se invierte el orden del HTML -->
+            <div class="botones-info-wrapper galeria-layout">
+                <!-- La frase ahora está primero (izquierda) -->
+                <div class="label-info-container">
+                    <i class="fas fa-spa"></i>
+                    <p id="fraseInspiradora">Cargando un momento de paz...</p>
+                </div>
+                <!-- Los botones ahora están después (derecha) -->
                 <div class="botones-info">
-                <div class="btn-con-tooltip">
-                    <button class="btn-info" id="btnMision" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
-                    <span class="tooltip">Nuestra Misión</span>
-                </div>
-                <div class="btn-con-tooltip">
-                    <button class="btn-info" id="btnSoporte" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-headset"></i> <span>Soporte</span></button>
-                    <span class="tooltip">Soporte Técnico</span>
-                </div>
-                <div class="btn-con-tooltip">
-                    <button class="btn-info" id="btnAgradecimientos" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-heart"></i> <span>Gracias</span></button>
-                    <span class="tooltip">Agradecimientos</span>
-                </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnMision" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
+                        <span class="tooltip">Nuestra Misión</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnSoporte" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-headset"></i> <span>Soporte</span></button>
+                        <span class="tooltip">Soporte Técnico</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnAgradecimientos" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-heart"></i> <span>Gracias</span></button>
+                        <span class="tooltip">Agradecimientos</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -318,6 +324,33 @@
             // Inicializar
             cargarImagenes();
             mostrarSeccion('completa');
+
+            // ===== FRASES DINÁMICAS Y LARGAS PARA LA GALERÍA =====
+            const frasesGaleria = [
+                "Cada imagen es un pequeño refugio para tu alma; tómate un momento para respirar, observar y reconectar con lo que realmente importa en tu interior.",
+                "En el silencio de una imagen encontrarás las palabras que tu corazón necesita escuchar hoy. Permítete este instante de paz y vuelve a ti con calma.",
+                "Mirar con atención es una forma de meditar. Deja que estos colores y formas te guíen hacia un estado de gratitud y serenidad profunda en este día.",
+                "Tu bienestar comienza cuando decides hacer una pausa consciente. Estas imágenes están aquí para recordarte que mereces momentos de belleza y tranquilidad.",
+                "A veces, todo lo que necesitamos es una perspectiva diferente. Navega por esta galería y permite que cada visual sane un poco más tu pensamiento.",
+                "Cada color y cada trazo en esta galería tienen el propósito de recordarte que el mundo está lleno de maravillas esperando ser apreciadas por ojos que buscan paz.",
+                "La verdadera belleza reside en los detalles que solemos ignorar. Detente un segundo, respira profundamente y deja que la armonía de estas capturas envuelva tu espíritu."
+            ];
+
+            const elFrase = document.getElementById('fraseInspiradora');
+            if (elFrase) {
+                let index = Math.floor(Math.random() * frasesGaleria.length);
+                elFrase.textContent = frasesGaleria[index];
+
+                // Rotación automática de frases cada 10 segundos con efecto de desvanecimiento
+                setInterval(() => {
+                    elFrase.style.opacity = '0';
+                    setTimeout(() => {
+                        index = (index + 1) % frasesGaleria.length;
+                        elFrase.textContent = frasesGaleria[index];
+                        elFrase.style.opacity = '1';
+                    }, 600);
+                }, 10000);
+            }
         });
 
         // Función de zoom global

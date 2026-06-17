@@ -1253,8 +1253,8 @@ body.dark-mode .btn-icon-only:hover {
 /* Estilos para el nuevo contenedor de Misión, Soporte, Gracias */
 .botones-info-wrapper {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Alineado a la derecha en PC */
+    flex-direction: row;
+    align-items: center;
     gap: 5px;
     background: linear-gradient(45deg, #f0e6ff, #f3ebff);
     padding: 10px 15px;
@@ -1272,16 +1272,65 @@ body.dark-mode .botones-info-wrapper {
     border-color: #3d3463;
 }
 
-.botones-info-wrapper p {
-    font-size: 11px;
+/* Clase específica para invertir el orden solo en la galería */
+.botones-info-wrapper.galeria-layout {
+    justify-content: space-between; /* Frase a la izquierda, botones a la derecha */
+    flex: 1; /* Permite que ocupe el espacio disponible */
+    gap: 25px;
+    align-items: center;
+}
+
+/* Asegura que el contenedor de la frase no aplaste a los botones en pantallas grandes */
+.botones-info-wrapper.galeria-layout .label-info-container {
+    max-width: 65%;
+}
+
+.label-info-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 10px 22px;
+    border-radius: 30px;
+    margin-bottom: 0;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.08);
+    animation: slideInLeft 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.4s ease;
+}
+
+.label-info-container:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(155, 89, 182, 0.15);
+}
+
+body.dark-mode .label-info-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(155, 89, 182, 0.2);
+}
+
+.label-info-container i {
+    font-size: 16px;
     color: #9b59b6;
-    font-weight: 600;
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+.botones-info-wrapper p {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #9b59b6;
+    font-weight: 400;
     margin: 0;
-    text-align: right; /* Alineado a la derecha en PC */
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    transition: opacity 0.6s ease-in-out;
 }
 
 body.dark-mode .botones-info-wrapper p {
-    color: #b0a4e3;
+    color: #ffffff;
 }
 
 .botones-info-wrapper .botones-info {
@@ -1294,12 +1343,30 @@ body.dark-mode .botones-info-wrapper p {
 
 @media (max-width: 600px) {
     .botones-info-wrapper {
+        flex-direction: column;
         align-items: center; /* Centra el contenido en móvil */
         text-align: center;
         width: 100%;
         padding: 8px 12px;
         margin: 5px 0 0 0; /* Ajusta margen en móvil */
     }
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+    .botones-info-wrapper.galeria-layout {
+        flex-direction: column; /* En móvil, frase arriba y botones abajo */
+    }
+    .botones-info-wrapper.galeria-layout .label-info-container {
+        max-width: 100%;
+    }
+
     .botones-info-wrapper p {
         text-align: center;
     }

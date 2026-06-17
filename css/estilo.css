@@ -28,9 +28,15 @@ body {
 
 /* Variables Modo Oscuro */
 body.dark-mode {
-    background: #121212;
+    background: #0f0c29; /* Azul noche profundo más agradable */
     color: #e0e0e0;
 }
+
+body.dark-mode .titulo h1 { color: #ffffff; }
+body.dark-mode .titulo p { color: #b0a4e3; }
+body.dark-mode .btn-icon-only { background: #2d2d2d; color: #ffffff; }
+body.dark-mode .buscador-destacado input { color: #ffffff; }
+body.dark-mode .btn-icon-only:hover { background: #3d3d3d; color: #9b59b6; }
 
 .contenedor {
     max-width: 1100px;
@@ -101,7 +107,7 @@ body.dark-mode .header {
     justify-content: flex-end;
     align-items: center;
     /* Eliminamos flex: 1 de aquí para que no empuje al título en PC */
-    flex: 0 1 auto; 
+    flex: 0 1 auto;
     max-width: 60%; /* En PC los botones no ocuparán más de la mitad */
 }
 
@@ -179,7 +185,7 @@ body.dark-mode .btn-header {
 /* Nueva Barra de Navegación */
 .nav-principal {
     position: relative;
-    z-index: 2000; /* Buscador siempre encima */
+    z-index: 4000; /* Aumentado para superar submenús */
     display: flex;
     gap: 15px;
     margin-bottom: 30px;
@@ -190,6 +196,7 @@ body.dark-mode .btn-header {
     flex: 1;
     min-width: 300px;
     position: relative;
+    z-index: 10; /* Para que las sugerencias floten sobre los botones info */
     background: white;
     border-radius: 30px;
     padding: 10px 25px;
@@ -217,7 +224,7 @@ body.dark-mode .btn-header {
     background: white;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    z-index: 2500; /* Sugerencias por encima de navegación */
+    z-index: 99999; /* Prioridad máxima absoluta sobre cualquier otro elemento */
     max-height: 250px;
     overflow-y: auto;
     display: none;
@@ -266,6 +273,8 @@ body.dark-mode .highlight { color: #bb86fc; }
 .botones-info {
     display: flex;
     gap: 10px;
+    position: relative;
+    z-index: 1; /* Detrás del buscador para no tapar sugerencias */
 }
 
 .btn-info {
@@ -302,6 +311,11 @@ body.dark-mode .btn-info {
     border: 1px solid white;
     position: relative;
     z-index: 1001;
+}
+
+body.dark-mode .menu-horizontal {
+    background: rgba(26, 22, 46, 0.8);
+    border-color: #2c254a;
 }
 
 .menu-item {
@@ -451,6 +465,15 @@ body.dark-mode .submenu {
     border-left: 15px solid;
 }
 
+body.dark-mode .tema-principal {
+    background: #1a162e;
+    box-shadow: 0 30px 60px -18px rgba(0,0,0,0.6);
+    border-left-width: 15px;
+}
+
+body.dark-mode .placeholder-text { color: #b0a4e3; }
+body.dark-mode .placeholder-text i { color: #9b59b6; }
+
 .tema-principal .icono-gigante {
     font-size: 90px;
     margin-bottom: 25px;
@@ -463,6 +486,8 @@ body.dark-mode .submenu {
     margin-bottom: 15px;
     line-height: 1.2;
 }
+
+body.dark-mode .tema-principal h2 { color: #ffffff; }
 
 .tema-principal .categoria-tag {
     background: #2b174e;
@@ -715,9 +740,14 @@ body.dark-mode .tema-principal .descripcion {
     z-index: 10000;
     box-shadow: 5px 0 30px rgba(44,27,78,0.3);
     transition: left 0.3s ease;
-    padding: 25px 20px;
+    padding: 25px 20px 80px 20px; /* Añadido padding inferior para el scroll */
     border-right: 5px solid #9b59b6;
     overflow-y: auto;
+}
+
+body.dark-mode .menu-categorias-movil {
+    background: #1a162e;
+    border-right-color: #9b59b6;
 }
 
 .menu-categorias-movil.mostrar {
@@ -731,6 +761,12 @@ body.dark-mode .tema-principal .descripcion {
     margin-bottom: 30px;
     padding-bottom: 15px;
     border-bottom: 2px solid #e0d0f0;
+}
+
+body.dark-mode .menu-categorias-header h3 { color: #e0d0f0; }
+body.dark-mode .categoria-movil-btn {
+    background: #241e3a;
+    color: #e0d0f0;
 }
 
 .menu-categorias-header h3 {
@@ -958,6 +994,12 @@ body.dark-mode .tema-principal .descripcion {
     text-align: center;
 }
 
+body.dark-mode .descripcion-personalizada { 
+    background: #2d263a; 
+    color: #ffffff; 
+    border-color: #9b59b6;
+}
+
 .tema-personalizado-imagen {
     flex: 1;
     display: flex;
@@ -1128,14 +1170,25 @@ body.dark-mode .tema-principal .descripcion {
 body.dark-mode .swal2-popup {
     background: #1e1e1e !important;
     color: #e0e0e0 !important;
-    border: 1px solid #444;
+    border: 3px solid #ffffff !important; /* Borde blanco más grueso y visible */
 }
-body.dark-mode .swal2-title, body.dark-mode .swal2-html-container {
-    color: #e0e0e0 !important;
+
+/* Títulos blancos en modo oscuro */
+body.dark-mode .swal2-title,
+body.dark-mode .swal2-title span {
+    color: #ffffff !important;
+}
+
+/* Mantener nombres y letras en negro solo dentro de las secciones con fondo claro en agradecimientos */
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara,
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara h3,
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara p,
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara span {
+    color: #1a1a2e !important;
 }
 
 .swal2-container {
-    z-index: 999999 !important; /* SweetAlert debe ser lo más alto en la página */
+    z-index: 9999999 !important; /* Prioridad máxima absoluta sobre cualquier otro elemento */
 }
 
 /* ===== RESPONSIVE PARA SALUDO Y RELOJ ===== */

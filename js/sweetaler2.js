@@ -21,7 +21,7 @@ function mostrarAgradecimientos() {
                 </div>
 
                 <!-- PADRES -->
-                <div style="background: linear-gradient(145deg, #ffd1dc, #ffe5f0); padding: ${isMobile ? '15px' : '25px'}; border-radius: ${isMobile ? '40px' : '80px'}; margin: 10px 0;">
+                <div class="popup-seccion-clara" style="background: linear-gradient(145deg, #ffd1dc, #ffe5f0); padding: ${isMobile ? '15px' : '25px'}; border-radius: ${isMobile ? '40px' : '80px'}; margin: 10px 0;">
                     <i class="fas fa-heart" style="font-size: ${isMobile ? '30px' : '50px'}; color: #e84393;"></i>
                     <h3 style="font-size: ${isMobile ? '22px' : '32px'}; color: #2c1b4e;">👨‍👩‍👧 PADRES</h3>
                     <p style="font-size: ${isMobile ? '14px' : '20px'}; color: #1a1a2e;">
@@ -34,7 +34,7 @@ function mostrarAgradecimientos() {
                 </div>
 
                 <!-- FAMILIA -->
-                <div style="background: linear-gradient(145deg, #b3e0cf, #d4f0e0); padding: ${isMobile ? '15px' : '25px'}; border-radius: ${isMobile ? '40px' : '80px'}; margin: 10px 0;">
+                <div class="popup-seccion-clara" style="background: linear-gradient(145deg, #b3e0cf, #d4f0e0); padding: ${isMobile ? '15px' : '25px'}; border-radius: ${isMobile ? '40px' : '80px'}; margin: 10px 0;">
                     <i class="fas fa-users" style="font-size: ${isMobile ? '30px' : '50px'}; color: #0e7c5c;"></i>
                     <h3 style="font-size: ${isMobile ? '22px' : '32px'}; color: #2c1b4e;">👪 FAMILIA</h3>
                     <p style="font-size: ${isMobile ? '12px' : '18px'}; color: #1a1a2e;">
@@ -48,7 +48,7 @@ function mostrarAgradecimientos() {
                 </div>
 
                 <!-- AMIGOS -->
-                <div style="background: linear-gradient(145deg, #fbc1d0, #ffd9e3); padding: ${isMobile ? '15px' : '25px'}; border-radius: ${isMobile ? '40px' : '80px'}; margin: 10px 0;">
+                <div class="popup-seccion-clara" style="background: linear-gradient(145deg, #fbc1d0, #ffd9e3); padding: ${isMobile ? '15px' : '25px'}; border-radius: ${isMobile ? '40px' : '80px'}; margin: 10px 0;">
                     <i class="fas fa-heart" style="font-size: ${isMobile ? '30px' : '50px'}; color: #c44569;"></i>
                     <h3 style="font-size: ${isMobile ? '22px' : '32px'}; color: #2c1b4e;">🤝 AMIGOS</h3>
                     <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
@@ -65,7 +65,7 @@ function mostrarAgradecimientos() {
                 </div>
             </div>
         `,  // ← ESTE CIERRE FALTABA
-        width: isMobile ? '95%' : '750px',
+        width: isMobile ? '95%' : '550px',
         customClass: {
             popup: 'swal-popup-agradecimientos'
         }

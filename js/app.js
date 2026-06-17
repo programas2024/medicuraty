@@ -580,7 +580,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     `}).join('');
                     sugerenciasCont.classList.add('mostrar');
                 } else {
-                    sugerenciasCont.classList.remove('mostrar');
+                    // Mensaje cuando no hay temas encontrados
+                    sugerenciasCont.innerHTML = `<div class="sugerencia-item" style="text-align: center; opacity: 0.6; cursor: default;">No encontrado</div>`;
+                    sugerenciasCont.classList.add('mostrar');
                 }
             } else {
                 sugerenciasCont.classList.remove('mostrar');

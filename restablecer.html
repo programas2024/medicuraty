@@ -70,6 +70,11 @@
     </div>
 
     <script>
+        // Aplicar modo oscuro si está guardado
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
         const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
         const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);

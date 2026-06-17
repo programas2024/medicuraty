@@ -1,3 +1,8 @@
+// 1. Cargar y aplicar preferencia de tema INMEDIATAMENTE para evitar parpadeo blanco
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+}
+
 // Inicializar Supabase
 const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
 const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
@@ -73,6 +78,7 @@ const categorias = [
 // Elementos DOM
 const menuHorizontal = document.getElementById('menuHorizontal');
 const temaPrincipal = document.getElementById('temaPrincipal');
+const esPaginaGaleria = window.location.pathname.includes('galeria.html');
 
 // Hacer temaPrincipal global para otros scripts
 window.temaPrincipal = temaPrincipal;
@@ -189,6 +195,7 @@ function cerrarTodosSubmenus() {
 
 // ===== FUNCIÓN PARA CONSTRUIR MENÚ ADAPTABLE =====
 function construirMenuAdaptable(filtro = '') {
+    if (!menuHorizontal) return;
     let html = '';
     const mobile = isMobile();
     
@@ -367,6 +374,7 @@ document.addEventListener('click', function(event) {
 });
 
 window.addEventListener('resize', function() {
+    if (esPaginaGaleria) return;
     construirMenuAdaptable();
 });
 
@@ -503,6 +511,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Hacer la función global para que perfil.js pueda usarla
     window.actualizarLogrosUI = async function(userId) {
+        const wrapper = document.getElementById('wrapperLogros');
+        if (!wrapper) return;
+
         if (!userId) {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) userId = session.user.id;
@@ -510,7 +521,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const { data: logros } = await supabaseClient.from('logros').select('*').eq('usuario_id', userId).single();
-        const wrapper = document.getElementById('wrapperLogros');
         
         if (logros && (logros.cambio_nombre || logros.cambio_genero)) {
             if (wrapper) {
@@ -543,6 +553,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- Lógica de Modo Oscuro ---
     const darkModeBtn = document.getElementById('darkModeToggle');
+
+    // Sincronizar el icono del botón si existe
+    if (darkModeBtn && document.body.classList.contains('dark-mode')) {
+        darkModeBtn.querySelector('i').className = 'fas fa-sun';
+    }
+
     if (darkModeBtn) {
         darkModeBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
@@ -550,12 +566,6 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
             darkModeBtn.querySelector('i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
         });
-        
-        // Cargar preferencia guardada
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            darkModeBtn.querySelector('i').className = 'fas fa-sun';
-        }
     }
 
     // --- Lógica del Buscador ---
@@ -888,9 +898,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Función para calcular y mostrar el promedio en el Header ---
     async function actualizarPromedio() {
-        const { data: opiniones } = await supabaseClient.from('comentarios').select('estrellas');
         const badge = document.getElementById('badgePromedio');
         const valorText = document.getElementById('valorPromedio');
+        if (!badge || !valorText) return;
+
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) return;
+
+        const { data: opiniones } = await supabaseClient.from('comentarios').select('estrellas');
 
         if (opiniones && opiniones.length > 0 && badge && valorText) {
             const suma = opiniones.reduce((acc, op) => acc + op.estrellas, 0);
@@ -1018,5 +1033,8 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarReloj();
     setInterval(actualizarReloj, 1000);
 
-    construirMenuAdaptable();
+    // Solo construir el menú dinámico de temas si no estamos en la página de galería
+    if (!esPaginaGaleria) {
+        construirMenuAdaptable();
+    }
 });

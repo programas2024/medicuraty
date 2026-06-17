@@ -107,8 +107,8 @@ body.dark-mode .header {
     justify-content: flex-end;
     align-items: center;
     /* Eliminamos flex: 1 de aquí para que no empuje al título en PC */
-    flex: 0 1 auto;
-    max-width: 60%; /* En PC los botones no ocuparán más de la mitad */
+    flex: 1 1 auto; /* Permite que ocupe espacio, pero no empuje al título */
+    min-width: 0; /* Permite que se encoja correctamente */
 }
 
 .btn-header {
@@ -274,6 +274,7 @@ body.dark-mode .highlight { color: #bb86fc; }
     display: flex;
     gap: 10px;
     position: relative;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan si hay poco espacio */
     z-index: 1; /* Detrás del buscador para no tapar sugerencias */
 }
 
@@ -1187,6 +1188,18 @@ body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara span {
     color: #1a1a2e !important;
 }
 
+/* Modo Oscuro para Login y Registro */
+body.dark-mode .auth-card {
+    background: #1a162e;
+    border-color: #2c254a;
+    color: #ffffff;
+}
+body.dark-mode .auth-input {
+    background: #241e3a;
+    border-color: #2c254a;
+    color: #ffffff;
+}
+
 .swal2-container {
     z-index: 9999999 !important; /* Prioridad máxima absoluta sobre cualquier otro elemento */
 }
@@ -1211,8 +1224,86 @@ body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara span {
         font-size: 1.1rem !important;
     }
 
-    /* Ocultar botones redundantes del encabezado en móvil */
-    #wrapperCalificar, #wrapperOpiniones, #wrapperLogros {
+    /* Clase para ocultar en móviles y limpiar el encabezado */
+    .hide-mobile {
         display: none !important;
+    }
+
+    .botones-info, .botones-info-wrapper {
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+}
+
+/* Botones en modo oscuro: No deben ser blancos */
+body.dark-mode .btn-info, 
+body.dark-mode .btn-icon-only {
+    background: #241e3a !important;
+    border-color: #3d3463 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .btn-info:hover, 
+body.dark-mode .btn-icon-only:hover {
+    background: #2c254a !important;
+    color: #9b59b6 !important;
+}
+
+/* Estilos para el nuevo contenedor de Misión, Soporte, Gracias */
+.botones-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Alineado a la derecha en PC */
+    gap: 5px;
+    background: linear-gradient(45deg, #f0e6ff, #f3ebff);
+    padding: 10px 15px;
+    border-radius: 30px;
+    border: 1px solid #e0d0f0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-left: 10px;
+    margin-left: auto;
+    flex: 0 1 auto;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .botones-info-wrapper {
+    background: linear-gradient(45deg, #1a162e, #2c254a);
+    border-color: #3d3463;
+}
+
+.botones-info-wrapper p {
+    font-size: 11px;
+    color: #9b59b6;
+    font-weight: 600;
+    margin: 0;
+    text-align: right; /* Alineado a la derecha en PC */
+}
+
+body.dark-mode .botones-info-wrapper p {
+    color: #b0a4e3;
+}
+
+.botones-info-wrapper .botones-info {
+    margin: 0; /* Anula margen predeterminado */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end; /* Alinea los botones a la derecha en PC */
+    gap: 5px;
+}
+
+@media (max-width: 600px) {
+    .botones-info-wrapper {
+        align-items: center; /* Centra el contenido en móvil */
+        text-align: center;
+        width: 100%;
+        padding: 8px 12px;
+        margin: 5px 0 0 0; /* Ajusta margen en móvil */
+    }
+    .botones-info-wrapper p {
+        text-align: center;
+    }
+    .botones-info-wrapper .botones-info {
+        justify-content: center; /* Centra los botones en móvil */
     }
 }

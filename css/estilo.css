@@ -1202,6 +1202,15 @@ body.dark-mode .swal-popup-ayuda .swal2-html-container span:not([class*="fa"]) {
     color: #000000 !important;
 }
 
+/* Ocultar botones específicos del encabezado en móvil */
+@media (max-width: 768px) {
+    #wrapperLogros,
+    #wrapperCalificar,
+    #wrapperOpiniones {
+        display: none !important;
+    }
+}
+
 /* Dark Mode Overrides for Profile SweetAlert */
 body.dark-mode .swal-popup-perfil {
     background: #000000 !important; 

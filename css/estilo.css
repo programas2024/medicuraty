@@ -95,14 +95,12 @@ body.dark-mode .header {
 
 /* ===== BOTONES DEL HEADER (TODOS IGUALES) ===== */
 .botones-header {
-.header-utils {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
     align-items: center;
-    flex: 1;
-}}
+}
 
 .btn-header {
     background: white;
@@ -270,7 +268,6 @@ body.dark-mode .highlight { color: #bb86fc; }
 .botones-info {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
 .btn-info {
@@ -520,8 +517,6 @@ body.dark-mode .tema-principal .descripcion {
 @media (max-width: 900px) {
     .header {
         padding: 20px;
-        justify-content: center;
-        text-align: center;
     }
 
     .controles-superiores {
@@ -530,10 +525,8 @@ body.dark-mode .tema-principal .descripcion {
     }
     
     .botones-header {
-    .header-utils {
         width: 100%;
         justify-content: center;
-        margin-top: 15px;
     }
     
     .btn-header {
@@ -558,11 +551,6 @@ body.dark-mode .tema-principal .descripcion {
         text-align: center;
     }
     
-    .botones-info {
-        width: 100%;
-        justify-content: center;
-    }
-
     .titulo {
         text-align: center;
     }

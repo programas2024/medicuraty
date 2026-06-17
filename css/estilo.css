@@ -1182,10 +1182,24 @@ body.dark-mode .swal-popup-perfil .swal-perfil-genero {
     color: #ffffff !important;
 }
 
-/* Forzar fondo oscuro y letra clara en el popup de ayuda en modo oscuro */
+/* Forzar que el popup de ayuda mantenga fondo claro y letras negras incluso en modo oscuro */
 body.dark-mode .swal-popup-ayuda {
     background-color: #000000 !important;
-    border: 3px solid #ffffff !important; /* Borde blanco más grueso y visible */
+    border: 3px solid #ffffff !important;
+}
+
+body.dark-mode .swal-popup-ayuda .swal2-title,
+body.dark-mode .swal-popup-ayuda .swal2-title span {
+    color: #ffffff !important;
+}
+
+/* Texto interno en negro para las cajitas de colores, pero sin tocar los iconos */
+body.dark-mode .swal-popup-ayuda .swal2-html-container div,
+body.dark-mode .swal-popup-ayuda .swal2-html-container p,
+body.dark-mode .swal-popup-ayuda .swal2-html-container strong,
+body.dark-mode .swal-popup-ayuda .swal2-html-container small,
+body.dark-mode .swal-popup-ayuda .swal2-html-container span:not([class*="fa"]) {
+    color: #000000 !important;
 }
 
 /* Dark Mode Overrides for Profile SweetAlert */

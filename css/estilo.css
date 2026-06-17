@@ -1157,4 +1157,9 @@ body.dark-mode .swal2-title, body.dark-mode .swal2-html-container {
     #iconoRelojDinamico, .fa-sparkles {
         font-size: 1.1rem !important;
     }
+
+    /* Ocultar botones redundantes del encabezado en móvil */
+    #wrapperCalificar, #wrapperOpiniones, #wrapperLogros {
+        display: none !important;
+    }
 }

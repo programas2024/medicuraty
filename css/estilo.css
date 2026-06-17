@@ -1174,38 +1174,546 @@ body.dark-mode .swal2-popup {
     border: 3px solid #ffffff !important; /* Borde blanco más grueso y visible */
 }
 
-/* Títulos blancos en modo oscuro */
+/* Títulos y texto general blancos en modo oscuro */
 body.dark-mode .swal2-title,
-body.dark-mode .swal2-title span {
+body.dark-mode .swal2-title span,
+body.dark-mode .swal-popup-perfil .swal-perfil-nombre,
+body.dark-mode .swal-popup-perfil .swal-perfil-genero {
     color: #ffffff !important;
 }
 
 /* Forzar fondo oscuro y letra clara en el popup de ayuda en modo oscuro */
 body.dark-mode .swal-popup-ayuda {
     background-color: #000000 !important;
-    border: 3px solid #ffffff !important;
+    border: 3px solid #ffffff !important; /* Borde blanco más grueso y visible */
 }
 
-body.dark-mode .swal-popup-ayuda .swal2-title,
-body.dark-mode .swal-popup-ayuda .swal2-title span {
+/* Dark Mode Overrides for Profile SweetAlert */
+body.dark-mode .swal-popup-perfil {
+    background: #000000 !important; 
+    color: #ffffff !important;
+    border: 2px solid #9b59b6 !important;
+}
+
+/* Contenedor de correo electrónico */
+.swal-perfil-info-box {
+    background: #f8f2ff;
+    padding: 15px;
+    border-radius: 25px; /* Más redondeado */
+    margin-bottom: 20px;
+    border: 1px solid #e0d0f0;
+    text-align: center;
+}
+
+body.dark-mode .swal-perfil-info-box {
+    background: #241e3a !important;
+    border-color: #3d3463 !important;
+}
+
+.swal-perfil-info-box small {
+    color: #9b59b6;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+}
+
+body.dark-mode .swal-perfil-info-box small {
+    color: #bb86fc;
+}
+
+.swal-perfil-info-box p {
+    margin: 0;
+    font-weight: 600;
+    color: #2c1b4e;
+}
+
+body.dark-mode .swal-perfil-info-box p {
+    color: #e0e0e0;
+}
+
+/* Estilos para las nuevas secciones desplegables */
+.swal-perfil-section {
+    margin-bottom: 15px;
+    border-radius: 25px; /* Borde redondeado para toda la sección */
+    overflow: hidden; /* Asegura que el contenido respete el border-radius */
+    border: 1px solid #e0d0f0; /* Borde ligero para separación */
+    background: white; /* Fondo por defecto */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .swal-perfil-section {
+    background: #1a1a1a;
+    border-color: #333;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.swal-perfil-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2c1b4e;
+    transition: background-color 0.2s ease;
+    border-left: 5px solid transparent; /* Para el color de categoría */
+}
+
+body.dark-mode .swal-perfil-section-header {
+    color: #e0e0e0;
+}
+
+.swal-perfil-section-header:hover {
+    background-color: #f8f2ff;
+}
+
+body.dark-mode .swal-perfil-section-header:hover {
+    background-color: #241e3a;
+}
+
+.swal-perfil-section-header i {
+    transition: transform 0.3s ease;
+}
+
+.swal-perfil-section-header.expanded i {
+    transform: rotate(90deg); /* Gira el icono cuando se expande */
+}
+
+.swal-perfil-section-content {
+    display: none; /* Oculto por defecto */
+    padding: 15px 20px;
+    border-top: 1px solid #e0d0f0; /* Separador */
+    text-align: center; /* Centra los botones */
+}
+
+body.dark-mode .swal-perfil-section-content {
+    border-top-color: #333;
+}
+
+.swal-perfil-section-content.show {
+    display: block; /* Muestra cuando se expande */
+}
+
+/* Dark Mode Overrides for Profile SweetAlert */
+body.dark-mode .swal-popup-perfil {
+    background: #000000 !important; 
+    color: #ffffff !important;
+    border: 2px solid #9b59b6 !important;
+}
+
+body.dark-mode .swal-popup-perfil .swal-perfil-genero {
+    color: #bb86fc !important;
+}
+
+body.dark-mode .swal-popup-perfil .swal-perfil-info-box {
+    background: #1a1a1a !important; /* Fondo más oscuro para el cuadro de info */
+    border-color: #3d3463 !important;
+}
+
+/* Colores específicos para los encabezados de sección */
+.swal-perfil-section-header.personal {
+    color: #9b59b6; border-left-color: #9b59b6;
+}
+.swal-perfil-section-header.security {
+    color: #e67e22; border-left-color: #e67e22;
+}
+.swal-perfil-section-header.session {
+    color: #ff7675; border-left-color: #ff7675;
+}
+
+body.dark-mode .swal-perfil-section-header.personal { color: #bb86fc; border-left-color: #bb86fc; }
+body.dark-mode .swal-perfil-section-header.security { color: #f1c40f; border-left-color: #f1c40f; }
+body.dark-mode .swal-perfil-section-header.session { color: #ff7675; border-left-color: #ff7675; }
+
+/* Ajuste de botones en modo oscuro para el perfil */
+/* Ajuste de botones en modo oscuro para el perfil */
+/* Estilos para los botones dentro de las secciones */
+.swal-perfil-section-content .swal-perfil-btn {
+    width: auto; /* Permite que los botones se ajusten a su contenido */
+    display: inline-flex; /* Para centrar y permitir múltiples botones en una línea */
+    margin: 5px; /* Espaciado entre botones */
+    min-width: 120px; /* Asegura un ancho mínimo */
+    justify-content: center; /* Centra el contenido dentro del botón */
+}
+
+.swal-perfil-btn {
+    background: #f8f2ff;
+    border: 1px solid #e0d0f0;
+    padding: 12px 20px; /* Padding ajustado */
+    border-radius: 20px;
+    color: #2c1b4e;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; /* Usar inline-flex para centrar */
+    align-items: center;
+    gap: 8px; /* Mayor espacio para icono y texto */
+    transition: 0.3s;
+    font-size: 14px; /* Tamaño de fuente ajustado */
+    flex-grow: 0; /* Evita que se estire */
+    flex-shrink: 1;
+    white-space: nowrap; /* Evita que el texto se rompa */
+}
+
+.swal-perfil-btn i {
+    font-size: 18px;
+    color: #9b59b6;
+}
+
+.swal-perfil-btn:hover {
+    background: #9b59b6;
+    color: white;
+    border-color: #9b59b6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+}
+
+.swal-perfil-btn:hover i {
+    color: white;
+}
+
+body.dark-mode .swal-perfil-btn {
+    background: #241e3a;
+    border-color: #3d3463;
+    color: #fff;
+}
+
+body.dark-mode .swal-perfil-btn i {
+    color: #bb86fc;
+}
+
+body.dark-mode .swal-perfil-btn:hover {
+    background: #bb86fc;
+    border-color: #bb86fc;
+    color: #1a1a1a;
+}
+
+body.dark-mode .swal-perfil-btn:hover i {
+    color: #1a1a1a;
+}
+
+/* Estilo específico para el botón de cerrar sesión */
+.swal-perfil-btn-logout {
+    background: #ff7675 !important;
+    color: white !important;
+    border-color: #ff7675 !important;
+}
+
+.swal-perfil-btn-logout i {
+    color: white !important;
+}
+
+.swal-perfil-btn-logout:hover {
+    background: #e84393 !important;
+    border-color: #e84393 !important;
+}
+
+body.dark-mode .swal-perfil-btn-logout {
+    background: #e84393 !important;
+    border-color: #e84393 !important;
+}
+
+body.dark-mode .swal-perfil-btn-logout:hover {
+    background: #c44569 !important;
+    border-color: #c44569 !important;
+}
+
+/* REMOVED OLD PROFILE BUTTON GRID AND CATEGORY LABELS */
+/*
+.perfil-grid-acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.swal-perfil-btn {
+    background: #f8f2ff;
+    border: 1px solid #e0d0f0;
+    padding: 12px;
+    border-radius: 20px;
+    color: #2c1b4e;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: 0.3s;
+    font-size: 13px;
+}
+
+.swal-perfil-btn i {
+    font-size: 18px;
+    color: #9b59b6;
+}
+
+.swal-perfil-btn:hover {
+    background: #9b59b6;
+    color: white;
+}
+
+.swal-perfil-btn:hover i {
+    color: white;
+}
+
+body.dark-mode .swal-perfil-btn {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #fff;
+}
+
+body.dark-mode .swal-popup-perfil .swal-perfil-category-personal { background: #3d3463 !important; color: #bb86fc !important; }
+body.dark-mode .swal-popup-perfil .swal-perfil-category-security { background: #3d3463 !important; color: #e67e22 !important; }
+body.dark-mode .swal-popup-perfil .swal-perfil-category-session { background: #3d3463 !important; color: #ff7675 !important; }
+*/
+
+/* Mantener nombres y letras en negro solo dentro de las secciones con fondo claro en agradecimientos */
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara,
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara h3,
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara p,
+body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara span {
+    color: #1a1a2e !important;
+}
+
+/* Modo Oscuro para Login y Registro */
+body.dark-mode .auth-card {
+    background: #1a162e;
+    border-color: #2c254a;
+    color: #ffffff;
+}
+body.dark-mode .auth-input {
+    background: #241e3a;
+    border-color: #2c254a;
+    color: #ffffff;
+}
+
+.swal2-container {
+    z-index: 9999999 !important; /* Prioridad máxima absoluta sobre cualquier otro elemento */
+}
+
+/* ===== RESPONSIVE PARA SALUDO Y RELOJ ===== */
+@media (max-width: 600px) {
+    #contenedorSaludo {
+        gap: 10px !important;
+    }
+    #contenedorSaludo > div {
+        min-width: 100% !important; /* Se apilan uno encima de otro */
+        padding: 12px 15px !important;
+        border-radius: 25px !important;
+    }
+    #contenedorSaludo h2 {
+        font-size: 1rem !important;
+    }
+    #relojTexto {
+        font-size: 0.85rem !important;
+    }
+    #iconoRelojDinamico, .fa-sparkles {
+        font-size: 1.1rem !important;
+    }
+
+    /* Clase para ocultar en móviles y limpiar el encabezado */
+    .hide-mobile {
+        display: none !important;
+    }
+
+    .botones-info, .botones-info-wrapper {
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+}
+
+/* Botones en modo oscuro: No deben ser blancos */
+body.dark-mode .btn-info, 
+body.dark-mode .btn-icon-only {
+    background: #241e3a !important;
+    border-color: #3d3463 !important;
     color: #ffffff !important;
 }
 
-body.dark-mode .swal-popup-ayuda .swal2-html-container,
-body.dark-mode .swal-popup-ayuda .swal2-html-container * {
-    color: #ffffff !important;
+body.dark-mode .btn-info:hover, 
+body.dark-mode .btn-icon-only:hover {
+    background: #2c254a !important;
+    color: #9b59b6 !important;
 }
 
-/* Ajustar los fondos internos en modo oscuro para el popup de ayuda */
-body.dark-mode .swal-popup-ayuda div[style*="background: white"],
-body.dark-mode .swal-popup-ayuda div[style*="background:white"],
-body.dark-mode .swal-popup-ayuda p[style*="background: #f8f0ff"],
-body.dark-mode .swal-popup-ayuda div[style*="background: #f3ebff"],
-body.dark-mode .swal-popup-ayuda div[style*="background: #ffeaa7"],
-body.dark-mode .swal-popup-ayuda div[style*="background: #e8d8ff"] {
-    background-color: #1a162e !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* Estilos para el nuevo contenedor de Misión, Soporte, Gracias */
+.botones-info-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(45deg, #f0e6ff, #f3ebff);
+    padding: 10px 15px;
+    border-radius: 30px;
+    border: 1px solid #e0d0f0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-left: 10px;
+    margin-left: auto;
+    flex: 0 1 auto;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
+
+body.dark-mode .botones-info-wrapper {
+    background: linear-gradient(45deg, #1a162e, #2c254a);
+    border-color: #3d3463;
+}
+
+/* Clase específica para invertir el orden solo en la galería */
+.botones-info-wrapper.galeria-layout {
+    justify-content: space-between; /* Frase a la izquierda, botones a la derecha */
+    flex: 1; /* Permite que ocupe el espacio disponible */
+    gap: 25px;
+    align-items: center;
+}
+
+/* Asegura que el contenedor de la frase no aplaste a los botones en pantallas grandes */
+.botones-info-wrapper.galeria-layout .label-info-container {
+    max-width: 65%;
+}
+
+.label-info-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 10px 22px;
+    border-radius: 30px;
+    margin-bottom: 0;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.08);
+    animation: slideInLeft 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.4s ease;
+}
+
+.label-info-container:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(155, 89, 182, 0.15);
+}
+
+body.dark-mode .label-info-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(155, 89, 182, 0.2);
+}
+
+.label-info-container i {
+    font-size: 16px;
+    color: #9b59b6;
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+.botones-info-wrapper p {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #9b59b6;
+    font-weight: 400;
+    margin: 0;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    transition: opacity 0.6s ease-in-out;
+}
+
+body.dark-mode .botones-info-wrapper p {
+    color: #ffffff;
+}
+
+.botones-info-wrapper .botones-info {
+    margin: 0; /* Anula margen predeterminado */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end; /* Alinea los botones a la derecha en PC */
+    gap: 5px;
+}
+
+@media (max-width: 600px) {
+    .botones-info-wrapper {
+        flex-direction: column;
+        align-items: center; /* Centra el contenido en móvil */
+        text-align: center;
+        width: 100%;
+        padding: 8px 12px;
+        margin: 5px 0 0 0; /* Ajusta margen en móvil */
+    }
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+    .botones-info-wrapper.galeria-layout {
+        flex-direction: column; /* En móvil, frase arriba y botones abajo */
+    }
+    .botones-info-wrapper.galeria-layout .label-info-container {
+        max-width: 100%;
+    }
+
+    .botones-info-wrapper p {
+        text-align: center;
+    }
+    .botones-info-wrapper .botones-info {
+        justify-content: center; /* Centra los botones en móvil */
+    }
+}
+    background: #111111 !important;
+    border-color: #333333 !important;
+}
+
+/* Ajuste de botones en modo oscuro para el perfil */
+.perfil-grid-acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.swal-perfil-btn {
+    background: #f8f2ff;
+    border: 1px solid #e0d0f0;
+    padding: 12px;
+    border-radius: 20px;
+    color: #2c1b4e;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: 0.3s;
+    font-size: 13px;
+}
+
+.swal-perfil-btn i {
+    font-size: 18px;
+    color: #9b59b6;
+}
+
+.swal-perfil-btn:hover {
+    background: #9b59b6;
+    color: white;
+}
+
+.swal-perfil-btn:hover i {
+    color: white;
+}
+
+body.dark-mode .swal-perfil-btn {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #fff;
+}
+
+/* Dark Mode Category Labels */
+body.dark-mode .swal-popup-perfil .swal-perfil-category-personal { background: #3d3463 !important; color: #bb86fc !important; }
+body.dark-mode .swal-popup-perfil .swal-perfil-category-security { background: #3d3463 !important; color: #e67e22 !important; }
+body.dark-mode .swal-popup-perfil .swal-perfil-category-session { background: #3d3463 !important; color: #ff7675 !important; }
 
 /* Mantener nombres y letras en negro solo dentro de las secciones con fondo claro en agradecimientos */
 body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara,

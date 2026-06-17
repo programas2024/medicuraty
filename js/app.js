@@ -655,44 +655,73 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Perfil de Usuario',
             html: `
                 <div style="text-align: center; padding: 5px;">
-                    <!-- Avatar y Datos -->
+                    <!-- Avatar y Datos Principales -->
                     <div style="font-size: 60px; margin-bottom: 15px;">${avatar}</div>
-                    <h3 style="color: #2c1b4e; margin-bottom: 5px; font-size: 22px;">${nombre}</h3>
-                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px; font-size: 14px;">${generoTexto}</p>
+                    <h3 class="swal-perfil-nombre">${nombre}</h3>
+                    <p class="swal-perfil-genero">${generoTexto}</p>
                     
-                    <div style="background: #fdfaff; padding: 15px; border-radius: 25px; border: 1px solid #f3e9ff; margin-bottom: 25px; text-align: left;">
-                        <div style="margin-bottom: 10px;">
-                            <small style="color: #a29bfe; font-weight: bold; text-transform: uppercase; font-size: 10px;">Correo Electrónico</small>
-                            <p style="color: #2c1b4e; font-size: 15px; margin: 0;">${correo}</p>
+                    <div class="swal-perfil-info-box">
+                        <small>Correo Electrónico</small>
+                        <p>${correo}</p>
+                    </div>
+
+                    <!-- Secciones Desplegables -->
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header personal" data-target="personal-content">
+                            <span><i class="fas fa-user-edit"></i> Datos Personales</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="personal-content">
+                            <button onclick="window.editarNombre()" class="swal-perfil-btn">
+                                <i class="fas fa-user-edit"></i> Editar Nombre
+                            </button>
+                            <button onclick="window.editarGenero()" class="swal-perfil-btn">
+                                <i class="fas fa-venus-mars"></i> Editar Género
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Botones de Acción -->
-                    <p style="color: #4a2d6e; font-size: 13px; margin-bottom: 15px; font-weight: 600; text-align: center;">Opciones de cuenta</p>
-                    
-                    <div style="text-align: left; margin-bottom: 8px;"><small style="background: #f0e6ff; color: #9b59b6; padding: 4px 10px; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">✨ Datos Personales</small></div>
-                    <button onclick="window.editarNombre()" style="width: 100%; margin-bottom: 10px; background: #2c1b4e; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                        <i class="fas fa-user-edit"></i> Editar mi Nombre
-                    </button>
-                    <button onclick="window.editarGenero()" style="width: 100%; margin-bottom: 10px; background: #2c1b4e; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                        <i class="fas fa-venus-mars"></i> Editar mi Género
-                    </button>
-                    
-                    <div style="text-align: left; margin-top: 5px; margin-bottom: 8px;"><small style="background: #fff3e0; color: #e67e22; padding: 4px 10px; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">🔒 Seguridad</small></div>
-                    <button onclick="window.location.href='restablecer.html'" class="auth-btn" style="width: 100%; margin-bottom: 10px; background: #9b59b6; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                        <i class="fas fa-key"></i> Cambiar Contraseña
-                    </button>
-                    
-                    <div style="text-align: left; margin-top: 5px; margin-bottom: 8px;"><small style="background: #ffebee; color: #ff7675; padding: 4px 10px; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">⚙️ Mi Sesión</small></div>
-                    <button id="btnLogout" style="width: 100%; background: #ff7675; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                    </button>
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header security" data-target="security-content">
+                            <span><i class="fas fa-key"></i> Seguridad</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="security-content">
+                            <button onclick="window.location.href='restablecer.html'" class="swal-perfil-btn">
+                                <i class="fas fa-key"></i> Cambiar Contraseña
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header session" data-target="session-content">
+                            <span><i class="fas fa-sign-out-alt"></i> Mi Sesión</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="session-content">
+                            <button id="btnLogout" class="swal-perfil-btn swal-perfil-btn-logout">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `,
             showConfirmButton: false,
             showCloseButton: true,
-            customClass: { popup: 'swal-popup-redondo' },
+            customClass: { popup: 'swal-popup-redondo swal-popup-perfil' },
             didOpen: () => {
+                // Lógica para las secciones desplegables
+                document.querySelectorAll('.swal-perfil-section-header').forEach(header => {
+                    header.addEventListener('click', function() {
+                        const targetId = this.dataset.target;
+                        const content = document.getElementById(targetId);
+                        if (content) {
+                            content.classList.toggle('show');
+                            this.classList.toggle('expanded');
+                        }
+                    });
+                });
+
                 document.getElementById('btnLogout').addEventListener('click', async () => {
                     await supabaseClient.auth.signOut();
                     window.location.href = 'index.html';

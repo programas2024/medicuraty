@@ -18,11 +18,11 @@ const estiloBase = {
 function mostrarAyuda() {
     Swal.fire({
         ...estiloBase,
-        title: '<span style="font-size: 28px; font-weight: 600; color: #2c1b4e;">✨ Medicurativo</span>',
+        title: '<span style="font-size: 28px; font-weight: 600; color: #000000;">✨ Medicurativo</span>',
         html: `
             <div style="text-align: left; max-height: 400px; overflow-y: auto; padding: 5px 15px 5px 5px; scrollbar-width: none; -ms-overflow-style: none;">
                 
-                <p style="font-size: 16px; margin: 15px 0 20px; color: #34495e; display: flex; align-items: center; gap: 10px; background: #f8f0ff; padding: 15px; border-radius: 40px;">
+                <p style="font-size: 16px; margin: 15px 0 20px; color: #000000; display: flex; align-items: center; gap: 10px; background: #f8f0ff; padding: 15px; border-radius: 40px;">
                     <i class="fas fa-heart" style="font-size: 24px; color: #e84393;"></i> 
                     <strong>Tu espacio de crecimiento personal</strong>
                 </p>
@@ -33,7 +33,7 @@ function mostrarAyuda() {
                     <div style="display: flex; align-items: center; gap: 12px; margin: 10px 0; background: white; padding: 12px 18px; border-radius: 40px; border-left: 5px solid #1e6f9c;">
                         <i class="fas fa-star" style="font-size: 24px; color: #1e6f9c; width: 35px;"></i>
                         <div style="flex: 1; font-size: 14px;">
-                            <strong style="color: #1e6f9c;">Valores:</strong> 11 reflexiones
+                            <strong style="color: #000000;">Valores:</strong> 11 reflexiones
                         </div>
                     </div>
                     
@@ -41,7 +41,7 @@ function mostrarAyuda() {
                     <div style="display: flex; align-items: center; gap: 12px; margin: 10px 0; background: white; padding: 12px 18px; border-radius: 40px; border-left: 5px solid #8e44ad;">
                         <i class="fas fa-seedling" style="font-size: 24px; color: #8e44ad; width: 35px;"></i>
                         <div style="flex: 1; font-size: 14px;">
-                            <strong style="color: #8e44ad;">Crecimiento:</strong> 9 temas
+                            <strong style="color: #000000;">Crecimiento:</strong> 9 temas
                         </div>
                     </div>
                     
@@ -49,7 +49,7 @@ function mostrarAyuda() {
                     <div style="display: flex; align-items: center; gap: 12px; margin: 10px 0; background: white; padding: 12px 18px; border-radius: 40px; border-left: 5px solid #c44569;">
                         <i class="fas fa-heart" style="font-size: 24px; color: #c44569; width: 35px;"></i>
                         <div style="flex: 1; font-size: 14px;">
-                            <strong style="color: #c44569;">Emociones:</strong> 4 reflexiones
+                            <strong style="color: #000000;">Emociones:</strong> 4 reflexiones
                         </div>
                     </div>
                     
@@ -57,7 +57,7 @@ function mostrarAyuda() {
                     <div style="display: flex; align-items: center; gap: 12px; margin: 10px 0; background: white; padding: 12px 18px; border-radius: 40px; border-left: 5px solid #0e7c5c;">
                         <i class="fas fa-crown" style="font-size: 24px; color: #0e7c5c; width: 35px;"></i>
                         <div style="flex: 1; font-size: 14px;">
-                            <strong style="color: #0e7c5c;">Liderazgo:</strong> 4 claves
+                            <strong style="color: #000000;">Liderazgo:</strong> 4 claves
                         </div>
                     </div>
                     
@@ -65,19 +65,19 @@ function mostrarAyuda() {
                     <div style="display: flex; align-items: center; gap: 12px; margin: 10px 0; background: white; padding: 12px 18px; border-radius: 40px; border-left: 5px solid #e67e22;">
                         <i class="fas fa-calendar-star" style="font-size: 24px; color: #e67e22; width: 35px;"></i>
                         <div style="flex: 1; font-size: 14px;">
-                            <strong style="color: #e67e22;">Especiales:</strong> 3 fechas
+                            <strong style="color: #000000;">Especiales:</strong> 3 fechas
                         </div>
                     </div>
                 </div>
                 
                 <!-- TOTAL -->
                 <div style="background: #ffeaa7; padding: 15px; border-radius: 40px; margin: 15px 0; text-align: center;">
-                    <strong style="font-size: 20px; color: #2c1b4e;">31 temas</strong> 
+                    <strong style="font-size: 20px; color: #000000;">31 temas</strong> 
                     <span style="font-size: 14px;">para reflexionar</span>
                 </div>
                 
                 <!-- MENSAJE FINAL -->
-                <div style="text-align: center; margin: 10px 0; font-size: 14px; color: #2c1b4e; background: #e8d8ff; padding: 12px; border-radius: 40px;">
+                <div style="text-align: center; margin: 10px 0; font-size: 14px; color: #000000; background: #e8d8ff; padding: 12px; border-radius: 40px;">
                     <i class="fas fa-hand-pointer"></i> Haz clic en cualquier tema del menú
                 </div>
             </div>
@@ -87,7 +87,11 @@ function mostrarAyuda() {
                 .swal2-html-container { scrollbar-width: none; -ms-overflow-style: none; }
             </style>
         `,
-        iconHtml: '<i class="fas fa-spa" style="font-size: 30px; color: #9b59b6;"></i>'
+        iconHtml: '<i class="fas fa-spa" style="font-size: 30px; color: #9b59b6;"></i>',
+        customClass: {
+            popup: 'swal-popup-redondo swal-popup-ayuda',
+            closeButton: 'swal-close-button'
+        }
     });
 }
 

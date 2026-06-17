@@ -1180,6 +1180,33 @@ body.dark-mode .swal2-title span {
     color: #ffffff !important;
 }
 
+/* Forzar fondo oscuro y letra clara en el popup de ayuda en modo oscuro */
+body.dark-mode .swal-popup-ayuda {
+    background-color: #000000 !important;
+    border: 3px solid #ffffff !important;
+}
+
+body.dark-mode .swal-popup-ayuda .swal2-title,
+body.dark-mode .swal-popup-ayuda .swal2-title span {
+    color: #ffffff !important;
+}
+
+body.dark-mode .swal-popup-ayuda .swal2-html-container,
+body.dark-mode .swal-popup-ayuda .swal2-html-container * {
+    color: #ffffff !important;
+}
+
+/* Ajustar los fondos internos en modo oscuro para el popup de ayuda */
+body.dark-mode .swal-popup-ayuda div[style*="background: white"],
+body.dark-mode .swal-popup-ayuda div[style*="background:white"],
+body.dark-mode .swal-popup-ayuda p[style*="background: #f8f0ff"],
+body.dark-mode .swal-popup-ayuda div[style*="background: #f3ebff"],
+body.dark-mode .swal-popup-ayuda div[style*="background: #ffeaa7"],
+body.dark-mode .swal-popup-ayuda div[style*="background: #e8d8ff"] {
+    background-color: #1a162e !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Mantener nombres y letras en negro solo dentro de las secciones con fondo claro en agradecimientos */
 body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara,
 body.dark-mode .swal-popup-agradecimientos .popup-seccion-clara h3,

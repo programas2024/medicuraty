@@ -95,12 +95,14 @@ body.dark-mode .header {
 
 /* ===== BOTONES DEL HEADER (TODOS IGUALES) ===== */
 .botones-header {
+.header-utils {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
     align-items: center;
-}
+    flex: 1;
+}}
 
 .btn-header {
     background: white;
@@ -268,6 +270,7 @@ body.dark-mode .highlight { color: #bb86fc; }
 .botones-info {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .btn-info {
@@ -517,6 +520,8 @@ body.dark-mode .tema-principal .descripcion {
 @media (max-width: 900px) {
     .header {
         padding: 20px;
+        justify-content: center;
+        text-align: center;
     }
 
     .controles-superiores {
@@ -525,8 +530,10 @@ body.dark-mode .tema-principal .descripcion {
     }
     
     .botones-header {
+    .header-utils {
         width: 100%;
         justify-content: center;
+        margin-top: 15px;
     }
     
     .btn-header {
@@ -551,6 +558,11 @@ body.dark-mode .tema-principal .descripcion {
         text-align: center;
     }
     
+    .botones-info {
+        width: 100%;
+        justify-content: center;
+    }
+
     .titulo {
         text-align: center;
     }
@@ -1135,4 +1147,25 @@ body.dark-mode .swal2-title, body.dark-mode .swal2-html-container {
 
 .swal2-container {
     z-index: 999999 !important; /* SweetAlert debe ser lo más alto en la página */
+}
+
+/* ===== RESPONSIVE PARA SALUDO Y RELOJ ===== */
+@media (max-width: 600px) {
+    #contenedorSaludo {
+        gap: 10px !important;
+    }
+    #contenedorSaludo > div {
+        min-width: 100% !important; /* Se apilan uno encima de otro */
+        padding: 12px 15px !important;
+        border-radius: 25px !important;
+    }
+    #contenedorSaludo h2 {
+        font-size: 1rem !important;
+    }
+    #relojTexto {
+        font-size: 0.85rem !important;
+    }
+    #iconoRelojDinamico, .fa-sparkles {
+        font-size: 1.1rem !important;
+    }
 }

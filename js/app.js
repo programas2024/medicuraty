@@ -382,7 +382,123 @@ document.addEventListener('DOMContentLoaded', function() {
             spanNombre.textContent = nombre;
             contenedorSaludo.style.display = 'flex';
             actualizarLogrosUI(session.user.id);
+            gestionarBuzon(session.user.id);
         }
+    }
+
+    // --- Identificador de la última gran actualización ---
+    const ID_ULTIMA_NOVEDAD = 'v1.2_reloj_y_logros'; 
+
+    // --- Lógica del Buzón de Novedades ---
+    async function gestionarBuzon(userId) {
+        const btnBuzon = document.getElementById('btnBuzon');
+        const notif = document.getElementById('notifBuzon');
+        
+        const bienvenidaVista = localStorage.getItem(`bienvenida_${userId}`);
+        const novedadVista = localStorage.getItem(`novedad_${userId}`);
+
+        // Mostrar puntito si hay bienvenida pendiente O una novedad no leída
+        if (!bienvenidaVista || novedadVista !== ID_ULTIMA_NOVEDAD) {
+            if (notif) notif.style.display = 'block';
+        }
+
+        // Bienvenida automática solo para nuevos
+        if (!bienvenidaVista) {
+            setTimeout(() => mostrarBienvenida(userId), 2500);
+        }
+
+        // Evento del botón
+        if (btnBuzon) {
+            btnBuzon.onclick = () => {
+                if (notif) notif.style.display = 'none';
+                
+                const yaVioBienvenida = localStorage.getItem(`bienvenida_${userId}`);
+                const yaVioNovedad = localStorage.getItem(`novedad_${userId}`);
+
+                if (yaVioBienvenida && yaVioNovedad !== ID_ULTIMA_NOVEDAD) {
+                    mostrarNovedades(userId);
+                } else {
+                    mostrarInstrucciones();
+                }
+            };
+        }
+    }
+
+    function mostrarNovedades(userId) {
+        Swal.fire({
+            title: '🚀 ¡Nuevas Actualizaciones!',
+            html: `
+                <div style="text-align: left; padding: 10px;">
+                    <p style="color: #9b59b6; font-weight: 700; margin-bottom: 15px;">Hemos mejorado tu experiencia:</p>
+                    <div style="background: #fdfaff; padding: 15px; border-radius: 20px; border: 1px solid #e0d0f0;">
+                        <ul style="margin: 0; padding-left: 20px; color: #2c1b4e; font-size: 0.9rem; line-height: 1.6;">
+                            <li><strong>Reloj Dinámico:</strong> Ahora tienes fecha y hora en tiempo real.</li>
+                            <li><strong>Barra de Progreso:</strong> Visualiza cómo avanza tu día con colores.</li>
+                            <li><strong>Logros Reales:</strong> Gana trofeos al personalizar tu perfil.</li>
+                        </ul>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #7f8c8d; text-align: center; margin-top: 15px;">Vuelve a pulsar el buzón cuando quieras ver el manual de uso.</p>
+                </div>
+            `,
+            confirmButtonText: '¡Entendido!',
+            confirmButtonColor: '#9b59b6',
+            customClass: { popup: 'swal-popup-redondo' }
+        }).then(() => {
+            localStorage.setItem(`novedad_${userId}`, ID_ULTIMA_NOVEDAD);
+        });
+    }
+
+    function mostrarBienvenida(userId) {
+        Swal.fire({
+            title: '¡Bienvenido a tu Espacio de Luz! 🌿',
+            html: `
+                <div style="text-align: center; padding: 10px;">
+                    <img src="imganes/logosmedi.png" style="width: 120px; margin-bottom: 20px; animation: pulse 2s infinite;">
+                    <p style="color: #2c1b4e; font-size: 1.1rem; line-height: 1.6; font-style: italic;">
+                        "Cada día es una nueva oportunidad para florecer. Estamos felices de que hoy hayas elegido sanar y crecer con nosotros."
+                    </p>
+                    <div style="margin-top: 20px; padding: 15px; background: #fdfaff; border-radius: 20px; border: 1px solid #e0d0f0;">
+                        <p style="color: #9b59b6; font-weight: 700; margin: 0;">¡Tu viaje hacia el bienestar comienza aquí!</p>
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Comenzar mi viaje',
+            confirmButtonColor: '#9b59b6',
+            customClass: { popup: 'swal-popup-redondo' },
+            allowOutsideClick: false
+        }).then(() => {
+            localStorage.setItem(`bienvenida_${userId}`, 'true');
+            mostrarInstrucciones();
+        });
+    }
+
+    function mostrarInstrucciones() {
+        Swal.fire({
+            title: '<span style="color: #2c1b4e;">¿Qué puedes hacer aquí?</span>',
+            html: `
+                <div style="text-align: left; padding: 10px;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 18px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                        <div style="background: #f0e6ff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6;"></i></div>
+                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Buscador:</strong> Encuentra reflexiones por palabras clave como "Paz" o "Éxito".</p>
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 18px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                        <div style="background: #fff9e6; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f;"></i></div>
+                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Logros:</strong> Personaliza tu perfil (nombre/género) para ganar trofeos dorados.</p>
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 18px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                        <div style="background: #e6fffa; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-share-alt" style="color: #27ae60;"></i></div>
+                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Compartir:</strong> Envía frases bonitas a tus amigos por WhatsApp con un clic.</p>
+                    </div>
+                    <div style="display: flex; gap: 15px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                        <div style="background: #fff5f5; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #ff7675;"></i></div>
+                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Comunidad:</strong> Califica la app y deja tus comentarios para inspirar a otros.</p>
+                    </div>
+                </div>
+            `,
+            confirmButtonText: '¡Entendido, vamos!',
+            confirmButtonColor: '#2c1b4e',
+            customClass: { popup: 'swal-popup-redondo' }
+        });
     }
 
     // Hacer la función global para que perfil.js pueda usarla

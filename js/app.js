@@ -13,6 +13,10 @@ clickSound.volume = 0.2; // Volumen bajo para que sea elegante
 const successSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3');
 successSound.volume = 0.3;
 
+const achievementSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
+achievementSound.volume = 0.4;
+window.achievementSound = achievementSound;
+
 const temas = [
     // Valores (11 temas)
     { id: 1, nombre: "Apreciate", cat: "valores", icono: "fa-star", desc: "El primer paso para sanar es valorarte a ti mismo.", imagen: "apreciate.png" },
@@ -376,9 +380,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if (session && contenedorSaludo && spanNombre) {
             const nombre = session.user.user_metadata?.nombre || "Usuario";
             spanNombre.textContent = nombre;
-            contenedorSaludo.style.display = 'block';
+            contenedorSaludo.style.display = 'flex';
+            actualizarLogrosUI(session.user.id);
         }
     }
+
+    // Hacer la función global para que perfil.js pueda usarla
+    window.actualizarLogrosUI = async function(userId) {
+        if (!userId) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) userId = session.user.id;
+            else return;
+        }
+
+        const { data: logros } = await supabaseClient.from('logros').select('*').eq('usuario_id', userId).single();
+        const wrapper = document.getElementById('wrapperLogros');
+        
+        if (logros && (logros.cambio_nombre || logros.cambio_genero)) {
+            if (wrapper) {
+                wrapper.style.display = 'flex';
+                wrapper.classList.add('animacion-entrada');
+            }
+        }
+    };
 
     verificarSesion();
 
@@ -494,21 +518,47 @@ document.addEventListener('DOMContentLoaded', function() {
         const nombre = session.user.user_metadata?.nombre || "No definido";
         const correo = session.user.email;
         const generoId = session.user.user_metadata?.genero_id;
-        const generoTexto = generoId == 1 ? "Hombre 👨" : (generoId == 2 ? "Mujer 👩" : "No especificado");
+        
+        // Avatar según género
+        const avatar = generoId == 1 ? '👨‍💻' : (generoId == 2 ? '👩‍💻' : '👤');
+        const generoTexto = generoId == 1 ? "Caballero" : (generoId == 2 ? "Dama" : "No especificado");
 
         Swal.fire({
-            title: 'Mi Perfil Medicurativo',
+            title: 'Perfil de Usuario',
             html: `
-                <div style="text-align: left; padding: 10px;">
-                    <div style="background: #f8f2ff; padding: 20px; border-radius: 30px; margin-bottom: 15px; border: 2px solid #e0d0f0;">
-                        <p><strong><i class="fas fa-user"></i> Nombre:</strong> ${nombre}</p>
-                        <p><strong><i class="fas fa-envelope"></i> Correo:</strong> ${correo}</p>
-                        <p><strong><i class="fas fa-venus-mars"></i> Género:</strong> ${generoTexto}</p>
+                <div style="text-align: center; padding: 5px;">
+                    <!-- Avatar y Datos -->
+                    <div style="font-size: 60px; margin-bottom: 15px;">${avatar}</div>
+                    <h3 style="color: #2c1b4e; margin-bottom: 5px; font-size: 22px;">${nombre}</h3>
+                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px; font-size: 14px;">${generoTexto}</p>
+                    
+                    <div style="background: #fdfaff; padding: 15px; border-radius: 25px; border: 1px solid #f3e9ff; margin-bottom: 25px; text-align: left;">
+                        <div style="margin-bottom: 10px;">
+                            <small style="color: #a29bfe; font-weight: bold; text-transform: uppercase; font-size: 10px;">Correo Electrónico</small>
+                            <p style="color: #2c1b4e; font-size: 15px; margin: 0;">${correo}</p>
+                        </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button onclick="window.location.href='restablecer.html'" class="swal2-confirm swal2-styled" style="background-color: #9b59b6; border-radius: 30px; margin: 0;">Editar Contraseña</button>
-                        <button id="btnLogout" class="swal2-deny swal2-styled" style="background-color: #e84393; border-radius: 30px; margin: 0;">Cerrar Sesión</button>
-                    </div>
+
+                    <!-- Botones de Acción -->
+                    <p style="color: #4a2d6e; font-size: 13px; margin-bottom: 15px; font-weight: 600; text-align: center;">Opciones de cuenta</p>
+                    
+                    <div style="text-align: left; margin-bottom: 8px;"><small style="background: #f0e6ff; color: #9b59b6; padding: 4px 10px; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">✨ Datos Personales</small></div>
+                    <button onclick="window.editarNombre()" style="width: 100%; margin-bottom: 10px; background: #2c1b4e; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                        <i class="fas fa-user-edit"></i> Editar mi Nombre
+                    </button>
+                    <button onclick="window.editarGenero()" style="width: 100%; margin-bottom: 10px; background: #2c1b4e; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                        <i class="fas fa-venus-mars"></i> Editar mi Género
+                    </button>
+                    
+                    <div style="text-align: left; margin-top: 5px; margin-bottom: 8px;"><small style="background: #fff3e0; color: #e67e22; padding: 4px 10px; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">🔒 Seguridad</small></div>
+                    <button onclick="window.location.href='restablecer.html'" class="auth-btn" style="width: 100%; margin-bottom: 10px; background: #9b59b6; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                        <i class="fas fa-key"></i> Cambiar Contraseña
+                    </button>
+                    
+                    <div style="text-align: left; margin-top: 5px; margin-bottom: 8px;"><small style="background: #ffebee; color: #ff7675; padding: 4px 10px; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">⚙️ Mi Sesión</small></div>
+                    <button id="btnLogout" style="width: 100%; background: #ff7675; border: none; color: white; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
                 </div>
             `,
             showConfirmButton: false,
@@ -770,6 +820,85 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(msgInterval);
         }, 800); // 800ms es suficiente para una bienvenida elegante pero veloz
     }
+
+    // --- Lógica del Reloj Dinámico ---
+    function actualizarReloj() {
+        const ahora = new Date();
+        const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        
+        const fechaTexto = `${dias[ahora.getDay()]}, ${ahora.getDate()} de ${meses[ahora.getMonth()]}`;
+        const horaTexto = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+        const elReloj = document.getElementById('relojTexto');
+        const elRelojIcono = document.getElementById('iconoRelojDinamico');
+        const elSaludoTexto = document.getElementById('saludoDinamico');
+        const contenedorReloj = document.getElementById('contenedorRelojVisual');
+        const barraProgreso = document.getElementById('barraProgresoDia');
+        const hora = ahora.getHours();
+        const diaSemana = ahora.getDay(); // 0: Domingo, 6: Sábado
+        const esFinDeSemana = (diaSemana === 0 || diaSemana === 6);
+        const saludoSemana = esFinDeSemana ? ' ¡Feliz fin de semana!' : ' ¡Feliz semana!';
+
+        if (elReloj) {
+            elReloj.innerHTML = `<span>${fechaTexto}</span> <span style="margin: 0 10px; color: #e0d0f0;">|</span> <span style="color: #9b59b6; font-weight: 800;">${horaTexto}</span>`;
+        }
+
+        if (elSaludoTexto) {
+            if (hora >= 6 && hora < 12) {
+                elSaludoTexto.textContent = `${saludoSemana} Qué alegría empezar el día contigo! ☀️`;
+            } else if (hora >= 12 && hora < 19) {
+                elSaludoTexto.textContent = `${saludoSemana} Es un gusto verte esta tarde! 🌿`;
+            } else {
+                elSaludoTexto.textContent = `${saludoSemana} Qué bueno verte antes de descansar! ✨`;
+            }
+        }
+
+        if (elRelojIcono) {
+            if (hora >= 6 && hora < 12) {
+                elRelojIcono.className = 'fas fa-cloud-sun'; // Mañana
+                elRelojIcono.style.color = '#f1c40f';
+            } else if (hora >= 12 && hora < 19) {
+                elRelojIcono.className = 'fas fa-sun'; // Tarde
+                elRelojIcono.style.color = '#f39c12';
+            } else {
+                elRelojIcono.className = 'fas fa-moon'; // Noche
+                elRelojIcono.style.color = '#9b59b6';
+            }
+        }
+
+        if (barraProgreso) {
+            const minutosTotales = 24 * 60;
+            const minutosPasados = (hora * 60) + ahora.getMinutes();
+            const porcentaje = (minutosPasados / minutosTotales) * 100;
+            barraProgreso.style.width = porcentaje + '%';
+
+            // Cambiar color de la barra (Prioridad Fin de Semana)
+            if (esFinDeSemana) {
+                barraProgreso.style.backgroundColor = '#e84393'; // Festivo: Rosa vibrante
+            } else {
+                if (hora >= 6 && hora < 12) {
+                    barraProgreso.style.backgroundColor = '#f1c40f'; // Mañana: Dorado
+                } else if (hora >= 12 && hora < 19) {
+                    barraProgreso.style.backgroundColor = '#f39c12'; // Tarde: Naranja cálido
+                } else {
+                    barraProgreso.style.backgroundColor = '#9b59b6'; // Noche: Morado místico
+                }
+            }
+        }
+
+        if (contenedorReloj) {
+            if (hora >= 6 && hora < 12) {
+                contenedorReloj.style.backgroundColor = '#fffdf0'; // Mañana: Amarillo crema
+            } else if (hora >= 12 && hora < 19) {
+                contenedorReloj.style.backgroundColor = '#f0f8ff'; // Tarde: Azul cielo muy claro
+            } else {
+                contenedorReloj.style.backgroundColor = '#fdfaff'; // Noche: Púrpura/Lila muy suave
+            }
+        }
+    }
+    actualizarReloj();
+    setInterval(actualizarReloj, 1000);
 
     construirMenuAdaptable();
 });

@@ -45,7 +45,7 @@ body.dark-mode {
     border-radius: 40px;
     padding: 15px 25px;
     display: flex;
-    align-items: center;
+    align-items: center; /* Alineación vertical perfecta */
     gap: 15px;
     margin-bottom: 35px;
     box-shadow: 0 8px 22px rgba(100, 70, 150, 0.2);
@@ -78,7 +78,7 @@ body.dark-mode .header {
 
 .titulo {
     flex: 1;
-    min-width: 200px;
+    min-width: 250px; /* Evita que el título se haga muy chiquito en PC */
 }
 
 .titulo h1 {
@@ -94,12 +94,15 @@ body.dark-mode .header {
 }
 
 /* ===== BOTONES DEL HEADER (TODOS IGUALES) ===== */
-.botones-header {
+.header-utils, .botones-header {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Importante para que no se desborden */
     justify-content: flex-end;
     align-items: center;
+    /* Eliminamos flex: 1 de aquí para que no empuje al título en PC */
+    flex: 0 1 auto; 
+    max-width: 60%; /* En PC los botones no ocuparán más de la mitad */
 }
 
 .btn-header {
@@ -153,11 +156,6 @@ body.dark-mode .btn-header {
     background: #2d2d2d;
     color: #e0e0e0;
     border-color: #444;
-}
-
-.header-utils {
-    display: flex;
-    gap: 10px;
 }
 
 .btn-icon-only {
@@ -519,14 +517,12 @@ body.dark-mode .tema-principal .descripcion {
         padding: 20px;
     }
 
-    .controles-superiores {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .botones-header {
+    /* Unificamos el comportamiento de los contenedores de botones */
+    .header-utils, .botones-header {
         width: 100%;
+        max-width: 100%;
         justify-content: center;
+        margin-top: 10px;
     }
     
     .btn-header {
@@ -551,6 +547,11 @@ body.dark-mode .tema-principal .descripcion {
         text-align: center;
     }
     
+    .header-utils {
+        width: 100%;
+        justify-content: center;
+    }
+
     .titulo {
         text-align: center;
     }

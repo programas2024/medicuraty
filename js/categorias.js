@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
         listaCategorias.forEach(cat => {
             if (cat.id === 'galeria') {
-                // ✅ GALERÍA: Redirige a galeria.html
+                // ✅ GALERÍA: Redirige a galeria2.html
                 html += `
-                    <button class="categoria-movil-btn" onclick="window.location.href='galeria.html'"
+                    <button class="categoria-movil-btn" onclick="window.location.href='galeria2.html'"
                             style="border-left-color: ${cat.color};">
                         <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
                         <span>${cat.nombre}</span>
@@ -48,6 +48,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Agregar botones de utilidad al final del menú móvil
         // Se eliminan Calificarnos, Ver Opiniones y Logros del menú móvil 
         // ya que ahora se accede exclusivamente desde el Perfil.
+        html += `
+            <div style="margin-top: 20px; padding: 20px; background: #fff9e6; border-radius: 30px; border: 2px solid #f1c40f; text-align: center;">
+                <span style="display: block; color: #d4ac0d; font-weight: 700; font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase;">Puntuación de la página</span>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-star" style="color: #f1c40f; font-size: 1.5rem;"></i>
+                    <span id="valorPromedioGlobalMovil" style="color: #2c1b4e; font-weight: 800; font-size: 1.8rem;">0.0</span>
+                </div>
+            </div>
+        `;
         contenedorBotonesActual.innerHTML = html;
     }
     
@@ -87,8 +96,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generar botones
     if (window.categorias) {
         generarBotonesCategorias();
+        // Forzar actualización del promedio real una vez creado el elemento en el menú
+        if (typeof window.actualizarPromedioGlobal === 'function') {
+            window.actualizarPromedioGlobal();
+        }
     } else {
         // Esperar a que cargue app.js
-        setTimeout(generarBotonesCategorias, 500);
+        setTimeout(() => {
+            generarBotonesCategorias();
+            if (typeof window.actualizarPromedioGlobal === 'function') {
+                window.actualizarPromedioGlobal();
+            }
+        }, 500);
     }
 });

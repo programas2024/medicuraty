@@ -1031,4 +1031,30 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!esPaginaGaleria) {
         construirMenuAdaptable();
     }
+
+    // --- Rotación de frases en el Index ---
+    const elFraseIndex = document.getElementById('fraseIndex');
+    if (elFraseIndex) {
+        const frasesIndex = [
+            "Estamos contigo: lee, respira y vuelve a intentarlo con calma.",
+            "Cada pequeña acción de hoy es una semilla para tu bienestar de mañana.",
+            "No tienes que ser perfecto para empezar, pero tienes que empezar para ser grande.",
+            "Tu mente es un jardín, tus pensamientos son las semillas. Cultiva flores.",
+            "La paciencia contigo mismo es la forma más alta de amor propio.",
+            "Recuerda que sanar no es una línea recta, es un viaje lleno de aprendizajes.",
+            "Tu luz interior es capaz de iluminar hasta el camino más oscuro."
+        ];
+        
+        let fraseActual = 0;
+        setInterval(() => {
+            elFraseIndex.style.opacity = '0';
+            elFraseIndex.style.transition = 'opacity 0.6s ease-in-out';
+            
+            setTimeout(() => {
+                fraseActual = (fraseActual + 1) % frasesIndex.length;
+                elFraseIndex.textContent = frasesIndex[fraseActual];
+                elFraseIndex.style.opacity = '1';
+            }, 600);
+        }, 15000); // Cambia cada 15 segundos
+    }
 });

@@ -45,6 +45,12 @@
             </div>
             <!-- Utilidades de la App -->
             <div class="header-utils">
+                <!-- Calificación antes del buzón (PC solamente) -->
+                <div id="contenedorPromedioGlobal" class="contenedor-promedio-global hide-mobile-flex" style="display: none; align-items: center; background: #fff9e6; border-radius: 30px; padding: 8px 15px; border: 1.5px solid #f1c40f; gap: 8px; animation: fadeIn 0.8s ease; cursor: default;">
+                    <i class="fas fa-star" style="color: #f1c40f; font-size: 0.9rem;"></i>
+                    <span id="valorPromedioGlobal" style="color: #d4ac0d; font-weight: 800; font-size: 1rem;">...</span>
+                </div>
+
                 <!-- Buzón de Novedades -->
                 <div class="btn-con-tooltip">
                     <button class="btn-icon-only" id="btnBuzon" style="color: #9b59b6; position: relative;">
@@ -91,29 +97,34 @@
 
         <!-- NUEVA BARRA DE ACCESO RÁPIDO -->
         <div class="nav-principal">
+            <!-- FRASE CON ESTILO DE GALERÍA (Contenedor morado y letras cursivas) -->
+            <div class="label-info-container" style="width: 100%; margin-bottom: 15px;">
+                <i class="fas fa-hand-holding-heart"></i>
+                <p id="fraseIndex">Estamos contigo: lee, respira y vuelve a intentarlo con calma.</p>
+            </div>
+
+            <!-- BUSCADOR -->
             <div class="buscador-destacado">
                 <i class="fas fa-search"></i>
                 <input type="text" id="inputBusqueda" placeholder="¿Qué necesitas leer hoy? (ej: Respeto, Éxito...)">
                 <div id="sugerenciasBusqueda" class="sugerencias-container"></div>
             </div>
+
+            <!-- BOTONES DE INFO (Vuelven a su posición original abajo) -->
             <div class="botones-info-wrapper">
-                <div class="label-info-container">
-                    <i class="fas fa-hand-holding-heart"></i>
-                    <p>Estamos contigo: lee, respira y vuelve a intentarlo con calma.</p>
-                </div>
                 <div class="botones-info">
-                <div class="btn-con-tooltip">
-                    <button class="btn-info" id="btnMision"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
-                    <span class="tooltip">Nuestra Misión</span>
-                </div>
-                <div class="btn-con-tooltip">
-                    <button class="btn-info" id="btnSoporte"><i class="fas fa-headset"></i> <span>Soporte</span></button>
-                    <span class="tooltip">Soporte Técnico</span>
-                </div>
-                <div class="btn-con-tooltip">
-                    <button class="btn-info" id="btnAgradecimientos"><i class="fas fa-heart"></i> <span>Gracias</span></button>
-                    <span class="tooltip">Agradecimientos</span>
-                </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnMision"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
+                        <span class="tooltip">Nuestra Misión</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnSoporte"><i class="fas fa-headset"></i> <span>Soporte</span></button>
+                        <span class="tooltip">Soporte Técnico</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnAgradecimientos"><i class="fas fa-heart"></i> <span>Gracias</span></button>
+                        <span class="tooltip">Agradecimientos</span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -85,6 +85,14 @@
 
         <!-- NUEVA BARRA DE ACCESO RÁPIDO -->
         <div class="nav-principal">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%; margin-bottom: 20px;">
+                <div id="contenedorPromedioGlobal" class="contenedor-promedio-global" style="display: none; align-items: center; background: white; border-radius: 30px; padding: 10px 20px; border: 2px solid #f1c40f; box-shadow: 0 4px 10px rgba(0,0,0,0.05); gap: 8px;">
+                    <i class="fas fa-star" style="color: #f1c40f; font-size: 1rem;"></i>
+                    <span style="font-weight: 700; color: #2c1b4e; font-size: 0.9rem;">Puntaje:</span>
+                    <span id="valorPromedioGlobal" style="color: #f1c40f; font-weight: 800; font-size: 1.1rem;">0.0</span>
+                </div>
+            </div>
+
             <!-- Contenedor de Saludo Mejorado -->
             <div id="contenedorSaludo" style="width: 100%; margin-bottom: 20px; display: none; animation: fadeIn 0.8s ease; flex-wrap: wrap; gap: 15px; align-items: stretch;">
                 <div style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1; min-width: 280px; text-align: center;">

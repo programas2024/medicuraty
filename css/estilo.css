@@ -190,6 +190,11 @@ body.dark-mode .btn-header {
     gap: 15px;
     margin-bottom: 30px;
     flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.nav-principal .label-info-container {
+    flex: 0 0 100%; /* Fuerza a que la frase ocupe todo el ancho arriba */
 }
 
 .buscador-destacado {
@@ -1648,23 +1653,25 @@ body.dark-mode .label-info-container {
 }
 
 .label-info-container i {
-    font-size: 16px;
-    color: #9b59b6;
+    font-size: 20px;
+    color: #9b59b6; /* Icono más sólido para visibilidad */
     animation: floatIcon 3s ease-in-out infinite;
 }
 
-.botones-info-wrapper p {
-    font-size: 15px;
+.label-info-container p,
+#fraseIndex {
+    font-size: 19px; /* Tamaño aumentado para una lectura sin esfuerzo */
     line-height: 1.4;
-    color: #9b59b6;
-    font-weight: 400;
+    color: #2c1b4e; /* Color oscuro para contraste de alta calidad */
+    font-weight: 700; /* Negrita para que la fuente Georgia itálica sea legible */
     margin: 0;
     font-family: 'Georgia', serif;
     font-style: italic;
     transition: opacity 0.6s ease-in-out;
 }
 
-body.dark-mode .botones-info-wrapper p {
+body.dark-mode .botones-info-wrapper p,
+body.dark-mode #fraseIndex {
     color: #ffffff;
 }
 
@@ -1871,13 +1878,13 @@ body.dark-mode .botones-info-wrapper {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.6);
+    background: #f3ebff; /* Fondo más claro para que el texto resalte al máximo */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 10px 22px;
     border-radius: 30px;
     margin-bottom: 0;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 2px solid #e0d0f0; /* Borde más definido para que el contenedor se note más */
     box-shadow: 0 4px 15px rgba(155, 89, 182, 0.08);
     animation: slideInLeft 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
     transition: all 0.4s ease;
@@ -1890,13 +1897,13 @@ body.dark-mode .botones-info-wrapper {
 }
 
 body.dark-mode .label-info-container {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(155, 89, 182, 0.15); /* Morado oscuro translúcido en lugar de gris */
     border-color: rgba(155, 89, 182, 0.2);
 }
 
 .label-info-container i {
     font-size: 16px;
-    color: #9b59b6;
+    color: #f0a7ea;
     animation: floatIcon 3s ease-in-out infinite;
 }
 
@@ -1954,5 +1961,12 @@ body.dark-mode .botones-info-wrapper p {
     }
     .botones-info-wrapper .botones-info {
         justify-content: center; /* Centra los botones en móvil */
+    }
+}
+
+/* Ocultar calificación del header solo en móviles para limpiar el espacio */
+@media (max-width: 768px) {
+    .hide-mobile-flex {
+        display: none !important;
     }
 }

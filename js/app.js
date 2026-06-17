@@ -202,9 +202,9 @@ function construirMenuAdaptable(filtro = '') {
     categorias.forEach(cat => {
         
     if (cat.id === 'galeria') {
-    // ✅ TANTO PC COMO MÓVIL: Redirigir a galeria.html
+    // ✅ TANTO PC COMO MÓVIL: Redirigir a galeria2.html
     html += `
-        <button class="menu-btn-categoria" onclick="window.location.href='galeria.html'"
+        <button class="menu-btn-categoria" onclick="window.location.href='galeria2.html'"
                 style="border-left: 5px solid ${cat.color};">
             <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
             <span>${cat.nombre}</span>
@@ -385,11 +385,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const contenedorSaludo = document.getElementById('contenedorSaludo');
         const spanNombre = document.getElementById('usuarioNombreLogueado');
 
-        if (session && contenedorSaludo && spanNombre) {
-            const nombre = session.user.user_metadata?.nombre || "Usuario";
-            spanNombre.textContent = nombre;
-            contenedorSaludo.style.display = 'flex';
+        if (session) {
+            if (contenedorSaludo && spanNombre) {
+                const nombre = session.user.user_metadata?.nombre || "Usuario";
+                spanNombre.textContent = nombre;
+                contenedorSaludo.style.display = 'flex';
+            }
             gestionarBuzon(session.user.id);
+        } else {
+            // Si no hay sesión, igual gestionamos el buzón para el invitado
+            gestionarBuzon(null);
         }
     }
 
@@ -400,6 +405,15 @@ document.addEventListener('DOMContentLoaded', function() {
     async function gestionarBuzon(userId) {
         const btnBuzon = document.getElementById('btnBuzon');
         const notif = document.getElementById('notifBuzon');
+
+        if (!userId) {
+            if (btnBuzon) {
+                // Usuario NO logueado: Mostramos el Swafire de invitación
+                if (notif) notif.style.display = 'block'; // Activamos puntito para invitar a registrarse
+                btnBuzon.onclick = () => mostrarInvitacionRegistro();
+            }
+            return;
+        }
         
         const bienvenidaVista = localStorage.getItem(`bienvenida_${userId}`);
         const novedadVista = localStorage.getItem(`novedad_${userId}`);
@@ -455,6 +469,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function mostrarInvitacionRegistro() {
+        Swal.fire({
+            title: '<span style="color: #2c1b4e; font-weight: 800;">🚀 ¡Descubre Medicurativo!</span>',
+            html: `
+                <div style="text-align: center; padding: 5px;">
+                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu refugio digital para la paz mental y el crecimiento personal.</p>
+                    
+                    <div style="text-align: left; background: #fdfaff; padding: 20px; border-radius: 30px; border: 2px solid #f0e6ff; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                        <!-- LO QUE PUEDE HACER -->
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible ahora</h4>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-spa" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Leer reflexiones sobre valores y crecimiento.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Buscador inteligente de inspiración.</p>
+                            </div>
+                        </div>
+
+                        <!-- LO QUE ESTÁ BLOQUEADO -->
+                        <div>
+                            <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Bloqueado para Invitados</h4>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.8;">
+                                <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Logros:</strong> Desbloquea trofeos al unirte.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.8;">
+                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-cloud-upload-alt" style="color: #ff7675; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Subir Contenido:</strong> Sube tus propias reflexiones.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0.8;">
+                                <div style="background: #e8f4fd; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-comment-alt" style="color: #3498db; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Comunidad:</strong> Califica y comenta sobre la página.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 25px;">
+                        <button onclick="window.location.href='login.html'" style="background: #9b59b6; color: white; border: none; padding: 16px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: 0.3s;">✨ ¡Unirme y Desbloquear todo!</button>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.8rem; color: #7f8c8d; font-style: italic;">"La paz interior es el mejor regalo que te puedes dar hoy."</p>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+    }
+
     function mostrarBienvenida(userId) {
         Swal.fire({
             title: '¡Bienvenido a tu Espacio de Luz! 🌿',
@@ -481,32 +546,62 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function mostrarInstrucciones() {
         Swal.fire({
-            title: '<span style="color: #2c1b4e;">¿Qué puedes hacer aquí?</span>',
+            title: '<span style="color: #2c1b4e; font-weight: 800;">🚀 ¡Bienvenido a Medicurativo!</span>',
             html: `
-                <div style="text-align: left; padding: 10px;">
-                    <div style="display: flex; gap: 15px; margin-bottom: 18px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                        <div style="background: #f0e6ff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6;"></i></div>
-                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Buscador:</strong> Encuentra reflexiones por palabras clave como "Paz" o "Éxito".</p>
+                <div style="text-align: center; padding: 5px;">
+                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio para sanar y crecer día a día.</p>
+                    
+                    <div style="text-align: left; background: #fdfaff; padding: 20px; border-radius: 30px; border: 2px solid #f0e6ff; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #fff9e6; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f;"></i></div>
+                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Gana Logros:</strong> Crea tu cuenta y personaliza tu perfil para ganar trofeos dorados.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #f0e6ff; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6;"></i></div>
+                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Buscador Inteligente:</strong> Encuentra la reflexión exacta que necesitas hoy.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #e6fffa; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #27ae60;"></i></div>
+                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Comunidad:</strong> Califica la página y ayúdanos a llegar a más personas.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="background: #fff0f5; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-upload" style="color: #ff7675;"></i></div>
+                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Próximamente:</strong> ¡Podrás subir tus propias frases y compartirlas!</p>
+                        </div>
                     </div>
-                    <div style="display: flex; gap: 15px; margin-bottom: 18px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                        <div style="background: #fff9e6; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f;"></i></div>
-                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Logros:</strong> Personaliza tu perfil (nombre/género) para ganar trofeos dorados.</p>
-                    </div>
-                    <div style="display: flex; gap: 15px; margin-bottom: 18px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                        <div style="background: #e6fffa; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-share-alt" style="color: #27ae60;"></i></div>
-                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Compartir:</strong> Envía frases bonitas a tus amigos por WhatsApp con un clic.</p>
-                    </div>
-                    <div style="display: flex; gap: 15px; align-items: center; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                        <div style="background: #fff5f5; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #ff7675;"></i></div>
-                        <p style="margin: 0; color: #4a2d6e; font-size: 0.95rem;"><strong>Comunidad:</strong> Califica la app y deja tus comentarios para inspirar a otros.</p>
-                    </div>
+                    <p style="margin-top: 20px; font-size: 0.85rem; color: #7f8c8d; font-style: italic;">"La paz interior comienza en el momento en que decides no permitir que otra persona o evento controle tus emociones."</p>
                 </div>
             `,
-            confirmButtonText: '¡Entendido, vamos!',
-            confirmButtonColor: '#2c1b4e',
+            confirmButtonText: '✨ ¡Empezar ahora!',
+            confirmButtonColor: '#9b59b6',
             customClass: { popup: 'swal-popup-redondo' }
         });
     }
+
+    // --- Función para actualizar la calificación global ---
+    window.actualizarPromedioGlobal = async function() {
+        const container = document.getElementById('contenedorPromedioGlobal');
+        const valorText = document.getElementById('valorPromedioGlobal');
+        const valorTextMovil = document.getElementById('valorPromedioGlobalMovil');
+        
+        const { data: opiniones } = await supabaseClient.from('comentarios').select('estrellas');
+
+        if (opiniones && opiniones.length > 0) {
+            const suma = opiniones.reduce((acc, op) => acc + op.estrellas, 0);
+            const promedio = (suma / opiniones.length).toFixed(1);
+            
+            // Actualizar header (PC) - Solo si el promedio no es 0
+            if (valorText) {
+                valorText.textContent = promedio;
+            }
+            
+            // Actualizar menú móvil
+            if (valorTextMovil) valorTextMovil.textContent = promedio;
+            if (container) container.style.display = 'flex';
+        }
+    }
+
+    actualizarPromedioGlobal();
 
     verificarSesion();
 

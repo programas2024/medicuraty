@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · Galería</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/galeria.css">
+    <link rel="stylesheet" href="css/swafire.css">
+    
+</head>
+<body>
+    <div class="contenedor">
+        
+        <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                </a>
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+            
+            <!-- Utilidades de la App (Sincronizado con Principal) -->
+            <div class="header-utils" id="headerUtilsGaleria">
+                <!-- Botón Inicio -->
+                <div class="btn-con-tooltip" id="wrapperInicio">
+                    <a href="index.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Inicio</span>
+                </div>
+
+                <!-- Botón Modo Oscuro (Visible en ambos) -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="tooltip">Modo Oscuro</span>
+                </div>
+
+                <!-- Botón Ayuda -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnAyuda" style="color: #2c1b4e;">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAV PRINCIPAL (Igual que en Principal) -->
+        <div class="nav-principal">
+            <!-- Contenedor de Saludo y Reloj -->
+            <div id="contenedorSaludo" style="width: 100%; margin-bottom: 20px; display: none; animation: fadeIn 0.8s ease; flex-wrap: wrap; gap: 15px; align-items: stretch;">
+                <div style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1; min-width: 280px; text-align: center;">
+                    <i class="fas fa-sparkles" style="color: #f1c40f; font-size: 1.2rem;"></i>
+                    <h2 style="color: #2c1b4e; font-size: 1.2rem; margin: 0;">¡Hola, <span id="usuarioNombreLogueado" style="color: #9b59b6; font-weight: 800;">Amigo</span>!<span id="saludoDinamico"> Qué alegría verte de nuevo 🌿</span></h2>
+                </div>
+                <div id="contenedorRelojVisual" style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; flex: 1; min-width: 280px; transition: background-color 1s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i id="iconoRelojDinamico" class="fas fa-clock" style="color: #9b59b6; font-size: 1.2rem;"></i>
+                        <div id="relojTexto" style="color: #2c1b4e; font-size: 1rem; font-weight: 600;"></div>
+                    </div>
+                    <div style="width: 60%; height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden;">
+                        <div id="barraProgresoDia" style="width: 0%; height: 100%; background: #9b59b6; transition: width 1s ease, background-color 1s ease;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Se agrega la clase galeria-layout y se invierte el orden del HTML -->
+            <div class="botones-info-wrapper galeria-layout">
+                <!-- La frase ahora está primero (izquierda) -->
+                <div class="label-info-container">
+                    <i class="fas fa-spa"></i>
+                    <p id="fraseInspiradora">Cargando un momento de paz...</p>
+                </div>
+                <!-- Los botones ahora están después (derecha) -->
+                <div class="botones-info">
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnMision" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
+                        <span class="tooltip">Nuestra Misión</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnSoporte" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-headset"></i> <span>Soporte</span></button>
+                        <span class="tooltip">Soporte Técnico</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnAgradecimientos" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-heart"></i> <span>Gracias</span></button>
+                        <span class="tooltip">Agradecimientos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE CATEGORÍAS CON HAMBURGUESA -->
+        <div class="categorias-contenedor">
+            <!-- Botón hamburguesa (solo móvil) -->
+            <button class="categorias-hamburguesa" id="categoriasHamburguesa">
+                <i class="fas fa-bars"></i>
+                <span>Categorías de galería</span>
+            </button>
+            
+            <!-- MENÚ HORIZONTAL (se oculta en móvil) -->
+            <div class="menu-horizontal" id="menuHorizontal">
+                <button class="menu-btn-categoria" onclick="mostrarSeccion('completa')" style="border-left: 5px solid #9b59b6;">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i>
+                    <span>Galería completa</span>
+                </button>
+                <button class="menu-btn-categoria" onclick="mostrarSeccion('destacados')" style="border-left: 5px solid #f39c12;">
+                    <i class="fas fa-star" style="color: #f39c12;"></i>
+                    <span>Destacados</span>
+                </button>
+                <button class="menu-btn-categoria" onclick="mostrarSeccion('recientes')" style="border-left: 5px solid #27ae60;">
+                    <i class="fas fa-clock" style="color: #27ae60;"></i>
+                    <span>Recientes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MENÚ HAMBURGUESA MÓVIL -->
+        <div class="menu-categorias-movil" id="menuCategoriasMovil">
+            <div class="menu-categorias-header">
+                <h3><i class="fas fa-images"></i> Categorías</h3>
+                <button class="cerrar-categorias" id="cerrarCategorias">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-categorias-botones" id="categoriasMovilBotones">
+                <button class="categoria-movil-btn" onclick="mostrarSeccion('completa')" style="border-left-color: #9b59b6;">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i>
+                    <span>Galería completa</span>
+                </button>
+                <button class="categoria-movil-btn" onclick="mostrarSeccion('destacados')" style="border-left-color: #f39c12;">
+                    <i class="fas fa-star" style="color: #f39c12;"></i>
+                    <span>Destacados</span>
+                </button>
+                <button class="categoria-movil-btn" onclick="mostrarSeccion('recientes')" style="border-left-color: #27ae60;">
+                    <i class="fas fa-clock" style="color: #27ae60;"></i>
+                    <span>Recientes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- CONTENEDORES DE IMÁGENES (CADA UNO EN SU SECCIÓN) -->
+        <div class="galeria-contenido" id="galeriaContenido">
+            
+            <!-- SECCIÓN COMPLETA (se muestra por defecto) -->
+            <div class="galeria-seccion-blanca" id="seccionCompleta">
+                <h3 class="galeria-subtitulo">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i> Galería completa
+                </h3>
+                <div class="galeria-grid" id="gridCompleta"></div>
+            </div>
+            
+            <!-- SECCIÓN DESTACADOS (oculta por defecto) -->
+            <div class="galeria-seccion-blanca" id="seccionDestacados" style="display: none;">
+                <h3 class="galeria-subtitulo">
+                    <i class="fas fa-star" style="color: #f39c12;"></i> Destacados
+                </h3>
+                <div class="galeria-grid" id="gridDestacados"></div>
+            </div>
+            
+            <!-- SECCIÓN RECIENTES (oculta por defecto) -->
+            <div class="galeria-seccion-blanca" id="seccionRecientes" style="display: none;">
+                <h3 class="galeria-subtitulo">
+                    <i class="fas fa-clock" style="color: #27ae60;"></i> Recientes
+                </h3>
+                <div class="galeria-grid" id="gridRecientes"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · galería visual <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2025 · imágenes de reflexión <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+
+    <script src="js/sweetalert.js"></script>
+    <script src="js/sweetaler2.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/perfil.js"></script>
+    <script src="js/performance.js"></script>
+    <script src="js/compartir.js"></script>
+    <script src="js/categorias.js"></script>
+     <script src="js/galeswafire.js"></script>
+    <!-- Script de galería -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ===== BASE DE DATOS DE IMÁGENES =====
+            const imagenesGaleria = [
+                { id: 1, url: 'imganes/camalio.png', titulo: 'Crecimiento personal', categoria: 'destacados' },
+                { id: 2, url: 'imganes/gatoperro.jpeg', titulo: 'La lealtad', categoria: 'destacados' },
+                { id: 3, url: 'imganes/koala.jpeg', titulo: 'Constancia', categoria: 'destacados' },
+                { id: 4, url: 'imganes/gavilan.jpeg', titulo: 'Liderazgo', categoria: 'destacados' },
+                { id: 5, url: 'imganes/ave.png', titulo: 'Paz interior', categoria: 'destacados' },
+                { id: 6, url: 'imganes/cerdo.png', titulo: 'Valorate', categoria: 'recientes' },
+                { id: 7, url: 'imganes/pavo.jpeg', titulo: 'Superación', categoria: 'recientes' },
+                { id: 8, url: 'imganes/pulpo.jpeg', titulo: 'Gratitud', categoria: 'recientes' },
+                { id: 9, url: 'imganes/mono.jpeg', titulo: 'Esperanza', categoria: 'recientes' },
+                { id: 10, url: 'imganes/mariquita.jpeg', titulo: 'Felicidad', categoria: 'completa' },
+                { id: 11, url: 'imganes/elefante.jpeg', titulo: 'Paz interior', categoria: 'completa' },
+                { id: 12, url: 'imganes/pato.jpeg', titulo: 'Motivación', categoria: 'completa' },
+                { id: 13, url: 'imganes/camalio.png', titulo: 'Crecimiento personal', categoria: 'completa' },
+                { id: 14, url: 'imganes/gatoperro.jpeg', titulo: 'La lealtad', categoria: 'completa' },
+                { id: 15, url: 'imganes/koala.jpeg', titulo: 'Constancia', categoria: 'completa' },
+                { id: 16, url: 'imganes/gavilan.jpeg', titulo: 'Liderazgo', categoria: 'completa' },
+                { id: 17, url: 'imganes/ave.png', titulo: 'Paz interior', categoria: 'completa' },
+                { id: 18, url: 'imganes/cerdo.png', titulo: 'Valorate', categoria: 'completa' },
+                { id: 19, url: 'imganes/pavo.jpeg', titulo: 'Superación', categoria: 'completa' },
+                { id: 20, url: 'imganes/pulpo.jpeg', titulo: 'Gratitud', categoria: 'completa' },
+                { id: 21, url: 'imganes/mono.jpeg', titulo: 'Esperanza', categoria: 'completa' },
+            ];
+
+            // Crear o capturar el overlay (indispensable para el menú móvil)
+            let overlay = document.querySelector('.categorias-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'categorias-overlay';
+                document.body.appendChild(overlay);
+            }
+
+            // ===== FUNCIÓN PARA CARGAR IMÁGENES =====
+            const cargarImagenes = () => {
+                const renderGrid = (grid, cat) => {
+                    if (typeof grid === 'string') grid = document.getElementById(grid);
+                    if (!grid) return;
+                    grid.innerHTML = imagenesGaleria
+                        .filter(img => img.categoria === cat)
+                        .map(img => `
+                            <div class="galeria-item" onclick="abrirImagenZoom('${img.url}', '${img.titulo}')">
+                                <img src="${img.url}" alt="${img.titulo}" loading="lazy">
+                                <div class="galeria-caption"><i class="fas fa-search-plus"></i> ${img.titulo}</div>
+                            </div>
+                        `).join('');
+                };
+                renderGrid('gridCompleta', 'completa');
+                renderGrid('gridDestacados', 'destacados');
+                renderGrid('gridRecientes', 'recientes');
+            };
+
+            // ===== FUNCIÓN PARA MOSTRAR SECCIÓN =====
+            window.mostrarSeccion = (seccion) => {
+                const seccionCompleta = document.getElementById('seccionCompleta');
+                const seccionDestacados = document.getElementById('seccionDestacados');
+                const seccionRecientes = document.getElementById('seccionRecientes');
+
+                if (seccionCompleta) seccionCompleta.style.display = (seccion === 'completa') ? 'block' : 'none';
+                if (seccionDestacados) seccionDestacados.style.display = (seccion === 'destacados') ? 'block' : 'none';
+                if (seccionRecientes) seccionRecientes.style.display = (seccion === 'recientes') ? 'block' : 'none';
+                
+                cerrarMenuMovil();
+            };
+
+            // ===== CONTROL DEL MENÚ MÓVIL =====
+            const cerrarMenuMovil = () => {
+                const menuMovil = document.getElementById('menuCategoriasMovil');
+                if (menuMovil) menuMovil.classList.remove('mostrar');
+                if (overlay) overlay.classList.remove('mostrar');
+                document.body.style.overflow = '';
+            };
+
+            const menuHamburguesa = document.getElementById('categoriasHamburguesa');
+            if (menuHamburguesa) {
+                menuHamburguesa.addEventListener('click', () => {
+                    const menuMovil = document.getElementById('menuCategoriasMovil');
+                    if (menuMovil) menuMovil.classList.add('mostrar');
+                    if (overlay) overlay.classList.add('mostrar');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+            
+            const cerrarMenu = document.getElementById('cerrarCategorias');
+            if (cerrarMenu) cerrarMenu.addEventListener('click', cerrarMenuMovil);
+            if (overlay) overlay.addEventListener('click', cerrarMenuMovil);
+
+            // Inicializar
+            cargarImagenes();
+            mostrarSeccion('completa');
+
+            // ===== FRASES DINÁMICAS Y LARGAS PARA LA GALERÍA =====
+            const frasesGaleria = [
+                "Cada imagen es un pequeño refugio para tu alma; tómate un momento para respirar, observar y reconectar con lo que realmente importa en tu interior.",
+                "En el silencio de una imagen encontrarás las palabras que tu corazón necesita escuchar hoy. Permítete este instante de paz y vuelve a ti con calma.",
+                "Mirar con atención es una forma de meditar. Deja que estos colores y formas te guíen hacia un estado de gratitud y serenidad profunda en este día.",
+                "Tu bienestar comienza cuando decides hacer una pausa consciente. Estas imágenes están aquí para recordarte que mereces momentos de belleza y tranquilidad.",
+                "A veces, todo lo que necesitamos es una perspectiva diferente. Navega por esta galería y permite que cada visual sane un poco más tu pensamiento.",
+                "Cada color y cada trazo en esta galería tienen el propósito de recordarte que el mundo está lleno de maravillas esperando ser apreciadas por ojos que buscan paz.",
+                "La verdadera belleza reside en los detalles que solemos ignorar. Detente un segundo, respira profundamente y deja que la armonía de estas capturas envuelva tu espíritu."
+            ];
+
+            const elFrase = document.getElementById('fraseInspiradora');
+            if (elFrase) {
+                let index = Math.floor(Math.random() * frasesGaleria.length);
+                elFrase.textContent = frasesGaleria[index];
+
+                // Rotación automática de frases cada 10 segundos con efecto de desvanecimiento
+                setInterval(() => {
+                    elFrase.style.opacity = '0';
+                    setTimeout(() => {
+                        index = (index + 1) % frasesGaleria.length;
+                        elFrase.textContent = frasesGaleria[index];
+                        elFrase.style.opacity = '1';
+                    }, 600);
+                }, 10000);
+            }
+        });
+
+        // Función de zoom global
+        window.abrirImagenZoom = (url, titulo) => {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: titulo,
+                title: titulo,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+        }
+
+        // Listener para ayuda de galería (reemplaza lo que hacía app2.js)
+        document.getElementById('btnAyuda')?.addEventListener('click', () => {
+            if (typeof mostrarAyudaGaleria === 'function') mostrarAyudaGaleria();
+        });
+    </script>
+</body>
+</html>

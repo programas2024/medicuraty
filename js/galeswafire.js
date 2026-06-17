@@ -1,6 +1,7 @@
 // ===== ALERTA DE AYUDA PARA GALERÍA =====
 function mostrarAyudaGaleria() {
     Swal.fire({
+        
         ...estiloBase,
         title: '<span style="font-size: 28px; font-weight: 600; color: #000000;">📸 Galería Medicurativo</span>',
         html: `

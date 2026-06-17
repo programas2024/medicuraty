@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // En la galería no queremos sobrescribir el menú de secciones (Completa/Destacados/Recientes)
         if (window.location.pathname.includes('galeria.html')) return;
 
+        
         const listaCategorias = window.categorias || [];
         let html = '';
         listaCategorias.forEach(cat => {

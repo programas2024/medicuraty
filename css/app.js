@@ -3,6 +3,7 @@ if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode');
 }
 
+
 // Inicializar Supabase
 const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
 const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';

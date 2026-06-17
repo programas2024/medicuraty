@@ -76,8 +76,6 @@ window.editarNombre = async function() {
                 }
             }
 
-            if (window.actualizarLogrosUI) window.actualizarLogrosUI(session.user.id);
-            
             Swal.fire({
                 title: !yaTeniaLogro ? '¡LOGRO DESBLOQUEADO! 🏆' : '¡Nombre Actualizado!',
                 html: `
@@ -112,71 +110,6 @@ window.editarNombre = async function() {
         }
     }
 };
-
-// ===== ESCUCHADOR PARA EL BOTÓN DE LOGROS =====
-document.addEventListener('DOMContentLoaded', () => {
-    const btnLogros = document.getElementById('btnLogros');
-    
-    if (btnLogros) {
-        btnLogros.addEventListener('click', async () => {
-            if (typeof supabaseClient === 'undefined') return;
-            
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) return;
-
-            // Consultar logros del usuario
-            const { data: logros, error } = await supabaseClient
-                .from('logros')
-                .select('*')
-                .eq('usuario_id', session.user.id)
-                .maybeSingle();
-
-            if (error || !logros) {
-                return; 
-            }
-
-            // Construir el HTML de los logros con estilo de tarjetas blancas
-            let logrosHTML = '<div style="display: flex; flex-direction: column; gap: 15px; padding: 10px; max-height: 400px; overflow-y: auto; scrollbar-width: none;">';
-            
-            if (logros.cambio_nombre) {
-                logrosHTML += `
-                    <div class="animacion-entrada" style="display: flex; align-items: center; gap: 15px; background: white; padding: 15px 20px; border-radius: 40px; border-left: 6px solid #f1c40f; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left;">
-                        <div style="background: #fff9e6; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-id-card" style="font-size: 24px; color: #f1c40f;"></i>
-                        </div>
-                        <div>
-                            <strong style="color: #2c1b4e; display: block; font-size: 16px;">Identidad Única</strong>
-                            <span style="font-size: 13px; color: #9b59b6; font-weight: 500;">¡Personalizaste tu nombre!</span>
-                        </div>
-                    </div>`;
-            }
-
-            if (logros.cambio_genero) {
-                logrosHTML += `
-                    <div class="animacion-entrada" style="display: flex; align-items: center; gap: 15px; background: white; padding: 15px 20px; border-radius: 40px; border-left: 6px solid #f1c40f; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left;">
-                        <div style="background: #fff9e6; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-venus-mars" style="font-size: 24px; color: #f1c40f;"></i>
-                        </div>
-                        <div>
-                            <strong style="color: #2c1b4e; display: block; font-size: 16px;">Autenticidad</strong>
-                            <span style="font-size: 13px; color: #9b59b6; font-weight: 500;">Definiste tu género con éxito.</span>
-                        </div>
-                    </div>`;
-            }
-
-            logrosHTML += '</div>';
-
-            Swal.fire({
-                title: '<span style="font-size: 24px; font-weight: 700; color: #2c1b4e;"><i class="fas fa-trophy" style="color: #f1c40f;"></i> Mis Logros</span>',
-                html: logrosHTML,
-                showCloseButton: true,
-                showConfirmButton: false,
-                background: '#fdfaff',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-        });
-    }
-});
 
 window.editarGenero = async function() {
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -247,8 +180,6 @@ window.editarGenero = async function() {
                     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#f1c40f', '#9b59b6'] });
                 }
             }
-
-            if (window.actualizarLogrosUI) window.actualizarLogrosUI(session.user.id);
 
             Swal.fire({
                 title: !yaTeniaLogro ? '¡LOGRO DESBLOQUEADO! 🏆' : '¡Género Actualizado!',

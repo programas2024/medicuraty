@@ -46,22 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Agregar botones de utilidad al final del menú móvil
-        html += `
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0e6ff; display: flex; flex-direction: column; gap: 12px;">
-                <button class="categoria-movil-btn" onclick="document.getElementById('btnCalificar').click(); cerrarMenu();" style="border-left-color: #f1c40f;">
-                    <i class="fas fa-star" style="color: #f1c40f;"></i>
-                    <span>Calificarnos</span>
-                </button>
-                <button class="categoria-movil-btn" onclick="document.getElementById('btnVerOpiniones').click(); cerrarMenu();" style="border-left-color: #9b59b6;">
-                    <i class="fas fa-comment-dots" style="color: #9b59b6;"></i>
-                    <span>Ver Opiniones</span>
-                </button>
-                <button id="btnLogrosMovil" class="categoria-movil-btn" onclick="document.getElementById('btnLogros').click(); cerrarMenu();" style="border-left-color: #f1c40f; display: none;">
-                    <i class="fas fa-trophy" style="color: #f1c40f;"></i>
-                    <span>Mis Logros</span>
-                </button>
-            </div>
-        `;
+        // Se eliminan Calificarnos, Ver Opiniones y Logros del menú móvil 
+        // ya que ahora se accede exclusivamente desde el Perfil.
         contenedorBotonesActual.innerHTML = html;
     }
     

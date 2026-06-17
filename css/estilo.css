@@ -1202,15 +1202,6 @@ body.dark-mode .swal-popup-ayuda .swal2-html-container span:not([class*="fa"]) {
     color: #000000 !important;
 }
 
-/* Ocultar botones específicos del encabezado en móvil */
-@media (max-width: 768px) {
-    #wrapperLogros,
-    #wrapperCalificar,
-    #wrapperOpiniones {
-        display: none !important;
-    }
-}
-
 /* Dark Mode Overrides for Profile SweetAlert */
 body.dark-mode .swal-popup-perfil {
     background: #000000 !important; 
@@ -1439,6 +1430,39 @@ body.dark-mode .swal-perfil-btn-logout {
 body.dark-mode .swal-perfil-btn-logout:hover {
     background: #c44569 !important;
     border-color: #c44569 !important;
+}
+
+/* Tarjetas de Logros dentro del Perfil */
+.achievement-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    border-left: 5px solid #f1c40f;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.achievement-card i {
+    font-size: 20px;
+    color: #f1c40f;
+    background: #fff9e6;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Forzar letras negras en contenido de perfil que tenga fondo claro */
+.swal-perfil-section-content div, 
+.swal-perfil-section-content p, 
+.swal-perfil-section-content strong {
+    color: #2c1b4e !important;
 }
 
 /* REMOVED OLD PROFILE BUTTON GRID AND CATEGORY LABELS */

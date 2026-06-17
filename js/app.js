@@ -389,7 +389,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const nombre = session.user.user_metadata?.nombre || "Usuario";
             spanNombre.textContent = nombre;
             contenedorSaludo.style.display = 'flex';
-            actualizarLogrosUI(session.user.id);
             gestionarBuzon(session.user.id);
         }
     }
@@ -509,31 +508,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Hacer la función global para que perfil.js pueda usarla
-    window.actualizarLogrosUI = async function(userId) {
-        const wrapper = document.getElementById('wrapperLogros');
-        if (!wrapper) return;
-
-        if (!userId) {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) userId = session.user.id;
-            else return;
-        }
-
-        const { data: logros } = await supabaseClient.from('logros').select('*').eq('usuario_id', userId).single();
-        
-        if (logros && (logros.cambio_nombre || logros.cambio_genero)) {
-            if (wrapper) {
-                wrapper.style.display = 'flex';
-                wrapper.classList.add('animacion-entrada');
-            }
-        }
-    };
-
     verificarSesion();
 
     // --- Manejo de errores de Supabase en la URL (#error=...) ---
-    const hash = window.location.hash;
+    const hash = window.location.hash; // Mantenemos esta línea para el manejo de errores de Supabase
     if (hash && hash.includes('error')) {
         const params = new URLSearchParams(hash.replace('#', '?'));
         const errorDesc = params.get('error_description');
@@ -672,12 +650,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <i class="fas fa-chevron-right"></i>
                         </div>
                         <div class="swal-perfil-section-content" id="personal-content">
-                            <button onclick="window.editarNombre()" class="swal-perfil-btn">
-                                <i class="fas fa-user-edit"></i> Editar Nombre
-                            </button>
-                            <button onclick="window.editarGenero()" class="swal-perfil-btn">
-                                <i class="fas fa-venus-mars"></i> Editar Género
-                            </button>
+                            <button onclick="window.editarNombre()" class="swal-perfil-btn"><i class="fas fa-user-edit"></i> Editar Nombre</button>
+                            <button onclick="window.editarGenero()" class="swal-perfil-btn"><i class="fas fa-venus-mars"></i> Editar Género</button>
                         </div>
                     </div>
 
@@ -687,9 +661,28 @@ document.addEventListener('DOMContentLoaded', function() {
                             <i class="fas fa-chevron-right"></i>
                         </div>
                         <div class="swal-perfil-section-content" id="security-content">
-                            <button onclick="window.location.href='restablecer.html'" class="swal-perfil-btn">
-                                <i class="fas fa-key"></i> Cambiar Contraseña
-                            </button>
+                            <button onclick="window.location.href='restablecer.html'" class="swal-perfil-btn"><i class="fas fa-key"></i> Cambiar Contraseña</button>
+                        </div>
+                    </div>
+
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header rating" data-target="rating-content">
+                            <span><i class="fas fa-star"></i> Calificación de Página</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="rating-content">
+                            <div id="userRatingDisplay" style="padding: 10px;">Cargando...</div>
+                            <button onclick="window.mostrarCalificacionSweetAlert()" class="swal-perfil-btn"><i class="fas fa-star-half-alt"></i> Calificar / Ver Opiniones</button>
+                        </div>
+                    </div>
+
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header achievements" data-target="achievements-content">
+                            <span><i class="fas fa-trophy"></i> Mis Logros</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="achievements-content">
+                            <div id="userAchievementsDisplay">Cargando...</div>
                         </div>
                     </div>
 
@@ -699,9 +692,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <i class="fas fa-chevron-right"></i>
                         </div>
                         <div class="swal-perfil-section-content" id="session-content">
-                            <button id="btnLogout" class="swal-perfil-btn swal-perfil-btn-logout">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                            </button>
+                            <button id="btnLogout" class="swal-perfil-btn swal-perfil-btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
                         </div>
                     </div>
                 </div>
@@ -710,7 +701,6 @@ document.addEventListener('DOMContentLoaded', function() {
             showCloseButton: true,
             customClass: { popup: 'swal-popup-redondo swal-popup-perfil' },
             didOpen: () => {
-                // Lógica para las secciones desplegables
                 document.querySelectorAll('.swal-perfil-section-header').forEach(header => {
                     header.addEventListener('click', function() {
                         const targetId = this.dataset.target;
@@ -722,234 +712,179 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
+                // Cargar Calificación Dinámica
+                (async () => {
+                    const { data } = await supabaseClient.from('comentarios').select('estrellas').eq('usuario_id', session.user.id);
+                    const container = document.getElementById('userRatingDisplay');
+                    if (data && data.length > 0) {
+                        const avg = (data.reduce((s, o) => s + o.estrellas, 0) / data.length).toFixed(1);
+                        container.innerHTML = `<p style="font-size: 1.1rem; font-weight: 700;">Tu promedio: <span style="color: #f1c40f;">${avg} ★</span></p>`;
+                    } else {
+                        container.innerHTML = `<p style="font-size: 0.9rem; opacity: 0.7;">Aún no has calificado.</p>`;
+                    }
+                })();
+
+                // Cargar Logros Dinámicos
+                (async () => {
+                    const { data: logros } = await supabaseClient.from('logros').select('*').eq('usuario_id', session.user.id).maybeSingle();
+                    const container = document.getElementById('userAchievementsDisplay');
+                    if (logros && (logros.cambio_nombre || logros.cambio_genero)) {
+                        let html = '';
+                        if (logros.cambio_nombre) html += `<div class="achievement-card"><i class="fas fa-id-card"></i> <div><strong>Identidad Única</strong><br><small>Cambiaste tu nombre</small></div></div>`;
+                        if (logros.cambio_genero) html += `<div class="achievement-card"><i class="fas fa-venus-mars"></i> <div><strong>Autenticidad</strong><br><small>Definiste tu género</small></div></div>`;
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = `<p style="font-size: 0.9rem; opacity: 0.7;">Sin logros aún.</p>`;
+                    }
+                })();
+
                 document.getElementById('btnLogout').addEventListener('click', async () => {
                     await supabaseClient.auth.signOut();
                     window.location.href = 'index.html';
                 });
             }
         });
-    });
+    }); // Cierra listener de perfil
 
-    // --- Lógica de Calificación ---
-    document.getElementById('btnCalificar')?.addEventListener('click', async () => {
+    // --- Nueva función global para Calificación y Ver Opiniones ---
+    window.mostrarCalificacionSweetAlert = async function() {
         const { data: { session } } = await supabaseClient.auth.getSession();
-        
         if (!session) {
             return Swal.fire({
                 title: '¡Inicia sesión!',
-                text: 'Necesitas una cuenta para dejar un comentario.',
-                icon: 'warning',
+                text: 'Necesitas una cuenta para dejar tu calificación.',
+                icon: 'info',
                 showCancelButton: true,
-                confirmButtonText: 'Ir a Login'
+                confirmButtonText: 'Ir a Login',
+                confirmButtonColor: '#9b59b6'
             }).then(r => r.isConfirmed && (window.location.href = 'login.html'));
         }
 
         let ratingSeleccionado = 0;
 
         Swal.fire({
-            title: '¿Qué te parece Medicurativo?',
+            title: '✨ ¡Tu Opinión Cuenta!',
             html: `
-                <div style="margin-bottom: 15px;">
-                    <p>Tu opinión nos ayuda a crecer.</p>
-                    <p>Publicarás como: <strong>${session.user.email}</strong></p>
-                    <div class="star-rating" id="starContainer">
-                        <i class="far fa-star" data-value="5"></i>
-                        <i class="far fa-star" data-value="4"></i>
-                        <i class="far fa-star" data-value="3"></i>
-                        <i class="far fa-star" data-value="2"></i>
-                        <i class="far fa-star" data-value="1"></i>
+                <div style="padding: 10px;">
+                    <p style="color: #4a2d6e; margin-bottom: 15px;">Danos tu calificación para seguir mejorando:</p>
+                    <div id="starContainer" style="font-size: 2.5rem; color: #f1c40f; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: center; gap: 5px;">
+                        <i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i>
                     </div>
+                    <textarea id="swal-comment" class="swal2-textarea" placeholder="Escribe un breve comentario..." style="border-radius: 20px; border: 2px solid #e0d0f0; width: 90%; height: 80px; font-size: 0.9rem;"></textarea>
                 </div>
-                <textarea id="swal-comment" class="swal2-textarea" placeholder="Escribe tu comentario aquí..." style="border-radius: 20px;"></textarea>
             `,
-            background: '#fff9ff',
-            showCloseButton: true,
-            closeButtonHtml: '×',
             showCancelButton: true,
-            confirmButtonText: 'Enviar Comentario',
-            cancelButtonText: 'Ahora no',
+            confirmButtonText: 'Enviar Calificación',
+            cancelButtonText: 'Cerrar',
             confirmButtonColor: '#9b59b6',
-            reverseButtons: true, // Esto pone el botón de confirmar a la derecha
-            customClass: {
-                popup: 'swal-popup-redondo',
-                closeButton: 'swal-close-button',
-                actions: 'swal2-actions-right' // Clase para alinear a la derecha
-            },
+            cancelButtonColor: '#ff7675',
+            background: '#fdfaff',
+            customClass: { popup: 'swal-popup-redondo' },
             didOpen: () => {
-                const stars = document.querySelectorAll('#starContainer i');
-                stars.forEach(star => {
-                    star.addEventListener('click', (e) => {
-                        ratingSeleccionado = e.target.getAttribute('data-value');
-                        // Quitar activo de todos y poner al seleccionado
-                        stars.forEach(s => s.classList.remove('active', 'fas'));
-                        stars.forEach(s => s.classList.add('far'));
-                        
-                        e.target.classList.add('active', 'fas');
-                        e.target.classList.remove('far');
-                    });
+                document.querySelectorAll('#starContainer i').forEach(s => {
+                    s.onclick = (e) => {
+                        ratingSeleccionado = e.target.dataset.value;
+                        document.querySelectorAll('#starContainer i').forEach((st, idx) => {
+                            if (idx < ratingSeleccionado) {
+                                st.classList.replace('far', 'fas');
+                            } else {
+                                st.classList.replace('fas', 'far');
+                            }
+                        });
+                    };
+                    s.onmouseenter = (e) => e.target.style.transform = 'scale(1.2)';
+                    s.onmouseleave = (e) => e.target.style.transform = 'scale(1)';
                 });
             },
             preConfirm: () => {
-                const comentario = document.getElementById('swal-comment').value;
-                if (ratingSeleccionado === 0) {
-                    Swal.showValidationMessage('Por favor, selecciona una estrella');
-                    return false;
-                }
-                return { rating: ratingSeleccionado, comment: comentario };
+                const comment = document.getElementById('swal-comment').value;
+                if (!ratingSeleccionado) return Swal.showValidationMessage('Elige estrellas');
+                return { rating: ratingSeleccionado, comment };
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
-                // Guardar en Supabase
-                const { error } = await supabaseClient.from('comentarios').insert({
-                    usuario_id: session.user.id,
-                    estrellas: result.value.rating,
-                    comentario: result.value.comment
-                });
+                await supabaseClient.from('comentarios').insert({ usuario_id: session.user.id, estrellas: result.value.rating, comentario: result.value.comment });
 
-                if (error) return Swal.fire('Error', error.message, 'error');
-
-                actualizarPromedio();
-
-                // Disparar efecto de confeti
-                successSound.play();
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#9b59b6', '#f1c40f', '#e84393']
-                });
+                // Confeti de éxito
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#f1c40f', '#9b59b6']
+                    });
+                }
 
                 Swal.fire({
-                    title: '¡Recibido!',
-                    text: `¡Gracias ${session.user.user_metadata?.nombre || 'amigo'}! Recibimos tus ${result.value.rating} estrellas. Estamos muy felices.`,
-                    imageUrl: 'imganes/logosmedi.png',
-                    imageWidth: 100,
-                    imageHeight: 100,
-                    imageAlt: 'Logo Medicurativo',
+                    title: '¡Muchas Gracias!',
+                    text: 'Tu opinión ha sido guardada con éxito.',
+                    icon: 'success',
+                    confirmButtonColor: '#9b59b6',
                     customClass: { popup: 'swal-popup-redondo' }
+                }).then(() => {
+                    // El perfil se mantiene abierto o se puede recargar si se desea ver el promedio actualizado
                 });
-                // Aquí podrías enviar los datos a un servidor o base de datos
             }
         });
-    });
-    
-    // --- Lógica para Ver Opiniones ---
-    document.getElementById('btnVerOpiniones')?.addEventListener('click', async () => {
-        const { data: opiniones, error } = await supabaseClient
+    };
+
+    // --- Nueva función global para Ver Opiniones (Estilo Bonito) ---
+    window.verOpinionesSweetAlert = async function() {
+        const { data: allOpinions, error } = await supabaseClient
             .from('comentarios')
             .select('estrellas, comentario, creado_en, usuarios(nombre)');
-        
-        if (error || !opiniones.length) {
-            Swal.fire({
-                title: 'Aún no hay opiniones',
-                text: '¡Sé el primero en decirnos qué piensas!',
-                icon: 'info',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return;
-        }
 
-        // Función interna para renderizar la lista basada en el filtro
-        const renderizarOpiniones = (filtro) => {
-            let filtradas = [...opiniones];
-            
-            if (filtro === '5' || filtro === '4' || filtro === '3') {
-                filtradas = filtradas.filter(op => op.estrellas === parseInt(filtro));
-            } else if (filtro === 'recientes') {
-                filtradas.reverse();
-            } else if (filtro === 'antiguos') {
-                // Se mantiene el orden original del array
-            } else {
-                filtradas.reverse(); // Default: todos los últimos primero
-            }
+        if (error) return Swal.fire('Error', 'No pudimos cargar las opiniones.', 'error');
 
-            const contenedor = document.getElementById('contenedorListaOpiniones');
-            if (!contenedor) return;
-
-            if (filtradas.length === 0) {
-                contenedor.innerHTML = `<div class="animacion-entrada" style="padding: 40px; color: #7f8c8d; text-align: center;">
-                    <i class="fas fa-search" style="font-size: 40px; opacity: 0.2; margin-bottom: 15px;"></i>
-                    <p>No hay opiniones con ${filtro} estrellas todavía.</p>
-                </div>`;
-                return;
-            }
-
-            let html = '<div style="max-height: 400px; overflow-y: auto; padding: 10px; scrollbar-width: none;">';
-            filtradas.forEach(op => {
-                const estrellas = '★'.repeat(op.estrellas) + '☆'.repeat(5 - op.estrellas);
-                html += `
-                    <div class="animacion-entrada" style="background: white; padding: 20px; border-radius: 30px; margin-bottom: 15px; border-left: 6px solid #f1c40f; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+        const renderOpinionsList = (ops) => {
+            if (!ops || ops.length === 0) return '<p style="text-align:center; opacity:0.6; padding: 20px;">Aún no hay opiniones. ¡Sé el primero!</p>';
+            return ops.map(op => `
+                <div style="background: white; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid #f1c40f; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <div style="display:flex; align-items:center; gap: 8px;">
                             <i class="fas fa-user-circle" style="color: #9b59b6; font-size: 1.1rem;"></i>
-                            <strong style="color: #2c1b4e; font-size: 1rem;">${op.usuarios?.nombre || 'Usuario'}</strong>
+                            <strong style="font-size: 0.9rem; color: #2c1b4e;">${op.usuarios?.nombre || 'Usuario'}</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="color: #f1c40f; font-size: 1.2rem;">${estrellas}</span>
-                            <small style="color: #9b59b6; font-weight: 600;">${new Date(op.creado_en).toLocaleDateString()}</small>
-                        </div>
-                        <p style="color: #2c1b4e; font-style: italic; font-size: 0.95rem;">"${op.comentario}"</p>
+                        <span style="color: #f1c40f; font-size: 0.9rem;">${'★'.repeat(op.estrellas)}${'☆'.repeat(5-op.estrellas)}</span>
                     </div>
-                `;
-            });
-            html += '</div>';
-            contenedor.innerHTML = html;
+                    <p style="font-size: 0.85rem; margin: 0; color: #4a2d6e; font-style: italic; line-height: 1.4;">"${op.comentario}"</p>
+                    <div style="text-align: right; margin-top: 5px;">
+                        <small style="color: #b0a4e3; font-size: 0.7rem;">${new Date(op.creado_en).toLocaleDateString()}</small>
+                    </div>
+                </div>
+            `).join('');
         };
 
         Swal.fire({
-            title: '<i class="fas fa-comments"></i> Comunidad Medicurativo',
+            title: '<i class="fas fa-comments" style="color: #9b59b6;"></i> Comunidad Medicurativo',
             html: `
-                <div style="margin-bottom: 20px; display: flex; justify-content: center;">
-                    <select id="filtroOpiniones" style="width: 85%; padding: 12px 20px; border-radius: 30px; border: 2px solid #e0d0f0; background: white; color: #2c1b4e; font-weight: 600; outline: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s;">
-                        <option value="recientes">🌟 Todas (Más recientes)</option>
-                        <option value="5">⭐⭐⭐⭐⭐ Solo 5 estrellas</option>
-                        <option value="4">⭐⭐⭐⭐ Solo 4 estrellas</option>
-                        <option value="3">⭐⭐⭐ Solo 3 estrellas</option>
-                        <option value="antiguos">⏳ Más antiguos</option>
-                    </select>
+                <div style="padding: 5px; max-height: 450px; overflow-y: auto; scrollbar-width: none;">
+                    ${renderOpinionsList(allOpinions ? [...allOpinions].reverse() : [])}
                 </div>
-                <div id="contenedorListaOpiniones"></div>
+                <p style="font-size: 0.8rem; color: #7f8c8d; margin-top: 15px;">Gracias por ayudarnos a crecer día tras día.</p>
             `,
-            width: '600px',
-            background: '#fdfaff',
-            showCloseButton: true,
             showConfirmButton: false,
-            customClass: {
-                popup: 'swal-popup-redondo'
-            },
-            didOpen: () => {
-                const select = document.getElementById('filtroOpiniones');
-                select.addEventListener('change', (e) => renderizarOpiniones(e.target.value));
-                // Carga inicial
-                renderizarOpiniones('recientes');
-            }
+            showCloseButton: true,
+            background: '#fdfaff',
+            customClass: { popup: 'swal-popup-redondo' }
         });
+    };
+
+    // Listeners para los botones del header
+    // El botón de Calificar se ha movido al SweetAlert de perfil.
+    // Si se necesita un listener para un botón de Calificar en el header,
+    // se debe añadir el botón al HTML y su listener aquí.
+    // Ejemplo (si se decide añadir un botón de Calificar al header):
+    // document.getElementById('btnCalificar')?.addEventListener('click', () => {
+    //     window.mostrarCalificacionSweetAlert();
+    // });
+
+    document.getElementById('btnVerOpiniones')?.addEventListener('click', () => {
+        window.verOpinionesSweetAlert();
     });
 
-    // --- Función para calcular y mostrar el promedio en el Header ---
-    async function actualizarPromedio() {
-        const badge = document.getElementById('badgePromedio');
-        const valorText = document.getElementById('valorPromedio');
-        if (!badge || !valorText) return;
+    // --- ELIMINAR EL BLOQUE REPETIDO QUE CAUSABA EL ERROR (Línea 1005 aprox) ---
 
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (!session) return;
-
-        const { data: opiniones } = await supabaseClient.from('comentarios').select('estrellas');
-
-        if (opiniones && opiniones.length > 0 && badge && valorText) {
-            const suma = opiniones.reduce((acc, op) => acc + op.estrellas, 0);
-            const promedio = (suma / opiniones.length).toFixed(1);
-            
-            valorText.textContent = promedio;
-            badge.style.display = 'flex';
-        } else if (badge) {
-            badge.style.display = 'none';
-        }
-    }
-
-    // Ejecutar al cargar la página
-    actualizarPromedio();
-    
     // --- Lógica del Splash Screen (Mejorada) ---
     const loaderMessages = [
         "La vida es linda...",

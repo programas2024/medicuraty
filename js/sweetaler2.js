@@ -52,7 +52,7 @@ function mostrarAgradecimientos() {
                     <i class="fas fa-heart" style="font-size: ${isMobile ? '30px' : '50px'}; color: #c44569;"></i>
                     <h3 style="font-size: ${isMobile ? '22px' : '32px'}; color: #2c1b4e;">🤝 AMIGOS</h3>
                     <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                        ${['DANIEL ARBOLEDA', 'HERNEY BENAVIDEZ', 'ANGIE RODRÍGUEZ', 'VICTORIA MANRIQUE', 'ANDRÉS TORO', 'ANGELA ROMERO', 'NICOLAS GUTIERREZ', 'MILAGROS RAMIREZ'].map(nombre => 
+                        ${['DANIEL ARBOLEDA', 'HERNEY BENAVIDEZ', 'ANGIE RODRÍGUEZ', 'VICTORIA MANRIQUE', 'ANDRÉS TORO', 'ANGELA ROMERO', 'NICOLAS GUTIERREZ', 'MILAGROS RAMIREZ', 'ALLISON ROMERO', 'NELLY MARIN'].map(nombre => 
                             `<span style="background: white; padding: ${isMobile ? '5px 12px' : '12px 25px'}; border-radius: 60px; font-size: ${isMobile ? '10px' : '16px'}; border: 1px solid #c44569;">${nombre}</span>`
                         ).join('')}
                     </div>

@@ -198,13 +198,15 @@ function construirMenuAdaptable(filtro = '') {
     if (!menuHorizontal) return;
     let html = '';
     const mobile = isMobile();
+    // Detectar si estamos en index para decidir el destino de galería
+    const esPaginaIndex = window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
+    const urlDestinoGaleria = esPaginaIndex ? 'galeria2.html' : 'galeria.html';
     
     categorias.forEach(cat => {
         
     if (cat.id === 'galeria') {
-    // ✅ TANTO PC COMO MÓVIL: Redirigir a galeria2.html
     html += `
-        <button class="menu-btn-categoria" onclick="window.location.href='galeria2.html'"
+        <button class="menu-btn-categoria" onclick="window.location.href='${urlDestinoGaleria}'"
                 style="border-left: 5px solid ${cat.color};">
             <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
             <span>${cat.nombre}</span>

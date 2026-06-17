@@ -98,21 +98,12 @@
 
         <!-- NUEVA BARRA DE ACCESO RÁPIDO -->
         <div class="nav-principal">
-            <!-- FRASE CON ESTILO DE GALERÍA (Contenedor morado y letras cursivas) -->
-            <div class="label-info-container" style="width: 100%; margin-bottom: 15px;">
-                <i class="fas fa-hand-holding-heart"></i>
-                <p id="fraseIndex">Estamos contigo: lee, respira y vuelve a intentarlo con calma.</p>
-            </div>
-
-            <!-- BUSCADOR -->
-            <div class="buscador-destacado">
-                <i class="fas fa-search"></i>
-                <input type="text" id="inputBusqueda" placeholder="¿Qué necesitas leer hoy? (ej: Respeto, Éxito...)">
-                <div id="sugerenciasBusqueda" class="sugerencias-container"></div>
-            </div>
-
-            <!-- BOTONES DE INFO (Vuelven a su posición original abajo) -->
-            <div class="botones-info-wrapper">
+            <!-- CONTENEDOR UNIFICADO (Frase + Botones en la misma fila) -->
+            <div class="botones-info-wrapper galeria-layout" style="width: 100%; margin-bottom: 15px;">
+                <div class="label-info-container" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <p id="fraseIndex">Estamos contigo: lee, respira y vuelve a intentarlo con calma.</p>
+                </div>
                 <div class="botones-info">
                     <div class="btn-con-tooltip">
                         <button class="btn-info" id="btnMision"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
@@ -127,6 +118,13 @@
                         <span class="tooltip">Agradecimientos</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- BUSCADOR -->
+            <div class="buscador-destacado">
+                <i class="fas fa-search"></i>
+                <input type="text" id="inputBusqueda" placeholder="¿Qué necesitas leer hoy? (ej: Respeto, Éxito...)">
+                <div id="sugerenciasBusqueda" class="sugerencias-container"></div>
             </div>
         </div>
 

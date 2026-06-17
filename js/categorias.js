@@ -23,12 +23,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         
         const listaCategorias = window.categorias || [];
+        // Detectar si estamos en index para decidir el destino de galería
+        const esPaginaIndex = window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
+        const urlDestinoGaleria = esPaginaIndex ? 'galeria2.html' : 'galeria.html';
+
         let html = '';
         listaCategorias.forEach(cat => {
             if (cat.id === 'galeria') {
-                // ✅ GALERÍA: Redirige a galeria2.html
                 html += `
-                    <button class="categoria-movil-btn" onclick="window.location.href='galeria2.html'"
+                    <button class="categoria-movil-btn" onclick="window.location.href='${urlDestinoGaleria}'"
                             style="border-left-color: ${cat.color};">
                         <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
                         <span>${cat.nombre}</span>

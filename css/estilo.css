@@ -193,10 +193,6 @@ body.dark-mode .btn-header {
     flex-direction: row;
 }
 
-.nav-principal .label-info-container {
-    flex: 0 0 100%; /* Fuerza a que la frase ocupe todo el ancho arriba */
-}
-
 .buscador-destacado {
     flex: 1;
     min-width: 300px;
@@ -1659,11 +1655,13 @@ body.dark-mode .label-info-container {
 }
 
 .label-info-container p,
-#fraseIndex {
-    font-size: 19px; /* Tamaño aumentado para una lectura sin esfuerzo */
+#fraseIndex,
+#fraseInspiradora {
+    font-size: 15px; /* Reducido para evitar desbordamientos y mejorar el ajuste con botones */
     line-height: 1.4;
     color: #2c1b4e; /* Color oscuro para contraste de alta calidad */
-    font-weight: 700; /* Negrita para que la fuente Georgia itálica sea legible */
+    font-weight: 600; /* Peso balanceado */
+    word-break: break-word; /* Asegura que frases largas se partan correctamente */
     margin: 0;
     font-family: 'Georgia', serif;
     font-style: italic;
@@ -1881,9 +1879,10 @@ body.dark-mode .botones-info-wrapper {
     background: #f3ebff; /* Fondo más claro para que el texto resalte al máximo */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 10px 22px;
+    padding: 8px 18px;
     border-radius: 30px;
     margin-bottom: 0;
+    flex-wrap: wrap; /* Evita que el contenido se desborde horizontalmente */
     border: 2px solid #e0d0f0; /* Borde más definido para que el contenedor se note más */
     box-shadow: 0 4px 15px rgba(155, 89, 182, 0.08);
     animation: slideInLeft 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);

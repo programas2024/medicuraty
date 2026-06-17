@@ -36,6 +36,12 @@
             
             <!-- Utilidades de la App (Sincronizado con Principal) -->
             <div class="header-utils" id="headerUtilsGaleria">
+                <!-- Calificación antes de los botones (PC solamente) -->
+                <div id="contenedorPromedioGlobal" class="contenedor-promedio-global hide-mobile-flex" style="display: none; align-items: center; background: #fff9e6; border-radius: 30px; padding: 8px 15px; border: 1.5px solid #f1c40f; gap: 8px; animation: fadeIn 0.8s ease; cursor: default;">
+                    <i class="fas fa-star" style="color: #f1c40f; font-size: 0.9rem;"></i>
+                    <span id="valorPromedioGlobal" style="color: #d4ac0d; font-weight: 800; font-size: 1rem;">...</span>
+                </div>
+
                 <!-- Botón Inicio -->
                 <div class="btn-con-tooltip" id="wrapperInicio">
                     <a href="index.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
@@ -81,14 +87,14 @@
                 </div>
             </div>
 
-            <!-- Se agrega la clase galeria-layout y se invierte el orden del HTML -->
-            <div class="botones-info-wrapper galeria-layout">
-                <!-- La frase ahora está primero (izquierda) -->
-                <div class="label-info-container">
+            <!-- CONTENEDOR UNIFICADO (Frase + Botones en la misma fila en PC) -->
+            <div class="botones-info-wrapper galeria-layout" style="width: 100%; margin-bottom: 15px;">
+                <div class="label-info-container" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                     <i class="fas fa-spa"></i>
                     <p id="fraseInspiradora">Cargando un momento de paz...</p>
                 </div>
-                <!-- Los botones ahora están después (derecha) -->
+
+                <!-- BOTONES DE INFO -->
                 <div class="botones-info">
                     <div class="btn-con-tooltip">
                         <button class="btn-info" id="btnMision" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-bullseye"></i> <span>Misión</span></button>

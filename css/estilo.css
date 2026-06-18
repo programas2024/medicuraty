@@ -886,12 +886,13 @@ body.dark-mode .categoria-movil-btn {
     transform: scale(1.1);
 }
 
-/* Grid de galería */
 .galeria-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px; /* Más espacio para los marcos y sombras */
     padding: 20px 0;
+    padding-top: 100px !important; /* Espacio suficiente para la corona del Top 1 */
+    overflow: visible !important;
 }
 
 .galeria-item {
@@ -927,6 +928,16 @@ body.dark-mode .categoria-movil-btn {
     font-weight: 600;
     transform: translateY(100%);
     transition: 0.3s;
+    z-index: 20; /* Por encima de los marcos overlay */
+}
+
+/* En móviles, el caption (con el corazón) debe ser siempre visible */
+@media (max-width: 768px) {
+    .galeria-caption {
+        transform: translateY(0);
+        background: rgba(44, 27, 78, 0.8); /* Fondo un poco más oscuro para legibilidad */
+        padding: 10px 5px !important;
+    }
 }
 
 .galeria-item:hover .galeria-caption {
@@ -936,8 +947,9 @@ body.dark-mode .categoria-movil-btn {
 /* Responsive */
 @media (max-width: 768px) {
     .galeria-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        grid-template-columns: 1fr !important;
+        gap: 120px; /* Separación amplia para que los marcos respiren en móvil */
+        padding-top: 80px !important;
     }
     
     .swal-popup-galeria {
@@ -1656,7 +1668,7 @@ body.dark-mode .label-info-container {
 .label-info-container p,
 #fraseIndex,
 #fraseInspiradora {
-    font-size: 16px; /* Aumentado ligeramente para mejor lectura sin romper el diseño */
+    font-size: 15px; 
     line-height: 1.4;
     color: #2c1b4e; /* Color oscuro para contraste de alta calidad */
     font-weight: 600; /* Peso balanceado */
@@ -1712,12 +1724,6 @@ body.dark-mode #fraseIndex {
     .botones-info-wrapper .botones-info {
         justify-content: center; /* Centra los botones en móvil */
     }
-}
-    background: #111111 !important;
-    border-color: #333333 !important;
-}
-
-/* Ajuste de botones en modo oscuro para el perfil */
 .perfil-grid-acciones {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1844,14 +1850,23 @@ body.dark-mode .botones-info-wrapper {
 /* Clase específica para invertir el orden solo en la galería */
 .botones-info-wrapper.galeria-layout {
     justify-content: space-between; /* Frase a la izquierda, botones a la derecha */
-    flex: 1; /* Permite que ocupe el espacio disponible */
     gap: 25px;
     align-items: center;
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap; /* Permite ajuste en móviles */
+    width: 100%;
 }
 
 /* Asegura que el contenedor de la frase no aplaste a los botones en pantallas grandes */
 .botones-info-wrapper.galeria-layout .label-info-container {
     max-width: 70%;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.botones-info-wrapper.galeria-layout .botones-info {
+    flex-shrink: 0; /* Los botones no se encogen */
 }
 
 .label-info-container {
@@ -1903,6 +1918,32 @@ body.dark-mode .botones-info-wrapper p {
     color: #ffffff;
 }
 
+/* Estilos para el botón de Like en Galería */
+.like-btn-galeria {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+    font-size: 0.85rem;
+    backdrop-filter: blur(5px);
+}
+
+.like-btn-galeria:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.like-btn-galeria i.fas.fa-heart {
+    color: #ff7675; /* Color coral para el like activo */
+    filter: drop-shadow(0 0 5px rgba(255, 118, 117, 0.5));
+}
+
 .botones-info-wrapper .botones-info {
     margin: 0; /* Anula margen predeterminado */
     display: flex;
@@ -1942,6 +1983,135 @@ body.dark-mode .botones-info-wrapper p {
     }
     .botones-info-wrapper .botones-info {
         justify-content: center; /* Centra los botones en móvil */
+    }
+}
+
+/* ===== SISTEMA DE PODIO (TOP 3) - REPARADO Y SERIO ===== */
+.top-rank-1 { 
+    padding: 15px !important; /* Marco más grueso para el ganador */
+    background: linear-gradient(135deg, #ffd700, #fff9aa, #b8860b, #ffd700) !important; /* Oro metálico */
+    border-radius: 50px !important;
+    box-shadow: 0 20px 45px rgba(212, 172, 13, 0.6) !important;
+    position: relative;
+    overflow: visible !important;
+    z-index: 50 !important;
+    border: none !important;
+    margin: 20px auto !important;
+    grid-column: 1 / -1; /* Ocupa todo el ancho en PC para destacar */
+    max-width: 500px; /* Tamaño destacado pero controlado */
+}
+
+.top-rank-1::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f521"; /* Icono de Corona fa-crown */
+    font-weight: 900;
+    position: absolute;
+    top: -70px; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4.8rem;
+    background: linear-gradient(135deg, #fff9aa, #ffd700, #f1c40f, #b8860b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 100;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+    animation: shineCrownReal 2s infinite alternate ease-in-out;
+}
+
+@keyframes shineCrownReal {
+    from { transform: translateX(-50%) translateY(0) scale(1); }
+    to { transform: translateX(-50%) translateY(-15px) scale(1.1); }
+}
+
+.top-rank-2 { 
+    padding: 10px !important;
+    background: linear-gradient(135deg, #e0e0e0, #ffffff, #808080) !important; /* Plata metálica */
+    border-radius: 40px !important;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15) !important;
+    position: relative;
+    overflow: visible !important;
+    z-index: 40 !important;
+    border: none !important;
+    margin: 15px !important;
+    max-width: 400px;
+}
+
+.top-rank-3 { 
+    padding: 10px !important;
+    background: linear-gradient(135deg, #cd7f32, #ffb366, #8b4513) !important; /* Bronce metálico */
+    border-radius: 40px !important;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15) !important;
+    position: relative;
+    overflow: visible !important;
+    z-index: 30 !important;
+    border: none !important;
+    margin: 15px !important;
+    max-width: 400px;
+}
+
+
+/* Mejoras visuales exclusivas para PC (No afecta a móviles) */
+@media (min-width: 769px) {
+    .top-rank-1 { padding: 25px !important; } /* Marco más ancho y visible para el oro */
+    .top-rank-2, .top-rank-3 { padding: 20px !important; }
+
+    .top-rank-1, .top-rank-2, .top-rank-3 {
+        border: 6px solid rgba(255, 255, 255, 0.4) !important; /* Efecto de cristal sobre el metal */
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        box-sizing: border-box;
+    }
+
+    .top-rank-1:hover { transform: scale(1.05) translateY(-10px); }
+    .top-rank-2:hover, .top-rank-3:hover { transform: scale(1.03) translateY(-5px); }
+
+    /* Badge circular con el puesto (1, 2, 3) sobre la imagen */
+    .top-rank-1::after, .top-rank-2::after, .top-rank-3::after {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.8rem;
+        z-index: 110;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        border: 5px solid;
+    }
+
+    .top-rank-1::after { content: "1"; color: #b8860b; border-color: #ffd700; }
+    .top-rank-2::after { content: "2"; color: #757575; border-color: #c0c0c0; }
+    .top-rank-3::after { content: "3"; color: #8b4513; border-color: #cd7f32; }
+
+    /* Agrandar corona en PC para un efecto majestuoso */
+    .top-rank-1::before {
+        font-size: 7rem !important;
+        top: -115px !important;
+    }
+}
+
+.top-rank-1 .galeria-caption,
+.top-rank-2 .galeria-caption,
+.top-rank-3 .galeria-caption {
+    display: none !important;
+}
+
+.top-rank-1 img, .top-rank-2 img, .top-rank-3 img {
+    border-radius: 30px !important; /* Imagen interna redondeada */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .top-rank-1, .top-rank-2, .top-rank-3 {
+        max-width: 100%;
+        margin: 10px 0 !important;
     }
 }
 

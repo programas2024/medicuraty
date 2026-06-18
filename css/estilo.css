@@ -190,7 +190,7 @@ body.dark-mode .btn-header {
     gap: 15px;
     margin-bottom: 30px;
     flex-wrap: wrap;
-    flex-direction: row;
+    flex-direction: column; /* Cambiado a columna para que saludo, frase y buscador se apilen correctamente */
 }
 
 .buscador-destacado {
@@ -1597,9 +1597,8 @@ body.dark-mode .btn-icon-only:hover {
     border-radius: 30px;
     border: 1px solid #e0d0f0;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    margin-left: 10px;
-    margin-left: auto;
-    flex: 0 1 auto;
+    margin-left: 0 !important;
+    width: 100%; /* Asegura que el contenedor de frase y botones ocupe todo el ancho */
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -1618,7 +1617,7 @@ body.dark-mode .botones-info-wrapper {
 
 /* Asegura que el contenedor de la frase no aplaste a los botones en pantallas grandes */
 .botones-info-wrapper.galeria-layout .label-info-container {
-    max-width: 65%;
+    max-width: 70%; /* Un poco más de espacio para la frase en PC */
 }
 
 .label-info-container {
@@ -1657,7 +1656,7 @@ body.dark-mode .label-info-container {
 .label-info-container p,
 #fraseIndex,
 #fraseInspiradora {
-    font-size: 15px; /* Reducido para evitar desbordamientos y mejorar el ajuste con botones */
+    font-size: 16px; /* Aumentado ligeramente para mejor lectura sin romper el diseño */
     line-height: 1.4;
     color: #2c1b4e; /* Color oscuro para contraste de alta calidad */
     font-weight: 600; /* Peso balanceado */
@@ -1837,23 +1836,6 @@ body.dark-mode .btn-icon-only:hover {
     color: #9b59b6 !important;
 }
 
-/* Estilos para el nuevo contenedor de Misión, Soporte, Gracias */
-.botones-info-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-    background: linear-gradient(45deg, #f0e6ff, #f3ebff);
-    padding: 10px 15px;
-    border-radius: 30px;
-    border: 1px solid #e0d0f0;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    margin-left: 10px;
-    margin-left: auto;
-    flex: 0 1 auto;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
 body.dark-mode .botones-info-wrapper {
     background: linear-gradient(45deg, #1a162e, #2c254a);
     border-color: #3d3463;
@@ -1869,7 +1851,7 @@ body.dark-mode .botones-info-wrapper {
 
 /* Asegura que el contenedor de la frase no aplaste a los botones en pantallas grandes */
 .botones-info-wrapper.galeria-layout .label-info-container {
-    max-width: 65%;
+    max-width: 70%;
 }
 
 .label-info-container {

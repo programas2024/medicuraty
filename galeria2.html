@@ -488,29 +488,32 @@
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 if (!session) {
                     return Swal.fire({
-                        title: '<span style="color:#2c1b4e;font-weight:800;">Cuenta requerida</span>',
+                        title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.3rem;">💜 Para apoyar esta reflexión</span>',
                         html: `
-                            <div style="text-align:center;padding:8px 4px;">
-                                <div style="width:76px;height:76px;margin:0 auto 16px;border-radius:50%;background:#f8f0ff;display:flex;align-items:center;justify-content:center;">
-                                    <i class="fas fa-heart" style="font-size:34px;color:#e84393;"></i>
+                            <div style="text-align:center; padding: 10px 5px;">
+                                <div style="background: linear-gradient(145deg, #f8f0ff, #f0e6ff); padding: 25px 20px; border-radius: 50px; margin: 10px 0;">
+                                    <div style="width:80px;height:80px;margin:0 auto 16px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px rgba(155,89,182,0.2);">
+                                        <i class="fas fa-heart" style="font-size:36px;color:#e84393;"></i>
+                                    </div>
+                                    <p style="margin:0 0 8px;color:#2c1b4e;font-size:1.05rem;font-weight:700;line-height:1.5;">
+                                        Necesitas una cuenta para<br>apoyar la reflexión de esta imagen.
+                                    </p>
+                                    <p style="margin:0;color:#7f5f9b;font-size:0.88rem;line-height:1.5;">
+                                        Al registrarte podrás dar ❤️ like,<br>participar en la galería y mucho más.
+                                    </p>
                                 </div>
-                                <p style="margin:0;color:#2c1b4e;font-size:1rem;line-height:1.55;font-weight:600;">
-                                    Necesitas crear una cuenta para poder apoyar esta publicaci&oacute;n.
-                                </p>
-                                <p style="margin:12px 0 0;color:#7f5f9b;font-size:0.9rem;line-height:1.45;">
-                                    Al registrarte podr&aacute;s dar like y participar en la galer&iacute;a.
-                                </p>
+                                <button onclick="window.location.href='login.html'" style="background:linear-gradient(135deg,#9b59b6,#8e44ad);color:white;border:none;padding:15px 28px;border-radius:50px;font-weight:700;cursor:pointer;width:100%;font-size:1rem;box-shadow:0 8px 20px rgba(155,89,182,0.3);margin-top:15px;transition:0.3s;">
+                                    ✨ Crear cuenta — ¡Es gratis!
+                                </button>
+                                <p style="margin-top:12px;font-size:0.78rem;color:#b0a4e3;">Ya con cuenta todo queda guardado 🌿</p>
                             </div>
                         `,
-                        icon: 'info',
+                        showConfirmButton: false,
                         showCloseButton: true,
-                        confirmButtonText: 'Crear cuenta',
-                        confirmButtonColor: '#9b59b6',
-                        customClass: { popup: 'swal-popup-redondo' }
-                    }).then(r => {
-                        if (r.isConfirmed) window.location.href = 'login.html';
+                        customClass: { popup: 'swal-popup-redondo', closeButton: 'swal-close-button' }
                     });
                 }
+
 
                 const userId = session.user.id;
                 const { data: existing } = await supabaseClient.from('likes').select('id').eq('usuario_id', userId).eq('imagen_id', imagenId).maybeSingle();

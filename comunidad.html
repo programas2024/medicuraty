@@ -1,0 +1,2898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Medicurativo · Comunidad</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/swafire.css">
+    <link rel="stylesheet" href="css/comunidad.css">
+    <style>
+        /* ===== ESTILOS PARA EL CONTENEDOR DE TABS ===== */
+        .comunidad-tabs-wrapper {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 25px 25px;
+            margin: 20px auto 30px;
+            max-width: 950px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            border: 1px solid #f0edf5;
+            transition: all 0.3s ease;
+        }
+
+        .comunidad-tabs-wrapper:hover {
+            box-shadow: 0 12px 40px rgba(155, 89, 182, 0.08);
+        }
+
+        .comunidad-tabs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: #f8f5fc;
+            padding: 8px;
+            border-radius: 60px;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: transparent;
+            color: #7f8c8d;
+            position: relative;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .tab-btn i {
+            margin-right: 8px;
+        }
+
+        .tab-btn.active {
+            background: #9b59b6;
+            color: white;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.35);
+        }
+
+        .tab-btn:not(.active):hover {
+            background: rgba(155, 89, 182, 0.08);
+            color: #2c1b4e;
+        }
+
+        .tab-btn[data-tab="recientes"].active {
+            background: #9b59b6;
+        }
+
+        .tab-btn[data-tab="valoradas"].active {
+            background: #e67e22;
+        }
+
+        .comunidad-posts-wrapper {
+            border-top: 2px solid #f0edf5;
+            padding-top: 20px;
+            margin-top: 5px;
+        }
+
+        /* ===== ESTILOS PARA MODO OSCURO ===== */
+        body.dark-mode .comunidad-tabs-wrapper {
+            background: #2a1f3d;
+            border-color: #3d2a5c;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        body.dark-mode .comunidad-tabs {
+            background: #1f1630;
+        }
+
+        body.dark-mode .tab-btn:not(.active) {
+            color: #a894b8;
+        }
+
+        body.dark-mode .tab-btn:not(.active):hover {
+            background: rgba(155, 89, 182, 0.15);
+            color: #d4c4e8;
+        }
+
+        body.dark-mode .comunidad-posts-wrapper {
+            border-top-color: #3d2a5c;
+        }
+
+        body.dark-mode .label-info-container p {
+            color: #ffffff !important;
+        }
+
+        body.dark-mode .label-info-container i {
+            color: #d4c4e8 !important;
+        }
+
+        /* ===== ESTILOS PARA PUBLICACIONES ===== */
+        body.dark-mode .publicacion-card {
+            background: #2a1f3d !important;
+            border-color: #3d2a5c !important;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.3) !important;
+        }
+
+        body.dark-mode .publicacion-card:hover {
+            box-shadow: 0 8px 32px rgba(155, 89, 182, 0.15) !important;
+        }
+
+        body.dark-mode .publicacion-card .nombre-usuario {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .publicacion-card p {
+            color: #ffffff !important;
+        }
+
+        body.dark-mode .publicacion-card .fecha-publicacion {
+            color: #7a6a8e !important;
+        }
+
+        body.dark-mode .publicacion-card .btn-like {
+            color: #7a6a8e !important;
+        }
+
+        body.dark-mode .publicacion-card .btn-like i {
+            color: #e74c3c !important;
+        }
+
+        /* ===== ESTILOS PERSONALIZADOS PARA EL SWEETALERT DE AYUDA ===== */
+        .swal-ayuda-comunidad .swal2-popup {
+            border-radius: 30px !important;
+            padding: 30px 35px 35px !important;
+            max-width: 520px !important;
+        }
+
+        .swal-ayuda-comunidad .swal2-title {
+            color: #2c1b4e !important;
+            font-size: 1.6rem !important;
+            font-weight: 800 !important;
+            padding-bottom: 5px !important;
+        }
+
+        .swal-ayuda-comunidad .swal2-title i {
+            color: #9b59b6 !important;
+            margin-right: 10px !important;
+        }
+
+        .swal-ayuda-comunidad .swal2-html-container {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .swal-ayuda-comunidad .ayuda-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            margin: 6px 0;
+            background: #f8f5fc;
+            border-radius: 16px;
+            transition: 0.2s;
+            border-left: 4px solid #9b59b6;
+        }
+
+        .swal-ayuda-comunidad .ayuda-item:hover {
+            background: #f0e6ff;
+            transform: translateX(4px);
+        }
+
+        .swal-ayuda-comunidad .ayuda-icono {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            margin-top: 1px;
+        }
+
+        .swal-ayuda-comunidad .ayuda-icono.morado {
+            background: #9b59b6;
+        }
+
+        .swal-ayuda-comunidad .ayuda-icono.naranja {
+            background: #e67e22;
+        }
+
+        .swal-ayuda-comunidad .ayuda-icono.verde {
+            background: #27ae60;
+        }
+
+        .swal-ayuda-comunidad .ayuda-icono.rojo {
+            background: #e74c3c;
+        }
+
+        .swal-ayuda-comunidad .ayuda-icono.azul {
+            background: #3498db;
+        }
+
+        .swal-ayuda-comunidad .ayuda-texto {
+            flex: 1;
+        }
+
+        .swal-ayuda-comunidad .ayuda-texto strong {
+            color: #2c1b4e;
+            font-weight: 700;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .swal-ayuda-comunidad .ayuda-texto span {
+            color: #6a5a7e;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .swal-ayuda-comunidad .ayuda-footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 2px solid #f0edf5;
+            text-align: center;
+            color: #8a7a9e;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        .swal-ayuda-comunidad .ayuda-footer i {
+            color: #e74c3c;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .swal2-popup {
+            background: #2a1f3d !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .swal2-title {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .swal2-title i {
+            color: #9b59b6 !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .ayuda-item {
+            background: #1f1630 !important;
+            border-left-color: #9b59b6 !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .ayuda-item:hover {
+            background: #2a1f3d !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .ayuda-texto strong {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .ayuda-texto span {
+            color: #a894b8 !important;
+        }
+
+        body.dark-mode .swal-ayuda-comunidad .ayuda-footer {
+            border-top-color: #3d2a5c !important;
+            color: #7a6a8e !important;
+        }
+
+        /* ===== ESTILOS PARA EL SWEETALERT DE PUBLICACIÓN EXITOSA ===== */
+        .swal-publicacion-exito .swal2-popup {
+            border-radius: 30px !important;
+            padding: 30px 35px 40px !important;
+            max-width: 450px !important;
+        }
+
+        .swal-publicacion-exito .swal2-title {
+            color: #2c1b4e !important;
+            font-size: 1.5rem !important;
+            font-weight: 800 !important;
+        }
+
+        .swal-publicacion-exito .swal2-html-container {
+            padding: 0 !important;
+        }
+
+        .swal-publicacion-exito .exito-imagen {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #f8f0ff, #f0e6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.15);
+        }
+
+        .swal-publicacion-exito .exito-imagen img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .swal-publicacion-exito .exito-texto {
+            text-align: center;
+            color: #2c1b4e;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 10px 0 5px;
+        }
+
+        .swal-publicacion-exito .exito-subtexto {
+            text-align: center;
+            color: #7f5f9b;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        body.dark-mode .swal-publicacion-exito .swal2-popup {
+            background: #2a1f3d !important;
+        }
+
+        body.dark-mode .swal-publicacion-exito .swal2-title {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .swal-publicacion-exito .exito-texto {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .swal-publicacion-exito .exito-subtexto {
+            color: #a894b8 !important;
+        }
+
+        body.dark-mode .swal-publicacion-exito .exito-imagen {
+            background: #1f1630 !important;
+        }
+
+        /* ===== ESTILOS PARA EL MODAL DE PUBLICACIÓN ===== */
+        .swal-publicacion-modal .swal2-popup {
+            border-radius: 30px !important;
+            padding: 30px 35px 35px !important;
+            max-width: 560px !important;
+            width: 100% !important;
+        }
+
+        .swal-publicacion-modal .swal2-title {
+            color: #2c1b4e !important;
+            font-size: 1.4rem !important;
+            font-weight: 700 !important;
+        }
+
+        .swal-publicacion-modal .swal2-html-container {
+            padding: 0 !important;
+        }
+
+        .swal-publicacion-modal .swal2-option-btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            background: #f3e9ff;
+            border: 2px solid #9b59b6;
+            color: #2c1b4e;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.05rem;
+            flex: 1;
+            justify-content: center;
+            min-width: 150px;
+            box-shadow: 0 2px 8px rgba(155, 89, 182, 0.1);
+        }
+
+        .swal-publicacion-modal .swal2-option-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 18px rgba(155, 89, 182, 0.3);
+        }
+
+        .swal-publicacion-modal .swal2-option-btn i {
+            font-size: 1.4rem;
+        }
+
+        .swal-publicacion-modal .swal2-option-btn.seleccionado {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .swal-publicacion-modal .swal2-option-btn.seleccionado i {
+            color: white;
+        }
+
+        .swal-publicacion-modal #contenedorPublicacion {
+            width: 100%;
+            max-width: 100%;
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .swal-publicacion-modal #textoPublicacion {
+            width: 100%;
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 2px solid #e0d6eb;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: #fdfaff;
+            transition: 0.3s;
+        }
+
+        .swal-publicacion-modal #textoPublicacion:focus {
+            border-color: #9b59b6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+        }
+
+        .swal-publicacion-modal #vistaPrevia {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #e0d6eb;
+            max-height: 350px;
+            background: #faf8fc;
+            display: none;
+            position: relative;
+        }
+
+        .swal-publicacion-modal #vistaPrevia img {
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            background: #faf8fc;
+            display: block;
+            border-radius: 14px;
+        }
+
+        .swal-publicacion-modal #quitarImagen {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swal-publicacion-modal #quitarImagen:hover {
+            background: rgba(0,0,0,0.9);
+            transform: scale(1.1);
+        }
+
+        .swal-publicacion-modal .swal2-confirm-btn {
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+            border: none;
+            padding: 16px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 18px rgba(155, 89, 182, 0.35);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .swal-publicacion-modal .swal2-confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(155, 89, 182, 0.45);
+        }
+
+        /* ===== ESTILOS PARA HASHTAGS POR CATEGORÍA CON DESPLEGABLE ===== */
+        .categoria-hashtags {
+            margin-bottom: 6px;
+            border: 1px solid #e0d6eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .categoria-hashtags .categoria-header {
+            padding: 10px 16px;
+            background: #f8f5fc;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2c1b4e;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .categoria-hashtags .categoria-header:hover {
+            background: #f0e6ff;
+        }
+
+        .categoria-hashtags .categoria-header i {
+            transition: 0.3s;
+            color: #9b59b6;
+        }
+
+        .categoria-hashtags .categoria-header .categoria-icono {
+            margin-right: 10px;
+        }
+
+        .categoria-hashtags .categoria-header .categoria-flecha {
+            font-size: 0.8rem;
+        }
+
+        .categoria-hashtags .categoria-contenido {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 12px;
+            background: white;
+        }
+
+        .categoria-hashtags .categoria-contenido.abierto {
+            max-height: 300px;
+            padding: 12px;
+        }
+
+        .categoria-hashtags .hashtags-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .hashtag-item {
+            padding: 5px 14px;
+            border-radius: 20px;
+            background: #f8f5fc;
+            border: 1px solid #e0d6eb;
+            color: #6a5a7e;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .hashtag-item:hover {
+            background: #f0e6ff;
+            border-color: #9b59b6;
+            transform: scale(1.05);
+        }
+
+        .hashtag-item.seleccionado {
+            background: #9b59b6;
+            color: white;
+            border-color: #9b59b6;
+        }
+
+        .hashtag-item.seleccionado:hover {
+            background: #8e44ad;
+        }
+
+        .hashtag-counter {
+            text-align: right;
+            font-size: 0.75rem;
+            color: #95a5a6;
+            margin-top: 4px;
+        }
+
+        body.dark-mode .categoria-hashtags {
+            border-color: #3d2a5c;
+        }
+
+        body.dark-mode .categoria-hashtags .categoria-header {
+            background: #1f1630;
+            color: #d4c4e8;
+        }
+
+        body.dark-mode .categoria-hashtags .categoria-header:hover {
+            background: #2a1f3d;
+        }
+
+        body.dark-mode .categoria-hashtags .categoria-contenido {
+            background: #2a1f3d;
+        }
+
+        body.dark-mode .hashtag-item {
+            background: #1f1630;
+            border-color: #3d2a5c;
+            color: #a894b8;
+        }
+
+        body.dark-mode .hashtag-item:hover {
+            background: #2a1f3d;
+            border-color: #9b59b6;
+        }
+
+        body.dark-mode .hashtag-item.seleccionado {
+            background: #9b59b6;
+            color: white;
+        }
+
+        /* ===== ESTILOS PARA PUBLICACIONES ===== */
+        .publicacion-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 24px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+            transition: 0.3s;
+            border: 1px solid #f0edf5;
+            position: relative;
+        }
+
+        .publicacion-card:hover {
+            box-shadow: 0 8px 32px rgba(155, 89, 182, 0.08);
+        }
+
+        .publicacion-card .publicacion-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .publicacion-card .publicacion-header .avatar-container {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+        }
+
+        .publicacion-card .publicacion-header .avatar-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e8e0f0;
+            margin-top: 0 !important;
+            max-height: none !important;
+        }
+
+        .publicacion-card .publicacion-header .info-usuario {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .publicacion-card .publicacion-header .info-usuario .nombre-usuario {
+            font-weight: 700;
+            color: #2c1b4e;
+            font-size: 1rem;
+        }
+
+        .publicacion-card .publicacion-header .info-usuario .fecha-publicacion {
+            font-size: 0.75rem;
+            color: #95a5a6;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .publicacion-card .publicacion-header .info-usuario .fecha-publicacion .badge-valorada {
+            background: #fef9e7;
+            color: #f39c12;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        .publicacion-card .publicacion-header .btn-eliminar-container {
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .publicacion-card .publicacion-header .btn-eliminar-container button {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.2s;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
+
+        .publicacion-card .publicacion-header .btn-eliminar-container button:hover {
+            opacity: 1;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .publicacion-card img {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 450px !important;
+            object-fit: contain !important;
+            border-radius: 16px !important;
+            margin-top: 12px !important;
+            background: #f8f5fc;
+            cursor: pointer;
+            display: block;
+        }
+
+        .publicacion-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #2c3e50;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        /* ===== HASHTAGS EN COLOR DENTRO DE PUBLICACIONES ===== */
+        .publicacion-card p .hashtag-color {
+            color: #9b59b6;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .publicacion-card p .hashtag-color:hover {
+            color: #8e44ad;
+            text-decoration: underline;
+        }
+
+        body.dark-mode .publicacion-card p .hashtag-color {
+            color: #c084d8;
+        }
+
+        body.dark-mode .publicacion-card p .hashtag-color:hover {
+            color: #d4a0e8;
+        }
+
+        .publicacion-card .ranking-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .ranking-badge.oro {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4);
+        }
+
+        .ranking-badge.plata {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+            box-shadow: 0 4px 12px rgba(149, 165, 166, 0.4);
+        }
+
+        .ranking-badge.bronce {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            box-shadow: 0 4px 12px rgba(211, 84, 0, 0.4);
+        }
+
+        /* ===== ESTILOS PARA SWEETALERT DE LIKE ===== */
+        .swal-like-container .swal2-popup {
+            border-radius: 30px !important;
+            padding: 30px 35px 35px !important;
+            max-width: 420px !important;
+        }
+
+        .swal-like-container .swal2-title {
+            color: #2c1b4e !important;
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+        }
+
+        .swal-like-container .swal2-title i {
+            color: #e74c3c !important;
+            margin-right: 8px !important;
+        }
+
+        .swal-like-container .like-imagen {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #f8f0ff, #f0e6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.15);
+        }
+
+        .swal-like-container .like-imagen img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .swal-like-container .like-texto {
+            text-align: center;
+            color: #2c1b4e;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 10px 0 5px;
+        }
+
+        .swal-like-container .like-subtexto {
+            text-align: center;
+            color: #7f5f9b;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        body.dark-mode .swal-like-container .swal2-popup {
+            background: #2a1f3d !important;
+        }
+
+        body.dark-mode .swal-like-container .swal2-title {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .swal-like-container .like-texto {
+            color: #d4c4e8 !important;
+        }
+
+        body.dark-mode .swal-like-container .like-subtexto {
+            color: #a894b8 !important;
+        }
+
+        body.dark-mode .swal-like-container .like-imagen {
+            background: #1f1630 !important;
+        }
+
+        /* ===== ESTILOS PARA EL SELECTOR DE REACCIONES ===== */
+        .reaction-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .reaction-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            background: #f8f5fc;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .reaction-btn:hover {
+            transform: scale(1.2);
+            border-color: #9b59b6;
+            box-shadow: 0 4px 16px rgba(155, 89, 182, 0.2);
+        }
+
+        .reaction-btn:active {
+            transform: scale(0.9);
+        }
+
+        .reaction-btn.selected {
+            border-color: #9b59b6;
+            background: #f0e6ff;
+            box-shadow: 0 4px 16px rgba(155, 89, 182, 0.25);
+        }
+
+        .reaction-btn .reaction-label {
+            font-size: 0.55rem;
+            color: #7f8c8d;
+            position: absolute;
+            bottom: -18px;
+            white-space: nowrap;
+        }
+
+        body.dark-mode .reaction-btn {
+            background: #1f1630;
+        }
+
+        body.dark-mode .reaction-btn.selected {
+            background: #2a1f3d;
+            border-color: #c084d8;
+        }
+
+        /* ===== ESTILOS PARA BARRA DE BÚSQUEDA ===== */
+        .busqueda-hashtag-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 8px 18px;
+            border-radius: 60px;
+            border: 2px solid #f0edf5;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            flex: 1;
+            transition: 0.3s;
+            position: relative;
+            min-width: 300px;
+        }
+
+        .busqueda-hashtag-wrapper:focus-within {
+            border-color: #9b59b6;
+            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.1);
+        }
+
+        .busqueda-hashtag-wrapper i {
+            color: #9b59b6;
+            font-size: 1.1rem;
+        }
+
+        .busqueda-hashtag-wrapper input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.95rem;
+            padding: 8px 0;
+            width: 100%;
+            color: #2c1b4e;
+            font-family: inherit;
+        }
+
+        .busqueda-hashtag-wrapper input::placeholder {
+            color: #b0a4c4;
+        }
+
+        /* ===== SUGERENCIAS DE HASHTAGS ===== */
+        .sugerencias-hashtags {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #f0edf5;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            padding: 8px 0;
+        }
+
+        .sugerencias-hashtags.mostrar {
+            display: block;
+        }
+
+        .sugerencias-hashtags .sugerencia-item {
+            padding: 10px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            color: #2c1b4e;
+        }
+
+        .sugerencias-hashtags .sugerencia-item:hover {
+            background: #f8f5fc;
+        }
+
+        .sugerencias-hashtags .sugerencia-item i {
+            color: #9b59b6;
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .sugerencias-hashtags {
+            background: #2a1f3d;
+            border-color: #3d2a5c;
+        }
+
+        body.dark-mode .sugerencias-hashtags .sugerencia-item {
+            color: #d4c4e8;
+        }
+
+        body.dark-mode .sugerencias-hashtags .sugerencia-item:hover {
+            background: #1f1630;
+        }
+
+        body.dark-mode .busqueda-hashtag-wrapper {
+            background: #2a1f3d;
+            border-color: #3d2a5c;
+        }
+
+        body.dark-mode .busqueda-hashtag-wrapper input {
+            color: #d4c4e8;
+        }
+
+        body.dark-mode .busqueda-hashtag-wrapper input::placeholder {
+            color: #7a6a8e;
+        }
+
+        /* ===== CONTENEDOR BLANCO: BARRA + ETIQUETA PEGADA AL BOTÓN + BOTÓN ===== */
+        .subir-busqueda-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin: 0 auto 20px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 8px 16px 8px 8px;
+            border-radius: 60px;
+            border: 2px solid #f0edf5;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            max-width: 950px;
+            transition: all 0.3s ease;
+        }
+
+        .subir-busqueda-container:hover {
+            box-shadow: 0 6px 28px rgba(155, 89, 182, 0.08);
+        }
+
+        body.dark-mode .subir-busqueda-container {
+            background: #2a1f3d;
+            border-color: #3d2a5c;
+        }
+
+        .subir-busqueda-container .busqueda-hashtag-wrapper {
+            order: 0;
+            flex: 1;
+            border: none;
+            box-shadow: none;
+            padding: 6px 16px 6px 12px;
+            background: transparent;
+            min-width: 350px;
+        }
+
+        .subir-busqueda-container .busqueda-hashtag-wrapper:focus-within {
+            border: none;
+            box-shadow: none;
+        }
+
+        .subir-busqueda-container .busqueda-hashtag-wrapper input {
+            padding: 6px 0;
+            font-size: 0.95rem;
+        }
+
+        /* ETIQUETA "sube tu inspiración" - PEGADA AL BOTÓN (a su izquierda) */
+        .subir-busqueda-container .label-inspiracion {
+            order: 1;
+            font-size: 0.8rem;
+            color: #6a5a7e;
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(155, 89, 182, 0.1);
+            padding: 5px 14px 5px 18px;
+            border-radius: 30px 0 0 30px;
+            border: 1px solid rgba(155, 89, 182, 0.15);
+            border-right: none;
+            margin-right: -4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subir-busqueda-container .label-inspiracion i {
+            color: #9b59b6;
+            font-size: 0.85rem;
+        }
+
+        body.dark-mode .subir-busqueda-container .label-inspiracion {
+            background: rgba(155, 89, 182, 0.2);
+            border-color: rgba(155, 89, 182, 0.25);
+            color: #c084d8;
+        }
+
+        body.dark-mode .subir-busqueda-container .label-inspiracion i {
+            color: #c084d8;
+        }
+
+        .subir-busqueda-container .btn-subir-publicacion {
+            order: 2;
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(155, 89, 182, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subir-busqueda-container .btn-subir-publicacion:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(155, 89, 182, 0.45);
+        }
+
+        .subir-busqueda-container .btn-subir-publicacion i {
+            font-size: 1.2rem;
+        }
+
+        /* ===== ICONOS DE LIKE CON VARIEDAD ===== */
+        .like-icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .like-icon-wrapper .like-icon {
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .like-icon-wrapper .like-icon.heart {
+            color: #e74c3c;
+        }
+
+        .like-icon-wrapper .like-icon.star {
+            color: #f1c40f;
+        }
+
+        .like-icon-wrapper .like-icon.flower {
+            color: #e84393;
+        }
+
+        .like-icon-wrapper .like-icon.sparkle {
+            color: #9b59b6;
+        }
+
+        .like-icon-wrapper .like-icon.fire {
+            color: #e67e22;
+        }
+
+        .like-icon-wrapper .like-count {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-left: 2px;
+        }
+
+        body.dark-mode .like-icon-wrapper .like-count {
+            color: #a894b8;
+        }
+
+        /* ===== RESPONSIVE - EN MÓVIL ===== */
+        @media (max-width: 768px) {
+            .subir-busqueda-container {
+                flex-wrap: wrap;
+                padding: 12px 14px;
+                border-radius: 30px;
+                gap: 10px;
+                margin: 0 8px 20px;
+                justify-content: center;
+                flex-direction: column;
+            }
+
+            .subir-busqueda-container .btn-subir-publicacion {
+                order: 0;
+                width: 100%;
+                justify-content: center;
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                border-radius: 40px;
+            }
+
+            .subir-busqueda-container .btn-subir-publicacion i {
+                font-size: 1.1rem;
+            }
+
+            .subir-busqueda-container .busqueda-hashtag-wrapper {
+                order: 1;
+                width: 100%;
+                flex: 1 1 100%;
+                min-width: unset;
+                padding: 4px 12px;
+                background: rgba(0,0,0,0.03);
+                border-radius: 40px;
+            }
+
+            body.dark-mode .subir-busqueda-container .busqueda-hashtag-wrapper {
+                background: rgba(255,255,255,0.05);
+            }
+
+            .subir-busqueda-container .busqueda-hashtag-wrapper input {
+                font-size: 0.9rem;
+            }
+
+            .subir-busqueda-container .label-inspiracion {
+                display: none !important;
+            }
+
+            .reaction-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.5rem;
+            }
+
+            .swal-publicacion-modal .swal2-popup {
+                padding: 22px 18px 26px !important;
+                max-width: 94% !important;
+                border-radius: 24px !important;
+            }
+
+            .swal-publicacion-modal .swal2-title {
+                font-size: 1.2rem !important;
+            }
+
+            .swal-publicacion-modal .swal2-option-btn {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+                min-width: 120px;
+                gap: 10px;
+                flex: 1;
+            }
+
+            .swal-publicacion-modal #textoPublicacion {
+                padding: 14px 16px;
+                min-height: 90px;
+                font-size: 0.95rem;
+                border-radius: 16px;
+            }
+
+            .swal-publicacion-modal #vistaPrevia {
+                max-height: 280px;
+                border-radius: 14px;
+            }
+
+            .swal-publicacion-modal #vistaPrevia img {
+                max-height: 260px;
+            }
+
+            .publicacion-card {
+                padding: 16px 16px 20px !important;
+                border-radius: 20px !important;
+                margin-bottom: 20px !important;
+            }
+
+            .publicacion-card .publicacion-header .avatar-container {
+                width: 40px;
+                height: 40px;
+            }
+
+            .publicacion-card .publicacion-header {
+                gap: 10px;
+            }
+
+            .publicacion-card .publicacion-header .info-usuario .nombre-usuario {
+                font-size: 0.9rem;
+            }
+
+            .publicacion-card img {
+                max-height: 350px !important;
+                border-radius: 14px !important;
+            }
+
+            .hashtag-item {
+                padding: 4px 12px;
+                font-size: 0.78rem;
+            }
+
+            .categoria-hashtags .categoria-header {
+                font-size: 0.85rem;
+                padding: 8px 14px;
+            }
+
+            .comunidad-tabs-wrapper {
+                padding: 16px 14px 20px;
+                margin: 12px 8px 20px;
+                max-width: 100%;
+            }
+
+            .comunidad-tabs {
+                gap: 6px;
+                padding: 6px;
+            }
+
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
+
+            .reaction-selector {
+                gap: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .subir-busqueda-container {
+                padding: 10px 10px;
+                border-radius: 24px;
+                gap: 8px;
+                margin: 0 4px 16px;
+            }
+
+            .subir-busqueda-container .btn-subir-publicacion {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                gap: 6px;
+            }
+
+            .subir-busqueda-container .btn-subir-publicacion i {
+                font-size: 1rem;
+            }
+
+            .subir-busqueda-container .busqueda-hashtag-wrapper {
+                padding: 3px 10px;
+            }
+
+            .subir-busqueda-container .busqueda-hashtag-wrapper input {
+                font-size: 0.82rem;
+                padding: 4px 0;
+            }
+
+            .subir-busqueda-container .busqueda-hashtag-wrapper i {
+                font-size: 0.85rem;
+            }
+
+            .reaction-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.2rem;
+            }
+
+            .publicacion-card {
+                padding: 14px 12px 18px !important;
+                border-radius: 16px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .publicacion-card .publicacion-header .avatar-container {
+                width: 36px;
+                height: 36px;
+            }
+
+            .publicacion-card .publicacion-header {
+                gap: 8px;
+            }
+
+            .publicacion-card .publicacion-header .info-usuario .nombre-usuario {
+                font-size: 0.85rem;
+            }
+
+            .publicacion-card .publicacion-header .info-usuario .fecha-publicacion {
+                font-size: 0.65rem;
+            }
+
+            .publicacion-card img {
+                max-height: 280px !important;
+                border-radius: 12px !important;
+            }
+
+            .publicacion-card p {
+                font-size: 0.95rem;
+            }
+
+            .swal-publicacion-modal .swal2-popup {
+                padding: 18px 14px 22px !important;
+                max-width: 96% !important;
+                border-radius: 20px !important;
+            }
+
+            .swal-publicacion-modal .swal2-title {
+                font-size: 1.1rem !important;
+            }
+
+            .swal-publicacion-modal .swal2-option-btn {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+                min-width: 100%;
+                flex: none;
+                width: 100%;
+            }
+
+            .swal-publicacion-modal .botones-opciones {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+
+            .swal-publicacion-modal #textoPublicacion {
+                padding: 12px 14px;
+                min-height: 80px;
+                font-size: 0.9rem;
+                border-radius: 14px;
+            }
+
+            .swal-publicacion-modal #vistaPrevia {
+                max-height: 220px;
+                border-radius: 12px;
+            }
+
+            .swal-publicacion-modal #vistaPrevia img {
+                max-height: 200px;
+            }
+
+            .swal-publicacion-modal .swal2-confirm-btn {
+                padding: 14px;
+                font-size: 0.95rem;
+            }
+
+            .hashtag-item {
+                padding: 3px 10px;
+                font-size: 0.7rem;
+            }
+
+            .categoria-hashtags .categoria-header {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            .swal-publicacion-exito .swal2-popup {
+                padding: 20px 16px 26px !important;
+                max-width: 96% !important;
+                border-radius: 20px !important;
+            }
+
+            .swal-ayuda-comunidad .swal2-popup {
+                padding: 18px 14px 22px !important;
+                max-width: 96% !important;
+                border-radius: 20px !important;
+            }
+
+            .swal-like-container .swal2-popup {
+                padding: 20px 16px 26px !important;
+                max-width: 96% !important;
+                border-radius: 20px !important;
+            }
+
+            .swal-like-container .like-imagen {
+                width: 70px;
+                height: 70px;
+                padding: 10px;
+            }
+
+            .comunidad-tabs-wrapper {
+                padding: 12px 10px 16px;
+                margin: 8px 4px 16px;
+                border-radius: 16px;
+                max-width: 100%;
+            }
+
+            .comunidad-tabs {
+                gap: 4px;
+                padding: 4px;
+                border-radius: 30px;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                min-width: 70px;
+            }
+
+            .tab-btn i {
+                margin-right: 4px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+
+        <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                </a>
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+
+            <!-- Utilidades de la App -->
+            <div class="header-utils" id="headerUtilsComunidad">
+                <div class="btn-con-tooltip" id="wrapperInicio">
+                    <a href="#" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Inicio</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="tooltip">Modo Oscuro</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnAyuda" style="color: #2c1b4e;">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAV PRINCIPAL -->
+        <div class="nav-principal">
+            <div id="contenedorSaludo" style="width: 100%; margin-bottom: 20px; display: none; animation: fadeIn 0.8s ease; flex-wrap: wrap; gap: 15px; align-items: stretch;">
+                <div style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1; min-width: 280px; text-align: center;">
+                    <i class="fas fa-sparkles" style="color: #f1c40f; font-size: 1.2rem;"></i>
+                    <h2 style="color: #2c1b4e; font-size: 1.2rem; margin: 0;">¡Hola, <span id="usuarioNombreLogueado" style="color: #9b59b6; font-weight: 800;">Amigo</span>!<span id="saludoDinamico"> Qué alegría verte de nuevo 🌿</span></h2>
+                </div>
+                <div id="contenedorRelojVisual" style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; flex: 1; min-width: 280px; transition: background-color 1s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i id="iconoRelojDinamico" class="fas fa-clock" style="color: #9b59b6; font-size: 1.2rem;"></i>
+                        <div id="relojTexto" style="color: #2c1b4e; font-size: 1rem; font-weight: 600;"></div>
+                    </div>
+                    <div style="width: 60%; height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden;">
+                        <div id="barraProgresoDia" style="width: 0%; height: 100%; background: #9b59b6; transition: width 1s ease, background-color 1s ease;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR UNIFICADO (Frase + Botones de info) -->
+            <div class="botones-info-wrapper galeria-layout" style="width: 100%; margin-bottom: 15px;">
+                <div class="label-info-container" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <i class="fas fa-spa"></i>
+                    <p id="fraseInspiradora">Cargando un momento de paz...</p>
+                </div>
+                <div class="botones-info">
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnMision" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
+                        <span class="tooltip">Nuestra Misión</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnSoporte" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-headset"></i> <span>Soporte</span></button>
+                        <span class="tooltip">Soporte Técnico</span>
+                    </div>
+                    <div class="btn-con-tooltip">
+                        <button class="btn-info" id="btnAgradecimientos" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-heart"></i> <span>Gracias</span></button>
+                        <span class="tooltip">Agradecimientos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== CONTENEDOR BLANCO: BARRA + ETIQUETA PEGADA AL BOTÓN + BOTÓN ====== -->
+        <div id="contenedorBotonSubir" class="subir-busqueda-container" style="display: none;">
+            <!-- Barra de búsqueda (izquierda en PC, abajo en móvil) -->
+            <div class="busqueda-hashtag-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="busquedaHashtag" placeholder="Buscar por #hashtag..." autocomplete="off">
+                <div class="sugerencias-hashtags" id="sugerenciasHashtags"></div>
+            </div>
+
+            <!-- Etiqueta "sube tu inspiración" - PEGADA AL BOTÓN (a su izquierda) -->
+            <div class="label-inspiracion">
+                <i class="fas fa-feather-alt"></i>
+                sube tu inspiración
+            </div>
+
+            <!-- Botón Subir (derecha en PC, arriba en móvil) -->
+            <button id="btnSubirPublicacion" class="btn-subir-publicacion">
+                <i class="fas fa-plus-circle"></i>
+                <span>Subir frase o imagen</span>
+            </button>
+        </div>
+
+        <!-- ====== CONTENEDOR UNIFICADO: TABS + PUBLICACIONES ====== -->
+        <div class="comunidad-tabs-wrapper">
+            
+            <!-- TABS: RECIENTES | MÁS VALORADAS -->
+            <div class="comunidad-tabs">
+                <button class="tab-btn active" data-tab="recientes">
+                    <i class="fas fa-clock"></i> Recientes
+                </button>
+                <button class="tab-btn" data-tab="valoradas">
+                    <i class="fas fa-fire"></i> Más Valoradas
+                </button>
+            </div>
+
+            <!-- MURO DE PUBLICACIONES -->
+            <div class="comunidad-posts-wrapper">
+                <div id="muroComunidad">
+                    <!-- Las publicaciones se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · comunidad <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social"><i class="fab fa-facebook"></i><span class="tooltip">Facebook</span></div>
+                <div class="red-social"><i class="fab fa-tiktok"></i><span class="tooltip">TikTok</span></div>
+                <div class="red-social"><i class="fab fa-youtube"></i><span class="tooltip">YouTube</span></div>
+                <div class="red-social"><i class="fab fa-whatsapp"></i><span class="tooltip">WhatsApp</span></div>
+                <div class="red-social"><i class="fab fa-instagram"></i><span class="tooltip">Instagram</span></div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2025 · compartiendo sabiduría <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+
+    <!-- Scripts comunes -->
+    <script src="js/sweetalert.js"></script>
+    <script src="js/sweetaler2.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/perfil.js"></script>
+    <script src="js/performance.js"></script>
+    <script src="js/compartir.js"></script>
+    
+    <script>
+        // ============================================================
+        // CÓDIGO DE COMUNIDAD
+        // ============================================================
+
+        // ===== VARIABLES GLOBALES =====
+        let usuarioActual = null;
+        let tabActual = 'recientes';
+        let todasPublicaciones = [];
+        let hashtagBusqueda = '';
+        let reaccionesPublicacion = {};
+
+        // ===== REACCIONES DISPONIBLES =====
+        const REACCIONES = [
+            { id: 'heart', icono: 'fa-heart', emoji: '❤️', class: 'heart', color: '#e74c3c' },
+            { id: 'star', icono: 'fa-star', emoji: '⭐', class: 'star', color: '#f1c40f' },
+            { id: 'flower', icono: 'fa-fan', emoji: '🌸', class: 'flower', color: '#e84393' },
+            { id: 'sparkle', icono: 'fa-sparkles', emoji: '✨', class: 'sparkle', color: '#9b59b6' },
+            { id: 'fire', icono: 'fa-fire', emoji: '🔥', class: 'fire', color: '#e67e22' }
+        ];
+
+        // ===== OBTENER REACCIÓN POR DEFECTO =====
+        function getDefaultReaction() {
+            return REACCIONES[0]; // corazón por defecto
+        }
+
+        // ===== OBTENER REACCIÓN MÁS USADA DE UNA PUBLICACIÓN =====
+        function getReaccionMasUsada(publicacionId) {
+            // Si tenemos datos guardados de reacciones para esta publicación
+            if (reaccionesPublicacion[publicacionId]) {
+                const counts = reaccionesPublicacion[publicacionId];
+                let maxCount = 0;
+                let maxReaction = REACCIONES[0];
+                
+                for (const [id, count] of Object.entries(counts)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        const found = REACCIONES.find(r => r.id === id);
+                        if (found) maxReaction = found;
+                    }
+                }
+                return maxReaction;
+            }
+            return getDefaultReaction();
+        }
+
+        // ===== GUARDAR REACCIÓN DE USUARIO EN MEMORIA =====
+        function guardarReaccionUsuario(publicacionId, reactionId) {
+            if (!reaccionesPublicacion[publicacionId]) {
+                reaccionesPublicacion[publicacionId] = {};
+                // Inicializar todas las reacciones en 0
+                REACCIONES.forEach(r => {
+                    reaccionesPublicacion[publicacionId][r.id] = 0;
+                });
+            }
+            // Incrementar la reacción elegida
+            reaccionesPublicacion[publicacionId][reactionId] = 
+                (reaccionesPublicacion[publicacionId][reactionId] || 0) + 1;
+        }
+
+        // ===== RENDERIZAR ICONO DE LIKE CON REACCIÓN =====
+        function renderLikeIcon(publicacionId, likes) {
+            const reaction = getReaccionMasUsada(publicacionId);
+            return `
+                <span class="like-icon-wrapper">
+                    <i class="fas ${reaction.icono} like-icon ${reaction.class}"></i>
+                    <span class="like-count">${likes || 0}</span>
+                </span>
+            `;
+        }
+
+        // ===== MOSTRAR SELECTOR DE REACCIONES =====
+        function mostrarSelectorReacciones(publicacionId) {
+            return new Promise((resolve) => {
+                // Crear botones de reacción
+                const buttonsHTML = REACCIONES.map(r => `
+                    <button class="reaction-btn" data-reaction="${r.id}" style="position:relative;">
+                        ${r.emoji}
+                    </button>
+                `).join('');
+
+                Swal.fire({
+                    title: '💜 Elige tu reacción',
+                    html: `
+                        <div style="padding: 10px 0;">
+                            <p style="color: #6a5a7e; font-size: 0.9rem; margin-bottom: 16px;">
+                                ¿Cómo te hace sentir esta publicación?
+                            </p>
+                            <div class="reaction-selector">
+                                ${buttonsHTML}
+                            </div>
+                        </div>
+                    `,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    customClass: { 
+                        popup: 'swal-popup-redondo swal-like-container'
+                    },
+                    didOpen: () => {
+                        // Event listeners para cada botón de reacción
+                        document.querySelectorAll('.reaction-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const reactionId = btn.dataset.reaction;
+                                Swal.close();
+                                resolve(reactionId);
+                            });
+                            
+                            // Efecto hover
+                            btn.addEventListener('mouseenter', () => {
+                                btn.style.transform = 'scale(1.3)';
+                            });
+                            btn.addEventListener('mouseleave', () => {
+                                btn.style.transform = 'scale(1)';
+                            });
+                        });
+                    }
+                });
+            });
+        }
+
+        // ===== HASHTAGS DISPONIBLES PARA SUGERENCIAS =====
+        const todosLosHashtags = [
+            '#inspiración', '#motivación', '#sueños', '#metas', '#propósito',
+            '#crecimiento', '#aprendizaje', '#evolución', '#transformación', '#plenitud',
+            '#comunidad', '#conexión', '#apoyo', '#unión', '#gratitud',
+            '#bienestar', '#meditación', '#mindfulness', '#pazinterior', '#armonía',
+            '#reflexión', '#sabiduría', '#introspección', '#consciencia', '#luz',
+            '#sanación', '#amorpropio', '#felicidad', '#esperanza', '#fortaleza'
+        ];
+
+        // ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO =====
+        function actualizarBotonInicio() {
+            const linkInicio = document.getElementById('btnInicioLink');
+            if (!linkInicio) return;
+            
+            try {
+                if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+                    setTimeout(actualizarBotonInicio, 500);
+                    return;
+                }
+                
+                const { data: { session } } = window.supabaseClient.auth.getSession();
+                const tieneSesion = session !== null;
+                
+                if (tieneSesion) {
+                    linkInicio.href = 'principal.html';
+                } else {
+                    linkInicio.href = 'index.html';
+                }
+            } catch (error) {
+                console.warn('Error al actualizar botón inicio:', error);
+                linkInicio.href = 'index.html';
+            }
+        }
+
+        // ===== OBTENER AVATAR POR GÉNERO =====
+        function obtenerAvatarPorGenero(generoId) {
+            if (generoId === 1) {
+                return 'imganes/amigo.png';
+            } else if (generoId === 2) {
+                return 'imganes/ave.png';
+            } else {
+                return 'imganes/compartir.png';
+            }
+        }
+
+        // ===== VERIFICAR SESIÓN =====
+        async function verificarSesion() {
+            try {
+                if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    return await verificarSesion();
+                }
+                
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                if (session) {
+                    const { data: userData } = await window.supabaseClient
+                        .from('usuarios')
+                        .select('nombre, genero_id, avatar')
+                        .eq('id', session.user.id)
+                        .maybeSingle();
+
+                    const generoId = userData?.genero_id || 0;
+                    const avatar = userData?.avatar || obtenerAvatarPorGenero(generoId);
+
+                    usuarioActual = {
+                        id: session.user.id,
+                        email: session.user.email,
+                        nombre: userData?.nombre || session.user.user_metadata?.nombre || 'Usuario',
+                        genero_id: generoId,
+                        avatar: avatar
+                    };
+                    
+                    const contenedor = document.getElementById('contenedorBotonSubir');
+                    if (contenedor) contenedor.style.display = 'flex';
+                } else {
+                    usuarioActual = null;
+                    const contenedor = document.getElementById('contenedorBotonSubir');
+                    if (contenedor) contenedor.style.display = 'none';
+                }
+                
+                actualizarBotonInicio();
+                return usuarioActual;
+            } catch (error) {
+                console.error('Error al verificar sesión:', error);
+                usuarioActual = null;
+                const contenedor = document.getElementById('contenedorBotonSubir');
+                if (contenedor) contenedor.style.display = 'none';
+                actualizarBotonInicio();
+                return null;
+            }
+        }
+
+        // ===== CARGAR PUBLICACIONES =====
+        async function cargarPublicaciones() {
+            try {
+                if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    return await cargarPublicaciones();
+                }
+                
+                const { data: publicaciones, error } = await window.supabaseClient
+                    .from('publicaciones')
+                    .select(`
+                        *,
+                        usuarios!publicaciones_usuario_id_fkey(
+                            nombre,
+                            genero_id,
+                            avatar
+                        )
+                    `);
+
+                if (error) {
+                    console.error('Error al cargar publicaciones:', error);
+                    return;
+                }
+
+                todasPublicaciones = publicaciones || [];
+                renderizarPublicaciones(tabActual);
+            } catch (error) {
+                console.error('Error en cargarPublicaciones:', error);
+            }
+        }
+
+        // ===== RESALTAR HASHTAGS EN TEXTO =====
+        function resaltarHashtags(texto) {
+            if (!texto) return '';
+            return texto.replace(/#(\w+)/g, (match, palabra) => {
+                return `<span class="hashtag-color" data-hashtag="${match}">${match}</span>`;
+            });
+        }
+
+        // ===== FILTRAR POR HASHTAG =====
+        function filtrarPorHashtag(publicaciones, hashtag) {
+            if (!hashtag || hashtag.trim() === '') return publicaciones;
+            
+            const termino = hashtag.trim().toLowerCase();
+            return publicaciones.filter(pub => {
+                const contenido = pub.contenido || '';
+                return contenido.toLowerCase().includes(termino);
+            });
+        }
+
+        // ===== RENDERIZAR PUBLICACIONES =====
+        function renderizarPublicaciones(tab) {
+            const muro = document.getElementById('muroComunidad');
+            if (!muro) return;
+            
+            let publicacionesFiltradas = [...todasPublicaciones];
+            
+            if (hashtagBusqueda && hashtagBusqueda.trim() !== '') {
+                publicacionesFiltradas = filtrarPorHashtag(publicacionesFiltradas, hashtagBusqueda);
+            }
+            
+            if (tab === 'recientes') {
+                publicacionesFiltradas.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else if (tab === 'valoradas') {
+                publicacionesFiltradas.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            }
+
+            if (publicacionesFiltradas.length === 0) {
+                muro.innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px; background: #fdfaff; border-radius: 30px; border: 2px solid #f0edf5;">
+                        <i class="fas fa-leaf" style="font-size: 3rem; color: #9b59b6; opacity: 0.5;"></i>
+                        <p style="color: #7f8c8d; margin-top: 20px; font-size: 1.1rem;">
+                            ${hashtagBusqueda ? 'No hay publicaciones con ese hashtag.' : 'Todavía no hay publicaciones. ¡Sé el primero en compartir algo hermoso!'}
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            muro.innerHTML = publicacionesFiltradas.map(pub => {
+                const esImagen = pub.tipo === 'imagen';
+                const contenidoTexto = pub.contenido || '';
+                const contenidoConHashtags = resaltarHashtags(contenidoTexto);
+                
+                const contenidoHTML = esImagen 
+                    ? `<img src="${pub.contenido}" alt="Publicación" loading="lazy" onclick="abrirImagenZoom('${pub.contenido}', 'Publicación')">` 
+                    : `<p>${contenidoConHashtags}</p>`;
+                
+                const generoId = pub.usuarios?.genero_id || 0;
+                const avatar = pub.usuarios?.avatar || obtenerAvatarPorGenero(generoId);
+                const nombre = pub.usuarios?.nombre || 'Usuario';
+                const fecha = new Date(pub.created_at).toLocaleDateString('es-ES', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                const esAutor = usuarioActual && pub.usuario_id === usuarioActual.id;
+
+                let rankingBadge = '';
+                let rankingClass = '';
+                if (tab === 'valoradas') {
+                    const index = publicacionesFiltradas.indexOf(pub);
+                    if (index === 0) {
+                        rankingBadge = `👑 #1`;
+                        rankingClass = 'oro';
+                    } else if (index === 1) {
+                        rankingBadge = `🥈 #2`;
+                        rankingClass = 'plata';
+                    } else if (index === 2) {
+                        rankingBadge = `🥉 #3`;
+                        rankingClass = 'bronce';
+                    }
+                }
+
+                // Renderizar like con reacción
+                const likeHTML = renderLikeIcon(pub.id, pub.likes || 0);
+
+                return `
+                    <div class="publicacion-card" data-id="${pub.id}">
+                        ${rankingBadge ? `<div class="ranking-badge ${rankingClass}">${rankingBadge}</div>` : ''}
+                        
+                        <div class="publicacion-header">
+                            <div class="avatar-container">
+                                <img src="${avatar}" alt="${nombre}" onerror="this.src='imganes/avatar-default.png'">
+                            </div>
+                            <div class="info-usuario">
+                                <div class="nombre-usuario">${nombre}</div>
+                                <div class="fecha-publicacion">
+                                    <i class="far fa-clock"></i> ${fecha}
+                                    ${tab === 'valoradas' ? `<span class="badge-valorada"><i class="fas fa-heart" style="color: #e74c3c;"></i> ${pub.likes || 0}</span>` : ''}
+                                </div>
+                            </div>
+                            ${esAutor ? `
+                                <div class="btn-eliminar-container">
+                                    <button class="btn-eliminar-publicacion" data-id="${pub.id}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        ${contenidoHTML}
+                        
+                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #f0edf5; display: flex; justify-content: space-between; align-items: center;">
+                            <button class="btn-like" data-id="${pub.id}" style="background: none; border: none; font-size: 0.85rem; color: #7f8c8d; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;">
+                                ${likeHTML}
+                            </button>
+                            <span style="font-size: 0.85rem; color: #95a5a6;"><i class="far fa-comment"></i> ${pub.comentarios || 0}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Event listeners para eliminar
+            document.querySelectorAll('.btn-eliminar-publicacion').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    const confirmar = await Swal.fire({
+                        title: '¿Eliminar publicación?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e74c3c',
+                        cancelButtonColor: '#95a5a6',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+                    if (confirmar.isConfirmed) {
+                        await eliminarPublicacion(id);
+                        await cargarPublicaciones();
+                    }
+                });
+            });
+
+            // Event listeners para likes - AHORA CON SELECTOR DE REACCIONES
+            document.querySelectorAll('.btn-like').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (!usuarioActual) {
+                        return Swal.fire({
+                            title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.3rem;">💜 Para reaccionar</span>',
+                            html: `
+                                <div style="text-align:center; padding: 10px 5px;">
+                                    <div style="background: linear-gradient(145deg, #f8f0ff, #f0e6ff); padding: 25px 20px; border-radius: 50px; margin: 10px 0;">
+                                        <div style="width:80px;height:80px;margin:0 auto 16px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px rgba(155,89,182,0.2);">
+                                            <i class="fas fa-heart" style="font-size:36px;color:#e84393;"></i>
+                                        </div>
+                                        <p style="margin:0 0 8px;color:#2c1b4e;font-size:1.05rem;font-weight:700;line-height:1.5;">
+                                            Necesitas una cuenta para<br>reaccionar a esta publicación.
+                                        </p>
+                                        <p style="margin:0;color:#7f5f9b;font-size:0.88rem;line-height:1.5;">
+                                            Al registrarte podrás elegir tu reacción<br>❤️ ⭐ 🌸 ✨ 🔥
+                                        </p>
+                                    </div>
+                                    <button onclick="window.location.href='login.html'" style="background:linear-gradient(135deg,#9b59b6,#8e44ad);color:white;border:none;padding:15px 28px;border-radius:50px;font-weight:700;cursor:pointer;width:100%;font-size:1rem;box-shadow:0 8px 20px rgba(155,89,182,0.3);margin-top:15px;transition:0.3s;">
+                                        ✨ Crear cuenta — ¡Es gratis!
+                                    </button>
+                                    <p style="margin-top:12px;font-size:0.78rem;color:#b0a4e3;">Ya con cuenta todo queda guardado 🌿</p>
+                                </div>
+                            `,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            customClass: { popup: 'swal-popup-redondo', closeButton: 'swal-close-button' }
+                        });
+                    }
+                    
+                    const id = btn.dataset.id;
+                    
+                    // Mostrar selector de reacciones
+                    const reactionId = await mostrarSelectorReacciones(id);
+                    
+                    if (reactionId) {
+                        // Guardar la reacción elegida
+                        guardarReaccionUsuario(id, reactionId);
+                        // Ejecutar el like con la reacción
+                        await toggleLike(id, reactionId);
+                        await cargarPublicaciones();
+                    }
+                });
+            });
+
+            // Event listeners para hashtags en publicaciones (click para buscar)
+            document.querySelectorAll('.publicacion-card .hashtag-color').forEach(el => {
+                el.addEventListener('click', () => {
+                    const hashtag = el.dataset.hashtag;
+                    const busquedaInput = document.getElementById('busquedaHashtag');
+                    if (busquedaInput) {
+                        busquedaInput.value = hashtag;
+                        hashtagBusqueda = hashtag;
+                        renderizarPublicaciones(tabActual);
+                    }
+                });
+            });
+        }
+
+        // ===== DAR/QUITAR LIKE =====
+        async function toggleLike(publicacionId, reactionId) {
+            if (!usuarioActual) return;
+
+            const loadingAlert = Swal.fire({
+                title: '<i class="fas fa-heart" style="color:#e74c3c;"></i> Procesando reacción...',
+                html: `
+                    <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0;">
+                        <div style="width:60px;height:60px;border:4px solid #f0e6ff;border-top-color:#9b59b6;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:15px;"></div>
+                        <p style="color:#7f5f9b;font-size:0.95rem;">Un momento, procesando tu reacción...</p>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            to { transform: rotate(360deg); }
+                        }
+                    </style>
+                `,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass: { popup: 'swal-like-container' },
+                didOpen: () => {
+                    const popup = document.querySelector('.swal2-popup');
+                    if (popup) {
+                        popup.style.borderRadius = '30px';
+                        popup.style.padding = '30px 25px';
+                    }
+                }
+            });
+
+            try {
+                const { data: existing, error: checkError } = await window.supabaseClient
+                    .from('comunidad_likes')
+                    .select('id')
+                    .eq('usuario_id', usuarioActual.id)
+                    .eq('publicacion_id', publicacionId)
+                    .maybeSingle();
+
+                if (checkError) {
+                    console.error('Error al verificar like:', checkError);
+                    loadingAlert.close();
+                    Swal.fire('Error', 'No se pudo verificar la reacción. Intenta nuevamente.', 'error');
+                    return;
+                }
+
+                let esLike = false;
+
+                if (existing) {
+                    const { error: deleteError } = await window.supabaseClient
+                        .from('comunidad_likes')
+                        .delete()
+                        .eq('id', existing.id);
+
+                    if (deleteError) {
+                        console.error('Error al eliminar like:', deleteError);
+                        loadingAlert.close();
+                        Swal.fire('Error', 'No se pudo quitar tu reacción. Intenta nuevamente.', 'error');
+                        return;
+                    }
+
+                    const { error: decrementError } = await window.supabaseClient.rpc('decrementar_likes_comunidad', { 
+                        pub_id: publicacionId 
+                    });
+
+                    if (decrementError) {
+                        console.error('Error al decrementar likes:', decrementError);
+                    }
+                    
+                    esLike = false;
+                } else {
+                    const likeData = {
+                        usuario_id: usuarioActual.id,
+                        publicacion_id: publicacionId,
+                        reaction: reactionId // Guardamos también la reacción
+                    };
+
+                    const { error: insertError } = await window.supabaseClient
+                        .from('comunidad_likes')
+                        .insert(likeData);
+
+                    if (insertError) {
+                        console.error('Error al insertar like:', insertError);
+                        loadingAlert.close();
+                        Swal.fire('Error', 'No se pudo guardar tu reacción. Intenta nuevamente.', 'error');
+                        return;
+                    }
+
+                    const { error: incrementError } = await window.supabaseClient.rpc('incrementar_likes_comunidad', { 
+                        pub_id: publicacionId 
+                    });
+
+                    if (incrementError) {
+                        console.error('Error al incrementar likes:', incrementError);
+                    }
+                    
+                    esLike = true;
+                }
+
+                loadingAlert.close();
+
+                // Obtener la reacción elegida
+                const reaction = REACCIONES.find(r => r.id === reactionId) || getDefaultReaction();
+
+                if (esLike) {
+                    if (typeof confetti === 'function') {
+                        confetti({
+                            particleCount: 80,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#e74c3c', '#e84393', '#9b59b6', '#f1c40f', '#e67e22']
+                        });
+                        setTimeout(() => {
+                            confetti({
+                                particleCount: 40,
+                                spread: 50,
+                                origin: { y: 0.5 },
+                                colors: ['#e74c3c', '#e84393', '#f1c40f']
+                            });
+                        }, 300);
+                    }
+
+                    Swal.fire({
+                        title: `${reaction.emoji} ¡Gracias por reaccionar!`,
+                        html: `
+                            <div style="display:flex;flex-direction:column;align-items:center;padding:5px 0;">
+                                <div class="like-imagen">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                                </div>
+                                <p class="like-texto">Has reaccionado con ${reaction.emoji}</p>
+                                <p class="like-subtexto">Cada reacción suma y fortalece nuestra comunidad.</p>
+                            </div>
+                        `,
+                        showConfirmButton: true,
+                        confirmButtonText: `${reaction.emoji} ¡Me encanta!`,
+                        confirmButtonColor: '#9b59b6',
+                        timer: 4000,
+                        timerProgressBar: true,
+                        customClass: { 
+                            popup: 'swal-popup-redondo swal-like-container',
+                            confirmButton: 'swal-confirm-btn'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: '<i class="fas fa-heart" style="color:#95a5a6;"></i> Reacción eliminada',
+                        html: `
+                            <div style="display:flex;flex-direction:column;align-items:center;padding:5px 0;">
+                                <div class="like-imagen">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                                </div>
+                                <p class="like-texto">Has quitado tu reacción</p>
+                                <p class="like-subtexto">Siempre puedes volver a reaccionar cuando quieras.</p>
+                            </div>
+                        `,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#95a5a6',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        customClass: { 
+                            popup: 'swal-popup-redondo swal-like-container',
+                            confirmButton: 'swal-confirm-btn'
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error en toggleLike:', error);
+                loadingAlert.close();
+                Swal.fire('Error', 'Ocurrió un error al procesar tu reacción. Intenta nuevamente.', 'error');
+            }
+        }
+
+        // ===== ELIMINAR PUBLICACIÓN =====
+        async function eliminarPublicacion(id) {
+            try {
+                const { error } = await window.supabaseClient
+                    .from('publicaciones')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    Swal.fire('Error', 'No pudimos eliminar la publicación.', 'error');
+                    console.error(error);
+                } else {
+                    Swal.fire({
+                        title: '¡Eliminada!',
+                        text: 'La publicación fue eliminada correctamente.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                console.error('Error en eliminarPublicacion:', error);
+                Swal.fire('Error', 'Ocurrió un error al eliminar.', 'error');
+            }
+        }
+
+        // ===== ABRIR MODAL PARA NUEVA PUBLICACIÓN CON DESPLEGABLES =====
+        function abrirModalPublicacion() {
+            if (!usuarioActual) {
+                Swal.fire('Inicia sesión', 'Debes iniciar sesión para publicar.', 'info');
+                return;
+            }
+
+            const categoriasHashtags = [
+                {
+                    nombre: '🌱 Inspiración',
+                    icono: 'fa-lightbulb',
+                    hashtags: ['#inspiración', '#motivación', '#sueños', '#metas', '#propósito']
+                },
+                {
+                    nombre: '💜 Crecimiento',
+                    icono: 'fa-seedling',
+                    hashtags: ['#crecimiento', '#aprendizaje', '#evolución', '#transformación', '#plenitud']
+                },
+                {
+                    nombre: '🤝 Comunidad',
+                    icono: 'fa-users',
+                    hashtags: ['#comunidad', '#conexión', '#apoyo', '#unión', '#gratitud']
+                },
+                {
+                    nombre: '🧘 Bienestar',
+                    icono: 'fa-spa',
+                    hashtags: ['#bienestar', '#meditación', '#mindfulness', '#pazinterior', '#armonía']
+                },
+                {
+                    nombre: '✨ Reflexión',
+                    icono: 'fa-star',
+                    hashtags: ['#reflexión', '#sabiduría', '#introspección', '#consciencia', '#luz']
+                }
+            ];
+
+            let hashtagsSeleccionados = [];
+            let categoriaAbierta = null;
+
+            Swal.fire({
+                title: '✨ Comparte con la comunidad',
+                html: `
+                    <div style="display: flex; flex-direction: column; gap: 16px; align-items: center; width:100%;">
+                        <p style="color: #6a5a7e; font-size: 0.95rem; margin: 0; text-align: center; line-height: 1.6;">
+                            <i class="fas fa-feather" style="color: #9b59b6;"></i> 
+                            Publica tu inspiración y contenido en el muro de la comunidad
+                        </p>
+                        
+                        <div class="botones-opciones" style="display: flex; gap: 14px; width: 100%; justify-content: center; flex-wrap: wrap;">
+                            <button id="opcionFrase" class="swal2-option-btn" style="flex: 1; min-width: 140px;">
+                                <i class="fas fa-quote-left"></i> Frase
+                            </button>
+                            <button id="opcionImagen" class="swal2-option-btn" style="flex: 1; min-width: 140px;">
+                                <i class="fas fa-image"></i> Imagen
+                            </button>
+                        </div>
+                        
+                        <div id="contenedorPublicacion" style="width: 100%; display: none; flex-direction: column; gap: 16px;">
+                            <textarea id="textoPublicacion" placeholder="Escribe tu frase o reflexión..." style="width: 100%; padding: 16px 18px; border-radius: 18px; border: 2px solid #e0d6eb; resize: vertical; min-height: 100px; font-family: inherit; font-size: 1rem; background: #fdfaff; transition: 0.3s;"></textarea>
+                            
+                            <input type="file" id="archivoImagen" accept="image/*" style="display: none;">
+                            <div id="vistaPrevia" style="display: none; position: relative; width: 100%; border-radius: 16px; overflow: hidden; border: 2px solid #e0d6eb; max-height: 350px; background: #faf8fc;">
+                                <img id="imagenPrevia" src="" alt="Vista previa" style="width: 100%; max-height: 320px; object-fit: contain; background: #faf8fc; display: block; border-radius: 14px;">
+                                <button id="quitarImagen" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); border: none; color: white; border-radius: 50%; width: 34px; height: 34px; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            
+                            <div style="width: 100%;">
+                                ${categoriasHashtags.map((cat, idx) => `
+                                    <div class="categoria-hashtags" data-categoria="${idx}">
+                                        <div class="categoria-header" data-categoria="${idx}">
+                                            <span>
+                                                <span class="categoria-icono">${cat.nombre}</span>
+                                            </span>
+                                            <i class="fas fa-chevron-down categoria-flecha"></i>
+                                        </div>
+                                        <div class="categoria-contenido" data-categoria="${idx}">
+                                            <div class="hashtags-group">
+                                                ${cat.hashtags.map(h => `
+                                                    <span class="hashtag-item" data-hashtag="${h}">${h}</span>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                                <div class="hashtag-counter" id="hashtagCounter">0 / 20 hashtags seleccionados</div>
+                            </div>
+                            
+                            <button id="publicarBtn" class="swal2-confirm-btn">
+                                <i class="fas fa-cloud-upload-alt"></i> Publicar
+                            </button>
+                        </div>
+                    </div>
+                `,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo swal-publicacion-modal' },
+                width: 'auto',
+                didOpen: () => {
+                    const contenedor = document.getElementById('contenedorPublicacion');
+                    const textoArea = document.getElementById('textoPublicacion');
+                    const archivoInput = document.getElementById('archivoImagen');
+                    const vistaPrevia = document.getElementById('vistaPrevia');
+                    const imagenPrevia = document.getElementById('imagenPrevia');
+                    const quitarBtn = document.getElementById('quitarImagen');
+                    const publicarBtn = document.getElementById('publicarBtn');
+                    const hashtagCounter = document.getElementById('hashtagCounter');
+                    
+                    let tipoSeleccionado = null;
+                    let archivoSeleccionado = null;
+
+                    document.querySelectorAll('.categoria-header').forEach(header => {
+                        header.addEventListener('click', () => {
+                            const idx = parseInt(header.dataset.categoria);
+                            const contenido = document.querySelector(`.categoria-contenido[data-categoria="${idx}"]`);
+                            const flecha = header.querySelector('.categoria-flecha');
+                            
+                            if (categoriaAbierta === idx) {
+                                contenido.classList.remove('abierto');
+                                flecha.style.transform = 'rotate(0deg)';
+                                categoriaAbierta = null;
+                            } else {
+                                if (categoriaAbierta !== null) {
+                                    const anteriorContenido = document.querySelector(`.categoria-contenido[data-categoria="${categoriaAbierta}"]`);
+                                    const anteriorFlecha = document.querySelector(`.categoria-header[data-categoria="${categoriaAbierta}"] .categoria-flecha`);
+                                    if (anteriorContenido) {
+                                        anteriorContenido.classList.remove('abierto');
+                                    }
+                                    if (anteriorFlecha) {
+                                        anteriorFlecha.style.transform = 'rotate(0deg)';
+                                    }
+                                }
+                                contenido.classList.add('abierto');
+                                flecha.style.transform = 'rotate(180deg)';
+                                categoriaAbierta = idx;
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.hashtag-item').forEach(el => {
+                        el.addEventListener('click', () => {
+                            const hashtag = el.dataset.hashtag;
+                            const index = hashtagsSeleccionados.indexOf(hashtag);
+                            
+                            if (index > -1) {
+                                hashtagsSeleccionados.splice(index, 1);
+                                el.classList.remove('seleccionado');
+                            } else if (hashtagsSeleccionados.length < 20) {
+                                hashtagsSeleccionados.push(hashtag);
+                                el.classList.add('seleccionado');
+                            } else {
+                                Swal.fire({
+                                    title: 'Límite alcanzado',
+                                    text: 'Puedes seleccionar máximo 20 hashtags.',
+                                    icon: 'info',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                            
+                            hashtagCounter.textContent = `${hashtagsSeleccionados.length} / 20 hashtags seleccionados`;
+                        });
+                    });
+
+                    document.getElementById('opcionFrase').addEventListener('click', () => {
+                        tipoSeleccionado = 'frase';
+                        contenedor.style.display = 'flex';
+                        archivoInput.style.display = 'none';
+                        vistaPrevia.style.display = 'none';
+                        textoArea.placeholder = 'Escribe tu frase o reflexión...';
+                        textoArea.value = '';
+                        archivoSeleccionado = null;
+                        document.querySelectorAll('.swal2-option-btn').forEach(b => b.classList.remove('seleccionado'));
+                        document.getElementById('opcionFrase').classList.add('seleccionado');
+                    });
+
+                    document.getElementById('opcionImagen').addEventListener('click', () => {
+                        tipoSeleccionado = 'imagen';
+                        contenedor.style.display = 'flex';
+                        archivoInput.style.display = 'block';
+                        archivoInput.click();
+                        textoArea.placeholder = 'Opcional: añade un pie de foto...';
+                        vistaPrevia.style.display = 'none';
+                        imagenPrevia.src = '';
+                        archivoSeleccionado = null;
+                        document.querySelectorAll('.swal2-option-btn').forEach(b => b.classList.remove('seleccionado'));
+                        document.getElementById('opcionImagen').classList.add('seleccionado');
+                    });
+
+                    archivoInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            archivoSeleccionado = file;
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                imagenPrevia.src = ev.target.result;
+                                vistaPrevia.style.display = 'block';
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+
+                    quitarBtn.addEventListener('click', () => {
+                        archivoSeleccionado = null;
+                        vistaPrevia.style.display = 'none';
+                        imagenPrevia.src = '';
+                        archivoInput.value = '';
+                    });
+
+                    publicarBtn.addEventListener('click', async () => {
+                        if (!tipoSeleccionado) {
+                            Swal.fire('Selecciona un tipo', 'Elige entre frase o imagen para publicar.', 'info');
+                            return;
+                        }
+                        
+                        let texto = textoArea.value.trim();
+                        
+                        if (hashtagsSeleccionados.length > 0) {
+                            texto = texto + ' ' + hashtagsSeleccionados.join(' ');
+                        }
+                        
+                        if (tipoSeleccionado === 'frase' && !texto) {
+                            Swal.fire('Frase vacía', 'Escribe una frase para compartir con la comunidad.', 'warning');
+                            return;
+                        }
+                        if (tipoSeleccionado === 'imagen' && !archivoSeleccionado && !texto) {
+                            Swal.fire('Sin contenido', 'Selecciona una imagen o escribe un pie de foto.', 'warning');
+                            return;
+                        }
+
+                        const loadingAlert = Swal.fire({
+                            title: '📤 Publicando contenido...',
+                            html: `
+                                <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0;">
+                                    <div style="width:60px;height:60px;border:4px solid #f0e6ff;border-top-color:#9b59b6;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:15px;"></div>
+                                    <p style="color:#7f5f9b;font-size:0.95rem;">Tu mensaje está llegando a la comunidad...</p>
+                                </div>
+                                <style>
+                                    @keyframes spin {
+                                        to { transform: rotate(360deg); }
+                                    }
+                                </style>
+                            `,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                const popup = document.querySelector('.swal2-popup');
+                                if (popup) {
+                                    popup.style.borderRadius = '30px';
+                                    popup.style.padding = '30px 25px';
+                                }
+                            }
+                        });
+
+                        let contenidoFinal = texto;
+                        let tipoFinal = tipoSeleccionado;
+
+                        if (tipoSeleccionado === 'imagen' && archivoSeleccionado) {
+                            const ext = archivoSeleccionado.name.split('.').pop();
+                            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+                            const filePath = `publicaciones/${fileName}`;
+                            
+                            const { data: uploadData, error: uploadError } = await window.supabaseClient
+                                .storage
+                                .from('publicaciones')
+                                .upload(filePath, archivoSeleccionado);
+
+                            if (uploadError) {
+                                loadingAlert.close();
+                                Swal.fire('Error al subir', 'No se pudo subir la imagen.', 'error');
+                                console.error(uploadError);
+                                return;
+                            }
+
+                            const { data: urlData } = window.supabaseClient
+                                .storage
+                                .from('publicaciones')
+                                .getPublicUrl(filePath);
+
+                            contenidoFinal = urlData.publicUrl;
+                            tipoFinal = 'imagen';
+                        }
+
+                        const { error: insertError } = await window.supabaseClient
+                            .from('publicaciones')
+                            .insert({
+                                usuario_id: usuarioActual.id,
+                                tipo: tipoFinal,
+                                contenido: contenidoFinal,
+                                created_at: new Date().toISOString()
+                            });
+
+                        loadingAlert.close();
+
+                        if (insertError) {
+                            Swal.fire('Error', 'No se pudo crear la publicación.', 'error');
+                            console.error(insertError);
+                        } else {
+                            if (typeof confetti === 'function') {
+                                confetti({
+                                    particleCount: 120,
+                                    spread: 80,
+                                    origin: { y: 0.6 },
+                                    colors: ['#9b59b6', '#8e44ad', '#f1c40f', '#e74c3c', '#27ae60', '#3498db']
+                                });
+                                setTimeout(() => {
+                                    confetti({
+                                        particleCount: 70,
+                                        spread: 60,
+                                        origin: { y: 0.5 },
+                                        colors: ['#9b59b6', '#f39c12', '#e84393']
+                                    });
+                                }, 300);
+                            }
+
+                            Swal.fire({
+                                title: '¡Publicado con éxito! ✨',
+                                html: `
+                                    <div style="display:flex;flex-direction:column;align-items:center;padding:5px 0;">
+                                        <div class="exito-imagen">
+                                            <img src="imganes/logosmedi.png" alt="Medicurativo">
+                                        </div>
+                                        <p class="exito-texto">¡Grandioso! Tu contenido está publicado</p>
+                                        <p class="exito-subtexto">Gracias por aportar a la comunidad 💜</p>
+                                    </div>
+                                `,
+                                showConfirmButton: true,
+                                confirmButtonText: 'Ver en el muro',
+                                confirmButtonColor: '#9b59b6',
+                                timer: 5000,
+                                timerProgressBar: true,
+                                customClass: { popup: 'swal-popup-redondo swal-publicacion-exito' }
+                            }).then(() => {
+                                Swal.close();
+                                cargarPublicaciones();
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // ===== SUGERENCIAS DE HASHTAGS EN LA BÚSQUEDA =====
+        function mostrarSugerencias(termino) {
+            const sugerenciasContainer = document.getElementById('sugerenciasHashtags');
+            if (!sugerenciasContainer) return;
+            
+            if (!termino || termino.trim() === '') {
+                sugerenciasContainer.classList.remove('mostrar');
+                return;
+            }
+            
+            const terminoLower = termino.toLowerCase().trim();
+            
+            const coincidencias = todosLosHashtags.filter(h => 
+                h.toLowerCase().includes(terminoLower)
+            );
+            
+            if (coincidencias.length === 0) {
+                sugerenciasContainer.classList.remove('mostrar');
+                return;
+            }
+            
+            sugerenciasContainer.innerHTML = coincidencias.map(h => `
+                <div class="sugerencia-item" data-hashtag="${h}">
+                    <i class="fas fa-hashtag"></i>
+                    ${h}
+                </div>
+            `).join('');
+            
+            sugerenciasContainer.classList.add('mostrar');
+            
+            sugerenciasContainer.querySelectorAll('.sugerencia-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const hashtag = el.dataset.hashtag;
+                    const input = document.getElementById('busquedaHashtag');
+                    if (input) {
+                        input.value = hashtag;
+                        hashtagBusqueda = hashtag;
+                        sugerenciasContainer.classList.remove('mostrar');
+                        renderizarPublicaciones(tabActual);
+                    }
+                });
+            });
+        }
+
+        // ===== ABRIR ZOOM DE IMAGEN =====
+        function abrirImagenZoom(url, titulo) {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: titulo,
+                title: titulo || 'Imagen',
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo' },
+                width: '90%',
+                imageWidth: '100%',
+                imageHeight: 'auto',
+                didOpen: () => {
+                    const img = document.querySelector('.swal2-image');
+                    if (img) {
+                        img.style.borderRadius = '16px';
+                    }
+                }
+            });
+        }
+
+        // ===== FUNCIÓN DE AYUDA =====
+        function mostrarAyudaComunidad() {
+            Swal.fire({
+                title: '<i class="fas fa-users"></i> Comunidad Medicurativo',
+                html: `
+                    <div style="padding: 5px 0;">
+                        <p style="text-align:center; color:#6a5a7e; font-size:0.95rem; margin-bottom:16px; font-weight:400;">
+                            Bienvenido al muro social, un espacio para compartir y crecer juntos.
+                        </p>
+
+                        <div class="ayuda-item">
+                            <div class="ayuda-icono morado"><i class="fas fa-clock"></i></div>
+                            <div class="ayuda-texto">
+                                <strong>Recientes</strong>
+                                <span>Publicaciones ordenadas por fecha, las más nuevas primero.</span>
+                            </div>
+                        </div>
+
+                        <div class="ayuda-item">
+                            <div class="ayuda-icono naranja"><i class="fas fa-fire"></i></div>
+                            <div class="ayuda-texto">
+                                <strong>Más Valoradas</strong>
+                                <span>Publicaciones con más reacciones ❤️ ⭐ 🌸 ✨ 🔥</span>
+                            </div>
+                        </div>
+
+                        <div class="ayuda-item">
+                            <div class="ayuda-icono verde"><i class="fas fa-plus-circle"></i></div>
+                            <div class="ayuda-texto">
+                                <strong>Subir contenido</strong>
+                                <span>Visible solo si estás logueado. Comparte frases o imágenes con la comunidad.</span>
+                            </div>
+                        </div>
+
+                        <div class="ayuda-item">
+                            <div class="ayuda-icono azul"><i class="fas fa-search"></i></div>
+                            <div class="ayuda-texto">
+                                <strong>Buscar por hashtag</strong>
+                                <span>Escribe #inspiración, #crecimiento o cualquier hashtag para filtrar publicaciones.</span>
+                            </div>
+                        </div>
+
+                        <div class="ayuda-item">
+                            <div class="ayuda-icono rojo"><i class="fas fa-trash-alt"></i></div>
+                            <div class="ayuda-texto">
+                                <strong>Eliminar</strong>
+                                <span>Solo puedes eliminar tus propias publicaciones, el botón aparece en tus posts.</span>
+                            </div>
+                        </div>
+
+                        <div class="ayuda-item" style="border-left-color: #e84393;">
+                            <div class="ayuda-icono" style="background: #e84393;"><i class="fas fa-heart"></i></div>
+                            <div class="ayuda-texto">
+                                <strong>Reacciones</strong>
+                                <span>Elige entre ❤️ ⭐ 🌸 ✨ 🔥 para expresar cómo te hace sentir cada publicación.</span>
+                            </div>
+                        </div>
+
+                        <div class="ayuda-footer">
+                            <i class="fas fa-feather"></i> Comparte desde el corazón, cada palabra y cada imagen suma luz.
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#9b59b6',
+                customClass: {
+                    popup: 'swal-popup-redondo swal-ayuda-comunidad',
+                    confirmButton: 'swal-confirm-btn'
+                }
+            });
+        }
+
+        // ===== INICIALIZACIÓN =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            let intentos = 0;
+            const maxIntentos = 20;
+            
+            while (typeof window.supabaseClient === 'undefined' && intentos < maxIntentos) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                intentos++;
+            }
+            
+            if (typeof window.supabaseClient === 'undefined') {
+                document.getElementById('muroComunidad').innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px; background: #fff0f0; border-radius: 30px; border: 2px solid #ff6b6b;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff6b6b;"></i>
+                        <p style="color: #c0392b; margin-top: 20px; font-size: 1.1rem;">Error al conectar con el servidor. Por favor, recarga la página.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            actualizarBotonInicio();
+            await verificarSesion();
+            await cargarPublicaciones();
+
+            const btnSubir = document.getElementById('btnSubirPublicacion');
+            if (btnSubir) {
+                btnSubir.addEventListener('click', abrirModalPublicacion);
+            }
+
+            const busquedaInput = document.getElementById('busquedaHashtag');
+            if (busquedaInput) {
+                busquedaInput.addEventListener('input', (e) => {
+                    const valor = e.target.value;
+                    hashtagBusqueda = valor;
+                    mostrarSugerencias(valor);
+                    renderizarPublicaciones(tabActual);
+                });
+
+                busquedaInput.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        const sugerencias = document.getElementById('sugerenciasHashtags');
+                        if (sugerencias) {
+                            sugerencias.classList.remove('mostrar');
+                        }
+                    }, 300);
+                });
+
+                busquedaInput.addEventListener('focus', () => {
+                    const valor = busquedaInput.value;
+                    if (valor && valor.trim() !== '') {
+                        mostrarSugerencias(valor);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    btn.classList.add('active');
+                    tabActual = btn.dataset.tab;
+                    
+                    const muro = document.getElementById('muroComunidad');
+                    muro.style.opacity = '0.5';
+                    renderizarPublicaciones(tabActual);
+                    setTimeout(() => {
+                        muro.style.opacity = '1';
+                    }, 100);
+                });
+            });
+
+            document.getElementById('btnAyuda')?.addEventListener('click', mostrarAyudaComunidad);
+
+            const frasesComunidad = [
+                "Comparte una frase que inspire o una imagen que refleje tu momento. Juntos creamos una comunidad de luz.",
+                "Cada palabra y cada imagen que compartes tiene el poder de sanar a alguien.",
+                "La comunidad es el reflejo de nuestras almas. Publica con el corazón.",
+                "No hay gesto pequeño cuando se hace con amor. Tu publicación puede ser el abrazo que alguien necesita.",
+                "En esta comunidad, cada voz cuenta. Anímate a compartir tu verdad y tu belleza."
+            ];
+            const elFrase = document.getElementById('fraseInspiradora');
+            if (elFrase) {
+                let index = Math.floor(Math.random() * frasesComunidad.length);
+                elFrase.textContent = frasesComunidad[index];
+                setInterval(() => {
+                    elFrase.style.opacity = '0';
+                    setTimeout(() => {
+                        index = (index + 1) % frasesComunidad.length;
+                        elFrase.textContent = frasesComunidad[index];
+                        elFrase.style.opacity = '1';
+                    }, 600);
+                }, 12000);
+            }
+
+            if (window.supabaseClient && window.supabaseClient.auth) {
+                window.supabaseClient.auth.onAuthStateChange((event, session) => {
+                    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                        actualizarBotonInicio();
+                        verificarSesion();
+                        cargarPublicaciones();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

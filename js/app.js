@@ -8,15 +8,59 @@ const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
 const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Hacer temaPrincipal global
+// Hacer supabaseClient global para que otros scripts lo usen
+window.supabaseClient = supabaseClient;
+
+// ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
+function getDestinoInicio() {
+    const path = window.location.pathname;
+    const esIndex = path.includes('index.html') || path.endsWith('/') || path === '';
+    const esPrincipal = path.includes('principal.html');
+    const esComunidad = path.includes('comunidad.html');
+    
+    // Si estamos en index, siempre ir a index
+    if (esIndex) return 'index.html';
+    
+    // Verificar si hay sesión activa
+    const { data: { session } } = supabaseClient.auth.getSession();
+    const tieneSesion = session !== null;
+    
+    // Si estamos en principal o comunidad y hay sesión, ir a principal
+    if ((esPrincipal || esComunidad) && tieneSesion) {
+        return 'principal.html';
+    }
+    
+    // Si estamos en principal o comunidad y NO hay sesión, ir a index
+    if ((esPrincipal || esComunidad) && !tieneSesion) {
+        return 'index.html';
+    }
+    
+    // Por defecto, ir a index
+    return 'index.html';
+}
+
+// ===== ACTUALIZAR BOTÓN INICIO =====
+function actualizarBotonInicio() {
+    const wrapperInicio = document.getElementById('wrapperInicio');
+    if (!wrapperInicio) return;
+    
+    const destino = getDestinoInicio();
+    const link = wrapperInicio.querySelector('a');
+    if (link) {
+        link.href = destino;
+    }
+}
+
 // ===== BASE DE DATOS =====
 
 // Sonido de interfaz (Click suave)
 const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
-clickSound.volume = 0.2; // Volumen bajo para que sea elegante
+clickSound.volume = 0.2;
+window.clickSound = clickSound;
 
 const successSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3');
 successSound.volume = 0.3;
+window.successSound = successSound;
 
 const achievementSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
 achievementSound.volume = 0.4;
@@ -65,24 +109,27 @@ const temas = [
     { id: 31, nombre: "El aprecio a la mujer", cat: "especial", icono: "fa-star", desc: "Reconocimiento y gratitud.", imagen: "aprecio_mujer.png" }
 ];
 
-// Categorías con colores (INCLUYENDO GALERÍA)
+// Categorías con colores (INCLUYENDO GALERÍA Y COMUNIDAD)
 const categorias = [
     { id: 'valores', nombre: 'Valores', icono: 'fa-hand-sparkles', color: '#1e6f9c', colorFondo: '#0a3b55' },
     { id: 'crecimiento', nombre: 'Crecimiento', icono: 'fa-seedling', color: '#8e44ad', colorFondo: '#4a2360' },
     { id: 'emociones', nombre: 'Emociones', icono: 'fa-heart', color: '#c44569', colorFondo: '#822b4a' },
     { id: 'liderazgo', nombre: 'Liderazgo', icono: 'fa-crown', color: '#0e7c5c', colorFondo: '#064e39' },
     { id: 'especial', nombre: 'Especiales', icono: 'fa-calendar-star', color: '#e67e22', colorFondo: '#a55c17' },
-    { id: 'galeria', nombre: 'Galería', icono: 'fa-images', color: '#9b59b6', colorFondo: '#4a2360' }
+    { id: 'galeria', nombre: 'Galería', icono: 'fa-images', color: '#9b59b6', colorFondo: '#4a2360' },
+    { id: 'comunidad', nombre: 'Comunidad', icono: 'fa-users', color: '#27ae60', colorFondo: '#1a6a3e' }
 ];
 
 // Elementos DOM
 const menuHorizontal = document.getElementById('menuHorizontal');
 const temaPrincipal = document.getElementById('temaPrincipal');
 const esPaginaGaleria = window.location.pathname.includes('galeria.html') || window.location.pathname.includes('galeria2.html');
+const esPaginaComunidad = window.location.pathname.includes('comunidad.html');
 
 // Hacer temaPrincipal global para otros scripts
 window.temaPrincipal = temaPrincipal;
-window.categorias = categorias; // Hacer categorias global
+window.categorias = categorias;
+window.temas = temas;
 
 // ===== FUNCIÓN DE ZOOM PARA IMÁGENES =====
 window.abrirImagenZoom = function(url, titulo) {
@@ -105,6 +152,21 @@ function isMobile() {
 
 // ===== FUNCIÓN PARA MOSTRAR TEMAS DE UNA CATEGORÍA EN SWEETALERT (MÓVIL) =====
 window.mostrarTemasCategoriaMobile = function(categoria) {
+    // Si es la categoría "comunidad" o "galeria", redirigir directamente
+    if (categoria.id === 'comunidad') {
+        const esPaginaIndex = window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
+        const urlDestino = esPaginaIndex ? 'comunidad.html' : 'comunidad.html';
+        window.location.href = urlDestino;
+        return;
+    }
+    
+    if (categoria.id === 'galeria') {
+        const esPaginaIndex = window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
+        const urlDestino = esPaginaIndex ? 'galeria2.html' : 'galeria.html';
+        window.location.href = urlDestino;
+        return;
+    }
+    
     const temasCat = temas.filter(t => t.cat === categoria.id);
     
     let temasHTML = '<div style="max-height: 400px; overflow-y: auto; padding: 5px; scrollbar-width: none;">';
@@ -157,7 +219,6 @@ function mostrarTema(tema) {
     const categoria = categorias.find(c => c.id === tema.cat);
     const colorBorde = categoria ? categoria.color : '#8e44ad';
 
-    // Diseño único para todos los temas usando el objeto tema
     const tieneImagen = tema.imagen && tema.imagen.trim() !== '';
     const imagenHTML = tieneImagen ? `
         <div class="tema-personalizado-imagen">
@@ -181,8 +242,6 @@ function mostrarTema(tema) {
     temaPrincipal.style.borderLeftColor = colorBorde;
 }
 
-
-
 // ===== FUNCIÓN PARA CERRAR SUBMENÚS =====
 function cerrarTodosSubmenus() {
     document.querySelectorAll('.submenu').forEach(sub => {
@@ -193,29 +252,38 @@ function cerrarTodosSubmenus() {
     });
 }
 
-// ===== FUNCIÓN PARA CONSTRUIR MENÚ ADAPTABLE =====
+// ===== FUNCIÓN PARA CONSTRUIR MENÚ ADAPTABLE (CON COMUNIDAD COMO ENLACE DIRECTO) =====
 function construirMenuAdaptable(filtro = '') {
     if (!menuHorizontal) return;
     let html = '';
     const mobile = isMobile();
-    // Detectar si estamos en index para decidir el destino de galería
     const esPaginaIndex = window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
     const urlDestinoGaleria = esPaginaIndex ? 'galeria2.html' : 'galeria.html';
+    const urlDestinoComunidad = esPaginaIndex ? 'comunidad.html' : 'comunidad.html';
     
     categorias.forEach(cat => {
-        
-    if (cat.id === 'galeria') {
-    html += `
-        <button class="menu-btn-categoria" onclick="window.location.href='${urlDestinoGaleria}'"
-                style="border-left: 5px solid ${cat.color};">
-            <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
-            <span>${cat.nombre}</span>
-        </button>
-    `;
-
-
-        } else {
-            // Otras categorías (valores, crecimiento, etc.)
+        // ===== CATEGORÍA GALERÍA (ENLACE DIRECTO) =====
+        if (cat.id === 'galeria') {
+            html += `
+                <button class="menu-btn-categoria" onclick="window.location.href='${urlDestinoGaleria}'"
+                        style="border-left: 5px solid ${cat.color};">
+                    <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                    <span>${cat.nombre}</span>
+                </button>
+            `;
+        } 
+        // ===== CATEGORÍA COMUNIDAD (ENLACE DIRECTO - TANTO PC COMO MÓVIL) =====
+        else if (cat.id === 'comunidad') {
+            html += `
+                <button class="menu-btn-categoria" onclick="window.location.href='${urlDestinoComunidad}'"
+                        style="border-left: 5px solid ${cat.color};">
+                    <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                    <span>${cat.nombre}</span>
+                </button>
+            `;
+        }
+        // ===== OTRAS CATEGORÍAS (valores, crecimiento, etc.) =====
+        else {
             if (mobile) {
                 html += `
                     <button class="menu-btn-categoria" onclick="window.mostrarTemasCategoriaMobile(${JSON.stringify(cat).replace(/"/g, '&quot;')})"
@@ -225,13 +293,11 @@ function construirMenuAdaptable(filtro = '') {
                     </button>
                 `;
             } else {
-                // Filtrar temas por nombre si hay búsqueda
                 const temasCat = temas.filter(t => 
                     t.cat === cat.id && 
                     t.nombre.toLowerCase().includes(filtro.toLowerCase())
                 );
 
-                // Solo mostrar categoría si tiene temas que coinciden
                 if (temasCat.length === 0 && filtro !== '') return;
 
                 html += `
@@ -259,9 +325,49 @@ function construirMenuAdaptable(filtro = '') {
     
     menuHorizontal.innerHTML = html;
 }
+
+// ===== FUNCIÓN PARA ACTUALIZAR MENÚ MÓVIL (HAMBURGUESA) =====
+function actualizarMenuMovil() {
+    const menuMovilBotones = document.getElementById('categoriasMovilBotones');
+    if (!menuMovilBotones) return;
+    
+    const esPaginaIndex = window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
+    const urlDestinoGaleria = esPaginaIndex ? 'galeria2.html' : 'galeria.html';
+    const urlDestinoComunidad = esPaginaIndex ? 'comunidad.html' : 'comunidad.html';
+    
+    let html = '';
+    
+    categorias.forEach(cat => {
+        if (cat.id === 'galeria') {
+            html += `
+                <button class="categoria-movil-btn" onclick="window.location.href='${urlDestinoGaleria}'" style="border-left-color: ${cat.color};">
+                    <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                    <span>${cat.nombre}</span>
+                </button>
+            `;
+        } else if (cat.id === 'comunidad') {
+            html += `
+                <button class="categoria-movil-btn" onclick="window.location.href='${urlDestinoComunidad}'" style="border-left-color: ${cat.color};">
+                    <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                    <span>${cat.nombre}</span>
+                </button>
+            `;
+        } else {
+            // Otras categorías (valores, crecimiento, etc.)
+            html += `
+                <button class="categoria-movil-btn" onclick="window.mostrarTemasCategoriaMobile(${JSON.stringify(cat).replace(/"/g, '&quot;')})" style="border-left-color: ${cat.color};">
+                    <i class="fas ${cat.icono}" style="color: ${cat.color};"></i>
+                    <span>${cat.nombre}</span>
+                </button>
+            `;
+        }
+    });
+    
+    menuMovilBotones.innerHTML = html;
+}
+
 // ===== FUNCIONES PARA PC =====
 window.toggleSubmenu = function(e, catId) {
-    // Detección segura: si 'e' es un evento, lo usamos; si es un string, es el catId
     const event = (e && e.stopPropagation) ? e : null;
     const id = event ? catId : e;
 
@@ -277,7 +383,6 @@ window.toggleSubmenu = function(e, catId) {
         cerrarTodosSubmenus();
         if (submenu) submenu.classList.add('mostrar');
         if (btn) btn.classList.add('activo');
-        // Reproducir sonido al abrir
         clickSound.currentTime = 0;
         clickSound.play().catch(e => console.log("Audio requiere interacción previa"));
     }
@@ -371,7 +476,6 @@ window.seleccionarTema = function(id) {
 document.addEventListener('click', function(event) {
     if (!event.target.closest('.menu-item')) {
         cerrarTodosSubmenus();
-        
     }
 });
 
@@ -380,7 +484,13 @@ window.addEventListener('resize', function() {
     construirMenuAdaptable();
 });
 
+// ============================================================
+// INICIALIZACIÓN PRINCIPAL
+// ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+    // --- ACTUALIZAR BOTÓN INICIO ---
+    actualizarBotonInicio();
+    
     // --- Verificación de Sesión y Saludo ---
     async function verificarSesion() {
         const { data: { session } } = await supabaseClient.auth.getSession();
@@ -394,9 +504,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 contenedorSaludo.style.display = 'flex';
             }
             gestionarBuzon(session.user.id);
+            // Actualizar botón inicio después de verificar sesión
+            actualizarBotonInicio();
         } else {
-            // Si no hay sesión, igual gestionamos el buzón para el invitado
             gestionarBuzon(null);
+            // Actualizar botón inicio después de verificar sesión
+            actualizarBotonInicio();
         }
     }
 
@@ -410,8 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!userId) {
             if (btnBuzon) {
-                // Usuario NO logueado: Mostramos el Swafire de invitación
-                if (notif) notif.style.display = 'block'; // Activamos puntito para invitar a registrarse
+                if (notif) notif.style.display = 'block';
                 btnBuzon.onclick = () => mostrarInvitacionRegistro();
             }
             return;
@@ -420,17 +532,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const bienvenidaVista = localStorage.getItem(`bienvenida_${userId}`);
         const novedadVista = localStorage.getItem(`novedad_${userId}`);
 
-        // Mostrar puntito si hay bienvenida pendiente O una novedad no leída
         if (!bienvenidaVista || novedadVista !== ID_ULTIMA_NOVEDAD) {
             if (notif) notif.style.display = 'block';
         }
 
-        // Bienvenida automática solo para nuevos
         if (!bienvenidaVista) {
             setTimeout(() => mostrarBienvenida(userId), 2500);
         }
 
-        // Evento del botón
         if (btnBuzon) {
             btnBuzon.onclick = () => {
                 if (notif) notif.style.display = 'none';
@@ -458,6 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <li><strong>Reloj Dinámico:</strong> Ahora tienes fecha y hora en tiempo real.</li>
                             <li><strong>Barra de Progreso:</strong> Visualiza cómo avanza tu día con colores.</li>
                             <li><strong>Logros Reales:</strong> Gana trofeos al personalizar tu perfil.</li>
+                            <li><strong>Nueva Comunidad:</strong> Comparte frases e imágenes con otros usuarios.</li>
                         </ul>
                     </div>
                     <p style="font-size: 0.85rem; color: #7f8c8d; text-align: center; margin-top: 15px;">Vuelve a pulsar el buzón cuando quieras ver el manual de uso.</p>
@@ -473,45 +583,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function mostrarInvitacionRegistro() {
         Swal.fire({
-            title: '<span style="color: #2c1b4e; font-weight: 800;">🚀 ¡Descubre Medicurativo!</span>',
+            title: '<span style="color: #2c1b4e; font-weight: 800;">📬 ¿Qué puedes hacer aquí?</span>',
             html: `
                 <div style="text-align: center; padding: 5px;">
-                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu refugio digital para la paz mental y el crecimiento personal.</p>
+                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio de crecimiento personal 🌿</p>
                     
                     <div style="text-align: left; background: #fdfaff; padding: 20px; border-radius: 30px; border: 2px solid #f0e6ff; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                        <!-- LO QUE PUEDE HACER -->
                         <div style="margin-bottom: 20px;">
-                            <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible ahora</h4>
+                            <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible sin cuenta</h4>
                             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                                <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-spa" style="color: #27ae60; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Leer reflexiones sobre valores y crecimiento.</p>
+                                <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-th-list" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Ver todas las <strong>categorías</strong> y sus reflexiones.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Buscar</strong> temas de inspiración libremente.</p>
                             </div>
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Buscador inteligente de inspiración.</p>
+                                <div style="background: #eaf6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-images" style="color: #3498db; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Explorar la <strong>galería</strong> de imágenes reflexivas.</p>
                             </div>
                         </div>
 
-                        <!-- LO QUE ESTÁ BLOQUEADO -->
                         <div>
-                            <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Bloqueado para Invitados</h4>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.8;">
+                            <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Solo con cuenta</h4>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.85;">
                                 <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Logros:</strong> Desbloquea trofeos al unirte.</p>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Completar logros:</strong> Desbloquea trofeos y medallas.</p>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.8;">
-                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-cloud-upload-alt" style="color: #ff7675; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Subir Contenido:</strong> Sube tus propias reflexiones.</p>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.85;">
+                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #e84393; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Calificar</strong> y dar like a las reflexiones.</p>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0.8;">
-                                <div style="background: #e8f4fd; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-comment-alt" style="color: #3498db; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Comunidad:</strong> Califica y comenta sobre la página.</p>
+                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0.85;">
+                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Comunidad:</strong> Comparte y participa con otros usuarios.</p>
                             </div>
                         </div>
                     </div>
                     
                     <div style="margin-top: 25px;">
-                        <button onclick="window.location.href='login.html'" style="background: #9b59b6; color: white; border: none; padding: 16px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: 0.3s;">✨ ¡Unirme y Desbloquear todo!</button>
+                        <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 16px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); font-size: 1rem; transition: 0.3s;">✨ ¡Crear cuenta y desbloquear todo!</button>
                     </div>
                     <p style="margin-top: 15px; font-size: 0.8rem; color: #7f8c8d; font-style: italic;">"La paz interior es el mejor regalo que te puedes dar hoy."</p>
                 </div>
@@ -563,12 +675,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Buscador Inteligente:</strong> Encuentra la reflexión exacta que necesitas hoy.</p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <div style="background: #e6fffa; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #27ae60;"></i></div>
-                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Comunidad:</strong> Califica la página y ayúdanos a llegar a más personas.</p>
+                            <div style="background: #e6fffa; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60;"></i></div>
+                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Comunidad:</strong> Comparte frases e imágenes con otros usuarios.</p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 15px;">
-                            <div style="background: #fff0f5; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-upload" style="color: #ff7675;"></i></div>
-                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Próximamente:</strong> ¡Podrás subir tus propias frases y compartirlas!</p>
+                            <div style="background: #fff0f5; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #ff7675;"></i></div>
+                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Califica:</strong> Tu opinión nos ayuda a crecer como comunidad.</p>
                         </div>
                     </div>
                     <p style="margin-top: 20px; font-size: 0.85rem; color: #7f8c8d; font-style: italic;">"La paz interior comienza en el momento en que decides no permitir que otra persona o evento controle tus emociones."</p>
@@ -592,23 +704,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const suma = opiniones.reduce((acc, op) => acc + op.estrellas, 0);
             const promedio = (suma / opiniones.length).toFixed(1);
             
-            // Actualizar header (PC) - Solo si el promedio no es 0
             if (valorText) {
                 valorText.textContent = promedio;
             }
             
-            // Actualizar menú móvil
             if (valorTextMovil) valorTextMovil.textContent = promedio;
             if (container) container.style.display = 'flex';
         }
     }
 
-    actualizarPromedioGlobal();
-
+    // Solo ejecutar en páginas que no sean comunidad
+    if (!esPaginaComunidad) {
+        actualizarPromedioGlobal();
+    }
     verificarSesion();
 
-    // --- Manejo de errores de Supabase en la URL (#error=...) ---
-    const hash = window.location.hash; // Mantenemos esta línea para el manejo de errores de Supabase
+    // --- Manejo de errores de Supabase en la URL ---
+    const hash = window.location.hash;
     if (hash && hash.includes('error')) {
         const params = new URLSearchParams(hash.replace('#', '?'));
         const errorDesc = params.get('error_description');
@@ -621,7 +733,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonColor: '#9b59b6',
                 customClass: { popup: 'swal-popup-redondo' }
             });
-            // Limpiar la URL para que el error no se repita al recargar
             window.history.replaceState(null, null, window.location.pathname);
         }
     }
@@ -629,7 +740,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Lógica de Modo Oscuro ---
     const darkModeBtn = document.getElementById('darkModeToggle');
 
-    // Sincronizar el icono del botón si existe
     if (darkModeBtn && document.body.classList.contains('dark-mode')) {
         darkModeBtn.querySelector('i').className = 'fas fa-sun';
     }
@@ -643,59 +753,55 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Lógica del Buscador ---
-    const inputBusqueda = document.getElementById('inputBusqueda');
-    const sugerenciasCont = document.getElementById('sugerenciasBusqueda');
+    // --- Lógica del Buscador (solo en páginas que no son comunidad) ---
+    if (!esPaginaComunidad) {
+        const inputBusqueda = document.getElementById('inputBusqueda');
+        const sugerenciasCont = document.getElementById('sugerenciasBusqueda');
 
-    if (inputBusqueda && sugerenciasCont) {
-        inputBusqueda.addEventListener('input', (e) => {
-            const valorOriginal = e.target.value;
-            const valor = valorOriginal.toLowerCase();
-            if (valor.length > 1) {
-                const filtrados = temas.filter(t => t.nombre.toLowerCase().includes(valor));
-                if (filtrados.length > 0) {
-                    sugerenciasCont.innerHTML = filtrados.map(t => {
-                        // Resaltado (Highlight) con color llamativo
-                        const regex = new RegExp(`(${valorOriginal})`, 'gi');
-                        const nombreResaltado = t.nombre.replace(regex, '<span class="highlight">$1</span>');
-                        return `
-                        <div class="sugerencia-item" onclick="seleccionarSugerencia(${t.id}); clickSound.play();">
-                            <i class="fas ${t.icono}"></i> ${nombreResaltado}
-                        </div>
-                    `}).join('');
-                    sugerenciasCont.classList.add('mostrar');
+        if (inputBusqueda && sugerenciasCont) {
+            inputBusqueda.addEventListener('input', (e) => {
+                const valorOriginal = e.target.value;
+                const valor = valorOriginal.toLowerCase();
+                if (valor.length > 1) {
+                    const filtrados = temas.filter(t => t.nombre.toLowerCase().includes(valor));
+                    if (filtrados.length > 0) {
+                        sugerenciasCont.innerHTML = filtrados.map(t => {
+                            const regex = new RegExp(`(${valorOriginal})`, 'gi');
+                            const nombreResaltado = t.nombre.replace(regex, '<span class="highlight">$1</span>');
+                            return `
+                            <div class="sugerencia-item" onclick="seleccionarSugerencia(${t.id}); clickSound.play();">
+                                <i class="fas ${t.icono}"></i> ${nombreResaltado}
+                            </div>
+                        `}).join('');
+                        sugerenciasCont.classList.add('mostrar');
+                    } else {
+                        sugerenciasCont.innerHTML = `<div class="sugerencia-item" style="text-align: center; opacity: 0.6; cursor: default;">No encontrado</div>`;
+                        sugerenciasCont.classList.add('mostrar');
+                    }
                 } else {
-                    // Mensaje cuando no hay temas encontrados
-                    sugerenciasCont.innerHTML = `<div class="sugerencia-item" style="text-align: center; opacity: 0.6; cursor: default;">No encontrado</div>`;
-                    sugerenciasCont.classList.add('mostrar');
+                    sugerenciasCont.classList.remove('mostrar');
                 }
-            } else {
-                sugerenciasCont.classList.remove('mostrar');
-            }
-        });
+            });
 
-        // Cerrar sugerencias al hacer clic fuera
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.buscador-destacado')) sugerenciasCont.classList.remove('mostrar');
-        });
-    }
-
-    window.seleccionarSugerencia = function(id) {
-        const tema = temas.find(t => t.id === id);
-        if (tema) {
-            mostrarTema(tema);
-            inputBusqueda.value = '';
-            sugerenciasCont.classList.remove('mostrar');
-            
-            // Scroll suave hacia el tema seleccionado
-            temaPrincipal.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            // Resaltar en el menú
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('activo'));
-            const btnCat = document.querySelector(`.menu-item[data-cat="${tema.cat}"] .menu-btn`);
-            if (btnCat) btnCat.classList.add('activo');
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.buscador-destacado')) sugerenciasCont.classList.remove('mostrar');
+            });
         }
-    };
+
+        window.seleccionarSugerencia = function(id) {
+            const tema = temas.find(t => t.id === id);
+            if (tema) {
+                mostrarTema(tema);
+                inputBusqueda.value = '';
+                sugerenciasCont.classList.remove('mostrar');
+                temaPrincipal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('activo'));
+                const btnCat = document.querySelector(`.menu-item[data-cat="${tema.cat}"] .menu-btn`);
+                if (btnCat) btnCat.classList.add('activo');
+            }
+        };
+    }
 
     // --- Listeners de botones ---
     document.getElementById('btnAyuda')?.addEventListener('click', window.mostrarAyuda);
@@ -721,8 +827,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const nombre = session.user.user_metadata?.nombre || "No definido";
         const correo = session.user.email;
         const generoId = session.user.user_metadata?.genero_id;
-        
-        // Avatar según género
         const avatar = generoId == 1 ? '👨‍💻' : (generoId == 2 ? '👩‍💻' : '👤');
         const generoTexto = generoId == 1 ? "Caballero" : (generoId == 2 ? "Dama" : "No especificado");
 
@@ -730,7 +834,6 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Perfil de Usuario',
             html: `
                 <div style="text-align: center; padding: 5px;">
-                    <!-- Avatar y Datos Principales -->
                     <div style="font-size: 60px; margin-bottom: 15px;">${avatar}</div>
                     <h3 class="swal-perfil-nombre">${nombre}</h3>
                     <p class="swal-perfil-genero">${generoTexto}</p>
@@ -740,7 +843,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p>${correo}</p>
                     </div>
 
-                    <!-- Secciones Desplegables -->
                     <div class="swal-perfil-section">
                         <div class="swal-perfil-section-header personal" data-target="personal-content">
                             <span><i class="fas fa-user-edit"></i> Datos Personales</span>
@@ -809,7 +911,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
-                // Cargar Calificación Dinámica
                 (async () => {
                     const { data } = await supabaseClient.from('comentarios').select('estrellas').eq('usuario_id', session.user.id);
                     const container = document.getElementById('userRatingDisplay');
@@ -821,7 +922,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })();
 
-                // Cargar Logros Dinámicos
                 (async () => {
                     const { data: logros } = await supabaseClient.from('logros').select('*').eq('usuario_id', session.user.id).maybeSingle();
                     const container = document.getElementById('userAchievementsDisplay');
@@ -841,9 +941,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
-    }); // Cierra listener de perfil
+    });
 
-    // --- Nueva función global para Calificación y Ver Opiniones ---
+    // --- Función global para Calificación y Ver Opiniones ---
     window.mostrarCalificacionSweetAlert = async function() {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (!session) {
@@ -902,7 +1002,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.isConfirmed) {
                 await supabaseClient.from('comentarios').insert({ usuario_id: session.user.id, estrellas: result.value.rating, comentario: result.value.comment });
 
-                // Confeti de éxito
                 if (typeof confetti === 'function') {
                     confetti({
                         particleCount: 100,
@@ -918,14 +1017,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon: 'success',
                     confirmButtonColor: '#9b59b6',
                     customClass: { popup: 'swal-popup-redondo' }
-                }).then(() => {
-                    // El perfil se mantiene abierto o se puede recargar si se desea ver el promedio actualizado
                 });
             }
         });
     };
 
-    // --- Nueva función global para Ver Opiniones (Estilo Bonito) ---
+    // --- Función global para Ver Opiniones ---
     window.verOpinionesSweetAlert = async function() {
         const { data: allOpinions, error } = await supabaseClient
             .from('comentarios')
@@ -967,22 +1064,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // Listeners para los botones del header
-    // El botón de Calificar se ha movido al SweetAlert de perfil.
-    // Si se necesita un listener para un botón de Calificar en el header,
-    // se debe añadir el botón al HTML y su listener aquí.
-    // Ejemplo (si se decide añadir un botón de Calificar al header):
-    // document.getElementById('btnCalificar')?.addEventListener('click', () => {
-    //     window.mostrarCalificacionSweetAlert();
-    // });
-
     document.getElementById('btnVerOpiniones')?.addEventListener('click', () => {
         window.verOpinionesSweetAlert();
     });
 
-    // --- ELIMINAR EL BLOQUE REPETIDO QUE CAUSABA EL ERROR (Línea 1005 aprox) ---
-
-    // --- Lógica del Splash Screen (Mejorada) ---
+    // --- Lógica del Splash Screen ---
     const loaderMessages = [
         "La vida es linda...",
         "Saludos para ti...",
@@ -1004,15 +1090,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2000);
 
-    // --- Retirada inmediata del Banner ---
-    // No esperamos a 'window.load' (que espera imágenes). 
-    // Usamos un pequeño delay de 500ms para que el usuario vea el logo y luego entramos.
     const loader = document.getElementById('loader-wrapper');
     if (loader) {
         setTimeout(() => {
             loader.classList.add('fade-out');
             clearInterval(msgInterval);
-        }, 800); // 800ms es suficiente para una bienvenida elegante pero veloz
+        }, 800);
     }
 
     // --- Lógica del Reloj Dinámico ---
@@ -1030,7 +1113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const contenedorReloj = document.getElementById('contenedorRelojVisual');
         const barraProgreso = document.getElementById('barraProgresoDia');
         const hora = ahora.getHours();
-        const diaSemana = ahora.getDay(); // 0: Domingo, 6: Sábado
+        const diaSemana = ahora.getDay();
         const esFinDeSemana = (diaSemana === 0 || diaSemana === 6);
         const saludoSemana = esFinDeSemana ? ' ¡Feliz fin de semana!' : ' ¡Feliz semana!';
 
@@ -1050,13 +1133,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (elRelojIcono) {
             if (hora >= 6 && hora < 12) {
-                elRelojIcono.className = 'fas fa-cloud-sun'; // Mañana
+                elRelojIcono.className = 'fas fa-cloud-sun';
                 elRelojIcono.style.color = '#f1c40f';
             } else if (hora >= 12 && hora < 19) {
-                elRelojIcono.className = 'fas fa-sun'; // Tarde
+                elRelojIcono.className = 'fas fa-sun';
                 elRelojIcono.style.color = '#f39c12';
             } else {
-                elRelojIcono.className = 'fas fa-moon'; // Noche
+                elRelojIcono.className = 'fas fa-moon';
                 elRelojIcono.style.color = '#9b59b6';
             }
         }
@@ -1067,27 +1150,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const porcentaje = (minutosPasados / minutosTotales) * 100;
             barraProgreso.style.width = porcentaje + '%';
 
-            // Cambiar color de la barra (Prioridad Fin de Semana)
             if (esFinDeSemana) {
-                barraProgreso.style.backgroundColor = '#e84393'; // Festivo: Rosa vibrante
+                barraProgreso.style.backgroundColor = '#e84393';
             } else {
                 if (hora >= 6 && hora < 12) {
-                    barraProgreso.style.backgroundColor = '#f1c40f'; // Mañana: Dorado
+                    barraProgreso.style.backgroundColor = '#f1c40f';
                 } else if (hora >= 12 && hora < 19) {
-                    barraProgreso.style.backgroundColor = '#f39c12'; // Tarde: Naranja cálido
+                    barraProgreso.style.backgroundColor = '#f39c12';
                 } else {
-                    barraProgreso.style.backgroundColor = '#9b59b6'; // Noche: Morado místico
+                    barraProgreso.style.backgroundColor = '#9b59b6';
                 }
             }
         }
 
         if (contenedorReloj) {
             if (hora >= 6 && hora < 12) {
-                contenedorReloj.style.backgroundColor = '#fffdf0'; // Mañana: Amarillo crema
+                contenedorReloj.style.backgroundColor = '#fffdf0';
             } else if (hora >= 12 && hora < 19) {
-                contenedorReloj.style.backgroundColor = '#f0f8ff'; // Tarde: Azul cielo muy claro
+                contenedorReloj.style.backgroundColor = '#f0f8ff';
             } else {
-                contenedorReloj.style.backgroundColor = '#fdfaff'; // Noche: Púrpura/Lila muy suave
+                contenedorReloj.style.backgroundColor = '#fdfaff';
             }
         }
     }
@@ -1097,5 +1179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Solo construir el menú dinámico de temas si no estamos en la página de galería
     if (!esPaginaGaleria) {
         construirMenuAdaptable();
+        // Actualizar el menú móvil también
+        actualizarMenuMovil();
     }
 });

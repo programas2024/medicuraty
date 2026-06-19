@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo - Bot Medi</title>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/galeria.css">
+
+    <style>
+        .bot-shell {
+            max-width: 980px;
+            margin: 0 auto 30px;
+            padding: 0 15px;
+        }
+
+        .bot-panel {
+            background: #fff;
+            border: 2px solid #f0e6ff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(155, 89, 182, 0.12);
+            overflow: hidden;
+            min-height: 650px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .bot-header {
+            background: linear-gradient(to right, #fdfaff, #f3e9ff);
+            border-bottom: 1px solid #eadcff;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .bot-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 16px rgba(44, 27, 78, 0.18);
+            flex-shrink: 0;
+        }
+
+        .bot-title {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .bot-title h2 {
+            margin: 0;
+            color: #2c1b4e;
+            font-size: 1.35rem;
+            line-height: 1.1;
+        }
+
+        .bot-title span {
+            color: #7f5f9b;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .bot-messages {
+            flex: 1;
+            padding: 22px;
+            background-color: #f7f3ff;
+            background-image: 
+                radial-gradient(rgba(155, 89, 182, 0.1) 1.5px, transparent 1.5px),
+                linear-gradient(135deg, #f7f3ff 0%, #eef2ff 100%);
+            background-size: 20px 20px, 100% 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .message-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message-row.user .message-avatar {
+            background: #2c1b4e;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 10px rgba(44, 27, 78, 0.15);
+        }
+
+        .message-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .message-bubble {
+            max-width: min(680px, 82%);
+            padding: 14px 18px;
+            border-radius: 18px 18px 18px 4px;
+            line-height: 1.55;
+            font-size: 0.98rem;
+            color: #2c1b4e;
+            background: white;
+            border: 1px solid rgba(155, 89, 182, 0.08);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.04);
+            animation: bubbleIntro 0.3s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+            transform-origin: left bottom;
+        }
+
+        .message-row.user .message-bubble {
+            background: linear-gradient(135deg, #9b59b6, #7f5f9b);
+            color: white;
+            border: none;
+            border-radius: 18px 18px 4px 18px;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.2);
+            transform-origin: right bottom;
+        }
+
+        @keyframes bubbleIntro {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Indicador de escritura */
+        .typing-bubble {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 14px 20px;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #7f5f9b;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { 
+                transform: scale(0.6);
+                opacity: 0.5;
+            } 40% { 
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        .bot-suggestions {
+            padding: 14px 18px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-top: 1px solid #eadcff;
+            background: #fdfaff;
+            transition: all 0.3s ease;
+        }
+
+        .bot-suggestion {
+            border: 1px solid #e3d1ff;
+            background: white;
+            color: #7f5f9b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(155, 89, 182, 0.05);
+        }
+
+        .bot-suggestion:hover {
+            background: #f3e9ff;
+            color: #9b59b6;
+            border-color: #9b59b6;
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.12);
+        }
+
+        .bot-input-area {
+            padding: 16px 18px;
+            display: flex;
+            gap: 10px;
+            background: white;
+            border-top: 1px solid #eadcff;
+            transition: all 0.3s ease;
+        }
+
+        .bot-input-area input {
+            flex: 1;
+            border: 2px solid #eadcff;
+            border-radius: 25px;
+            padding: 13px 20px;
+            font-size: 1rem;
+            outline: none;
+            color: #2c1b4e;
+            background: #faf7ff;
+            transition: all 0.2s ease;
+        }
+
+        .bot-input-area input:focus {
+            border-color: #9b59b6;
+            background: white;
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.15);
+        }
+
+        .bot-send {
+            border: none;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            cursor: pointer;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.2);
+        }
+
+        .bot-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(155, 89, 182, 0.3);
+        }
+
+        /* ===== ESTILOS MODO OSCURO PARA EL CHAT ===== */
+        body.dark-mode .bot-panel {
+            background: #19143c;
+            border-color: #2e2663;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .bot-header {
+            background: linear-gradient(to right, #1d1746, #251d59);
+            border-bottom-color: #2e2663;
+        }
+
+        body.dark-mode .bot-title h2 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .bot-title span {
+            color: #b0a4e3;
+        }
+
+        body.dark-mode .bot-messages {
+            background-color: #120e2e;
+            background-image: 
+                radial-gradient(rgba(155, 89, 182, 0.15) 1.5px, transparent 1.5px),
+                linear-gradient(135deg, #120e2e 0%, #1a133d 100%);
+            background-size: 20px 20px, 100% 100%;
+        }
+
+        body.dark-mode .message-avatar {
+            border-color: #1e1948;
+        }
+
+        body.dark-mode .message-bubble {
+            background: #1e1948;
+            color: #e0e0e0;
+            border-color: #2e2663;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .message-row.user .message-bubble {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+        }
+
+        body.dark-mode .bot-suggestions {
+            background: #19143c;
+            border-top-color: #2e2663;
+        }
+
+        body.dark-mode .bot-suggestion {
+            background: #251d59;
+            color: #d4c8ff;
+            border-color: #3b3085;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .bot-suggestion:hover {
+            background: #312675;
+            color: #ffffff;
+            border-color: #9b59b6;
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.2);
+        }
+
+        body.dark-mode .bot-input-area {
+            background: #19143c;
+            border-top-color: #2e2663;
+        }
+
+        body.dark-mode .bot-input-area input {
+            background: #120e2e;
+            border-color: #2e2663;
+            color: #ffffff;
+        }
+
+        body.dark-mode .bot-input-area input:focus {
+            border-color: #9b59b6;
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.3);
+        }
+
+        body.dark-mode .typing-dot {
+            background-color: #b0a4e3;
+        }
+
+        @media (max-width: 650px) {
+            .bot-panel {
+                min-height: 72vh;
+                border-radius: 12px;
+            }
+
+            .bot-header {
+                padding: 14px 16px;
+            }
+
+            .bot-title h2 {
+                font-size: 1.15rem;
+            }
+
+            .bot-messages {
+                padding: 16px;
+            }
+
+            .message-bubble {
+                max-width: 88%;
+                font-size: 0.93rem;
+            }
+
+            .bot-input-area {
+                padding: 12px;
+            }
+        }
+
+        /* Nuevos estilos de características adicionales */
+        .btn-tts {
+            background: transparent;
+            border: none;
+            color: #7f5f9b;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            align-self: center;
+        }
+        .btn-tts:hover {
+            color: #9b59b6;
+            transform: scale(1.15);
+        }
+        .btn-tts.speaking {
+            color: #e74c3c;
+            animation: pulseSpeaking 1.5s infinite;
+        }
+        @keyframes pulseSpeaking {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.7; }
+        }
+        .bot-mic {
+            border: none;
+            background: #f0e6ff;
+            color: #7f5f9b;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(155, 89, 182, 0.1);
+        }
+        .bot-mic:hover {
+            background: #e3d1ff;
+            color: #9b59b6;
+            transform: scale(1.05);
+        }
+        .bot-mic.listening {
+            background: #ff7675;
+            color: white;
+            animation: listeningPulse 1.5s infinite;
+        }
+        @keyframes listeningPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.4); }
+            70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(255, 118, 117, 0); }
+        }
+        .btn-clear-chat {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            color: #7f5f9b;
+            cursor: pointer;
+            font-size: 1.15rem;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .btn-clear-chat:hover {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            transform: rotate(15deg);
+        }
+        body.dark-mode .btn-clear-chat {
+            color: #b0a4e3;
+        }
+        body.dark-mode .btn-clear-chat:hover {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff7675;
+        }
+        .bot-suggestions-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 10px 18px 0;
+            background: #fdfaff;
+            border-top: 1px solid #eadcff;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+        body.dark-mode .bot-suggestions-tabs {
+            background: #19143c;
+            border-top-color: #2e2663;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #7f5f9b;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab-btn:hover {
+            color: #9b59b6;
+        }
+        .tab-btn.active {
+            color: #9b59b6;
+            border-bottom-color: #9b59b6;
+        }
+        body.dark-mode .tab-btn {
+            color: #b0a4e3;
+        }
+        body.dark-mode .tab-btn:hover {
+            color: #ffffff;
+        }
+        body.dark-mode .tab-btn.active {
+            color: #ffffff;
+            border-bottom-color: #9b59b6;
+        }
+        .bot-suggestions-container {
+            padding: 12px 18px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: #fdfaff;
+            min-height: 50px;
+            transition: all 0.3s ease;
+        }
+        body.dark-mode .bot-suggestions-container {
+            background: #19143c;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="header">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                </a>
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+            <div class="header-utils" id="headerUtilsBot">
+                <div class="btn-con-tooltip">
+                    <a href="galeria2.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-images"></i>
+                    </a>
+                    <span class="tooltip">Galeria</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <a href="index.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Inicio</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-principal">
+            <div class="botones-info-wrapper galeria-layout" style="width: 100%; margin-bottom: 15px;">
+                <div class="label-info-container" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <i class="fas fa-robot"></i>
+                    <p>Habla con Bot Medi y conoce mejor Medicurativo</p>
+                </div>
+            </div>
+        </div>
+
+        <main class="bot-shell">
+            <section class="bot-panel" aria-label="Chat Bot Medi">
+                <div class="bot-header">
+                    <img class="bot-avatar" src="imganes/logosmedi.png" alt="Bot Medi">
+                    <div class="bot-title">
+                        <h2>Bot Medi</h2>
+                        <span>Asistente de Medicurativo</span>
+                    </div>
+                    <button id="btnClearChat" class="btn-clear-chat" title="Limpiar Conversación">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+
+                <div class="bot-messages" id="botMessages"></div>
+
+                <div class="bot-suggestions-tabs" id="suggestionsTabs">
+                    <button class="tab-btn active" data-category="general"><i class="fas fa-info-circle"></i> General</button>
+                    <button class="tab-btn" data-category="cuenta"><i class="fas fa-user-cog"></i> Cuenta</button>
+                    <button class="tab-btn" data-category="funciones"><i class="fas fa-shapes"></i> Funciones</button>
+                </div>
+                <div class="bot-suggestions-container" id="suggestionsContainer">
+                    <!-- Cargadas dinámicamente con JS -->
+                </div>
+
+                <form class="bot-input-area" id="botForm">
+                    <input id="botInput" type="text" autocomplete="off" placeholder="Escribe tu pregunta..." aria-label="Pregunta para Bot Medi">
+                    <button class="bot-mic" id="botMic" type="button" aria-label="Hablar">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="bot-send" type="submit" aria-label="Enviar">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </section>
+        </main>
+
+         <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · galería visual <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2025 · imágenes de reflexión <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+    <script src="js/bot.js"></script>
+</body>
+</html>

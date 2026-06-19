@@ -165,6 +165,60 @@ function mostrarSoporte() {
 }
 
 // Estilos adicionales - SOLO UNA VEZ y con nombre único
+function mostrarSoporte() {
+    Swal.fire({
+        ...estiloBase,
+        title: '<span style="font-size: 28px; font-weight: 600; color: #2c1b4e;">Soporte Medicurativo</span>',
+        html: `
+            <div style="text-align: center; padding: 15px;">
+                
+                <div style="background: #f8f0ff; padding: 25px; border-radius: 60px; margin: 15px 0;">
+                    <i class="fas fa-headset" style="font-size: 70px; color: #9b59b6; margin-bottom: 20px;"></i>
+                    
+                    <p style="font-size: 18px; color: #2c3e50; margin: 20px 0; line-height: 1.6;">
+                        Hola, somos el equipo Medicurativo.<br>
+                        &iquest;En qu&eacute; te podemos ayudar?<br>
+                        Cu&eacute;ntanos qu&eacute; necesitas.
+                    </p>
+                    
+                    <div style="background: #2c1b4e; padding: 20px; border-radius: 50px; margin: 20px 0;">
+                        <i class="fas fa-envelope" style="font-size: 30px; color: white; margin-right: 10px;"></i>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=joacoxx2340@gmail.com&su=Soporte%20Medicurativo&body=Hola%2C%20somos%20el%20equipo%20Medicurativo.%20%C2%BFEn%20qu%C3%A9%20te%20podemos%20ayudar%3F%20Cu%C3%A9ntanos.%0A%0AP%C3%A1gina%20o%20secci%C3%B3n%3A%0AProblema%20o%20duda%3A%0ADescripci%C3%B3n%3A%0A" target="_blank" rel="noopener" style="color: white; font-size: 20px; font-weight: 600; text-decoration: none;">
+                            Gmail
+                        </a>
+                    </div>
+
+                    <div style="background: #27ae60; padding: 18px; border-radius: 50px; margin: 20px 0;">
+                        <i class="fab fa-whatsapp" style="font-size: 30px; color: white; margin-right: 10px;"></i>
+                        <a href="https://api.whatsapp.com/send?text=Hola%2C%20necesito%20ayuda%20con%20Medicurativo" target="_blank" rel="noopener" style="color: white; font-size: 20px; font-weight: 600; text-decoration: none;">
+                            WhatsApp
+                        </a>
+                    </div>
+
+                    <div style="background: #9b59b6; padding: 18px; border-radius: 50px; margin: 20px 0;">
+                        <i class="fas fa-robot" style="font-size: 30px; color: white; margin-right: 10px;"></i>
+                        <a href="bot.html" style="color: white; font-size: 20px; font-weight: 600; text-decoration: none;">
+                            Bot Medi
+                        </a>
+                    </div>
+                    
+                    <p style="font-size: 16px; color: #7f8c8d; margin-top: 15px;">
+                        Puedes escribir por Gmail, WhatsApp o hablar con Bot Medi.
+                        <br>Describe qu&eacute; estabas haciendo, en qu&eacute; p&aacute;gina pas&oacute; y si puedes agrega una captura.
+                        <br>Respondemos lo antes posible.
+                    </p>
+                </div>
+                
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                    <i class="fas fa-check-circle" style="font-size: 24px; color: #27ae60;"></i>
+                    <span style="color: #34495e;">Soporte gratuito por Gmail, WhatsApp y Bot Medi</span>
+                </div>
+            </div>
+        `,
+        iconHtml: '<i class="fas fa-headset" style="font-size: 30px; color: #9b59b6;"></i>'
+    });
+}
+
 const sweetAlertStyles = document.createElement('style');
 sweetAlertStyles.innerHTML = `
     .swal-popup-redondo {

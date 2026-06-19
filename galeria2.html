@@ -311,15 +311,62 @@
                             const totalLikes = isSorted ? img.totalLikes : (allLikes ? allLikes.filter(l => l.imagen_id === img.id).length : 0);
                             
                             let topClass = "";
-                            if (isSorted && index === 0) topClass = "top-rank-1";
-                            else if (isSorted && index === 1) topClass = "top-rank-2";
-                            else if (isSorted && index === 2) topClass = "top-rank-3";
+                            let badgeHTML = "";
+                            let crownHTML = "";
+                            if (isSorted) {
+                                if (index === 0) {
+                                    topClass = "top-rank-1";
+                                    badgeHTML = `<div class="top-badge">#1</div>`;
+                                    crownHTML = `
+                                        <div class="pretty-crown">
+                                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                                <defs>
+                                                    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                        <stop offset="0%" stop-color="#FFF5C3" />
+                                                        <stop offset="40%" stop-color="#F9D423" />
+                                                        <stop offset="100%" stop-color="#FF4E50" />
+                                                    </linearGradient>
+                                                    <filter id="crown-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                                        <feGaussianBlur stdDeviation="3" result="blur" />
+                                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                                    </filter>
+                                                </defs>
+                                                <rect x="15" y="70" width="70" height="8" rx="4" fill="url(#gold-grad)" />
+                                                <circle cx="25" cy="74" r="2.5" fill="#fff" />
+                                                <circle cx="35" cy="74" r="2.5" fill="#FF4E50" />
+                                                <circle cx="50" cy="74" r="3" fill="#00E6FF" />
+                                                <circle cx="65" cy="74" r="2.5" fill="#FF4E50" />
+                                                <circle cx="75" cy="74" r="2.5" fill="#fff" />
+                                                <path d="M15 70 L10 35 L30 52 L50 20 L70 52 L90 35 L85 70 Z" fill="url(#gold-grad)" />
+                                                <circle cx="10" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow)" />
+                                                <circle cx="30" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow)" />
+                                                <circle cx="50" cy="20" r="5" fill="#FFD700" filter="url(#crown-glow)" />
+                                                <circle cx="70" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow)" />
+                                                <circle cx="90" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow)" />
+                                            </svg>
+                                        </div>
+                                    `;
+                                } else if (index === 1) {
+                                    topClass = "top-rank-2";
+                                    badgeHTML = `<div class="top-badge">#2</div>`;
+                                } else if (index === 2) {
+                                    topClass = "top-rank-3";
+                                    badgeHTML = `<div class="top-badge">#3</div>`;
+                                } else {
+                                    topClass = "top-rank-other";
+                                    badgeHTML = `<div class="top-badge">#${index + 1}</div>`;
+                                }
+                            }
 
                             return `
                                 <div class="galeria-item ${topClass}" onclick="abrirImagenZoom('${img.url}', '${img.titulo}', ${img.id})">
-                                    <img src="${img.url}" alt="${img.titulo}" loading="lazy">
-                                    <div class="galeria-caption">
-                                        <span>${img.titulo}</span>
+                                    ${crownHTML}
+                                    ${badgeHTML}
+                                    <div class="galeria-item-inner">
+                                        <img src="${img.url}" alt="${img.titulo}" loading="lazy">
+                                        <div class="galeria-caption">
+                                            <span>${img.titulo}</span>
+                                        </div>
                                     </div>
                                 </div>
                             `;
@@ -331,28 +378,104 @@
                 renderGrid('gridValorados', null, true);
             };
 
-            // ZOOM INVITADO CON TÍTULO PRETTY Y LIKE
+            // ===== ZOOM GRANDE INVITADO CON MARCO TOP RANK =====
             window.abrirImagenZoom = async (url, titulo, id) => {
                 const { data: likes } = await supabaseClient.from('likes').select('id').eq('imagen_id', id);
                 const total = likes ? likes.length : 0;
 
-                Swal.fire({
-                    imageUrl: url,
-                    imageAlt: titulo,
-                    title: `<span style="color: #2c1b4e; font-family: 'Georgia', serif; font-style: italic; font-size: 1.6rem; font-weight: 700;">${titulo}</span>`,
-                    html: `
-                        <div class="swal-like-container">
-                            <button class="like-btn-galeria" style="background: #9b59b6; padding: 14px 35px; font-size: 1.1rem; border-radius: 40px; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.3);" 
-                                    onclick="window.toggleLikeInvitado(); Swal.close();">
-                                <i class="far fa-heart"></i>
-                                <span style="margin-left: 10px;">Apoyar reflexión (${total})</span>
-                            </button>
+                // Calcular ranking global
+                const { data: allLikes } = await supabaseClient.from('likes').select('imagen_id');
+                const likesCountMap = {};
+                imagenesGaleria.forEach(img => { likesCountMap[img.id] = 0; });
+                if (allLikes) {
+                    allLikes.forEach(l => {
+                        if (likesCountMap[l.imagen_id] !== undefined) likesCountMap[l.imagen_id]++;
+                    });
+                }
+                const sorted = [...imagenesGaleria].map(img => ({
+                    ...img,
+                    totalLikes: likesCountMap[img.id]
+                })).sort((a, b) => b.totalLikes - a.totalLikes);
+                const rank = sorted.findIndex(img => img.id === id) + 1;
+
+                let topClass = "top-rank-other";
+                let badgeHTML = `<div class="top-badge">#${rank}</div>`;
+                let crownHTML = "";
+                let rankEmoji = "";
+
+                if (rank === 1) {
+                    topClass = "top-rank-1";
+                    badgeHTML = `<div class="top-badge">#1</div>`;
+                    rankEmoji = "👑";
+                    crownHTML = `
+                        <div class="pretty-crown">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="gold-grad-zoom" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#FFF5C3" />
+                                        <stop offset="40%" stop-color="#F9D423" />
+                                        <stop offset="100%" stop-color="#FF4E50" />
+                                    </linearGradient>
+                                    <filter id="crown-glow-zoom" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="3" result="blur" />
+                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                    </filter>
+                                </defs>
+                                <rect x="15" y="70" width="70" height="8" rx="4" fill="url(#gold-grad-zoom)" />
+                                <circle cx="25" cy="74" r="2.5" fill="#fff" />
+                                <circle cx="35" cy="74" r="2.5" fill="#FF4E50" />
+                                <circle cx="50" cy="74" r="3" fill="#00E6FF" />
+                                <circle cx="65" cy="74" r="2.5" fill="#FF4E50" />
+                                <circle cx="75" cy="74" r="2.5" fill="#fff" />
+                                <path d="M15 70 L10 35 L30 52 L50 20 L70 52 L90 35 L85 70 Z" fill="url(#gold-grad-zoom)" />
+                                <circle cx="10" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow-zoom)" />
+                                <circle cx="30" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow-zoom)" />
+                                <circle cx="50" cy="20" r="5" fill="#FFD700" filter="url(#crown-glow-zoom)" />
+                                <circle cx="70" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow-zoom)" />
+                                <circle cx="90" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow-zoom)" />
+                            </svg>
                         </div>
-                        <p style="font-size: 0.9rem; color: #9b59b6; margin-top: 15px; font-weight: 600;">✨ ¡Únete a nosotros para participar!</p>
+                    `;
+                } else if (rank === 2) {
+                    topClass = "top-rank-2";
+                    badgeHTML = `<div class="top-badge">#2</div>`;
+                    rankEmoji = "🥈";
+                } else if (rank === 3) {
+                    topClass = "top-rank-3";
+                    badgeHTML = `<div class="top-badge">#3</div>`;
+                    rankEmoji = "🥉";
+                }
+
+                Swal.fire({
+                    title: `<span style="color:#2c1b4e;font-family:'Georgia',serif;font-style:italic;font-size:1.5rem;font-weight:700;">${titulo}</span>`,
+                    html: `
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                            <div class="galeria-item ${topClass} swal-zoom-card">
+                                ${crownHTML}
+                                ${badgeHTML}
+                                <div class="galeria-item-inner">
+                                    <img src="${url}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;">
+                                </div>
+                            </div>
+                            <div class="swal-zoom-caption-wrapper" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                                <div class="zoom-rank-badge">${rankEmoji} #${rank} en popularidad</div>
+                                <button class="like-btn-premium" id="zoomLikeBtnInvitado">
+                                    <i class="far fa-heart" style="font-size:1.4rem;"></i>
+                                    <span>Apoyar (${total})</span>
+                                </button>
+                                <p style="margin:0;font-size:0.8rem;color:#9b59b6;font-weight:600;">✨ ¡Únete para participar!</p>
+                            </div>
+                        </div>
                     `,
                     showCloseButton: true,
                     showConfirmButton: false,
-                    customClass: { popup: 'swal-popup-redondo' }
+                    customClass: { popup: 'swal-popup-redondo swal-zoom-lg' },
+                    didOpen: () => {
+                        document.getElementById('zoomLikeBtnInvitado')?.addEventListener('click', () => {
+                            window.toggleLikeInvitado();
+                            Swal.close();
+                        });
+                    }
                 });
             };
 
@@ -440,17 +563,7 @@
             }
         });
 
-        // Función de zoom global
-        window.abrirImagenZoom = (url, titulo) => {
-            Swal.fire({
-                imageUrl: url,
-                imageAlt: titulo,
-                title: titulo,
-                showCloseButton: true,
-                showConfirmButton: false,
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-        }
+        // Zoom global fallback removido por duplicidad
 
         // Listener para ayuda de galería (reemplaza lo que hacía app2.js)
         document.getElementById('btnAyuda')?.addEventListener('click', () => {

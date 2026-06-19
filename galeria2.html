@@ -36,12 +36,6 @@
             
             <!-- Utilidades de la App (Sincronizado con Principal) -->
             <div class="header-utils" id="headerUtilsGaleria">
-                <!-- Calificación antes de los botones (PC solamente) -->
-                <div id="contenedorPromedioGlobal" class="contenedor-promedio-global hide-mobile-flex" style="display: none; align-items: center; background: #fff9e6; border-radius: 30px; padding: 8px 15px; border: 1.5px solid #f1c40f; gap: 8px; animation: fadeIn 0.8s ease; cursor: default;">
-                    <i class="fas fa-star" style="color: #f1c40f; font-size: 0.9rem;"></i>
-                    <span id="valorPromedioGlobal" style="color: #d4ac0d; font-weight: 800; font-size: 1rem;">...</span>
-                </div>
-
                 <!-- Botón Inicio -->
                 <div class="btn-con-tooltip" id="wrapperInicio">
                     <a href="index.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
@@ -289,27 +283,34 @@
                 document.body.appendChild(overlay);
             }
 
-            // ===== FUNCIÓN PARA CARGAR IMÁGENES (VISTA INVITADO) =====
+            // ===== FUNCIÓN PARA CARGAR IMÁGENES CON LIKES =====
             window.cargarImagenes = async () => {
-                const { data: allLikes } = await supabaseClient.from('likes').select('imagen_id');
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const userId = session?.user?.id;
+                
+                // Obtener todos los likes de la tabla
+                const { data: allLikes } = await supabaseClient.from('likes').select('imagen_id, usuario_id');
 
                 const renderGrid = (gridId, cat, isSorted = false) => {
                     const grid = document.getElementById(gridId);
                     if (!grid) return;
                     
                     let items = isSorted ? [...imagenesGaleria] : imagenesGaleria.filter(img => img.categoria === cat);
-
+                    
                     if (isSorted) {
                         items = items.map(img => {
-                            const totalLikes = allLikes ? allLikes.filter(l => l.imagen_id === img.id).length : 0;
-                            return { ...img, totalLikes };
-                        }).sort((a, b) => b.totalLikes - a.totalLikes);
+                            const likesCount = allLikes ? allLikes.filter(l => l.imagen_id === img.id).length : 0;
+                            return { ...img, likesCount };
+                        }).sort((a, b) => b.likesCount - a.likesCount);
                     }
 
                     grid.innerHTML = items
                         .map((img, index) => {
-                            const totalLikes = isSorted ? img.totalLikes : (allLikes ? allLikes.filter(l => l.imagen_id === img.id).length : 0);
+                            const likesImg = allLikes ? allLikes.filter(l => l.imagen_id === img.id) : [];
+                            const totalLikes = likesImg.length;
+                            const haDadoLike = userId && likesImg.some(l => l.usuario_id === userId);
                             
+                            // Clases especiales para el Top 3 en la sección "Valorados"
                             let topClass = "";
                             let badgeHTML = "";
                             let crownHTML = "";
@@ -378,10 +379,14 @@
                 renderGrid('gridValorados', null, true);
             };
 
-            // ===== ZOOM GRANDE INVITADO CON MARCO TOP RANK =====
+            // ===== ZOOM GRANDE CON MARCO TOP RANK =====
             window.abrirImagenZoom = async (url, titulo, id) => {
-                const { data: likes } = await supabaseClient.from('likes').select('id').eq('imagen_id', id);
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const userId = session?.user?.id;
+
+                const { data: likes } = await supabaseClient.from('likes').select('usuario_id').eq('imagen_id', id);
                 const total = likes ? likes.length : 0;
+                const haDado = userId && likes.some(l => l.usuario_id === userId);
 
                 // Calcular ranking global
                 const { data: allLikes } = await supabaseClient.from('likes').select('imagen_id');
@@ -394,8 +399,8 @@
                 }
                 const sorted = [...imagenesGaleria].map(img => ({
                     ...img,
-                    totalLikes: likesCountMap[img.id]
-                })).sort((a, b) => b.totalLikes - a.totalLikes);
+                    likesCount: likesCountMap[img.id]
+                })).sort((a, b) => b.likesCount - a.likesCount);
                 const rank = sorted.findIndex(img => img.id === id) + 1;
 
                 let topClass = "top-rank-other";
@@ -459,11 +464,10 @@
                             </div>
                             <div class="swal-zoom-caption-wrapper" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
                                 <div class="zoom-rank-badge">${rankEmoji} #${rank} en popularidad</div>
-                                <button class="like-btn-premium" id="zoomLikeBtnInvitado">
-                                    <i class="far fa-heart" style="font-size:1.4rem;"></i>
-                                    <span>Apoyar (${total})</span>
+                                <button class="like-btn-premium ${haDado ? 'liked' : ''}" id="zoomLikeBtn">
+                                    <i class="${haDado ? 'fas' : 'far'} fa-heart" style="font-size:1.4rem;"></i>
+                                    <span>${haDado ? 'Te encanta' : 'Apoyar'} (${total})</span>
                                 </button>
-                                <p style="margin:0;font-size:0.8rem;color:#9b59b6;font-weight:600;">✨ ¡Únete para participar!</p>
                             </div>
                         </div>
                     `,
@@ -471,27 +475,53 @@
                     showConfirmButton: false,
                     customClass: { popup: 'swal-popup-redondo swal-zoom-lg' },
                     didOpen: () => {
-                        document.getElementById('zoomLikeBtnInvitado')?.addEventListener('click', () => {
-                            window.toggleLikeInvitado();
+                        document.getElementById('zoomLikeBtn')?.addEventListener('click', async () => {
+                            await window.toggleLike(id);
                             Swal.close();
                         });
                     }
                 });
             };
 
-            // Invitación para el invitado
-            window.toggleLikeInvitado = () => {
-                if (typeof mostrarInvitacionRegistro === 'function') {
-                    mostrarInvitacionRegistro();
-                } else {
-                    Swal.fire({
-                        title: '❤️ ¡Únete a nosotros!',
-                        text: 'Inicia sesión para poder dar like y apoyar nuestras reflexiones.',
+            // Lógica para dar/quitar Like
+            window.toggleLike = async (imagenId) => {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    return Swal.fire({
+                        title: '<span style="color:#2c1b4e;font-weight:800;">Cuenta requerida</span>',
+                        html: `
+                            <div style="text-align:center;padding:8px 4px;">
+                                <div style="width:76px;height:76px;margin:0 auto 16px;border-radius:50%;background:#f8f0ff;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fas fa-heart" style="font-size:34px;color:#e84393;"></i>
+                                </div>
+                                <p style="margin:0;color:#2c1b4e;font-size:1rem;line-height:1.55;font-weight:600;">
+                                    Necesitas crear una cuenta para poder apoyar esta publicaci&oacute;n.
+                                </p>
+                                <p style="margin:12px 0 0;color:#7f5f9b;font-size:0.9rem;line-height:1.45;">
+                                    Al registrarte podr&aacute;s dar like y participar en la galer&iacute;a.
+                                </p>
+                            </div>
+                        `,
                         icon: 'info',
-                        confirmButtonText: 'Ir a Login',
-                        confirmButtonColor: '#9b59b6'
-                    }).then(r => r.isConfirmed && (window.location.href = 'login.html'));
+                        showCloseButton: true,
+                        confirmButtonText: 'Crear cuenta',
+                        confirmButtonColor: '#9b59b6',
+                        customClass: { popup: 'swal-popup-redondo' }
+                    }).then(r => {
+                        if (r.isConfirmed) window.location.href = 'login.html';
+                    });
                 }
+
+                const userId = session.user.id;
+                const { data: existing } = await supabaseClient.from('likes').select('id').eq('usuario_id', userId).eq('imagen_id', imagenId).maybeSingle();
+
+                if (existing) {
+                    await supabaseClient.from('likes').delete().eq('id', existing.id);
+                } else {
+                    await supabaseClient.from('likes').insert({ usuario_id: userId, imagen_id: imagenId });
+                    if(window.clickSound) window.clickSound.play();
+                }
+                window.cargarImagenes(); // Recargar UI
             };
 
             // ===== FUNCIÓN PARA MOSTRAR SECCIÓN =====

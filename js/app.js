@@ -78,7 +78,7 @@ const categorias = [
 // Elementos DOM
 const menuHorizontal = document.getElementById('menuHorizontal');
 const temaPrincipal = document.getElementById('temaPrincipal');
-const esPaginaGaleria = window.location.pathname.includes('galeria.html');
+const esPaginaGaleria = window.location.pathname.includes('galeria.html') || window.location.pathname.includes('galeria2.html');
 
 // Hacer temaPrincipal global para otros scripts
 window.temaPrincipal = temaPrincipal;

@@ -1,7 +1,8 @@
 // ===== MENÚ DE CATEGORÍAS PARA MÓVIL =====
 document.addEventListener('DOMContentLoaded', function() {
     // Si estamos en la galería, no manejamos el menú aquí para evitar conflictos con su lógica propia
-    if (window.location.pathname.includes('galeria.html')) return;
+    const esPaginaGaleria = window.location.pathname.includes('galeria.html') || window.location.pathname.includes('galeria2.html');
+    if (esPaginaGaleria) return;
 
     const hamburguesaBtn = document.getElementById('categoriasHamburguesa');
     const menuMovil = document.getElementById('menuCategoriasMovil');
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!contenedorBotonesActual) return;
 
         // En la galería no queremos sobrescribir el menú de secciones (Completa/Destacados/Recientes)
-        if (window.location.pathname.includes('galeria.html')) return;
+        if (esPaginaGaleria) return;
 
         
         const listaCategorias = window.categorias || [];

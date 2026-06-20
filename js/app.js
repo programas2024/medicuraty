@@ -12,7 +12,6 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 window.supabaseClient = supabaseClient;
 
 // ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
-// ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
 async function getDestinoInicio() {
     const path = window.location.pathname;
     const esIndex = path.includes('index.html') || path.endsWith('/') || path === '';
@@ -40,6 +39,8 @@ async function getDestinoInicio() {
     // Por defecto, ir a index
     return 'index.html';
 }
+
+// ===== ACTUALIZAR BOTÓN INICIO =====
 async function actualizarBotonInicio() {
     const wrapperInicio = document.getElementById('wrapperInicio');
     if (!wrapperInicio) return;
@@ -803,14 +804,31 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    function obtenerTituloPorEstrellas(cantidad) {
+    if (cantidad >= 9) return '🌟 Leyenda Medicurativo';
+    if (cantidad >= 7) return '⭐ Maestro del Crecimiento';
+    if (cantidad >= 5) return '✨ Explorador de Luz';
+    if (cantidad >= 3) return '🌱 Aprendiz de la Vida';
+    if (cantidad >= 1) return '🌿 Iniciado en el Camino';
+    return '🕊️ Buscador de Paz';
+}
+
+// Exponer función
+window.obtenerTituloPorEstrellas = obtenerTituloPorEstrellas;
+
+
+
     // --- Listeners de botones ---
     document.getElementById('btnAyuda')?.addEventListener('click', window.mostrarAyuda);
     document.getElementById('btnMision')?.addEventListener('click', window.mostrarMision);
     document.getElementById('btnSoporte')?.addEventListener('click', window.mostrarSoporte);
     document.getElementById('btnAgradecimientos')?.addEventListener('click', window.mostrarAgradecimientos);
     
-    // --- Lógica de Perfil de Usuario ---
-    document.getElementById('btnPerfil')?.addEventListener('click', async () => {
+
+
+// --- Lógica de Perfil de Usuario ---
+document.getElementById('btnPerfil')?.addEventListener('click', async function() {
+    try {
         const { data: { session } } = await supabaseClient.auth.getSession();
 
         if (!session) {
@@ -824,19 +842,237 @@ document.addEventListener('DOMContentLoaded', function() {
             }).then(r => r.isConfirmed && (window.location.href = 'login.html'));
         }
 
+        const userId = session.user.id;
         const nombre = session.user.user_metadata?.nombre || "No definido";
         const correo = session.user.email;
         const generoId = session.user.user_metadata?.genero_id;
         const avatar = generoId == 1 ? '👨‍💻' : (generoId == 2 ? '👩‍💻' : '👤');
         const generoTexto = generoId == 1 ? "Caballero" : (generoId == 2 ? "Dama" : "No especificado");
 
+        // Verificar logros ANTES de mostrar el perfil
+        if (window.verificarLogros) {
+            await window.verificarLogros(userId);
+        }
+
+        // Obtener estrellas reclamadas
+        let estrellasReclamadas = [];
+        if (window.obtenerEstrellasReclamadas) {
+            estrellasReclamadas = await window.obtenerEstrellasReclamadas(userId);
+        }
+        const totalEstrellas = estrellasReclamadas.length;
+
+        // ================================================
+        // TÍTULO, COLOR Y MARCO SEGÚN ESTRELLAS
+        // ================================================
+        let tituloUsuario = '🕊️ Buscador de Paz';
+        let fraseUsuario = 'Cada día es una nueva oportunidad para crecer';
+        let colorNombre = '#2c1b4e';
+        let colorBordePerfil = '#e0d0f0';
+        let tamañoNombre = '1.4rem';
+        let marcoAvatar = '';
+        let tamañoAvatar = '60px';
+        let decoracionAvatar = '';
+        let efectoFondo = '';
+        let mostrarEfecto = false;
+        
+        // Estrellas visuales
+        let estrellasVisuales = '';
+        let glowEstrella = '';
+        
+        if (totalEstrellas >= 9) {
+            tituloUsuario = '🌟 Leyenda Medicurativo';
+            fraseUsuario = '✨ Iluminas el camino de los demás con tu luz';
+            colorNombre = '#ffd700';
+            colorBordePerfil = '#ffd700';
+            tamañoNombre = '2rem';
+            marcoAvatar = `
+                border: 4px solid #ffd700;
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.2);
+                background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
+                padding: 12px;
+            `;
+            tamañoAvatar = '75px';
+            decoracionAvatar = `
+                <div style="position: absolute; top: -15px; right: -15px; font-size: 1.5rem; animation: pulse 2s infinite;">👑</div>
+            `;
+            mostrarEfecto = true;
+            efectoFondo = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden;">
+                    <div style="position: absolute; top: 10%; left: 5%; font-size: 2rem; animation: floatStar 8s ease-in-out infinite;">⭐</div>
+                    <div style="position: absolute; top: 20%; right: 10%; font-size: 1.5rem; animation: floatStar 10s ease-in-out infinite 2s;">✨</div>
+                    <div style="position: absolute; bottom: 30%; left: 8%; font-size: 1.8rem; animation: floatStar 9s ease-in-out infinite 4s;">🌟</div>
+                    <div style="position: absolute; bottom: 20%; right: 5%; font-size: 2.2rem; animation: floatStar 7s ease-in-out infinite 1s;">⭐</div>
+                </div>
+            `;
+            glowEstrella = `
+                <div style="position: relative; display: inline-block;">
+                    <div style="font-size: 6rem; animation: pulseGlow 2s ease-in-out infinite; text-shadow: 0 0 40px rgba(255,215,0,0.8), 0 0 80px rgba(255,215,0,0.4), 0 0 120px rgba(255,215,0,0.2);">
+                        ⭐
+                    </div>
+                </div>
+            `;
+        } else if (totalEstrellas >= 7) {
+            tituloUsuario = '⭐ Maestro del Crecimiento';
+            fraseUsuario = '🌿 Has alcanzado la sabiduría del alma';
+            colorNombre = '#c0a000';
+            colorBordePerfil = '#c0a000';
+            tamañoNombre = '1.8rem';
+            marcoAvatar = `
+                border: 4px solid #c0a000;
+                box-shadow: 0 0 35px rgba(192, 160, 0, 0.5), 0 0 60px rgba(192, 160, 0, 0.15);
+                background: radial-gradient(circle, rgba(192,160,0,0.12) 0%, transparent 70%);
+                padding: 10px;
+            `;
+            tamañoAvatar = '70px';
+            decoracionAvatar = `
+                <div style="position: absolute; top: -12px; right: -12px; font-size: 1.3rem;">⭐</div>
+            `;
+            mostrarEfecto = true;
+            efectoFondo = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden;">
+                    <div style="position: absolute; top: 15%; left: 8%; font-size: 1.5rem; animation: floatStar 9s ease-in-out infinite;">✨</div>
+                    <div style="position: absolute; bottom: 25%; right: 10%; font-size: 1.8rem; animation: floatStar 8s ease-in-out infinite 3s;">⭐</div>
+                    <div style="position: absolute; top: 45%; left: 3%; font-size: 1.2rem; animation: floatStar 7s ease-in-out infinite 1s;">🌟</div>
+                </div>
+            `;
+            glowEstrella = `
+                <div style="position: relative; display: inline-block;">
+                    <div style="font-size: 5rem; animation: pulseGlow 2s ease-in-out infinite; text-shadow: 0 0 30px rgba(192,160,0,0.7), 0 0 60px rgba(192,160,0,0.3);">
+                        ⭐
+                    </div>
+                </div>
+            `;
+        } else if (totalEstrellas >= 5) {
+            tituloUsuario = '✨ Explorador de Luz';
+            fraseUsuario = '🌱 Sigues brillando en tu viaje interior';
+            colorNombre = '#e8b800';
+            colorBordePerfil = '#e8b800';
+            tamañoNombre = '1.6rem';
+            marcoAvatar = `
+                border: 4px solid #e8b800;
+                box-shadow: 0 0 30px rgba(232, 184, 0, 0.4), 0 0 50px rgba(232, 184, 0, 0.1);
+                background: radial-gradient(circle, rgba(232,184,0,0.1) 0%, transparent 70%);
+                padding: 10px;
+            `;
+            tamañoAvatar = '65px';
+            decoracionAvatar = `
+                <div style="position: absolute; top: -10px; right: -10px; font-size: 1.2rem;">✨</div>
+            `;
+            mostrarEfecto = true;
+            efectoFondo = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden;">
+                    <div style="position: absolute; top: 20%; left: 10%; font-size: 1.3rem; animation: floatStar 10s ease-in-out infinite;">✨</div>
+                    <div style="position: absolute; bottom: 30%; right: 8%; font-size: 1.5rem; animation: floatStar 8s ease-in-out infinite 2s;">⭐</div>
+                </div>
+            `;
+            glowEstrella = `
+                <div style="position: relative; display: inline-block;">
+                    <div style="font-size: 4.5rem; animation: pulseGlow 2s ease-in-out infinite; text-shadow: 0 0 25px rgba(232,184,0,0.6), 0 0 50px rgba(232,184,0,0.25);">
+                        ⭐
+                    </div>
+                </div>
+            `;
+        } else if (totalEstrellas >= 3) {
+            tituloUsuario = '🌱 Aprendiz de la Vida';
+            fraseUsuario = '🌻 Cada paso te acerca más a tu esencia';
+            colorNombre = '#d4a017';
+            colorBordePerfil = '#d4a017';
+            tamañoNombre = '1.5rem';
+            marcoAvatar = `
+                border: 3px solid #d4a017;
+                box-shadow: 0 0 20px rgba(212, 160, 23, 0.3);
+                background: radial-gradient(circle, rgba(212,160,23,0.08) 0%, transparent 70%);
+                padding: 8px;
+            `;
+            tamañoAvatar = '60px';
+            decoracionAvatar = '';
+            mostrarEfecto = false;
+            estrellasVisuales = '⭐'.repeat(3);
+        } else if (totalEstrellas >= 1) {
+            tituloUsuario = '🌿 Iniciado en el Camino';
+            fraseUsuario = '🌺 Has dado el primer paso hacia tu bienestar';
+            colorNombre = '#b8860b';
+            colorBordePerfil = '#b8860b';
+            tamañoNombre = '1.4rem';
+            marcoAvatar = `
+                border: 3px solid #b8860b;
+                box-shadow: 0 0 15px rgba(184, 134, 11, 0.25);
+                padding: 6px;
+            `;
+            tamañoAvatar = '55px';
+            decoracionAvatar = '';
+            mostrarEfecto = false;
+            estrellasVisuales = '⭐';
+        }
+
+        const tieneMarco = totalEstrellas > 0;
+
+        // Determinar qué mostrar en estrellas
+        let estrellasDisplay = '';
+        if (totalEstrellas >= 3) {
+            // 3+ estrellas - mostrar solo una con glow
+            estrellasDisplay = glowEstrella;
+        } else if (totalEstrellas > 0) {
+            // 1-2 estrellas - mostrar normales
+            estrellasDisplay = `<span style="font-size: 3rem; letter-spacing: 8px;">${estrellasVisuales}</span>`;
+        }
+
+        // Efecto de confeti al abrir si tiene 5+ estrellas
+        if (mostrarEfecto && typeof confetti === 'function') {
+            setTimeout(() => {
+                confetti({
+                    particleCount: 60,
+                    spread: 70,
+                    origin: { y: 0.3 },
+                    colors: ['#ffd700', '#f1c40f', '#e8b800', '#c0a000', '#ffffff']
+                });
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 40,
+                        spread: 50,
+                        origin: { y: 0.4, x: 0.3 },
+                        colors: ['#ffd700', '#f39c12', '#f1c40f']
+                    });
+                    confetti({
+                        particleCount: 40,
+                        spread: 50,
+                        origin: { y: 0.4, x: 0.7 },
+                        colors: ['#ffd700', '#f39c12', '#f1c40f']
+                    });
+                }, 400);
+            }, 300);
+        }
+
         Swal.fire({
             title: 'Perfil de Usuario',
             html: `
-                <div style="text-align: center; padding: 5px;">
-                    <div style="font-size: 60px; margin-bottom: 15px;">${avatar}</div>
-                    <h3 class="swal-perfil-nombre">${nombre}</h3>
-                    <p class="swal-perfil-genero">${generoTexto}</p>
+                <div style="text-align: center; padding: 5px; position: relative; z-index: 10;">
+                    ${efectoFondo}
+                    <div style="position: relative; display: inline-block; margin-bottom: 5px;">
+                        <div style="font-size: ${tamañoAvatar}; display: inline-block; border-radius: 50%; transition: all 0.5s ease; ${tieneMarco ? marcoAvatar : ''}">
+                            ${avatar}
+                        </div>
+                        ${tieneMarco ? decoracionAvatar : ''}
+                    </div>
+                    <h3 class="swal-perfil-nombre" style="color: ${colorNombre}; transition: color 0.5s ease; margin-bottom: 2px; font-size: ${tamañoNombre};">
+                        ${nombre}
+                    </h3>
+                    ${totalEstrellas > 0 ? `
+                        <div style="margin: 5px 0;">
+                            ${estrellasDisplay}
+                        </div>
+                        <div style="font-size: 1.1rem; font-weight: 600; color: ${colorNombre}; margin: 5px 0 8px 0;">
+                            ${tituloUsuario}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #7f8c8d; font-style: italic; margin-bottom: 10px; padding: 8px 16px; background: rgba(155, 89, 182, 0.06); border-radius: 20px; display: inline-block;">
+                            "${fraseUsuario}"
+                        </div>
+                    ` : `
+                        <p class="swal-perfil-genero" style="margin-top: 2px;">${generoTexto}</p>
+                        <div style="font-size: 0.85rem; color: #b0a4e3; margin: 8px 0; font-style: italic;">
+                            🌱 Comienza tu viaje de crecimiento
+                        </div>
+                    `}
                     
                     <div class="swal-perfil-info-box">
                         <small>Correo Electrónico</small>
@@ -882,6 +1118,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="swal-perfil-section-content" id="achievements-content">
                             <div id="userAchievementsDisplay">Cargando...</div>
+                            <button id="btnVerTodosLogros" class="swal-perfil-btn" style="margin-top: 10px; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 8px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; display: none;">
+                                <i class="fas fa-list-ul"></i> Ver todos los logros
+                            </button>
                         </div>
                     </div>
 
@@ -908,8 +1147,37 @@ document.addEventListener('DOMContentLoaded', function() {
             `,
             showConfirmButton: false,
             showCloseButton: true,
-            customClass: { popup: 'swal-popup-redondo swal-popup-perfil' },
+            customClass: { 
+                popup: `swal-popup-redondo swal-popup-perfil ${totalEstrellas > 0 ? 'swal-perfil-borde-' + totalEstrellas : ''}`,
+                closeButton: 'swal2-close-custom'
+            },
             didOpen: () => {
+                // Aplicar borde de color al SweetAlert según nivel
+                const popup = document.querySelector('.swal-popup-perfil');
+                if (popup && totalEstrellas > 0) {
+                    popup.style.border = `3px solid ${colorBordePerfil}`;
+                    popup.style.boxShadow = `0 25px 60px ${colorBordePerfil}40, 0 0 40px ${colorBordePerfil}20`;
+                }
+
+                // Inyectar animaciones CSS
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes floatStar {
+                        0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+                        50% { transform: translateY(-30px) rotate(20deg); opacity: 1; }
+                    }
+                    @keyframes pulseGlow {
+                        0%, 100% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.1); opacity: 0.8; }
+                    }
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.1); }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Toggle de secciones
                 document.querySelectorAll('.swal-perfil-section-header').forEach(header => {
                     header.addEventListener('click', function() {
                         const targetId = this.dataset.target;
@@ -921,38 +1189,560 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
+                // Cargar calificación del usuario
                 (async () => {
-                    const { data } = await supabaseClient.from('comentarios').select('estrellas').eq('usuario_id', session.user.id);
-                    const container = document.getElementById('userRatingDisplay');
-                    if (data && data.length > 0) {
-                        const avg = (data.reduce((s, o) => s + o.estrellas, 0) / data.length).toFixed(1);
-                        container.innerHTML = `<p style="font-size: 1.1rem; font-weight: 700;">Tu promedio: <span style="color: #f1c40f;">${avg} ★</span></p>`;
-                    } else {
-                        container.innerHTML = `<p style="font-size: 0.9rem; opacity: 0.7;">Aún no has calificado.</p>`;
+                    try {
+                        const { data } = await supabaseClient.from('comentarios').select('estrellas').eq('usuario_id', userId);
+                        const container = document.getElementById('userRatingDisplay');
+                        if (data && data.length > 0) {
+                            const avg = (data.reduce((s, o) => s + o.estrellas, 0) / data.length).toFixed(1);
+                            container.innerHTML = `<p style="font-size: 1.1rem; font-weight: 700;">Tu promedio: <span style="color: #f1c40f;">${avg} ★</span></p>`;
+                        } else {
+                            container.innerHTML = `<p style="font-size: 0.9rem; opacity: 0.7;">Aún no has calificado.</p>`;
+                        }
+                    } catch (error) {
+                        console.error('Error al cargar calificación:', error);
                     }
                 })();
 
+                // ================================================
+                // CARGAR LOGROS - MOSTRAR 3 CON OPCIÓN "VER MÁS"
+                // ================================================
                 (async () => {
-                    const { data: logros } = await supabaseClient.from('logros').select('*').eq('usuario_id', session.user.id).maybeSingle();
                     const container = document.getElementById('userAchievementsDisplay');
-                    if (logros && (logros.cambio_nombre || logros.cambio_genero)) {
+                    const btnVerTodos = document.getElementById('btnVerTodosLogros');
+                    container.innerHTML = '<div style="text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Cargando logros...</div>';
+
+                    try {
+                        // Obtener logros de la tabla
+                        const { data: logros, error } = await supabaseClient
+                            .from('logros')
+                            .select('*')
+                            .eq('usuario_id', userId)
+                            .maybeSingle();
+
+                        if (error) throw error;
+
+                        // Lista de todos los logros posibles
+                        const listaLogros = [
+                            { key: 'cambio_nombre', icono: 'fa-id-card', texto: 'Identidad Única', desc: 'Cambiaste tu nombre' },
+                            { key: 'cambio_genero', icono: 'fa-venus-mars', texto: 'Autenticidad', desc: 'Definiste tu género' },
+                            { key: 'completado_perfil', icono: 'fa-check-circle', texto: 'Perfil Completado', desc: 'Todos tus datos listos' },
+                            { key: 'primera_publicacion', icono: 'fa-share-alt', texto: 'Comunidad Activa', desc: 'Primera publicación' },
+                            { key: 'cinco_publicaciones', icono: 'fa-users', texto: 'Miembro Destacado', desc: '5 publicaciones' },
+                            { key: 'primera_reflexion', icono: 'fa-book', texto: 'Escritor Novato', desc: 'Primera reflexión' },
+                            { key: 'cinco_reflexiones', icono: 'fa-pen-fancy', texto: 'Escritor Dedicado', desc: '5 reflexiones' },
+                            { key: 'diez_reflexiones', icono: 'fa-feather-alt', texto: 'Maestro Escritor', desc: '10 reflexiones' },
+                            { key: 'reflexion_emocion', icono: 'fa-face-smile', texto: 'Emocional', desc: 'Reflexión con emoción' }
+                        ];
+
+                        // Si no hay registros, crear uno por defecto
+                        let logrosData = logros;
+                        if (!logrosData) {
+                            logrosData = {
+                                cambio_nombre: false,
+                                cambio_genero: false,
+                                completado_perfil: false,
+                                primera_publicacion: false,
+                                cinco_publicaciones: false,
+                                primera_reflexion: false,
+                                cinco_reflexiones: false,
+                                diez_reflexiones: false,
+                                reflexion_emocion: false
+                            };
+                        }
+
+                        // Separar logros completados y pendientes
+                        const completados = [];
+                        const pendientes = [];
+
+                        listaLogros.forEach(logro => {
+                            if (logrosData[logro.key] === true) {
+                                completados.push(logro);
+                            } else {
+                                pendientes.push(logro);
+                            }
+                        });
+                   
+                        // Si no hay logros completados
+                        if (completados.length === 0) {
+                            container.innerHTML = `
+                                <div style="text-align: center; padding: 15px;">
+                                    <i class="fas fa-trophy" style="font-size: 2rem; color: #d5c6e0; margin-bottom: 8px; display: block;"></i>
+                                    <p style="font-size: 0.9rem; color: #7f8c8d;">Aún no has desbloqueado logros.</p>
+                                    <p style="font-size: 0.8rem; color: #b0a4e3;">Escribe en tu diario, publica en la comunidad y completa tu perfil 🏆</p>
+                                </div>
+                            `;
+                            btnVerTodos.style.display = 'none';
+                            return;
+                        }
+
+                        // Mostrar SOLO 3 logros completados
+                        const primeros3 = completados.slice(0, 3);
                         let html = '';
-                        if (logros.cambio_nombre) html += `<div class="achievement-card"><i class="fas fa-id-card"></i> <div><strong>Identidad Única</strong><br><small>Cambiaste tu nombre</small></div></div>`;
-                        if (logros.cambio_genero) html += `<div class="achievement-card"><i class="fas fa-venus-mars"></i> <div><strong>Autenticidad</strong><br><small>Definiste tu género</small></div></div>`;
+
+                        primeros3.forEach(logro => {
+                            const reclamado = estrellasReclamadas.includes(logro.key);
+                            html += `
+                                <div class="achievement-card" style="background: linear-gradient(135deg, #fdfaff, #f3e9ff); border-radius: 15px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #f1c40f; transition: all 0.3s ease;">
+                                    <i class="fas ${logro.icono}" style="color: #f1c40f; font-size: 1.2rem; width: 28px; text-align: center;"></i>
+                                    <div style="flex: 1; text-align: left;">
+                                        <strong style="font-size: 0.85rem; color: #2c1b4e;">${logro.texto}</strong>
+                                        <br>
+                                        <small style="color: #7f8c8d; font-size: 0.7rem;">${logro.desc}</small>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        ${reclamado ? '<i class="fas fa-star" style="color: #f1c40f; font-size: 1.2rem;"></i>' : ''}
+                                        <i class="fas fa-check-circle" style="color: #27ae60; font-size: 1.1rem;"></i>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        // Mostrar contador de logros
+                        const totalCompletados = completados.length;
+                        const totalPendientes = pendientes.length;
+
+                        html += `
+                            <div style="text-align: center; margin-top: 8px; font-size: 0.8rem; color: #7f8c8d;">
+                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                                ${totalCompletados} de ${listaLogros.length} logros completados
+                                ${totalPendientes > 0 ? `· <span style="color: #b0a4e3;">${totalPendientes} pendientes</span>` : ''}
+                            </div>
+                        `;
+
                         container.innerHTML = html;
-                    } else {
-                        container.innerHTML = `<p style="font-size: 0.9rem; opacity: 0.7;">Sin logros aún.</p>`;
+
+                        // Mostrar botón "Ver más" si hay más de 3 logros o pendientes
+                        if (completados.length > 3 || pendientes.length > 0) {
+                            btnVerTodos.style.display = 'block';
+                            btnVerTodos.onclick = () => {
+                                mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId);
+                            };
+                        } else {
+                            btnVerTodos.style.display = 'none';
+                        }
+
+                    } catch (error) {
+                        console.error('Error al cargar logros:', error);
+                        container.innerHTML = `<p style="font-size: 0.9rem; color: #ff7675;">Error al cargar logros.</p>`;
+                        btnVerTodos.style.display = 'none';
                     }
                 })();
 
+                // ================================================
+                // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS EN SWEETALERT BONITO
+                // ================================================
+                function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
+                    const esMovil = window.innerWidth <= 768;
+                    
+                    let html = `
+                        <div style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 5px;">
+                            <style>
+                                .modal-logros-scroll::-webkit-scrollbar {
+                                    width: 4px;
+                                }
+                                .modal-logros-scroll::-webkit-scrollbar-track {
+                                    background: #f0e6ff;
+                                    border-radius: 10px;
+                                }
+                                .modal-logros-scroll::-webkit-scrollbar-thumb {
+                                    background: #9b59b6;
+                                    border-radius: 10px;
+                                }
+                            </style>
+                            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 8px;">
+                                <div style="margin-bottom: 15px;">
+                                    <p style="text-align: center; font-weight: 600; color: #27ae60; margin-bottom: 10px; font-size: 0.95rem;">
+                                        ✅ Logros Completados (${completados.length})
+                                    </p>
+                    `;
+
+                    if (completados.length === 0) {
+                        html += `<p style="text-align: center; color: #7f8c8d; font-size: 0.85rem;">Aún no has completado logros</p>`;
+                    } else {
+                        completados.forEach(logro => {
+                            const reclamado = estrellasReclamadas.includes(logro.key);
+                            html += `
+                                <div style="background: linear-gradient(135deg, #f0faf0, #e8f5e9); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #27ae60;">
+                                    <i class="fas ${logro.icono}" style="color: #27ae60; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                                    <div style="flex: 1; text-align: left; min-width: 0;">
+                                        <strong style="font-size: 0.85rem; color: #2c1b4e; display: block; word-wrap: break-word;">${logro.texto}</strong>
+                                        <small style="color: #7f8c8d; font-size: 0.7rem; display: block;">${logro.desc}</small>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                                        ${reclamado ? '<i class="fas fa-star" style="color: #f1c40f; font-size: 1.1rem;"></i>' : ''}
+                                        ${!reclamado ? `<button onclick="reclamarLogroDesdeModal('${logro.key}', '${logro.texto}', '${userId}')" style="background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.3s;">
+                                            ⭐ Reclamar
+                                        </button>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    html += `
+                                </div>
+                                <div style="border-top: 2px dashed #e0d0f0; padding-top: 15px; margin-top: 5px;">
+                                    <p style="text-align: center; font-weight: 600; color: #b0a4e3; margin-bottom: 10px; font-size: 0.95rem;">
+                                        ⏳ Logros Pendientes (${pendientes.length})
+                                    </p>
+                    `;
+
+                    if (pendientes.length === 0) {
+                        html += `<p style="text-align: center; color: #27ae60; font-size: 0.9rem;">🎉 ¡Has completado TODOS los logros!</p>`;
+                    } else {
+                        pendientes.forEach(logro => {
+                            html += `
+                                <div style="background: #faf8ff; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #d5c6e0; opacity: 0.6;">
+                                    <i class="fas ${logro.icono}" style="color: #b0a4e3; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                                    <div style="flex: 1; text-align: left; min-width: 0;">
+                                        <strong style="font-size: 0.85rem; color: #7f8c8d; display: block; word-wrap: break-word;">${logro.texto}</strong>
+                                        <small style="color: #b0a4e3; font-size: 0.7rem; display: block;">${logro.desc}</small>
+                                    </div>
+                                    <i class="fas fa-lock" style="color: #b0a4e3; font-size: 1rem; flex-shrink: 0;"></i>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    html += `
+                                </div>
+                                <div style="text-align: center; margin-top: 12px; padding: 8px; background: #fdfaff; border-radius: 12px;">
+                                    <p style="font-size: 0.8rem; color: #7f8c8d; margin: 0;">
+                                        ⭐ Estrellas reclamadas: <span style="color: #f1c40f; font-weight: 700;">${estrellasReclamadas.length}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    Swal.fire({
+                        title: '<span style="color: #2c1b4e; font-weight: 800;">🏆 Todos mis Logros</span>',
+                        html: html,
+                        confirmButtonColor: '#9b59b6',
+                        confirmButtonText: 'Cerrar',
+                        showCloseButton: true,
+                        closeButtonHtml: '✕',
+                        customClass: {
+                            popup: 'swal-ver-todas swal-popup-redondo',
+                            confirmButton: 'swal2-confirm-custom',
+                            closeButton: 'swal2-close-custom'
+                        },
+                        buttonsStyling: false,
+                        width: esMovil ? '95%' : '550px',
+                        maxWidth: esMovil ? '95%' : '600px',
+                        padding: '20px'
+                    });
+                }
+
+                // ================================================
+                // FUNCIÓN PARA RECLAMAR DESDE EL MODAL
+                // ================================================
+                window.reclamarLogroDesdeModal = async function(logroKey, logroTexto, userId) {
+                    // Cerrar el modal actual
+                    Swal.close();
+                    
+                    // Esperar un momento y reclamar
+                    setTimeout(async () => {
+                        const reclamado = await window.reclamarLogro(userId, logroKey, logroTexto);
+                        if (reclamado) {
+                            // Recargar el perfil para actualizar las estrellas
+                            document.getElementById('btnPerfil').click();
+                        }
+                    }, 300);
+                };
+
+                // Logout
                 document.getElementById('btnLogout').addEventListener('click', async () => {
                     await supabaseClient.auth.signOut();
                     window.location.href = 'index.html';
                 });
             }
         });
-    });
+    } catch (error) {
+        console.error('Error al abrir perfil:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un problema al cargar tu perfil.',
+            icon: 'error',
+            confirmButtonColor: '#ff7675',
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+    }
+});
 
+
+// ============================================================
+async function reclamarLogro(userId, logroKey, logroTexto) {
+    try {
+        // Verificar si ya fue reclamado
+        const { data: existe, error: checkError } = await supabaseClient
+            .from('reclamos')
+            .select('id')
+            .eq('usuario_id', userId)
+            .eq('logro_key', logroKey)
+            .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        if (existe) {
+            Swal.fire({
+                title: 'Ya reclamaste esta estrella ⭐',
+                text: `Ya reclamaste la estrella por "${logroTexto}"`,
+                icon: 'info',
+                confirmButtonColor: '#9b59b6',
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+            return false;
+        }
+
+        // Reclamar el logro
+        const { error: insertError } = await supabaseClient
+            .from('reclamos')
+            .insert({
+                usuario_id: userId,
+                logro_key: logroKey
+            });
+
+        if (insertError) {
+            // Error específico de RLS
+            if (insertError.code === '42501') {
+                Swal.fire({
+                    title: '⚠️ Error de permisos',
+                    text: 'No se pudo reclamar la estrella. Contacta al administrador.',
+                    icon: 'error',
+                    confirmButtonColor: '#ff7675',
+                    customClass: { popup: 'swal-popup-redondo' }
+                });
+                return false;
+            }
+            throw insertError;
+        }
+
+        // Éxito - mostrar confeti y estrella
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 80,
+                spread: 60,
+                origin: { y: 0.6 },
+                colors: ['#f1c40f', '#ffd700', '#9b59b6']
+            });
+        }
+
+        Swal.fire({
+            title: '⭐ ¡Estrella Reclamada!',
+            html: `
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 4rem; margin-bottom: 10px;">⭐</div>
+                    <p style="color: #2c1b4e; font-weight: 600;">¡Has ganado una estrella por:</p>
+                    <p style="color: #9b59b6; font-weight: 800; font-size: 1.1rem;">"${logroTexto}"</p>
+                    <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 10px;">Sigue así, cada logro cuenta 🌟</p>
+                </div>
+            `,
+            icon: 'success',
+            timer: 2500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+
+        // Sonido de logro
+        if (window.achievementSound) {
+            window.achievementSound.currentTime = 0;
+            window.achievementSound.play().catch(() => {});
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error('Error al reclamar logro:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'No pudimos reclamar tu estrella. Intenta de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#ff7675',
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+        return false;
+    }
+}
+// ============================================================
+// FUNCIÓN PARA VERIFICAR Y GUARDAR LOGROS
+// ============================================================
+async function verificarLogros(userId) {
+    try {
+        // Obtener datos del usuario
+        const { data: userData } = await supabaseClient
+            .from('usuarios')
+            .select('nombre, genero_id')
+            .eq('id', userId)
+            .single();
+
+        const tieneNombre = userData && userData.nombre && userData.nombre !== 'Amigo';
+        const tieneGenero = userData && userData.genero_id !== null;
+
+        // Contar publicaciones
+        const { count: countPublicaciones } = await supabaseClient
+            .from('publicaciones')
+            .select('*', { count: 'exact', head: true })
+            .eq('usuario_id', userId);
+
+        // Contar reflexiones
+        const { count: countReflexiones } = await supabaseClient
+            .from('diarios')
+            .select('*', { count: 'exact', head: true })
+            .eq('usuario_id', userId);
+
+        // Verificar reflexión con emoción
+        const { data: reflexionesConEmocion } = await supabaseClient
+            .from('diarios')
+            .select('id')
+            .eq('usuario_id', userId)
+            .not('emocion', 'is', null)
+            .limit(1);
+
+        const tieneReflexionConEmocion = reflexionesConEmocion && reflexionesConEmocion.length > 0;
+
+        // Construir objeto de logros
+        const logros = {
+            cambio_nombre: tieneNombre,
+            cambio_genero: tieneGenero,
+            completado_perfil: tieneNombre && tieneGenero,
+            primera_publicacion: countPublicaciones >= 1,
+            cinco_publicaciones: countPublicaciones >= 5,
+            primera_reflexion: countReflexiones >= 1,
+            cinco_reflexiones: countReflexiones >= 5,
+            diez_reflexiones: countReflexiones >= 10,
+            reflexion_emocion: tieneReflexionConEmocion
+        };
+
+        // Guardar o actualizar en la tabla logros
+        const { error } = await supabaseClient
+            .from('logros')
+            .upsert({
+                usuario_id: userId,
+                ...logros,
+                actualizado_en: new Date().toISOString()
+            });
+
+        if (error) {
+            console.error('Error al guardar logros:', error);
+        }
+
+        return logros;
+
+    } catch (error) {
+        console.error('Error en verificarLogros:', error);
+        return null;
+    }
+}
+
+// Exponer función globalmente
+window.verificarLogros = verificarLogros;
+
+// ============================================================
+// FUNCIÓN PARA RECLAMAR LOGRO (DAR ESTRELLA)
+// ============================================================
+async function reclamarLogro(userId, logroKey, logroTexto) {
+    try {
+        // Verificar si ya fue reclamado
+        const { data: existe, error: checkError } = await supabaseClient
+            .from('reclamos')
+            .select('id')
+            .eq('usuario_id', userId)
+            .eq('logro_key', logroKey)
+            .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        if (existe) {
+            Swal.fire({
+                title: 'Ya reclamaste esta estrella ⭐',
+                text: `Ya reclamaste la estrella por "${logroTexto}"`,
+                icon: 'info',
+                confirmButtonColor: '#9b59b6',
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+            return false;
+        }
+
+        // Reclamar el logro
+        const { error: insertError } = await supabaseClient
+            .from('reclamos')
+            .insert({
+                usuario_id: userId,
+                logro_key: logroKey
+            });
+
+        if (insertError) throw insertError;
+
+        // Éxito - mostrar confeti y estrella
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 80,
+                spread: 60,
+                origin: { y: 0.6 },
+                colors: ['#f1c40f', '#ffd700', '#9b59b6']
+            });
+        }
+
+        Swal.fire({
+            title: '⭐ ¡Estrella Reclamada!',
+            html: `
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 4rem; margin-bottom: 10px;">⭐</div>
+                    <p style="color: #2c1b4e; font-weight: 600;">¡Has ganado una estrella por:</p>
+                    <p style="color: #9b59b6; font-weight: 800; font-size: 1.1rem;">"${logroTexto}"</p>
+                    <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 10px;">Sigue así, cada logro cuenta 🌟</p>
+                </div>
+            `,
+            icon: 'success',
+            timer: 2500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+
+        // Sonido de logro
+        if (window.achievementSound) {
+            window.achievementSound.currentTime = 0;
+            window.achievementSound.play().catch(() => {});
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error('Error al reclamar logro:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'No pudimos reclamar tu estrella. Intenta de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#ff7675',
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+        return false;
+    }
+}
+
+// Obtener estrellas reclamadas
+async function obtenerEstrellasReclamadas(userId) {
+    try {
+        const { data, error } = await supabaseClient
+            .from('reclamos')
+            .select('logro_key')
+            .eq('usuario_id', userId);
+
+        if (error) throw error;
+        return data.map(r => r.logro_key);
+
+    } catch (error) {
+        console.error('Error al obtener estrellas:', error);
+        return [];
+    }
+}
+
+// Exponer funciones globalmente
+window.reclamarLogro = reclamarLogro;
+window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
     // --- Función global para Calificación y Ver Opiniones ---
     window.mostrarCalificacionSweetAlert = async function() {
         const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1192,4 +1982,5 @@ document.addEventListener('DOMContentLoaded', function() {
         // Actualizar el menú móvil también
         actualizarMenuMovil();
     }
+
 });

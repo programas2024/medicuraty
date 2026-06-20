@@ -12,11 +12,13 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 window.supabaseClient = supabaseClient;
 
 // ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
+// ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
 async function getDestinoInicio() {
     const path = window.location.pathname;
     const esIndex = path.includes('index.html') || path.endsWith('/') || path === '';
     const esPrincipal = path.includes('principal.html');
     const esComunidad = path.includes('comunidad.html');
+    const esDiario = path.includes('diario.html');  // <-- AGREGADO
     
     // Si estamos en index, siempre ir a index
     if (esIndex) return 'index.html';
@@ -25,21 +27,19 @@ async function getDestinoInicio() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     const tieneSesion = session !== null;
     
-    // Si estamos en principal o comunidad y hay sesión, ir a principal
-    if ((esPrincipal || esComunidad) && tieneSesion) {
+    // Si estamos en principal, comunidad o diario Y hay sesión -> ir a principal
+    if ((esPrincipal || esComunidad || esDiario) && tieneSesion) {
         return 'principal.html';
     }
     
-    // Si estamos en principal o comunidad y NO hay sesión, ir a index
-    if ((esPrincipal || esComunidad) && !tieneSesion) {
+    // Si estamos en principal, comunidad o diario y NO hay sesión -> ir a index
+    if ((esPrincipal || esComunidad || esDiario) && !tieneSesion) {
         return 'index.html';
     }
     
     // Por defecto, ir a index
     return 'index.html';
 }
-
-// ===== ACTUALIZAR BOTÓN INICIO =====
 async function actualizarBotonInicio() {
     const wrapperInicio = document.getElementById('wrapperInicio');
     if (!wrapperInicio) return;

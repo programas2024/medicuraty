@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicurativo · Mi Diario Personal</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Nuestros CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/swafire.css">
+    <link rel="stylesheet" href="css/diario.css">
+    
+    <!-- Estilos adicionales para el modal de edición -->
+    <style>
+        /* ==================== ESTILOS PARA SWEETALERT MEJORADOS ==================== */
+        
+/* ==================== ESTILOS PARA LA "X" DE CIERRE ==================== */
+.swal2-close-custom {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: rgba(155, 89, 182, 0.08) !important;
+    color: #4a2f6e !important;
+    font-size: 1.4rem !important;
+    font-weight: 300 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    border: none !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+.swal2-close-custom:hover {
+    background: rgba(155, 89, 182, 0.2) !important;
+    transform: rotate(90deg) scale(1.1) !important;
+    color: #9b59b6 !important;
+}
+
+.swal2-close-custom:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.25) !important;
+}
+
+        /* ==================== ESTILOS PARA BOTONES DEL MODAL ==================== */
+.swal2-confirm-custom {
+    order: 2 !important;  /* Actualizar a la derecha */
+    background: linear-gradient(135deg, #9b59b6, #8e44ad) !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 28px !important;
+    border-radius: 50px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    margin-left: 8px !important;
+}
+
+.swal2-confirm-custom:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 30px rgba(155, 89, 182, 0.4) !important;
+}
+
+.swal2-cancel-custom {
+    order: 1 !important;  /* Cancelar a la izquierda */
+    background: #f0e6ff !important;
+    color: #4a2f6e !important;
+    border: none !important;
+    padding: 12px 28px !important;
+    border-radius: 50px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    margin-right: 8px !important;
+}
+
+.swal2-cancel-custom:hover {
+    background: #e8d9ff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(155, 89, 182, 0.15) !important;
+}
+
+/* Ajuste del contenedor de botones */
+.swal2-actions {
+    flex-direction: row !important;
+    gap: 10px !important;
+}
+
+/* Estilo del input de validación */
+.swal2-validation-message {
+    background: #fff5f5 !important;
+    color: #ff7675 !important;
+    border-radius: 15px !important;
+    padding: 10px !important;
+    border: 1px solid #ffd4d4 !important;
+}
+        /* Modal de edición */
+        .swal-edit-modal .swal2-popup {
+            border-radius: 30px !important;
+            padding: 30px !important;
+            max-width: 550px !important;
+            background: linear-gradient(145deg, #ffffff, #faf8ff) !important;
+            box-shadow: 0 25px 60px rgba(155, 89, 182, 0.2) !important;
+        }
+        
+        .swal-edit-textarea {
+            width: 100% !important;
+            min-height: 150px !important;
+            padding: 15px !important;
+            border-radius: 15px !important;
+            border: 2px solid #e8d9ff !important;
+            font-family: 'Segoe UI', system-ui, sans-serif !important;
+            font-size: 0.95rem !important;
+            resize: vertical !important;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+            background: #faf8ff !important;
+            color: #2c1b4e !important;
+            line-height: 1.6 !important;
+        }
+        
+        .swal-edit-textarea:focus {
+            border-color: #9b59b6 !important;
+            box-shadow: 0 0 0 4px rgba(155, 89, 182, 0.15) !important;
+            outline: none !important;
+        }
+        
+        .swal-emocion-group {
+            display: flex !important;
+            gap: 10px !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            margin-top: 8px !important;
+        }
+        
+        .swal-emocion-btn {
+            padding: 10px 18px !important;
+            border-radius: 30px !important;
+            border: 2.5px solid #e8d9ff !important;
+            background: white !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            color: #4a2f6e !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-family: inherit !important;
+        }
+        
+        .swal-emocion-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.2) !important;
+            border-color: #9b59b6 !important;
+        }
+        
+        .swal-emocion-btn.active {
+            background: #9b59b6 !important;
+            color: white !important;
+            border-color: #9b59b6 !important;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3) !important;
+        }
+        
+        .swal-emocion-btn .emoji {
+            font-size: 1.2rem !important;
+        }
+        
+        .swal-edit-label {
+            display: block !important;
+            margin-bottom: 8px !important;
+            color: #4a2f6e !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.3px !important;
+        }
+        
+        .swal-edit-label i {
+            margin-right: 8px !important;
+        }
+        
+        /* ==================== ESTILOS DE TARJETAS ==================== */
+        
+        .diario-card-footer {
+            display: flex !important;
+            gap: 8px !important;
+            justify-content: flex-end !important;
+            margin-top: 12px !important;
+            padding-top: 12px !important;
+            border-top: 1.5px solid #f0e6ff !important;
+        }
+        
+        .btn-editar-diario {
+            background: rgba(155, 89, 182, 0.1) !important;
+            color: #9b59b6 !important;
+            border: none !important;
+            border-radius: 30px !important;
+            padding: 8px 16px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+        
+        .btn-editar-diario:hover {
+            background: #9b59b6 !important;
+            color: white !important;
+            transform: scale(1.05) !important;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3) !important;
+        }
+        
+        .btn-eliminar-diario {
+            background: rgba(255, 118, 117, 0.1) !important;
+            color: #ff7675 !important;
+            border: none !important;
+            border-radius: 30px !important;
+            padding: 8px 16px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+        
+        .btn-eliminar-diario:hover {
+            background: #ff7675 !important;
+            color: white !important;
+            transform: scale(1.05) !important;
+            box-shadow: 0 5px 15px rgba(255, 118, 117, 0.3) !important;
+        }
+
+        .btn-ver-todas {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 30px !important;
+            padding: 10px 24px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            margin-top: 10px !important;
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.25) !important;
+        }
+
+        .btn-ver-todas:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 30px rgba(155, 89, 182, 0.35) !important;
+        }
+
+        /* Estilo para el contenedor de "ver todas" en el modal */
+        .modal-todas-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .modal-todas-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-todas-container::-webkit-scrollbar-track {
+            background: #f0e6ff;
+            border-radius: 10px;
+        }
+
+        .modal-todas-container::-webkit-scrollbar-thumb {
+            background: #9b59b6;
+            border-radius: 10px;
+        }
+
+        .modal-card-item {
+            background: #faf8ff;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #9b59b6;
+            text-align: left;
+        }
+
+        .modal-card-item .fecha-item {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .modal-card-item .texto-item {
+            font-size: 0.9rem;
+            color: #2c1b4e;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .modal-card-item .emocion-item {
+            font-size: 0.8rem;
+            color: #9b59b6;
+            font-weight: 600;
+        }
+
+        .modal-card-item .acciones-item {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            justify-content: flex-end;
+        }
+
+        .modal-card-item .acciones-item button {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-card-item .acciones-item .btn-edit-item {
+            background: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+        }
+
+        .modal-card-item .acciones-item .btn-edit-item:hover {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .modal-card-item .acciones-item .btn-delete-item {
+            background: rgba(255, 118, 117, 0.1);
+            color: #ff7675;
+        }
+
+        .modal-card-item .acciones-item .btn-delete-item:hover {
+            background: #ff7675;
+            color: white;
+        }
+
+        .contador-reflexiones {
+            background: #f3e9ff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #4a2f6e;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        /* Animación de actualización */
+        @keyframes actualizarCard {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); background: #f8f0ff; }
+            100% { transform: scale(1); }
+        }
+        
+        .diario-card-entrada.actualizando {
+            animation: actualizarCard 0.6s ease !important;
+        }
+        
+        /* ==================== ESTILOS PARA SWEETALERT DE ACTUALIZACIÓN ==================== */
+        .swal-update-success .swal2-popup {
+            border-radius: 30px !important;
+            background: linear-gradient(145deg, #ffffff, #fafffa) !important;
+            box-shadow: 0 25px 60px rgba(39, 174, 96, 0.15) !important;
+        }
+        
+        .swal-update-error .swal2-popup {
+            border-radius: 30px !important;
+            background: linear-gradient(145deg, #ffffff, #fff5f5) !important;
+            box-shadow: 0 25px 60px rgba(255, 118, 117, 0.15) !important;
+        }
+        
+        .swal-help-modal .swal2-popup {
+            border-radius: 30px !important;
+            background: linear-gradient(145deg, #ffffff, #faf8ff) !important;
+            box-shadow: 0 25px 60px rgba(155, 89, 182, 0.15) !important;
+            max-width: 550px !important;
+        }
+
+        .swal-ver-todas .swal2-popup {
+            border-radius: 30px !important;
+            background: linear-gradient(145deg, #ffffff, #faf8ff) !important;
+            box-shadow: 0 25px 60px rgba(155, 89, 182, 0.15) !important;
+            max-width: 600px !important;
+        }
+
+        .swal-no-data {
+            text-align: center;
+            padding: 30px 20px;
+            color: #95a5a6;
+        }
+
+        .swal-no-data i {
+            font-size: 3rem;
+            color: #d5c6e0;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- PANTALLA DE CARGA (Splash Screen) -->
+    <div id="loader-wrapper">
+        <div id="loader-content">
+            <img src="imganes/logosmedi.png" alt="Logo" class="loader-logo">
+            <p id="loader-message">Bienvenido a tu espacio seguro...</p>
+            <div class="loader-bar-container">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contenedor">
+        <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <img src="imganes/logosmedi.png" alt="Medicurativo" loading="lazy">
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+            
+            <div class="header-utils">
+                <!-- Calificación antes del buzón (PC solamente) -->
+                <div id="contenedorPromedioGlobal" class="contenedor-promedio-global hide-mobile-flex" style="display: none; align-items: center; background: #fff9e6; border-radius: 30px; padding: 8px 15px; border: 1.5px solid #f1c40f; gap: 8px; animation: fadeIn 0.8s ease; cursor: default;">
+                    <i class="fas fa-star" style="color: #f1c40f; font-size: 0.9rem;"></i>
+                    <span id="valorPromedioGlobal" style="color: #d4ac0d; font-weight: 800; font-size: 1rem;">...</span>
+                </div>
+
+                <!-- Botón de Inicio (Casita) para volver a principal.html -->
+                <div class="btn-con-tooltip" id="wrapperInicio">
+                    <a href="principal.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Volver al Inicio</span>
+                </div>
+
+                <!-- Cambiar Modo (Luna/Sol) -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="tooltip">Cambiar Modo</span>
+                </div>
+
+                <!-- Botón de Ayuda -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnAyuda">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+
+                <!-- Perfil -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnPerfil" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <span class="tooltip">Mi Perfil</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAV PRINCIPAL CON SALUDO Y RELOJ -->
+        <div class="nav-principal">
+            <div id="contenedorSaludo" style="width: 100%; margin-bottom: 20px; display: none; animation: fadeIn 0.8s ease; flex-wrap: wrap; gap: 15px; align-items: stretch;">
+                <div style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1; min-width: 280px; text-align: center;">
+                    <i class="fas fa-sparkles" style="color: #f1c40f; font-size: 1.2rem;"></i>
+                    <h2 style="color: #2c1b4e; font-size: 1.2rem; margin: 0;">¡Hola, <span id="usuarioNombreLogueado" style="color: #9b59b6; font-weight: 800;">Amigo</span>!<span id="saludoDinamico"> Qué alegría verte de nuevo 🌿</span></h2>
+                </div>
+
+                <div id="contenedorRelojVisual" style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; flex: 1; min-width: 280px; transition: background-color 1s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i id="iconoRelojDinamico" class="fas fa-clock" style="color: #9b59b6; font-size: 1.2rem;"></i>
+                        <div id="relojTexto" style="color: #2c1b4e; font-size: 1rem; font-weight: 600;"></div>
+                    </div>
+                    <div style="width: 60%; height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden;">
+                        <div id="barraProgresoDia" style="width: 0%; height: 100%; background: #9b59b6; transition: width 1s ease, background-color 1s ease;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FRASE INFORMATIVA DEL DIARIO -->
+            <div class="label-info-container" style="width: 100%; margin-bottom: 15px;">
+                <i class="fas fa-book-open"></i>
+                <p>Escribe tus pensamientos libres, tus agradecimientos y reflexiones para liberar tu mente 🌿</p>
+            </div>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL: DIARIO -->
+        <main class="diario-layout">
+            <!-- SECCIÓN: NUEVA ENTRADA -->
+            <section class="diario-seccion animacion-entrada">
+                <h2 class="diario-titulo"><i class="fas fa-feather-alt"></i> Escribir en mi Diario</h2>
+                
+                <div class="diario-libreta-wrapper">
+                    <textarea class="diario-textarea" id="txtDiario" placeholder="¿Cómo te fue hoy? Expresa lo que piensas, tus logros o lo que agradeces del día..."></textarea>
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <span class="emocion-selector-label">¿Cómo te sientes en este momento?</span>
+                    <div class="emocion-options">
+                        <button class="emocion-btn" data-emocion="feliz">
+                            <span>😊</span>
+                            <span class="emocion-label">Alegre</span>
+                        </button>
+                        <button class="emocion-btn" data-emocion="calmo">
+                            <span>🌿</span>
+                            <span class="emocion-label">Calmo</span>
+                        </button>
+                        <button class="emocion-btn" data-emocion="triste">
+                            <span>😔</span>
+                            <span class="emocion-label">Triste</span>
+                        </button>
+                        <button class="emocion-btn" data-emocion="estresado">
+                            <span>⚡</span>
+                            <span class="emocion-label">Estresado</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-guardar-diario" id="btnGuardarEntry">
+                    <i class="fas fa-bookmark"></i> Guardar mi Reflexión
+                </button>
+            </section>
+
+            <!-- SECCIÓN: HISTORIAL DE ENTRADAS -->
+            <section class="diario-seccion animacion-entrada" style="animation-delay: 0.1s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <h2 class="diario-titulo" style="margin: 0;"><i class="fas fa-history"></i> Mis Reflexiones Recientes</h2>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span class="contador-reflexiones" id="contadorReflexiones">0 reflexiones</span>
+                        <button class="btn-ver-todas" id="btnVerTodas">
+                            <i class="fas fa-list-ul"></i> Ver todas
+                        </button>
+                    </div>
+                </div>
+                <div class="diario-grid-historial" id="gridHistorialDiario">
+                    <!-- Las tarjetas se generan dinámicamente -->
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · tu diario íntimo <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2026 · tu diario de crecimiento <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+
+    <!-- Nuestros scripts -->
+    <script src="js/sweetalert.js"></script>
+    <script src="js/sweetaler2.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/perfil.js"></script>
+    <script src="js/performance.js"></script>
+    
+    <!-- Lógica del Diario COMPLETA CON EDICIÓN Y SWEETALERTS MEJORADOS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verificar sesión después de que se cargue la base
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (!session) {
+                Swal.fire({
+                    title: 'Acceso no autorizado',
+                    text: 'Debes iniciar sesión para usar tu diario de crecimiento.',
+                    icon: 'warning',
+                    confirmButtonColor: '#9b59b6',
+                    allowOutsideClick: false
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+                return;
+            }
+
+            const userId = session.user.id;
+            let emocionSeleccionada = null;
+            let todasLasEntradas = []; // Almacenar todas para el contador y "ver todas"
+
+            // Manejo de botones de emociones
+            const botonesEmocion = document.querySelectorAll('.emocion-btn');
+            botonesEmocion.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    botonesEmocion.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    emocionSeleccionada = btn.dataset.emocion;
+                    if (window.clickSound) {
+                        window.clickSound.currentTime = 0;
+                        window.clickSound.play().catch(() => {});
+                    }
+                });
+            });
+
+            // Guardar entrada
+            const btnGuardar = document.getElementById('btnGuardarEntry');
+            const txtDiario = document.getElementById('txtDiario');
+
+            btnGuardar.addEventListener('click', async () => {
+                const entradaText = txtDiario.value.trim();
+                if (!entradaText) {
+                    Swal.fire({
+                        title: 'Escribe algo',
+                        text: 'El diario no puede guardarse vacío.',
+                        icon: 'warning',
+                        confirmButtonColor: '#9b59b6',
+                        customClass: { popup: 'swal-popup-redondo' }
+                    });
+                    return;
+                }
+
+                // Verificar límite de 2 por día
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const hoyISO = hoy.toISOString();
+
+                try {
+                    const { data: entradasHoy, error: countError } = await window.supabaseClient
+                        .from('diarios')
+                        .select('id')
+                        .eq('usuario_id', userId)
+                        .gte('creado_en', hoyISO)
+                        .lt('creado_en', new Date(hoy.getTime() + 86400000).toISOString());
+
+                    if (countError) throw countError;
+
+                    if (entradasHoy && entradasHoy.length >= 2) {
+                        Swal.fire({
+                            title: 'Límite diario alcanzado',
+                            html: `
+                                <div style="text-align: center; padding: 5px;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 10px;"></div>
+                                    <p style="color: #2c1b4e; font-weight: 500;">Ya escribiste tus <strong>2 reflexiones</strong> de hoy.</p>
+                                    <p style="color: #7f8c8d; font-size: 0.9rem;">Vuelve mañana para seguir escribiendo 🌙</p>
+                                    <div style="margin-top: 15px; background: #f3e9ff; padding: 10px; border-radius: 15px;">
+                                        <i class="fas fa-calendar-alt" style="color: #9b59b6;"></i>
+                                        <span style="color: #2c1b4e; font-size: 0.85rem; margin-left: 8px;">El crecimiento personal es un hábito diario</span>
+                                    </div>
+                                </div>
+                            `,
+                            icon: 'info',
+                            confirmButtonColor: '#9b59b6',
+                            confirmButtonText: 'Entendido',
+                            customClass: { popup: 'swal-popup-redondo' }
+                        });
+                        return;
+                    }
+
+                } catch (err) {
+                    console.error("Error verificando límite diario:", err);
+                }
+
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('diarios')
+                        .insert({
+                            usuario_id: userId,
+                            entrada: entradaText,
+                            emocion: emocionSeleccionada
+                        });
+
+                    if (error) throw error;
+
+                    // Sonido y confeti
+                    if (window.successSound) {
+                        window.successSound.currentTime = 0;
+                        window.successSound.play().catch(() => {});
+                    }
+                    if (typeof confetti === 'function') {
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#f1c40f', '#9b59b6']
+                        });
+                    }
+
+                    // 🔥 SWEETALERT DE GUARDADO EXITOSO - MEJORADO
+                    Swal.fire({
+                        title: '<span style="color: #27ae60; font-weight: 800;">✨ ¡Reflexión Guardada!</span>',
+                        html: `
+                            <div style="text-align: center; padding: 5px;">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">📖</div>
+                                <p style="color: #2c1b4e; font-weight: 500; margin-bottom: 5px;">Tu pensamiento ahora forma parte</p>
+                                <p style="color: #7f8c8d; font-size: 0.9rem;">de tu viaje de crecimiento personal 🌱</p>
+                                <div style="margin-top: 15px; background: #e8f5e9; padding: 10px; border-radius: 15px;">
+                                    <i class="fas fa-feather" style="color: #27ae60;"></i>
+                                    <span style="color: #2c1b4e; font-size: 0.85rem; margin-left: 8px;">"Cada palabra escrita es un paso hacia tu bienestar"</span>
+                                </div>
+                            </div>
+                        `,
+                        icon: 'success',
+                        timer: 2500,
+                        showConfirmButton: false,
+                        customClass: { 
+                            popup: 'swal-popup-redondo swal-update-success' 
+                        }
+                    });
+
+                    // Limpiar campos
+                    txtDiario.value = '';
+                    botonesEmocion.forEach(b => b.classList.remove('active'));
+                    emocionSeleccionada = null;
+
+                    // Recargar lista
+                    cargarEntradas();
+
+                } catch (err) {
+                    console.error("Error al guardar en el diario:", err);
+                    // 🔥 SWEETALERT DE ERROR - MEJORADO
+                    Swal.fire({
+                        title: '<span style="color: #ff7675; font-weight: 800;">⚠️ No se pudo guardar</span>',
+                        html: `
+                            <div style="text-align: center; padding: 5px;">
+                                <div style="font-size: 2.5rem; margin-bottom: 10px;">😓</div>
+                                <p style="color: #2c1b4e; margin-bottom: 5px;">Hubo un problema al guardar tu reflexión.</p>
+                                <p style="color: #7f8c8d; font-size: 0.85rem;">Por favor, intenta de nuevo en unos momentos.</p>
+                                <div style="margin-top: 15px; background: #fff5f5; padding: 10px; border-radius: 15px;">
+                                    <i class="fas fa-wifi" style="color: #ff7675;"></i>
+                                    <span style="color: #2c1b4e; font-size: 0.85rem; margin-left: 8px;">Verifica tu conexión a internet</span>
+                                </div>
+                            </div>
+                        `,
+                        icon: 'error',
+                        confirmButtonColor: '#ff7675',
+                        confirmButtonText: 'Intentar de nuevo',
+                        customClass: { 
+                            popup: 'swal-popup-redondo swal-update-error' 
+                        }
+                    });
+                } finally {
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="fas fa-bookmark"></i> Guardar mi Reflexión';
+                }
+            });
+
+            // ============================================
+            // FUNCIONES PRINCIPALES DEL DIARIO
+            // ============================================
+
+            // Función para cargar entradas (solo las últimas 2 para mostrar)
+            async function cargarEntradas() {
+                const grid = document.getElementById('gridHistorialDiario');
+                if (!grid) return;
+
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; opacity: 0.6; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Cargando tus notas privadas...</div>';
+
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('diarios')
+                        .select('*')
+                        .eq('usuario_id', userId)
+                        .order('creado_en', { ascending: false });
+
+                    if (error) throw error;
+
+                    // Guardar todas las entradas para el contador y "ver todas"
+                    todasLasEntradas = data || [];
+
+                    // Actualizar contador
+                    const contador = document.getElementById('contadorReflexiones');
+                    if (contador) {
+                        const total = todasLasEntradas.length;
+                        contador.textContent = ` ${total} reflexión${total !== 1 ? 'es' : ''}`;
+                    }
+
+                    if (!data || data.length === 0) {
+                        grid.innerHTML = `
+                            <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: rgba(255,255,255,0.4); border-radius: 30px; border: 2px dashed #eadcff; margin-top: 15px;">
+                                <i class="fas fa-feather" style="font-size: 2.5rem; color: #9b59b6; opacity: 0.5; margin-bottom: 15px;"></i>
+                                <p style="color: #7f8c8d; font-size: 0.95rem; font-style: italic;">Tu diario está en blanco. Escribe tu primera reflexión hoy para iniciar tu registro.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // Solo mostrar las últimas 2
+                    const ultimasDos = data.slice(0, 2);
+
+                    const emojisMap = {
+                        'feliz': '😊',
+                        'calmo': '🌿',
+                        'triste': '😔',
+                        'estresado': '⚡'
+                    };
+
+                    const emocionLabels = {
+                        'feliz': 'Alegre',
+                        'calmo': 'Calmo',
+                        'triste': 'Triste',
+                        'estresado': 'Estresado'
+                    };
+
+                    grid.innerHTML = ultimasDos.map(item => {
+                        const fechaObj = new Date(item.creado_en);
+                        const fecha = fechaObj.toLocaleDateString('es-ES', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                        }) + ' · ' + fechaObj.toLocaleTimeString('es-ES', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        const emoji = emojisMap[item.emocion] || '';
+                        const label = emocionLabels[item.emocion] || 'Reflexión';
+
+                        return `
+                            <div class="diario-card-entrada animacion-entrada" data-id="${item.id}">
+                                <div class="diario-card-header">
+                                    <span class="diario-card-fecha">
+                                        <i class="far fa-calendar-alt" style="margin-right: 5px; color: #9b59b6;"></i>
+                                        ${fecha}
+                                    </span>
+                                    <span class="diario-card-emocion" title="Emoción: ${label}">
+                                        ${emoji} ${label}
+                                    </span>
+                                </div>
+                                <div class="diario-card-cuerpo" id="texto-${item.id}">${escapeHTML(item.entrada)}</div>
+                                <div class="diario-card-footer">
+                                    <button class="btn-editar-diario" onclick="editarEntrada(${item.id})" title="Editar esta reflexión">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn-eliminar-diario" onclick="eliminarEntrada(${item.id})" title="Eliminar esta reflexión">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                } catch (err) {
+                    console.error("Error al cargar historial:", err);
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ff7675; padding: 20px;"><i class="fas fa-exclamation-triangle"></i> No pudimos recuperar tus entradas de diario.</div>';
+                }
+            }
+
+            // ============================================
+            // FUNCIÓN PARA VER TODAS LAS REFLEXIONES EN SWEETALERT
+            // ============================================
+
+            document.getElementById('btnVerTodas')?.addEventListener('click', () => {
+                if (!todasLasEntradas || todasLasEntradas.length === 0) {
+                    Swal.fire({
+                        title: 'Sin reflexiones',
+                        text: 'Aún no has escrito ninguna reflexión en tu diario.',
+                        icon: 'info',
+                        confirmButtonColor: '#9b59b6',
+                        customClass: { popup: 'swal-popup-redondo' }
+                    });
+                    return;
+                }
+
+                const emojisMap = {
+                    'feliz': '😊',
+                    'calmo': '🌿',
+                    'triste': '😔',
+                    'estresado': '⚡'
+                };
+
+                const emocionLabels = {
+                    'feliz': 'Alegre',
+                    'calmo': 'Calmo',
+                    'triste': 'Triste',
+                    'estresado': 'Estresado'
+                };
+
+                // Construir el HTML de todas las reflexiones
+                let htmlContent = `
+                    <div class="modal-todas-container">
+                        <p style="text-align: center; color: #7f8c8d; font-size: 0.85rem; margin-bottom: 15px;">
+                            <i class="fas fa-book"></i> Total: ${todasLasEntradas.length} reflexión${todasLasEntradas.length !== 1 ? 'es' : ''}
+                        </p>
+                `;
+
+                todasLasEntradas.forEach((item, index) => {
+                    const fechaObj = new Date(item.creado_en);
+                    const fecha = fechaObj.toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    }) + ' · ' + fechaObj.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const emoji = emojisMap[item.emocion] || '';
+                    const label = emocionLabels[item.emocion] || 'Reflexión';
+
+                    htmlContent += `
+                        <div class="modal-card-item" data-id="${item.id}">
+                            <div class="fecha-item">
+                                <i class="far fa-calendar-alt" style="margin-right: 5px; color: #9b59b6;"></i>
+                                ${fecha}
+                            </div>
+                            <div class="texto-item">${escapeHTML(item.entrada)}</div>
+                            <div class="emocion-item">${emoji} ${label}</div>
+                            <div class="acciones-item">
+                                <button class="btn-edit-item" onclick="editarEntradaDesdeModal(${item.id})">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn-delete-item" onclick="eliminarEntradaDesdeModal(${item.id})">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                htmlContent += `</div>`;
+
+                Swal.fire({
+                    title: '<span style="color: #2c1b4e; font-weight: 800;"> Todas mis Reflexiones</span>',
+                    html: htmlContent,
+                    confirmButtonColor: '#9b59b6',
+                    confirmButtonText: 'Cerrar',
+                    customClass: {
+                        popup: 'swal-ver-todas swal-popup-redondo',
+                        confirmButton: 'swal2-confirm-custom'
+                    },
+                    showCloseButton: true,
+                    closeButtonHtml: '✕',
+                    customClass: {
+                        popup: 'swal-ver-todas swal-popup-redondo',
+                        confirmButton: 'swal2-confirm-custom',
+                        closeButton: 'swal2-close-custom'
+                    },
+                    buttonsStyling: false
+                });
+            });
+
+            // ============================================
+            // FUNCIÓN DE EDICIÓN - CON SWEETALERT MEJORADO
+            // ============================================
+            
+            window.editarEntrada = async (id) => {
+                await editarEntradaCompleta(id);
+            };
+
+            window.editarEntradaDesdeModal = async (id) => {
+                // Cerrar el modal actual y luego abrir el de edición
+                Swal.close();
+                setTimeout(async () => {
+                    await editarEntradaCompleta(id);
+                }, 300);
+            };
+
+            async function editarEntradaCompleta(id) {
+                try {
+                    // Obtener la entrada actual
+                    const { data, error } = await window.supabaseClient
+                        .from('diarios')
+                        .select('*')
+                        .eq('id', id)
+                        .single();
+
+                    if (error) throw error;
+
+                    // Variable para almacenar la emoción seleccionada en el modal
+                    let emocionEditada = data.emocion || '';
+
+                    // Mostrar modal de edición personalizado
+                    const result = await Swal.fire({
+                        title: '<span style="color: #2c1b4e; font-weight: 800;">Editar mi Reflexión</span>',
+                        html: `
+                            <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+                                <div style="margin-bottom: 18px;">
+                                    <label class="swal-edit-label">
+                                        <i class="fas fa-feather" style="color: #9b59b6;"></i> 
+                                        Tu reflexión:
+                                    </label>
+                                    <textarea id="swal-edit-text" class="swal-edit-textarea" placeholder="Escribe tu reflexión...">${escapeHTML(data.entrada)}</textarea>
+                                </div>
+                                <div>
+                                    <label class="swal-edit-label">
+                                        <i class="fas fa-smile" style="color: #f1c40f;"></i> 
+                                        ¿Cómo te sientes?
+                                    </label>
+                                    <div class="swal-emocion-group">
+                                        <button type="button" class="swal-emocion-btn ${data.emocion === 'feliz' ? 'active' : ''}" data-emocion="feliz">
+                                            <span class="emoji">😊</span> Alegre
+                                        </button>
+                                        <button type="button" class="swal-emocion-btn ${data.emocion === 'calmo' ? 'active' : ''}" data-emocion="calmo">
+                                            <span class="emoji">🌿</span> Calmo
+                                        </button>
+                                        <button type="button" class="swal-emocion-btn ${data.emocion === 'triste' ? 'active' : ''}" data-emocion="triste">
+                                            <span class="emoji">😔</span> Triste
+                                        </button>
+                                        <button type="button" class="swal-emocion-btn ${data.emocion === 'estresado' ? 'active' : ''}" data-emocion="estresado">
+                                            <span class="emoji">⚡</span> Estresado
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `,
+                        confirmButtonText: 'Actualizar Reflexión',
+                        cancelButtonText: 'Cancelar',
+                        showCancelButton: true,
+                        confirmButtonColor: '#9b59b6',
+                        cancelButtonColor: '#95a5a6',
+                        showCloseButton: true,
+                        closeButtonHtml: '✕',
+                        allowOutsideClick: true,
+                        allowEscapeKey: true,
+                        customClass: {
+                            popup: 'swal-edit-modal',
+                            confirmButton: 'swal2-confirm-custom',
+                            cancelButton: 'swal2-cancel-custom',
+                            closeButton: 'swal2-close-custom'
+                        },
+                        buttonsStyling: false,
+                        preConfirm: () => {
+                            const texto = document.getElementById('swal-edit-text').value.trim();
+                            if (!texto) {
+                                Swal.showValidationMessage('✍️ La reflexión no puede estar vacía');
+                                return false;
+                            }
+                            return {
+                                texto: texto,
+                                emocion: emocionEditada
+                            };
+                        },
+                        didOpen: () => {
+                            // Manejar selección de emociones en el modal
+                            const emocionBtns = document.querySelectorAll('.swal-emocion-btn');
+                            emocionBtns.forEach(btn => {
+                                btn.addEventListener('click', () => {
+                                    emocionBtns.forEach(b => b.classList.remove('active'));
+                                    btn.classList.add('active');
+                                    emocionEditada = btn.dataset.emocion;
+                                });
+                            });
+
+                            // Auto-focus en el textarea
+                            const textarea = document.getElementById('swal-edit-text');
+                            if (textarea) {
+                                textarea.focus();
+                                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+                            }
+                        }
+                    });
+
+                    // Si el usuario confirma la edición
+                    if (result.isConfirmed && result.value) {
+                        const { texto, emocion } = result.value;
+
+                        // Mostrar loading en el botón
+                        Swal.fire({
+                            title: 'Actualizando...',
+                            text: 'Guardando los cambios en tu reflexión',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Actualizar en Supabase
+                        const { error: updateError } = await window.supabaseClient
+                            .from('diarios')
+                            .update({
+                                entrada: texto,
+                                emocion: emocion || null
+                            })
+                            .eq('id', id);
+
+                        if (updateError) throw updateError;
+
+                        // SweetAlert de actualización exitosa
+                        Swal.fire({
+                            title: '<span style="color: #9b59b6; font-weight: 800;">✨ ¡Reflexión Actualizada!</span>',
+                            html: `
+                                <div style="text-align: center; padding: 5px;">
+                                    <div style="font-size: 3rem; margin-bottom: 10px;">🔄</div>
+                                    <p style="color: #2c1b4e; font-weight: 500; margin-bottom: 5px;">Tu reflexión ha sido modificada con éxito</p>
+                                    <p style="color: #7f8c8d; font-size: 0.9rem;">Sigue escribiendo y creciendo cada día 🌱</p>
+                                    <div style="margin-top: 15px; background: #f3e9ff; padding: 10px; border-radius: 15px;">
+                                        <i class="fas fa-pen" style="color: #9b59b6;"></i>
+                                        <span style="color: #2c1b4e; font-size: 0.85rem; margin-left: 8px;">"El crecimiento personal es un viaje sin fin"</span>
+                                    </div>
+                                </div>
+                            `,
+                            icon: 'success',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            customClass: { 
+                                popup: 'swal-popup-redondo swal-update-success' 
+                            }
+                        });
+
+                        // Actualizar la tarjeta en la interfaz
+                        const card = document.querySelector(`.diario-card-entrada[data-id="${id}"]`);
+                        if (card) {
+                            card.classList.add('actualizando');
+                            const cuerpo = card.querySelector('.diario-card-cuerpo');
+                            if (cuerpo) cuerpo.textContent = texto;
+                            
+                            // Actualizar emoción
+                            const emocionSpan = card.querySelector('.diario-card-emocion');
+                            if (emocionSpan && emocion) {
+                                const emojisMap = {
+                                    'feliz': '😊 Alegre',
+                                    'calmo': '🌿 Calmo',
+                                    'triste': '😔 Triste',
+                                    'estresado': '⚡ Estresado'
+                                };
+                                emocionSpan.textContent = emojisMap[emocion] || ' Reflexión';
+                            }
+                            
+                            setTimeout(() => {
+                                card.classList.remove('actualizando');
+                            }, 600);
+                        } else {
+                            // Si no encuentra la tarjeta, recargar todo
+                            cargarEntradas();
+                        }
+
+                        // Sonido de éxito
+                        if (window.successSound) {
+                            window.successSound.currentTime = 0;
+                            window.successSound.play().catch(() => {});
+                        }
+                    }
+
+                } catch (err) {
+                    console.error("Error al editar entrada:", err);
+                    // SweetAlert de error en edición
+                    Swal.fire({
+                        title: '<span style="color: #ff7675; font-weight: 800;">⚠️ Error al actualizar</span>',
+                        html: `
+                            <div style="text-align: center; padding: 5px;">
+                                <div style="font-size: 2.5rem; margin-bottom: 10px;">😓</div>
+                                <p style="color: #2c1b4e; margin-bottom: 5px;">No pudimos actualizar tu reflexión.</p>
+                                <p style="color: #7f8c8d; font-size: 0.85rem;">Por favor, intenta de nuevo más tarde.</p>
+                                <div style="margin-top: 15px; background: #fff5f5; padding: 10px; border-radius: 15px;">
+                                    <i class="fas fa-database" style="color: #ff7675;"></i>
+                                    <span style="color: #2c1b4e; font-size: 0.85rem; margin-left: 8px;">Error de conexión con la base de datos</span>
+                                </div>
+                            </div>
+                        `,
+                        icon: 'error',
+                        confirmButtonColor: '#ff7675',
+                        confirmButtonText: 'Intentar de nuevo',
+                        customClass: { 
+                            popup: 'swal-popup-redondo swal-update-error' 
+                        }
+                    });
+                }
+            }
+
+            // ============================================
+            // FUNCIÓN DE ELIMINACIÓN CON SWEETALERT MEJORADO
+            // ============================================
+
+            window.eliminarEntrada = async (id) => {
+                await eliminarEntradaCompleta(id);
+            };
+
+            window.eliminarEntradaDesdeModal = async (id) => {
+                // Cerrar el modal actual y luego abrir el de confirmación
+                Swal.close();
+                setTimeout(async () => {
+                    await eliminarEntradaCompleta(id);
+                }, 300);
+            };
+
+            async function eliminarEntradaCompleta(id) {
+                const confirmar = await Swal.fire({
+                    title: '<span style="color: #ff7675; font-weight: 800;">🗑️ ¿Eliminar esta reflexión?</span>',
+                    html: `
+                        <div style="text-align: center; padding: 5px;">
+                            <div style="font-size: 2.5rem; margin-bottom: 10px;">😔</div>
+                            <p style="color: #2c1b4e; font-weight: 500;">Esta acción no se puede deshacer.</p>
+                            <p style="color: #7f8c8d; font-size: 0.9rem;">La reflexión se borrará permanentemente de tu diario.</p>
+                            <div style="margin-top: 15px; background: #fff5f5; padding: 10px; border-radius: 15px;">
+                                <i class="fas fa-trash-alt" style="color: #ff7675;"></i>
+                                <span style="color: #2c1b4e; font-size: 0.85rem; margin-left: 8px;">¿Estás seguro de que deseas continuar?</span>
+                            </div>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff7675',
+                    cancelButtonColor: '#95a5a6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: { 
+                        popup: 'swal-popup-redondo' 
+                    }
+                });
+
+                if (confirmar.isConfirmed) {
+                    try {
+                        const { error } = await window.supabaseClient
+                            .from('diarios')
+                            .delete()
+                            .eq('id', id);
+
+                        if (error) throw error;
+
+                        // 🔥 SWEETALERT DE ELIMINACIÓN EXITOSA
+                        Swal.fire({
+                            title: '<span style="color: #27ae60; font-weight: 800;"> Reflexión Eliminada</span>',
+                            html: `
+                                <div style="text-align: center; padding: 5px;">
+                                    <div style="font-size: 3rem; margin-bottom: 10px;">🧹</div>
+                                    <p style="color: #2c1b4e; font-weight: 500;">Tu espacio queda más ligero.</p>
+                                    <p style="color: #7f8c8d; font-size: 0.9rem;">A veces soltar también es parte del crecimiento 🌿</p>
+                                </div>
+                            `,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            customClass: { 
+                                popup: 'swal-popup-redondo swal-update-success' 
+                            }
+                        });
+
+                        // Eliminar la tarjeta del DOM
+                        const card = document.querySelector(`.diario-card-entrada[data-id="${id}"]`);
+                        if (card) {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.transform = 'scale(0.8)';
+                            card.style.opacity = '0';
+                            setTimeout(() => {
+                                card.remove();
+                                cargarEntradas();
+                            }, 300);
+                        } else {
+                            cargarEntradas();
+                        }
+
+                    } catch (err) {
+                        console.error("Error al eliminar entrada:", err);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No pudimos eliminar la reflexión.',
+                            icon: 'error',
+                            confirmButtonColor: '#ff7675'
+                        });
+                    }
+                }
+            }
+
+            // ============================================
+            // FUNCIONES AUXILIARES
+            // ============================================
+
+            function escapeHTML(str) {
+                if (!str) return '';
+                return str.replace(/[&<>'"]/g, 
+                    tag => ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        "'": '&#39;',
+                        '"': '&quot;'
+                    }[tag] || tag)
+                );
+            }
+
+            // ============================================
+            // 🎨 AYUDA DEL DIARIO - SWEETALERT MEJORADO
+            // ============================================
+
+            document.getElementById('btnAyuda')?.addEventListener('click', () => {
+                Swal.fire({
+                    title: '<span style="color: #2c1b4e; font-weight: 800;">📖 Tu Diario de Crecimiento</span>',
+                    html: `
+                        <div style="text-align: center; padding: 5px;">
+                            <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Un espacio seguro para tus reflexiones 🌿</p>
+                            
+                            <div style="text-align: left; background: #fdfaff; padding: 20px; border-radius: 30px; border: 2px solid #f0e6ff; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                                        <i class="fas fa-pen-fancy"></i> Escribir y Reflexionar
+                                    </h4>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-feather-alt" style="color: #27ae60; font-size: 0.8rem;"></i>
+                                        </div>
+                                        <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Escribe tus pensamientos, <strong>logros y agradecimientos</strong> del día.</p>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-smile" style="color: #f1c40f; font-size: 0.8rem;"></i>
+                                        </div>
+                                        <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Selecciona una <strong>emoción</strong> para darle contexto a tu reflexión.</p>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-bookmark" style="color: #9b59b6; font-size: 0.8rem;"></i>
+                                        </div>
+                                        <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Guarda</strong> tus reflexiones de forma segura y privada.</p>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="color: #9b59b6; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                                        <i class="fas fa-edit"></i> Gestionar tus Notas
+                                    </h4>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <div style="background: #f3e9ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-pen" style="color: #9b59b6; font-size: 0.8rem;"></i>
+                                        </div>
+                                        <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"> <strong>Edita</strong> cualquier reflexión si necesitas corregir o ampliar detalles.</p>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-trash-alt" style="color: #ff7675; font-size: 0.8rem;"></i>
+                                        </div>
+                                        <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"> <strong>Elimina</strong> notas que ya no necesites mantener en tu diario.</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                                        <i class="fas fa-lock"></i> Privacidad y Seguridad
+                                    </h4>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="background: #eaf6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-shield-alt" style="color: #3498db; font-size: 0.8rem;"></i>
+                                        </div>
+                                        <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"> <strong>Solo tú</strong> puedes acceder y gestionar tus reflexiones personales.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px; background: linear-gradient(135deg, #f3e9ff, #e8d9ff); padding: 12px 20px; border-radius: 20px;">
+                                <p style="margin: 0; color: #2c1b4e; font-size: 0.85rem; font-style: italic;">
+                                    <i class="fas fa-quote-left" style="color: #9b59b6; margin-right: 5px;"></i>
+                                    Escribir es como sembrar semillas de bienestar en tu mente
+                                    <i class="fas fa-quote-right" style="color: #9b59b6; margin-left: 5px;"></i>
+                                </p>
+                            </div>
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonColor: '#9b59b6',
+                    confirmButtonText: 'Entendido ✨',
+                    customClass: { 
+                        popup: 'swal-popup-redondo swal-help-modal' 
+                    }
+                });
+            });
+
+            // ============================================
+            // INICIALIZAR
+            // ============================================
+
+            // Cargar historial inicial
+            cargarEntradas();
+
+            // Mostrar saludo después de cargar
+            setTimeout(() => {
+                const contenedorSaludo = document.getElementById('contenedorSaludo');
+                if (contenedorSaludo) {
+                    contenedorSaludo.style.display = 'flex';
+                }
+            }, 500);
+
+        });
+    </script>
+</body>
+</html>

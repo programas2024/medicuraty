@@ -12,7 +12,7 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 window.supabaseClient = supabaseClient;
 
 // ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
-function getDestinoInicio() {
+async function getDestinoInicio() {
     const path = window.location.pathname;
     const esIndex = path.includes('index.html') || path.endsWith('/') || path === '';
     const esPrincipal = path.includes('principal.html');
@@ -22,7 +22,7 @@ function getDestinoInicio() {
     if (esIndex) return 'index.html';
     
     // Verificar si hay sesión activa
-    const { data: { session } } = supabaseClient.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     const tieneSesion = session !== null;
     
     // Si estamos en principal o comunidad y hay sesión, ir a principal
@@ -40,11 +40,11 @@ function getDestinoInicio() {
 }
 
 // ===== ACTUALIZAR BOTÓN INICIO =====
-function actualizarBotonInicio() {
+async function actualizarBotonInicio() {
     const wrapperInicio = document.getElementById('wrapperInicio');
     if (!wrapperInicio) return;
     
-    const destino = getDestinoInicio();
+    const destino = await getDestinoInicio();
     const link = wrapperInicio.querySelector('a');
     if (link) {
         link.href = destino;
@@ -882,6 +882,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="swal-perfil-section-content" id="achievements-content">
                             <div id="userAchievementsDisplay">Cargando...</div>
+                        </div>
+                    </div>
+
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header diary" data-target="diary-content">
+                            <span><i class="fas fa-book"></i> Mi Diario Personal</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="diary-content">
+                            <button onclick="window.location.href='diario.html'" class="swal-perfil-btn"><i class="fas fa-edit"></i> Escribir en mi Diario</button>
                         </div>
                     </div>
 

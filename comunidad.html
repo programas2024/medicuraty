@@ -1522,7 +1522,7 @@
             <!-- Utilidades de la App -->
             <div class="header-utils" id="headerUtilsComunidad">
                 <div class="btn-con-tooltip" id="wrapperInicio">
-                    <a href="#" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                    <a href="principal.html" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
                         <i class="fas fa-home"></i>
                     </a>
                     <span class="tooltip">Inicio</span>
@@ -1660,6 +1660,7 @@
     <script src="js/compartir.js"></script>
     
     <script>
+
         // ============================================================
         // CÓDIGO DE COMUNIDAD
         // ============================================================
@@ -1682,12 +1683,11 @@
 
         // ===== OBTENER REACCIÓN POR DEFECTO =====
         function getDefaultReaction() {
-            return REACCIONES[0]; // corazón por defecto
+            return REACCIONES[0];
         }
 
         // ===== OBTENER REACCIÓN MÁS USADA DE UNA PUBLICACIÓN =====
         function getReaccionMasUsada(publicacionId) {
-            // Si tenemos datos guardados de reacciones para esta publicación
             if (reaccionesPublicacion[publicacionId]) {
                 const counts = reaccionesPublicacion[publicacionId];
                 let maxCount = 0;
@@ -1709,12 +1709,10 @@
         function guardarReaccionUsuario(publicacionId, reactionId) {
             if (!reaccionesPublicacion[publicacionId]) {
                 reaccionesPublicacion[publicacionId] = {};
-                // Inicializar todas las reacciones en 0
                 REACCIONES.forEach(r => {
                     reaccionesPublicacion[publicacionId][r.id] = 0;
                 });
             }
-            // Incrementar la reacción elegida
             reaccionesPublicacion[publicacionId][reactionId] = 
                 (reaccionesPublicacion[publicacionId][reactionId] || 0) + 1;
         }
@@ -1733,7 +1731,6 @@
         // ===== MOSTRAR SELECTOR DE REACCIONES =====
         function mostrarSelectorReacciones(publicacionId) {
             return new Promise((resolve) => {
-                // Crear botones de reacción
                 const buttonsHTML = REACCIONES.map(r => `
                     <button class="reaction-btn" data-reaction="${r.id}" style="position:relative;">
                         ${r.emoji}
@@ -1758,15 +1755,12 @@
                         popup: 'swal-popup-redondo swal-like-container'
                     },
                     didOpen: () => {
-                        // Event listeners para cada botón de reacción
                         document.querySelectorAll('.reaction-btn').forEach(btn => {
                             btn.addEventListener('click', () => {
                                 const reactionId = btn.dataset.reaction;
                                 Swal.close();
                                 resolve(reactionId);
                             });
-                            
-                            // Efecto hover
                             btn.addEventListener('mouseenter', () => {
                                 btn.style.transform = 'scale(1.3)';
                             });
@@ -1789,8 +1783,8 @@
             '#sanación', '#amorpropio', '#felicidad', '#esperanza', '#fortaleza'
         ];
 
-        // ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO =====
-        function actualizarBotonInicio() {
+        // ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO (CORREGIDA CON ASYNC) =====
+        async function actualizarBotonInicio() {
             const linkInicio = document.getElementById('btnInicioLink');
             if (!linkInicio) return;
             
@@ -1800,13 +1794,16 @@
                     return;
                 }
                 
-                const { data: { session } } = window.supabaseClient.auth.getSession();
+                // ✅ USAR await - es asíncrono
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
                 const tieneSesion = session !== null;
                 
                 if (tieneSesion) {
                     linkInicio.href = 'principal.html';
+                    console.log('🔗 Botón inicio → principal.html (logueado)');
                 } else {
                     linkInicio.href = 'index.html';
+                    console.log('🔗 Botón inicio → index.html (no logueado)');
                 }
             } catch (error) {
                 console.warn('Error al actualizar botón inicio:', error);
@@ -1860,14 +1857,14 @@
                     if (contenedor) contenedor.style.display = 'none';
                 }
                 
-                actualizarBotonInicio();
+                await actualizarBotonInicio();
                 return usuarioActual;
             } catch (error) {
                 console.error('Error al verificar sesión:', error);
                 usuarioActual = null;
                 const contenedor = document.getElementById('contenedorBotonSubir');
                 if (contenedor) contenedor.style.display = 'none';
-                actualizarBotonInicio();
+                await actualizarBotonInicio();
                 return null;
             }
         }
@@ -1914,7 +1911,6 @@
         // ===== FILTRAR POR HASHTAG =====
         function filtrarPorHashtag(publicaciones, hashtag) {
             if (!hashtag || hashtag.trim() === '') return publicaciones;
-            
             const termino = hashtag.trim().toLowerCase();
             return publicaciones.filter(pub => {
                 const contenido = pub.contenido || '';
@@ -1989,7 +1985,6 @@
                     }
                 }
 
-                // Renderizar like con reacción
                 const likeHTML = renderLikeIcon(pub.id, pub.likes || 0);
 
                 return `
@@ -2050,7 +2045,7 @@
                 });
             });
 
-            // Event listeners para likes - AHORA CON SELECTOR DE REACCIONES
+            // Event listeners para likes
             document.querySelectorAll('.btn-like').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     e.stopPropagation();
@@ -2083,21 +2078,17 @@
                     }
                     
                     const id = btn.dataset.id;
-                    
-                    // Mostrar selector de reacciones
                     const reactionId = await mostrarSelectorReacciones(id);
                     
                     if (reactionId) {
-                        // Guardar la reacción elegida
                         guardarReaccionUsuario(id, reactionId);
-                        // Ejecutar el like con la reacción
                         await toggleLike(id, reactionId);
                         await cargarPublicaciones();
                     }
                 });
             });
 
-            // Event listeners para hashtags en publicaciones (click para buscar)
+            // Event listeners para hashtags
             document.querySelectorAll('.publicacion-card .hashtag-color').forEach(el => {
                 el.addEventListener('click', () => {
                     const hashtag = el.dataset.hashtag;
@@ -2183,7 +2174,7 @@
                     const likeData = {
                         usuario_id: usuarioActual.id,
                         publicacion_id: publicacionId,
-                        reaction: reactionId // Guardamos también la reacción
+                        reaction: reactionId
                     };
 
                     const { error: insertError } = await window.supabaseClient
@@ -2210,7 +2201,6 @@
 
                 loadingAlert.close();
 
-                // Obtener la reacción elegida
                 const reaction = REACCIONES.find(r => r.id === reactionId) || getDefaultReaction();
 
                 if (esLike) {
@@ -2308,7 +2298,7 @@
             }
         }
 
-        // ===== ABRIR MODAL PARA NUEVA PUBLICACIÓN CON DESPLEGABLES =====
+        // ===== ABRIR MODAL PARA NUEVA PUBLICACIÓN =====
         function abrirModalPublicacion() {
             if (!usuarioActual) {
                 Swal.fire('Inicia sesión', 'Debes iniciar sesión para publicar.', 'info');
@@ -2650,7 +2640,7 @@
             });
         }
 
-        // ===== SUGERENCIAS DE HASHTAGS EN LA BÚSQUEDA =====
+        // ===== SUGERENCIAS DE HASHTAGS =====
         function mostrarSugerencias(termino) {
             const sugerenciasContainer = document.getElementById('sugerenciasHashtags');
             if (!sugerenciasContainer) return;
@@ -2661,7 +2651,6 @@
             }
             
             const terminoLower = termino.toLowerCase().trim();
-            
             const coincidencias = todosLosHashtags.filter(h => 
                 h.toLowerCase().includes(terminoLower)
             );
@@ -2717,76 +2706,108 @@
 
         // ===== FUNCIÓN DE AYUDA =====
         function mostrarAyudaComunidad() {
+            const isDarkMode = document.body.classList.contains('dark-mode') || 
+                               localStorage.getItem('theme') === 'dark';
+            
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#6a5a7e';
+            const descColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+            const cardBg2 = isDarkMode ? 'rgba(255,255,255,0.05)' : '#f8f2ff';
+            const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+            
             Swal.fire({
-                title: '<i class="fas fa-users"></i> Comunidad Medicurativo',
+                title: '',
+                background: bgColor,
                 html: `
-                    <div style="padding: 5px 0;">
-                        <p style="text-align:center; color:#6a5a7e; font-size:0.95rem; margin-bottom:16px; font-weight:400;">
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px; font-size: 24px;">
+                            <i class="fas fa-users" style="color: #9b59b6;"></i> Comunidad Medicurativo
+                        </h2>
+
+                        <p style="text-align:center; color:${subTextColor}; font-size:0.95rem; margin-bottom:16px; font-weight:400;">
                             Bienvenido al muro social, un espacio para compartir y crecer juntos.
                         </p>
 
-                        <div class="ayuda-item">
-                            <div class="ayuda-icono morado"><i class="fas fa-clock"></i></div>
-                            <div class="ayuda-texto">
-                                <strong>Recientes</strong>
-                                <span>Publicaciones ordenadas por fecha, las más nuevas primero.</span>
+                        <div style="text-align: left;">
+                            <div class="ayuda-item" style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div class="ayuda-icono morado" style="background: #9b59b6; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-clock" style="color: white; font-size: 16px;"></i></div>
+                                <div class="ayuda-texto">
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Recientes</strong>
+                                    <span style="color: ${descColor}; font-size: 0.85rem;">Publicaciones ordenadas por fecha, las más nuevas primero.</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="ayuda-item">
-                            <div class="ayuda-icono naranja"><i class="fas fa-fire"></i></div>
-                            <div class="ayuda-texto">
-                                <strong>Más Valoradas</strong>
-                                <span>Publicaciones con más reacciones ❤️ ⭐ 🌸 ✨ 🔥</span>
+                            <div class="ayuda-item" style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #e67e22; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div class="ayuda-icono naranja" style="background: #e67e22; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-fire" style="color: white; font-size: 16px;"></i></div>
+                                <div class="ayuda-texto">
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Más Valoradas</strong>
+                                    <span style="color: ${descColor}; font-size: 0.85rem;">Publicaciones con más reacciones ❤️ ⭐ 🌸 ✨ 🔥</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="ayuda-item">
-                            <div class="ayuda-icono verde"><i class="fas fa-plus-circle"></i></div>
-                            <div class="ayuda-texto">
-                                <strong>Subir contenido</strong>
-                                <span>Visible solo si estás logueado. Comparte frases o imágenes con la comunidad.</span>
+                            <div class="ayuda-item" style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #27ae60; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div class="ayuda-icono verde" style="background: #27ae60; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-plus-circle" style="color: white; font-size: 16px;"></i></div>
+                                <div class="ayuda-texto">
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Subir contenido</strong>
+                                    <span style="color: ${descColor}; font-size: 0.85rem;">Visible solo si estás logueado. Comparte frases o imágenes con la comunidad.</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="ayuda-item">
-                            <div class="ayuda-icono azul"><i class="fas fa-search"></i></div>
-                            <div class="ayuda-texto">
-                                <strong>Buscar por hashtag</strong>
-                                <span>Escribe #inspiración, #crecimiento o cualquier hashtag para filtrar publicaciones.</span>
+                            <div class="ayuda-item" style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #3498db; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div class="ayuda-icono azul" style="background: #3498db; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: white; font-size: 16px;"></i></div>
+                                <div class="ayuda-texto">
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Buscar por hashtag</strong>
+                                    <span style="color: ${descColor}; font-size: 0.85rem;">Escribe #inspiración, #crecimiento o cualquier hashtag para filtrar publicaciones.</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="ayuda-item">
-                            <div class="ayuda-icono rojo"><i class="fas fa-trash-alt"></i></div>
-                            <div class="ayuda-texto">
-                                <strong>Eliminar</strong>
-                                <span>Solo puedes eliminar tus propias publicaciones, el botón aparece en tus posts.</span>
+                            <div class="ayuda-item" style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #e74c3c; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div class="ayuda-icono rojo" style="background: #e74c3c; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trash-alt" style="color: white; font-size: 16px;"></i></div>
+                                <div class="ayuda-texto">
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Eliminar</strong>
+                                    <span style="color: ${descColor}; font-size: 0.85rem;">Solo puedes eliminar tus propias publicaciones, el botón aparece en tus posts.</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="ayuda-item" style="border-left-color: #e84393;">
-                            <div class="ayuda-icono" style="background: #e84393;"><i class="fas fa-heart"></i></div>
-                            <div class="ayuda-texto">
-                                <strong>Reacciones</strong>
-                                <span>Elige entre ❤️ ⭐ 🌸 ✨ 🔥 para expresar cómo te hace sentir cada publicación.</span>
+                            <div class="ayuda-item" style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #e84393; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                                <div class="ayuda-icono" style="background: #e84393; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-heart" style="color: white; font-size: 16px;"></i></div>
+                                <div class="ayuda-texto">
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Reacciones</strong>
+                                    <span style="color: ${descColor}; font-size: 0.85rem;">Elige entre ❤️ ⭐ 🌸 ✨ 🔥 para expresar cómo te hace sentir cada publicación.</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="ayuda-footer">
-                            <i class="fas fa-feather"></i> Comparte desde el corazón, cada palabra y cada imagen suma luz.
+                            <div class="ayuda-footer" style="margin-top: 16px; padding: 14px; background: ${cardBg2}; border-radius: 16px; text-align: center; border: 1px solid ${borderColor};">
+                                <i class="fas fa-feather" style="color: #9b59b6;"></i>
+                                <span style="color: ${textColor}; font-size: 0.9rem; font-weight: 500;">Comparte desde el corazón, cada palabra y cada imagen suma luz.</span>
+                            </div>
                         </div>
                     </div>
                 `,
                 showConfirmButton: true,
                 confirmButtonText: 'Entendido',
                 confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                closeButtonHtml: '✕',
                 customClass: {
                     popup: 'swal-popup-redondo swal-ayuda-comunidad',
-                    confirmButton: 'swal-confirm-btn'
+                    confirmButton: 'swal-confirm-btn',
+                    closeButton: 'custom-close-btn-left'
                 }
             });
         }
+
+        window.mostrarAyudaComunidad = mostrarAyudaComunidad;
 
         // ===== INICIALIZACIÓN =====
         document.addEventListener('DOMContentLoaded', async () => {
@@ -2808,7 +2829,8 @@
                 return;
             }
 
-            actualizarBotonInicio();
+            // ✅ Usar await para que espere a que termine
+            await actualizarBotonInicio();
             await verificarSesion();
             await cargarPublicaciones();
 

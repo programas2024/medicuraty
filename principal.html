@@ -220,51 +220,115 @@
     <!-- Sobreescribe soporte para usar bot2.html en principal -->
     <script>
         function mostrarSoporte() {
-            Swal.fire({
-                ...estiloBase,
-                title: '<span style="font-size: 28px; font-weight: 600; color: #2c1b4e;">Soporte Medicurativo</span>',
-                html: `
-                    <div style="text-align: center; padding: 15px;">
-                        <div style="background: #f8f0ff; padding: 25px; border-radius: 60px; margin: 15px 0;">
-                            <i class="fas fa-headset" style="font-size: 70px; color: #9b59b6; margin-bottom: 20px;"></i>
-                            <p style="font-size: 18px; color: #2c3e50; margin: 20px 0; line-height: 1.6;">
-                                Hola, somos el equipo Medicurativo.<br>
-                                &iquest;En qu&eacute; te podemos ayudar?<br>
-                                Cu&eacute;ntanos qu&eacute; necesitas.
-                            </p>
-                            <div style="background: #2c1b4e; padding: 20px; border-radius: 50px; margin: 20px 0;">
-                                <i class="fas fa-envelope" style="font-size: 30px; color: white; margin-right: 10px;"></i>
-                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=joacoxx2340@gmail.com&su=Soporte%20Medicurativo&body=Hola%2C%20somos%20el%20equipo%20Medicurativo.%20%C2%BFEn%20qu%C3%A9%20te%20podemos%20ayudar%3F%20Cu%C3%A9ntanos.%0A%0AP%C3%A1gina%20o%20secci%C3%B3n%3A%0AProblema%20o%20duda%3A%0ADescripci%C3%B3n%3A%0A" target="_blank" rel="noopener" style="color: white; font-size: 20px; font-weight: 600; text-decoration: none;">
-                                    Gmail
-                                </a>
-                            </div>
-                            <div style="background: #27ae60; padding: 18px; border-radius: 50px; margin: 20px 0;">
-                                <i class="fab fa-whatsapp" style="font-size: 30px; color: white; margin-right: 10px;"></i>
-                                <a href="https://api.whatsapp.com/send?text=Hola%2C%20necesito%20ayuda%20con%20Medicurativo" target="_blank" rel="noopener" style="color: white; font-size: 20px; font-weight: 600; text-decoration: none;">
-                                    WhatsApp
-                                </a>
-                            </div>
-                            <div style="background: #9b59b6; padding: 18px; border-radius: 50px; margin: 20px 0;">
-                                <i class="fas fa-robot" style="font-size: 30px; color: white; margin-right: 10px;"></i>
-                                <a href="bot2.html" style="color: white; font-size: 20px; font-weight: 600; text-decoration: none;">
-                                    Bot Medi
-                                </a>
-                            </div>
-                            <p style="font-size: 16px; color: #7f8c8d; margin-top: 15px;">
-                                Puedes escribir por Gmail, WhatsApp o hablar con Bot Medi.
-                                <br>Describe qu&eacute; estabas haciendo, en qu&eacute; p&aacute;gina pas&oacute; y si puedes agrega una captura.
-                                <br>Respondemos lo antes posible.
-                            </p>
-                        </div>
-                        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-                            <i class="fas fa-check-circle" style="font-size: 24px; color: #27ae60;"></i>
-                            <span style="color: #34495e;">Soporte gratuito por Gmail, WhatsApp y Bot Medi</span>
+    Swal.fire({
+        title: '',
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <!-- Círculo con imagen -->
+                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>
-                `,
-                iconHtml: '<i class="fas fa-headset" style="font-size: 30px; color: #9b59b6;"></i>'
-            });
+                </div>
+
+                <h2 style="color: #2c1b4e; font-weight: 800; font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;">
+                    <i class="fas fa-headset" style="color: #9b59b6; font-size: 32px;"></i>
+                    Soporte Medicurativo
+                </h2>
+                
+                <div style="background: #f8f0ff; padding: 25px; border-radius: 60px; margin: 15px 0; border: 2px solid #f0e6ff;">
+                    <p style="font-size: 18px; color: #2c1b4e; margin: 10px 0; line-height: 1.8; font-weight: 500;">
+                        Hola, somos el equipo Medicurativo.<br>
+                        ¿En qué te podemos ayudar?<br>
+                        <span style="color: #9b59b6; font-weight: 600;">Cuéntanos qué necesitas.</span>
+                    </p>
+
+                    <!-- Gmail -->
+                    <div style="background: linear-gradient(135deg, #2c1b4e, #4a2360); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(44, 27, 78, 0.3);" 
+                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-envelope" style="font-size: 24px; color: white;"></i>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=joacoxx2340@gmail.com&su=Soporte%20Medicurativo&body=Hola%2C%20somos%20el%20equipo%20Medicurativo.%20%C2%BFEn%20qu%C3%A9%20te%20podemos%20ayudar%3F%20Cu%C3%A9ntanos.%0A%0AP%C3%A1gina%20o%20secci%C3%B3n%3A%0AProblema%20o%20duda%3A%0ADescripci%C3%B3n%3A%0A" 
+                           target="_blank" rel="noopener" 
+                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                            Gmail
+                        </a>
+                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div style="background: linear-gradient(135deg, #27ae60, #1a8a4a); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);"
+                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fab fa-whatsapp" style="font-size: 24px; color: white;"></i>
+                        <a href="https://api.whatsapp.com/send?text=Hola%2C%20necesito%20ayuda%20con%20Medicurativo" 
+                           target="_blank" rel="noopener" 
+                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                            WhatsApp
+                        </a>
+                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
+                    </div>
+
+                    <!-- Bot Medi -->
+                    <div style="background: linear-gradient(135deg, #9b59b6, #7a3d91); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);"
+                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-robot" style="font-size: 24px; color: white;"></i>
+                        <a href="bot2.html" 
+                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                            Bot Medi
+                        </a>
+                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 15px; background: #fdfaff; border-radius: 30px; border: 1px solid #e0d0f0;">
+                        <p style="font-size: 15px; color: #2c1b4e; margin: 0; line-height: 1.6;">
+                            <i class="fas fa-info-circle" style="color: #9b59b6; font-size: 18px;"></i>
+                            <br>
+                            Puedes escribir por Gmail, WhatsApp o hablar con Bot Medi.
+                            <br>
+                            <span style="color: #7f8c8d; font-size: 0.9rem;">
+                                Describe qué estabas haciendo, en qué página pasó y si puedes agrega una captura.
+                            </span>
+                            <br>
+                            <strong style="color: #9b59b6;">Respondemos lo antes posible.</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Badges de soporte -->
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                    <span style="background: #f0e6ff; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: #2c1b4e; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-envelope" style="color: #9b59b6;"></i> Gmail
+                    </span>
+                    <span style="background: #e6fffa; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: #2c1b4e; display: flex; align-items: center; gap: 8px;">
+                        <i class="fab fa-whatsapp" style="color: #27ae60;"></i> WhatsApp
+                    </span>
+                    <span style="background: #fff9e6; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: #2c1b4e; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-robot" style="color: #f1c40f;"></i> Bot Medi
+                    </span>
+                </div>
+
+                <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-check-circle" style="font-size: 20px; color: #27ae60;"></i>
+                    <span style="color: #34495e; font-size: 0.9rem; font-weight: 500;">Soporte gratuito por Gmail, WhatsApp y Bot Medi</span>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: all 0.3s; width: 100%;" 
+                            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        `,
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'custom-close-btn-left'
         }
+    });
+}
     </script>
     <script src="js/sweetaler2.js"></script>
     <script src="js/app.js"></script>

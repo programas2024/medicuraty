@@ -1692,6 +1692,131 @@ body.dark-mode #fraseIndex {
     gap: 5px;
 }
 
+
+
+/* Estilos mejorados para el botón Cerrar */
+.swal2-confirm-custom {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad) !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 35px !important;
+    border-radius: 50px !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 20px rgba(155, 89, 182, 0.4) !important;
+    letter-spacing: 0.5px !important;
+}
+
+.swal2-confirm-custom:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 30px rgba(155, 89, 182, 0.5) !important;
+    background: linear-gradient(135deg, #8e44ad, #7d3c98) !important;
+}
+
+.swal2-confirm-custom:active {
+    transform: translateY(0px) !important;
+}
+
+/* Estilos mejorados para el botón de cerrar (X) */
+.swal2-close-custom {
+    color: #9b59b6 !important;
+    font-size: 2rem !important;
+    transition: all 0.3s ease !important;
+    background: rgba(155, 89, 182, 0.1) !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.swal2-close-custom:hover {
+    background: rgba(155, 89, 182, 0.2) !important;
+    transform: rotate(90deg) !important;
+    color: #8e44ad !important;
+}
+
+/* Contenedor de los botones con espacio */
+.custom-actions {
+    display: flex !important;
+    gap: 30px !important; /* 🔥 Espacio grande entre botones (ajusta este valor) */
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 10px 0 !important;
+}
+
+/* Estilo para el botón Enviar Calificación */
+.btn-confirm-custom {
+    background-color: #9b59b6 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 12px 30px !important; /* Más padding para hacerlos más grandes */
+    font-weight: bold !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Estilo para el botón Cerrar */
+.btn-cancel-custom {
+    background-color: #ff7675 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 12px 30px !important; /* Más padding para hacerlos más grandes */
+    font-weight: bold !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Efectos hover */
+.btn-confirm-custom:hover {
+    background-color: #8e44ad !important;
+    transform: scale(1.05) !important;
+}
+
+.btn-cancel-custom:hover {
+    background-color: #e74c3c !important;
+    transform: scale(1.05) !important;
+}
+
+/* Estilo personalizado para el botón de cerrar (X) */
+.custom-close-btn {
+    color: #9b59b6 !important;
+    font-size: 24px !important;
+    font-weight: 300 !important;
+    transition: all 0.3s ease !important;
+    opacity: 0.7 !important;
+}
+
+.custom-close-btn:hover {
+    color: #e74c3c !important;
+    opacity: 1 !important;
+    transform: scale(1.2) !important;
+}
+
+/* Estilo para mover la X a la izquierda */
+.custom-close-btn-left {
+    color: #9b59b6 !important;
+    font-size: 24px !important;
+    font-weight: 300 !important;
+    transition: all 0.3s ease !important;
+    opacity: 0.7 !important;
+    position: absolute !important;
+    top: 10px !important;
+    left: 460px !important; /* 🔥 Mueve la X a la izquierda */
+    right: auto !important; /* Elimina el right por defecto */
+    margin: 0 !important;
+    padding: 5px !important;
+}
+
+.custom-close-btn-left:hover {
+    color: #e74c3c !important;
+    opacity: 1 !important;
+    transform: scale(1.2) !important;
+}
 @media (max-width: 600px) {
     .botones-info-wrapper {
         flex-direction: column;

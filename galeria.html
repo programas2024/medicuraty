@@ -54,7 +54,7 @@
 
                 <!-- Botón Ayuda -->
                 <div class="btn-con-tooltip">
-                    <button class="btn-icon-only" id="btnAyuda" style="color: #2c1b4e;">
+                    <button class="btn-icon-only" id="btnAyudas" style="color: #2c1b4e;">
                         <i class="fas fa-question-circle"></i>
                     </button>
                     <span class="tooltip">Ayuda</span>
@@ -249,6 +249,166 @@
      <script src="js/galeswafire.js"></script>
     <!-- Script de galería -->
     <script>
+
+        document.getElementById('btnAyudas')?.addEventListener('click', () => {
+    if (typeof mostrarAyudaGaleria === 'function') {
+        mostrarAyudaGaleria();
+    } else {
+        // Fallback si no está definida
+        Swal.fire({
+            title: 'Ayuda',
+            text: 'Bienvenido a la galería. Explora y encuentra inspiración.',
+            icon: 'info',
+             
+            confirmButtonColor: '#9b59b6'
+        });
+    }
+});
+ // ===== FUNCIÓN DE AYUDA PARA GALERÍA =====
+function mostrarAyudaGaleria() {
+    // FORZAR DETECCIÓN (más seguro)
+    const isDarkMode = document.body.classList.contains('dark-mode') || 
+                       localStorage.getItem('theme') === 'dark' ||
+                       document.documentElement.getAttribute('data-theme') === 'dark';
+    
+    // Colores según modo
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+    const cardBg = isDarkMode ? 'rgba(255,255,255,0.08)' : '#fdfaff';
+    const cardBg2 = isDarkMode ? 'rgba(255,255,255,0.05)' : '#f8f2ff';
+    const borderColor = isDarkMode ? 'rgba(255,255,255,0.15)' : '#f0e6ff';
+    
+    Swal.fire({
+        title: '',
+        background: isDarkMode ? '#1a1a2e' : '#fdfaff',
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <!-- Círculo con imagen arriba del título -->
+                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <h2 style="color: ${textColor}; font-weight: 800; font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-images" style="color: #9b59b6;"></i>
+                    Galería Medicurativo
+                </h2>
+
+                <p style="text-align:center; color:${subTextColor}; font-size:0.95rem; margin-bottom:16px; font-weight:400; line-height:1.6;">
+                    <i class="fas fa-quote-left" style="color: #9b59b6; font-size: 1rem;"></i>
+                    Un espacio visual para inspirarte, reflexionar y conectar con tu interior.
+                    <br>Cada imagen tiene un mensaje esperando ser descubierto.
+                </p>
+
+                <div style="text-align: left;">
+                    <!-- Categorías -->
+                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                        <div style="background: #9b59b6; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-images" style="color: white; font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Galería Completa</strong>
+                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Todas las imágenes disponibles en un solo lugar.</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #f39c12; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                        <div style="background: #f39c12; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-star" style="color: white; font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Destacadas</strong>
+                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Las imágenes más especiales seleccionadas para ti.</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #27ae60; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                        <div style="background: #27ae60; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-clock" style="color: white; font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Recientes</strong>
+                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Las últimas imágenes añadidas a la galería.</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #e74c3c; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                        <div style="background: #e74c3c; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-fire" style="color: white; font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Más Valoradas (Top)</strong>
+                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Las imágenes con más corazones ❤️ de la comunidad.</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidades extra -->
+                    <div style="margin-top: 16px; padding: 14px; background: ${isDarkMode ? 'rgba(39,174,96,0.15)' : '#f0faf0'}; border-radius: 16px; border: 1px solid ${isDarkMode ? 'rgba(39,174,96,0.3)' : '#c8e6c9'};">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <i class="fas fa-heart" style="color: #e84393; font-size: 18px;"></i>
+                            <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Apoya las imágenes</span>
+                        </div>
+                        <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
+                            Haz clic en el ❤️ para apoyar una imagen. 
+                            <strong style="color: #9b59b6;">¡Las más apoyadas suben al Top!</strong>
+                            <br>
+                            <span style="color: ${subTextColor}; font-size: 0.8rem;">(Necesitas tener cuenta para apoyar)</span>
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 12px; padding: 14px; background: ${cardBg}; border-radius: 16px; border: 1px solid ${borderColor};">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <i class="fas fa-search-plus" style="color: #9b59b6; font-size: 18px;"></i>
+                            <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Ver imagen en grande</span>
+                        </div>
+                        <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
+                            Haz clic en cualquier imagen para verla en detalle, 
+                            <br>con su título y posición en el ranking.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 12px; padding: 14px; background: ${isDarkMode ? 'rgba(243,156,18,0.15)' : '#fff9e6'}; border-radius: 16px; border: 1px solid ${isDarkMode ? 'rgba(243,156,18,0.3)' : '#fdebd0'};">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <i class="fas fa-arrow-right" style="color: #f39c12; font-size: 18px;"></i>
+                            <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Navegación</span>
+                        </div>
+                        <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
+                            Usa el menú de categorías para cambiar entre secciones.
+                            <br>
+                            <span style="color: ${subTextColor}; font-size: 0.8rem;">En móvil, abre el menú con el botón ☰</span>
+                        </p>
+                    </div>
+
+                    <!-- Footer inspirador -->
+                    <div style="margin-top: 16px; padding: 14px; background: ${cardBg}; border-radius: 16px; text-align: center; border: 1px solid ${borderColor};">
+                        <i class="fas fa-feather" style="color: #9b59b6; font-size: 18px;"></i>
+                        <span style="color: ${textColor}; font-size: 0.9rem; font-weight: 500; display: block; margin-top: 4px;">
+                            "La belleza está en los ojos de quien sabe mirar con el corazón."
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#9b59b6',
+        showCloseButton: true,
+        closeButtonHtml: '✕',
+        customClass: {
+            popup: 'swal-popup-redondo',
+            confirmButton: 'swal-confirm-btn',
+            closeButton: 'custom-close-btn-left'
+        }
+    });
+}
+
+
+
+// ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
+window.mostrarAyudaGaleria = mostrarAyudaGaleria;
         document.addEventListener('DOMContentLoaded', () => {
             // ===== BASE DE DATOS DE IMÁGENES =====
             const imagenesGaleria = [

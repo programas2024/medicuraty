@@ -12,46 +12,73 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 window.supabaseClient = supabaseClient;
 
 // ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
+// ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
+// ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
+// ===== FUNCIÓN PARA DETECTAR DESTINO DEL BOTÓN INICIO =====
 async function getDestinoInicio() {
     const path = window.location.pathname;
+    
     const esIndex = path.includes('index.html') || path.endsWith('/') || path === '';
     const esPrincipal = path.includes('principal.html');
     const esComunidad = path.includes('comunidad.html');
-    const esDiario = path.includes('diario.html');  // <-- AGREGADO
+    const esDiario = path.includes('diario.html');
+    const esGaleria = path.includes('galeria.html') || path.includes('galeria2.html');
+    const esLogin = path.includes('login.html');
+    const esRestablecer = path.includes('restablecer.html');
     
-    // Si estamos en index, siempre ir a index
-    if (esIndex) return 'index.html';
+    // Si estamos en index, login o restablecer, ir a index
+    if (esIndex || esLogin || esRestablecer) return 'index.html';
     
-    // Verificar si hay sesión activa
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    // 🔥 FORZAR RECARGA DE SESIÓN (más confiable)
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
     const tieneSesion = session !== null;
     
-    // Si estamos en principal, comunidad o diario Y hay sesión -> ir a principal
-    if ((esPrincipal || esComunidad || esDiario) && tieneSesion) {
-        return 'principal.html';
-    }
-    
-    // Si estamos en principal, comunidad o diario y NO hay sesión -> ir a index
-    if ((esPrincipal || esComunidad || esDiario) && !tieneSesion) {
+    // 🔥 TAMBIÉN VERIFICAR CON getSession() otra vez por si acaso
+    if (!tieneSesion) {
+        // Intentar refrescar la sesión
+        const { data: { session: refreshedSession } } = await supabaseClient.auth.getSession();
+        if (refreshedSession) {
+            return 'principal.html';
+        }
         return 'index.html';
     }
     
-    // Por defecto, ir a index
+    // Si estamos en una página protegida y hay sesión -> ir a principal
+    if ((esPrincipal || esComunidad || esDiario || esGaleria) && tieneSesion) {
+        return 'principal.html';
+    }
+    
     return 'index.html';
 }
 
 // ===== ACTUALIZAR BOTÓN INICIO =====
+// ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO =====
 async function actualizarBotonInicio() {
-    const wrapperInicio = document.getElementById('wrapperInicio');
-    if (!wrapperInicio) return;
+    const linkInicio = document.getElementById('btnInicioLink');
+    if (!linkInicio) return;
     
-    const destino = await getDestinoInicio();
-    const link = wrapperInicio.querySelector('a');
-    if (link) {
-        link.href = destino;
+    try {
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            setTimeout(actualizarBotonInicio, 500);
+            return;
+        }
+        
+        // ✅ USAR await (es asíncrono)
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const tieneSesion = session !== null;
+        
+        if (tieneSesion) {
+            linkInicio.href = 'principal.html';
+            console.log('🔗 Botón inicio → principal.html (logueado)');
+        } else {
+            linkInicio.href = 'index.html';
+            console.log('🔗 Botón inicio → index.html (no logueado)');
+        }
+    } catch (error) {
+        console.warn('Error al actualizar botón inicio:', error);
+        linkInicio.href = 'index.html';
     }
 }
-
 // ===== BASE DE DATOS =====
 
 // Sonido de interfaz (Click suave)
@@ -489,8 +516,7 @@ window.addEventListener('resize', function() {
 // INICIALIZACIÓN PRINCIPAL
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- ACTUALIZAR BOTÓN INICIO ---
-    actualizarBotonInicio();
+    
     
     // --- Verificación de Sesión y Saludo ---
     async function verificarSesion() {
@@ -557,6 +583,214 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+function mostrarSoporte() {
+    // Detectar modo oscuro
+    const isDarkMode = document.body.classList.contains('dark-mode') || 
+                       localStorage.getItem('theme') === 'dark';
+    
+    // Colores según modo
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+    const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+    const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#e0d0f0';
+    
+    Swal.fire({
+        title: '',
+        background: bgColor,
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <!-- Círculo con imagen -->
+                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <h2 style="color: ${textColor}; font-weight: 800; font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;">
+                    <i class="fas fa-headset" style="color: #9b59b6; font-size: 32px;"></i>
+                    Soporte Medicurativo
+                </h2>
+                
+                <div style="background: ${isDarkMode ? 'rgba(155,89,182,0.15)' : '#f8f0ff'}; padding: 25px; border-radius: 60px; margin: 15px 0; border: 2px solid ${isDarkMode ? 'rgba(155,89,182,0.2)' : '#f0e6ff'};">
+                    <p style="font-size: 18px; color: ${textColor}; margin: 10px 0; line-height: 1.8; font-weight: 500;">
+                        Hola, somos el equipo Medicurativo.<br>
+                        ¿En qué te podemos ayudar?<br>
+                        <span style="color: #9b59b6; font-weight: 600;">Cuéntanos qué necesitas.</span>
+                    </p>
+
+                    <!-- Gmail -->
+                    <div style="background: linear-gradient(135deg, #2c1b4e, #4a2360); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(44, 27, 78, 0.3);" 
+                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-envelope" style="font-size: 24px; color: white;"></i>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=joacoxx2340@gmail.com&su=Soporte%20Medicurativo&body=Hola%2C%20somos%20el%20equipo%20Medicurativo.%20%C2%BFEn%20qu%C3%A9%20te%20podemos%20ayudar%3F%20Cu%C3%A9ntanos.%0A%0AP%C3%A1gina%20o%20secci%C3%B3n%3A%0AProblema%20o%20duda%3A%0ADescripci%C3%B3n%3A%0A" 
+                           target="_blank" rel="noopener" 
+                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                            Gmail
+                        </a>
+                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div style="background: linear-gradient(135deg, #27ae60, #1a8a4a); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); cursor: pointer;"
+                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"
+                         onclick="abrirWhatsAppDirecto()">
+                        <i class="fab fa-whatsapp" style="font-size: 24px; color: white;"></i>
+                        <span style="color: white; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;">
+                            WhatsApp
+                        </span>
+                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
+                    </div>
+
+                    <!-- Bot Medi -->
+                    <div style="background: linear-gradient(135deg, #9b59b6, #7a3d91); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);"
+                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-robot" style="font-size: 24px; color: white;"></i>
+                        <a href="bot.html" 
+                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                            Bot Medi
+                        </a>
+                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 15px; background: ${cardBg}; border-radius: 30px; border: 1px solid ${borderColor};">
+                        <p style="font-size: 15px; color: ${textColor}; margin: 0; line-height: 1.6;">
+                            <i class="fas fa-info-circle" style="color: #9b59b6; font-size: 18px;"></i>
+                            <br>
+                            Puedes escribir por Gmail, WhatsApp o hablar con Bot Medi.
+                            <br>
+                            <span style="color: ${subTextColor}; font-size: 0.9rem;">
+                                Describe qué estabas haciendo, en qué página pasó y si puedes agrega una captura.
+                            </span>
+                            <br>
+                            <strong style="color: #9b59b6;">Respondemos lo antes posible.</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Badges de soporte -->
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                    <span style="background: ${isDarkMode ? 'rgba(155,89,182,0.2)' : '#f0e6ff'}; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: ${textColor}; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-envelope" style="color: #9b59b6;"></i> Gmail
+                    </span>
+                    <span style="background: ${isDarkMode ? 'rgba(39,174,96,0.2)' : '#e6fffa'}; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: ${textColor}; display: flex; align-items: center; gap: 8px;">
+                        <i class="fab fa-whatsapp" style="color: #27ae60;"></i> WhatsApp
+                    </span>
+                    <span style="background: ${isDarkMode ? 'rgba(241,196,15,0.2)' : '#fff9e6'}; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: ${textColor}; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-robot" style="color: #f1c40f;"></i> Bot Medi
+                    </span>
+                </div>
+
+                <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-check-circle" style="font-size: 20px; color: #27ae60;"></i>
+                    <span style="color: ${subTextColor}; font-size: 0.9rem; font-weight: 500;">Soporte gratuito por Gmail, WhatsApp y Bot Medi</span>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: all 0.3s; width: 100%;" 
+                            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        `,
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'custom-close-btn-left'
+        }
+    });
+}
+
+// ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
+window.mostrarSoporte = mostrarSoporte;
+// ⬇️ FUNCIÓN PARA ABRIR WHATSAPP DIRECTO (APP O WEB) ⬇️
+function abrirWhatsAppDirecto() {
+    const numero = '573114232761';
+    const mensaje = 'Hola equipo Medicurativo, necesito ayuda con:%0A%0A📌 Página: %0A🛑 Problema: %0A📝 Descripción: %0A%0A🙏 Gracias, respondan lo antes posible.';
+    
+    // Intentar abrir con el esquema de la app (whatsapp://)
+    const appUrl = `whatsapp://send?phone=${numero}&text=${mensaje}`;
+    
+    // Fallback: si no abre la app, usar web
+    const webUrl = `https://wa.me/${numero}?text=${mensaje}`;
+    
+    // Intentar abrir la app primero
+    const win = window.open(appUrl, '_blank');
+    
+    // Si no se pudo abrir (o se cerró), abrir web
+    if (!win || win.closed) {
+        window.open(webUrl, '_blank');
+    }
+}
+
+// ⬇️ EXPONER FUNCIONES GLOBALMENTE ⬇️
+window.mostrarSoporte = mostrarSoporte;
+window.abrirWhatsAppDirecto = abrirWhatsAppDirecto;
+    // ===== FUNCIÓN MOSTRAR MISIÓN =====
+window.mostrarMision = function() {
+    // Detectar modo oscuro
+    const isDarkMode = document.body.classList.contains('dark-mode') || 
+                       localStorage.getItem('theme') === 'dark';
+    
+    // Colores según modo
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+    const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+    const cardBg2 = isDarkMode ? 'rgba(255,255,255,0.05)' : '#f8f2ff';
+    const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+    
+    Swal.fire({
+        title: '',
+        background: bgColor,
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">Nuestra Misión</h2>
+                
+                <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 30px; border: 2px solid ${borderColor}; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                    <p style="color: ${textColor}; font-size: 1rem; line-height: 1.8; text-align: center;">
+                        <i class="fas fa-quote-left" style="color: #9b59b6; font-size: 1.2rem;"></i>
+                        Esta página web está hecha para ayudarte en conocimiento en temas
+                        que nos ayudan a <strong style="color: #9b59b6;">crecer como persona</strong>
+                        en esta vida y ser <strong style="color: #9b59b6;">mejores cada día</strong>.
+                    </p>
+                    
+                    <div style="background: ${cardBg2}; padding: 15px; border-radius: 20px; margin: 15px 0; border-left: 5px solid #9b59b6;">
+                        <p style="color: ${textColor}; font-size: 1rem; font-weight: 500; text-align: center; margin: 0;">
+                            🌱 <strong>Crecemos juntos, un tema a la vez</strong>
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; justify-content: center;">
+                    <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 1rem; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: 0.3s;">
+                        ✨ Entendido
+                    </button>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic;">"El conocimiento es el primer paso hacia la transformación."</p>
+            </div>
+        `,
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'custom-close-btn-left'
+        }
+    });
+};
     function mostrarNovedades(userId) {
         Swal.fire({
             title: '🚀 ¡Nuevas Actualizaciones!',
@@ -583,61 +817,98 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function mostrarInvitacionRegistro() {
-        Swal.fire({
-            title: '<span style="color: #2c1b4e; font-weight: 800;">📬 ¿Qué puedes hacer aquí?</span>',
-            html: `
-                <div style="text-align: center; padding: 5px;">
-                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio de crecimiento personal 🌿</p>
-                    
-                    <div style="text-align: left; background: #fdfaff; padding: 20px; border-radius: 30px; border: 2px solid #f0e6ff; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                        <div style="margin-bottom: 20px;">
-                            <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible sin cuenta</h4>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                                <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-th-list" style="color: #27ae60; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Ver todas las <strong>categorías</strong> y sus reflexiones.</p>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                                <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Buscar</strong> temas de inspiración libremente.</p>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="background: #eaf6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-images" style="color: #3498db; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;">Explorar la <strong>galería</strong> de imágenes reflexivas.</p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Solo con cuenta</h4>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.85;">
-                                <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Completar logros:</strong> Desbloquea trofeos y medallas.</p>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; opacity: 0.85;">
-                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #e84393; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Calificar</strong> y dar like a las reflexiones.</p>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0.85;">
-                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60; font-size: 0.8rem;"></i></div>
-                                <p style="margin: 0; color: #2c1b4e; font-size: 0.9rem;"><strong>Comunidad:</strong> Comparte y participa con otros usuarios.</p>
-                            </div>
+    // Detectar modo oscuro
+    const isDarkMode = document.body.classList.contains('dark-mode') || 
+                       localStorage.getItem('theme') === 'dark';
+    
+    // Colores según modo
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+    const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+    const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+    
+    Swal.fire({
+        title: '',
+        background: bgColor,
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <!-- Círculo con imagen - Con margen superior reducido -->
+                <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
+                    <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>
-                    
-                    <div style="margin-top: 25px;">
-                        <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 16px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); font-size: 1rem; transition: 0.3s;">✨ ¡Crear cuenta y desbloquear todo!</button>
-                    </div>
-                    <p style="margin-top: 15px; font-size: 0.8rem; color: #7f8c8d; font-style: italic;">"La paz interior es el mejor regalo que te puedes dar hoy."</p>
                 </div>
-            `,
-            showConfirmButton: false,
-            showCloseButton: true,
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-    }
+
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">¿Qué puedes hacer aquí?</h2>
+                <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio de crecimiento personal 🌿</p>
+                
+                <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 30px; border: 2px solid ${borderColor}; box-shadow: 0 5px 20px rgba(0,0,0,0.05); max-height: 300px; overflow-y: auto;">
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible sin cuenta</h4>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-th-list" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;">Ver todas las <strong>categorías</strong> y sus reflexiones.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Buscar</strong> temas de inspiración libremente.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="background: #eaf6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-images" style="color: #3498db; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;">Explorar la <strong>galería</strong> de imágenes reflexivas.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Solo con cuenta</h4>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #f39c12; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Gana Estrellas:</strong> Avanza en el sistema y desbloquea nuevos niveles.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Completar logros:</strong> Desbloquea trofeos y medallas.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div style="background: #e8f8f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-book" style="color: #1abc9c; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Diario Personal:</strong> Guarda tus pensamientos en un espacio privado.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #e84393; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Calificar</strong> y dar like a las reflexiones.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Comunidad:</strong> Comparte y participa con otros usuarios.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 14px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); font-size: 1rem; transition: 0.3s;">✨ ¡Crear cuenta y desbloquear todo!</button>
+                </div>
+                <p style="margin-top: 12px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic;">"La paz interior es el mejor regalo que te puedes dar hoy."</p>
+            </div>
+        `,
+        showConfirmButton: false,
+        showCloseButton: true,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'custom-close-btn-left'
+        }
+    });
+}
+
+// ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
+window.mostrarInvitacionRegistro = mostrarInvitacionRegistro;
+    
 
     function mostrarBienvenida(userId) {
         Swal.fire({
-            title: '¡Bienvenido a tu Espacio de Luz! 🌿',
+            title: '¡Bienvenido a tu Espacio de Luz! ',
             html: `
                 <div style="text-align: center; padding: 10px;">
                     <img src="imganes/logosmedi.png" style="width: 120px; margin-bottom: 20px; animation: pulse 2s infinite;">
@@ -659,40 +930,81 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function mostrarInstrucciones() {
-        Swal.fire({
-            title: '<span style="color: #2c1b4e; font-weight: 800;">🚀 ¡Bienvenido a Medicurativo!</span>',
-            html: `
-                <div style="text-align: center; padding: 5px;">
-                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio para sanar y crecer día a día.</p>
-                    
-                    <div style="text-align: left; background: #fdfaff; padding: 20px; border-radius: 30px; border: 2px solid #f0e6ff; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <div style="background: #fff9e6; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f;"></i></div>
-                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Gana Logros:</strong> Crea tu cuenta y personaliza tu perfil para ganar trofeos dorados.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <div style="background: #f0e6ff; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6;"></i></div>
-                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Buscador Inteligente:</strong> Encuentra la reflexión exacta que necesitas hoy.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <div style="background: #e6fffa; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60;"></i></div>
-                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Comunidad:</strong> Comparte frases e imágenes con otros usuarios.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <div style="background: #fff0f5; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #ff7675;"></i></div>
-                            <p style="margin: 0; color: #2c1b4e; font-size: 0.95rem;"><strong>Califica:</strong> Tu opinión nos ayuda a crecer como comunidad.</p>
+  function mostrarInstrucciones() {
+    // Detectar modo oscuro
+    const isDarkMode = document.body.classList.contains('dark-mode') || 
+                       localStorage.getItem('theme') === 'dark';
+    
+    // Colores según modo
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+    const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+    const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+    
+    Swal.fire({
+        title: '',
+        background: bgColor,
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <!-- Círculo con imagen arriba del título -->
+                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>
-                    <p style="margin-top: 20px; font-size: 0.85rem; color: #7f8c8d; font-style: italic;">"La paz interior comienza en el momento en que decides no permitir que otra persona o evento controle tus emociones."</p>
                 </div>
-            `,
-            confirmButtonText: '✨ ¡Empezar ahora!',
-            confirmButtonColor: '#9b59b6',
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-    }
 
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">¡Bienvenido a Medicurativo!</h2>
+                <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio para sanar y crecer día a día.</p>
+                
+                <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 30px; border: 2px solid ${borderColor}; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #fff9e6; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Gana Logros:</strong> Completando misiones sencillas que ayudan en la experiencia contigo mismo.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #f0e6ff; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Buscador Inteligente:</strong> Encuentra la reflexión exacta que necesitas hoy.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #e6fffa; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Comunidad:</strong> Interactua con el contenido de los demas usuarios que mas impacten.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #fff0f5; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #ff7675;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Califica:</strong> Tu opinión nos ayuda a crecer como comunidad.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #fff9e6; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-rocket" style="color: #f39c12;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Gana Estrellas:</strong> Avanza en el sistema y desbloquea nuevos niveles y recompensas.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #e8f8f5; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-book" style="color: #1abc9c;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Diario Personal:</strong> Guarda tus pensamientos más íntimos en un espacio privado donde solo tú puedes verlos.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: #fdf2e9; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-share-alt" style="color: #e67e22;"></i></div>
+                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Contenido Propio:</strong> Sube tus propias reflexiones e inspiraciones a la comunidad para que otros también se motiven.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.85rem; color: ${subTextColor}; font-style: italic;">"La paz interior comienza en el momento en que decides no permitir que otra persona o evento controle tus emociones."</p>
+            </div>
+        `,
+        confirmButtonText: '✨ ¡Empezar ahora!',
+        confirmButtonColor: '#9b59b6',
+        showCloseButton: true,
+        closeButtonHtml: '✕',
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'custom-close-btn-left'
+        }
+    });
+}
+
+// ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
+window.mostrarInstrucciones = mostrarInstrucciones;
     // --- Función para actualizar la calificación global ---
     window.actualizarPromedioGlobal = async function() {
         const container = document.getElementById('contenedorPromedioGlobal');
@@ -1331,110 +1643,163 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 })();
 
                 // ================================================
-                // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS EN SWEETALERT BONITO
-                // ================================================
-                function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
-                    const esMovil = window.innerWidth <= 768;
-                    
-                    let html = `
-                        <div style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 5px;">
-                            <style>
-                                .modal-logros-scroll::-webkit-scrollbar {
-                                    width: 4px;
-                                }
-                                .modal-logros-scroll::-webkit-scrollbar-track {
-                                    background: #f0e6ff;
-                                    border-radius: 10px;
-                                }
-                                .modal-logros-scroll::-webkit-scrollbar-thumb {
-                                    background: #9b59b6;
-                                    border-radius: 10px;
-                                }
-                            </style>
-                            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 8px;">
-                                <div style="margin-bottom: 15px;">
-                                    <p style="text-align: center; font-weight: 600; color: #27ae60; margin-bottom: 10px; font-size: 0.95rem;">
-                                        ✅ Logros Completados (${completados.length})
-                                    </p>
-                    `;
-
-                    if (completados.length === 0) {
-                        html += `<p style="text-align: center; color: #7f8c8d; font-size: 0.85rem;">Aún no has completado logros</p>`;
-                    } else {
-                        completados.forEach(logro => {
-                            const reclamado = estrellasReclamadas.includes(logro.key);
-                            html += `
-                                <div style="background: linear-gradient(135deg, #f0faf0, #e8f5e9); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #27ae60;">
-                                    <i class="fas ${logro.icono}" style="color: #27ae60; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
-                                    <div style="flex: 1; text-align: left; min-width: 0;">
-                                        <strong style="font-size: 0.85rem; color: #2c1b4e; display: block; word-wrap: break-word;">${logro.texto}</strong>
-                                        <small style="color: #7f8c8d; font-size: 0.7rem; display: block;">${logro.desc}</small>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-                                        ${reclamado ? '<i class="fas fa-star" style="color: #f1c40f; font-size: 1.1rem;"></i>' : ''}
-                                        ${!reclamado ? `<button onclick="reclamarLogroDesdeModal('${logro.key}', '${logro.texto}', '${userId}')" style="background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.3s;">
-                                            ⭐ Reclamar
-                                        </button>` : ''}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    html += `
-                                </div>
-                                <div style="border-top: 2px dashed #e0d0f0; padding-top: 15px; margin-top: 5px;">
-                                    <p style="text-align: center; font-weight: 600; color: #b0a4e3; margin-bottom: 10px; font-size: 0.95rem;">
-                                        ⏳ Logros Pendientes (${pendientes.length})
-                                    </p>
-                    `;
-
-                    if (pendientes.length === 0) {
-                        html += `<p style="text-align: center; color: #27ae60; font-size: 0.9rem;">🎉 ¡Has completado TODOS los logros!</p>`;
-                    } else {
-                        pendientes.forEach(logro => {
-                            html += `
-                                <div style="background: #faf8ff; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #d5c6e0; opacity: 0.6;">
-                                    <i class="fas ${logro.icono}" style="color: #b0a4e3; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
-                                    <div style="flex: 1; text-align: left; min-width: 0;">
-                                        <strong style="font-size: 0.85rem; color: #7f8c8d; display: block; word-wrap: break-word;">${logro.texto}</strong>
-                                        <small style="color: #b0a4e3; font-size: 0.7rem; display: block;">${logro.desc}</small>
-                                    </div>
-                                    <i class="fas fa-lock" style="color: #b0a4e3; font-size: 1rem; flex-shrink: 0;"></i>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    html += `
-                                </div>
-                                <div style="text-align: center; margin-top: 12px; padding: 8px; background: #fdfaff; border-radius: 12px;">
-                                    <p style="font-size: 0.8rem; color: #7f8c8d; margin: 0;">
-                                        ⭐ Estrellas reclamadas: <span style="color: #f1c40f; font-weight: 700;">${estrellasReclamadas.length}</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    Swal.fire({
-                        title: '<span style="color: #2c1b4e; font-weight: 800;">🏆 Todos mis Logros</span>',
-                        html: html,
-                        confirmButtonColor: '#9b59b6',
-                        confirmButtonText: 'Cerrar',
-                        showCloseButton: true,
-                        closeButtonHtml: '✕',
-                        customClass: {
-                            popup: 'swal-ver-todas swal-popup-redondo',
-                            confirmButton: 'swal2-confirm-custom',
-                            closeButton: 'swal2-close-custom'
-                        },
-                        buttonsStyling: false,
-                        width: esMovil ? '95%' : '550px',
-                        maxWidth: esMovil ? '95%' : '600px',
-                        padding: '20px'
-                    });
+             // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS EN SWEETALERT BONITO
+// ================================================
+function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
+    const esMovil = window.innerWidth <= 768;
+    
+    let html = `
+        <div style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 5px;">
+            <style>
+                .modal-logros-scroll::-webkit-scrollbar {
+                    width: 4px;
                 }
+                .modal-logros-scroll::-webkit-scrollbar-track {
+                    background: #f0e6ff;
+                    border-radius: 10px;
+                }
+                .modal-logros-scroll::-webkit-scrollbar-thumb {
+                    background: #9b59b6;
+                    border-radius: 10px;
+                }
+                .titulo-logros-completados {
+                    background: linear-gradient(135deg, #27ae60, #2ecc71);
+                    padding: 10px 20px;
+                    border-radius: 50px;
+                    display: inline-block;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+                    letter-spacing: 0.5px;
+                    margin-bottom: 5px;
+                }
+                .titulo-logros-pendientes {
+                    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+                    padding: 10px 20px;
+                    border-radius: 50px;
+                    display: inline-block;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+                    letter-spacing: 0.5px;
+                    margin-bottom: 5px;
+                }
+                .contador-logros {
+                    background: rgba(255,255,255,0.3);
+                    padding: 2px 12px;
+                    border-radius: 50px;
+                    font-size: 0.75rem;
+                    margin-left: 8px;
+                }
+                .badge-estrellas {
+                    background: linear-gradient(135deg, #f1c40f, #f39c12);
+                    color: white;
+                    padding: 6px 16px;
+                    border-radius: 50px;
+                    font-weight: 700;
+                    font-size: 0.8rem;
+                    display: inline-block;
+                    box-shadow: 0 2px 10px rgba(241, 196, 15, 0.3);
+                }
+                .badge-estrellas i {
+                    margin-right: 5px;
+                }
+            </style>
+            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 8px;">
+                <div style="margin-bottom: 20px;">
+                    <div style="text-align: center;">
+                        <span class="titulo-logros-completados">
+                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                            Logros Completados
+                            <span class="contador-logros">${completados.length}</span>
+                        </span>
+                    </div>
+                `;
+
+    if (completados.length === 0) {
+        html += `<p style="text-align: center; color: #7f8c8d; font-size: 0.85rem; padding: 15px 0;">Aún no has completado logros</p>`;
+    } else {
+        completados.forEach(logro => {
+            const reclamado = estrellasReclamadas.includes(logro.key);
+            html += `
+                <div style="background: linear-gradient(135deg, #f0faf0, #e8f5e9); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #27ae60; transition: transform 0.2s;">
+                    <i class="fas ${logro.icono}" style="color: #27ae60; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                    <div style="flex: 1; text-align: left; min-width: 0;">
+                        <strong style="font-size: 0.85rem; color: #2c1b4e; display: block; word-wrap: break-word;">${logro.texto}</strong>
+                        <small style="color: #7f8c8d; font-size: 0.7rem; display: block;">${logro.desc}</small>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                        ${reclamado ? '<i class="fas fa-star" style="color: #f1c40f; font-size: 1.1rem; text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);"></i>' : ''}
+                        ${!reclamado ? `<button onclick="reclamarLogroDesdeModal('${logro.key}', '${logro.texto}', '${userId}')" style="background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s; box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);">
+                            ⭐ Reclamar
+                        </button>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += `
+                </div>
+                <div style="border-top: 2px dashed #e0d0f0; padding-top: 20px; margin-top: 5px;">
+                    <div style="text-align: center;">
+                        <span class="titulo-logros-pendientes">
+                            <i class="fas fa-hourglass-half" style="margin-right: 8px;"></i>
+                            Logros Pendientes
+                            <span class="contador-logros">${pendientes.length}</span>
+                        </span>
+                    </div>
+    `;
+
+    if (pendientes.length === 0) {
+        html += `<p style="text-align: center; color: #27ae60; font-size: 0.9rem; padding: 15px 0;">🎉 ¡Has completado TODOS los logros!</p>`;
+    } else {
+        pendientes.forEach(logro => {
+            html += `
+                <div style="background: #faf8ff; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #d5c6e0; opacity: 0.6; transition: opacity 0.2s;">
+                    <i class="fas ${logro.icono}" style="color: #b0a4e3; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                    <div style="flex: 1; text-align: left; min-width: 0;">
+                        <strong style="font-size: 0.85rem; color: #7f8c8d; display: block; word-wrap: break-word;">${logro.texto}</strong>
+                        <small style="color: #b0a4e3; font-size: 0.7rem; display: block;">${logro.desc}</small>
+                    </div>
+                    <i class="fas fa-lock" style="color: #b0a4e3; font-size: 1rem; flex-shrink: 0;"></i>
+                </div>
+            `;
+        });
+    }
+
+    html += `
+                </div>
+                <div style="text-align: center; margin-top: 15px; padding: 10px 15px; background: linear-gradient(135deg, #fdfaff, #f8f4ff); border-radius: 12px; border: 1px solid #f0e6ff;">
+                    <span class="badge-estrellas">
+                        <i class="fas fa-star"></i>
+                        Estrellas reclamadas: ${estrellasReclamadas.length}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    Swal.fire({
+        title: '<span style="color: #2c1b4e; font-weight: 800; font-size: 1.4rem;">🏆 Todos mis Logros</span>',
+        html: html,
+        confirmButtonColor: '#9b59b6',
+        confirmButtonText: 'Cerrar ✕',
+        showCloseButton: true,
+        closeButtonHtml: '✕',
+        customClass: {
+            popup: 'swal-ver-todas swal-popup-redondo',
+            confirmButton: 'swal2-confirm-custom',
+            closeButton: 'swal2-close-custom'
+        },
+        buttonsStyling: false,
+        width: esMovil ? '95%' : '550px',
+        maxWidth: esMovil ? '95%' : '600px',
+        padding: '20px'
+    });
+}
 
                 // ================================================
                 // FUNCIÓN PARA RECLAMAR DESDE EL MODAL
@@ -1760,23 +2125,30 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
         let ratingSeleccionado = 0;
 
         Swal.fire({
-            title: '✨ ¡Tu Opinión Cuenta!',
-            html: `
-                <div style="padding: 10px;">
-                    <p style="color: #4a2d6e; margin-bottom: 15px;">Danos tu calificación para seguir mejorando:</p>
-                    <div id="starContainer" style="font-size: 2.5rem; color: #f1c40f; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: center; gap: 5px;">
-                        <i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i>
-                    </div>
-                    <textarea id="swal-comment" class="swal2-textarea" placeholder="Escribe un breve comentario..." style="border-radius: 20px; border: 2px solid #e0d0f0; width: 90%; height: 80px; font-size: 0.9rem;"></textarea>
-                </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Enviar Calificación',
-            cancelButtonText: 'Cerrar',
-            confirmButtonColor: '#9b59b6',
-            cancelButtonColor: '#ff7675',
-            background: '#fdfaff',
-            customClass: { popup: 'swal-popup-redondo' },
+    title: '✨ ¡Tu Opinión Cuenta!',
+    html: `
+        <div style="padding: 10px;">
+            <p style="color: #4a2d6e; margin-bottom: 15px;">Danos tu calificación para seguir mejorando:</p>
+            <div id="starContainer" style="font-size: 2.5rem; color: #f1c40f; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: center; gap: 5px;">
+                <i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i>
+            </div>
+            <textarea id="swal-comment" class="swal2-textarea" placeholder="Escribe un breve comentario..." style="border-radius: 20px; border: 2px solid #e0d0f0; width: 90%; height: 80px; font-size: 0.9rem;"></textarea>
+        </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Enviar Calificación',
+    cancelButtonText: 'Cerrar',
+    confirmButtonColor: '#9b59b6',
+    cancelButtonColor: '#ff7675',
+    background: '#fdfaff',
+    reverseButtons: true, // 🔥 Invierte el orden: Confirmar a la derecha, Cancelar a la izquierda
+    buttonsStyling: false,
+    customClass: {
+        popup: 'swal-popup-redondo',
+        confirmButton: 'btn-confirm-custom',
+        cancelButton: 'btn-cancel-custom',
+        actions: 'custom-actions' // 🔥 Clase para el contenedor
+    },
             didOpen: () => {
                 document.querySelectorAll('#starContainer i').forEach(s => {
                     s.onclick = (e) => {
@@ -1823,46 +2195,76 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
     };
 
     // --- Función global para Ver Opiniones ---
-    window.verOpinionesSweetAlert = async function() {
-        const { data: allOpinions, error } = await supabaseClient
-            .from('comentarios')
-            .select('estrellas, comentario, creado_en, usuarios(nombre)');
+ window.verOpinionesSweetAlert = async function() {
+    const { data: allOpinions, error } = await supabaseClient
+        .from('comentarios')
+        .select('estrellas, comentario, creado_en, usuarios(nombre)');
 
-        if (error) return Swal.fire('Error', 'No pudimos cargar las opiniones.', 'error');
+    if (error) return Swal.fire('Error', 'No pudimos cargar las opiniones.', 'error');
 
-        const renderOpinionsList = (ops) => {
-            if (!ops || ops.length === 0) return '<p style="text-align:center; opacity:0.6; padding: 20px;">Aún no hay opiniones. ¡Sé el primero!</p>';
-            return ops.map(op => `
-                <div style="background: white; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid #f1c40f; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <div style="display:flex; align-items:center; gap: 8px;">
-                            <i class="fas fa-user-circle" style="color: #9b59b6; font-size: 1.1rem;"></i>
-                            <strong style="font-size: 0.9rem; color: #2c1b4e;">${op.usuarios?.nombre || 'Usuario'}</strong>
-                        </div>
-                        <span style="color: #f1c40f; font-size: 0.9rem;">${'★'.repeat(op.estrellas)}${'☆'.repeat(5-op.estrellas)}</span>
+    // Detectar modo oscuro
+    const isDarkMode = document.body.classList.contains('dark-mode') || 
+                       localStorage.getItem('theme') === 'dark';
+    
+    // Colores según modo
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+    const cardBg = isDarkMode ? 'rgba(255,255,255,0.08)' : 'white';
+    const cardTextColor = isDarkMode ? '#ffffff' : '#4a2d6e';
+    const cardSubTextColor = isDarkMode ? '#d0c0e0' : '#b0a4e3';
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+
+    const renderOpinionsList = (ops) => {
+        if (!ops || ops.length === 0) return '<p style="text-align:center; opacity:0.6; padding: 20px; color:' + subTextColor + ';">Aún no hay opiniones. ¡Sé el primero!</p>';
+        return ops.map(op => `
+            <div style="background: ${cardBg}; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid #f1c40f; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <div style="display:flex; align-items:center; gap: 8px;">
+                        <i class="fas fa-user-circle" style="color: #9b59b6; font-size: 1.1rem;"></i>
+                        <strong style="font-size: 0.9rem; color: ${textColor};">${op.usuarios?.nombre || 'Usuario'}</strong>
                     </div>
-                    <p style="font-size: 0.85rem; margin: 0; color: #4a2d6e; font-style: italic; line-height: 1.4;">"${op.comentario}"</p>
-                    <div style="text-align: right; margin-top: 5px;">
-                        <small style="color: #b0a4e3; font-size: 0.7rem;">${new Date(op.creado_en).toLocaleDateString()}</small>
+                    <span style="color: #f1c40f; font-size: 0.9rem;">${'★'.repeat(op.estrellas)}${'☆'.repeat(5-op.estrellas)}</span>
+                </div>
+                <p style="font-size: 0.85rem; margin: 0; color: ${cardTextColor}; font-style: italic; line-height: 1.4;">"${op.comentario}"</p>
+                <div style="text-align: right; margin-top: 5px;">
+                    <small style="color: ${cardSubTextColor}; font-size: 0.7rem;">${new Date(op.creado_en).toLocaleDateString()}</small>
+                </div>
+            </div>
+        `).join('');
+    };
+
+    Swal.fire({
+        title: '',
+        html: `
+            <div style="text-align: center;">
+                <!-- Círculo con imagen arriba del título -->
+                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
                     </div>
                 </div>
-            `).join('');
-        };
 
-        Swal.fire({
-            title: '<i class="fas fa-comments" style="color: #9b59b6;"></i> Comunidad Medicurativo',
-            html: `
-                <div style="padding: 5px; max-height: 450px; overflow-y: auto; scrollbar-width: none;">
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">
+                    <i class="fas fa-comments" style="color: #9b59b6;"></i> Comunidad Medicurativo
+                </h2>
+                
+                <div style="padding: 5px; max-height: 380px; overflow-y: auto; scrollbar-width: none; margin-top: 10px;">
                     ${renderOpinionsList(allOpinions ? [...allOpinions].reverse() : [])}
                 </div>
-                <p style="font-size: 0.8rem; color: #7f8c8d; margin-top: 15px;">Gracias por ayudarnos a crecer día tras día.</p>
-            `,
-            showConfirmButton: false,
-            showCloseButton: true,
-            background: '#fdfaff',
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-    };
+                <p style="font-size: 0.8rem; color: ${subTextColor}; margin-top: 15px;">Gracias por ayudarnos a crecer día tras día.</p>
+            </div>
+        `,
+        showConfirmButton: false,
+        showCloseButton: true,
+        background: bgColor,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'custom-close-btn-left'
+        }
+    });
+};
 
     document.getElementById('btnVerOpiniones')?.addEventListener('click', () => {
         window.verOpinionesSweetAlert();

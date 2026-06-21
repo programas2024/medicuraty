@@ -18,6 +18,49 @@
     backdrop-filter: blur(5px);
 }
 
+/* === MODO OSCURO PARA GALERÍA === */
+body.dark-mode .galeria-seccion-blanca {
+    background: #1a1a2e !important;
+    border-color: #2a2a4e !important;
+}
+
+body.dark-mode .galeria-seccion-blanca .galeria-subtitulo {
+    color: #ffffff !important;
+}
+
+body.dark-mode .galeria-seccion-blanca .galeria-subtitulo i {
+    color: #9b59b6 !important;
+}
+
+body.dark-mode .label-info-container p {
+    color: #ffffff !important;
+}
+
+body.dark-mode .label-info-container i {
+    color: #9b59b6 !important;
+}
+
+body.dark-mode .galeria-item {
+    background: #2a2a4e !important;
+    border-color: #3a3a5e !important;
+}
+
+body.dark-mode .galeria-item .galeria-item-inner {
+    background: #2a2a4e !important;
+}
+
+body.dark-mode .galeria-item .galeria-caption {
+    background: rgba(26, 26, 46, 0.9) !important;
+}
+
+body.dark-mode .galeria-item .galeria-caption span {
+    color: #ffffff !important;
+}
+
+body.dark-mode .galeria-subtitulo {
+    color: #ffffff !important;
+}
+
 .galeria-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

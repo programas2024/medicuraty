@@ -38,6 +38,8 @@
             border-top: 1px solid #333333 !important;
             color: #aaaaaa !important;
         }
+
+        /* CASITA (INICIO) - SIEMPRE MORADA */
         body.dark-mode .btn-icon-only {
             color: #b07cc6 !important;
             background: transparent !important;
@@ -46,30 +48,59 @@
             color: #d4b0e6 !important;
             background: rgba(155, 89, 182, 0.15) !important;
         }
+        body.dark-mode .btn-icon-only i {
+            color: #b07cc6 !important;
+        }
+        body.dark-mode .btn-icon-only:hover i {
+            color: #d4b0e6 !important;
+        }
+
+        /* OTROS BOTONES - BLANCOS EN MODO OSCURO */
         body.dark-mode .btn-dark-mode {
             color: #ffffff !important;
             background: transparent !important;
+        }
+        body.dark-mode .btn-dark-mode i {
+            color: #ffffff !important;
         }
         body.dark-mode .btn-dark-mode:hover {
             color: #ffffff !important;
             background: rgba(255, 255, 255, 0.1) !important;
         }
+        body.dark-mode .btn-dark-mode:hover i {
+            color: #ffffff !important;
+        }
+
         body.dark-mode .btn-ayuda {
             color: #ffffff !important;
             background: transparent !important;
+        }
+        body.dark-mode .btn-ayuda i {
+            color: #ffffff !important;
         }
         body.dark-mode .btn-ayuda:hover {
             color: #ffffff !important;
             background: rgba(255, 255, 255, 0.1) !important;
         }
+        body.dark-mode .btn-ayuda:hover i {
+            color: #ffffff !important;
+        }
+
         body.dark-mode .btn-faq {
             color: #ffffff !important;
             background: transparent !important;
+        }
+        body.dark-mode .btn-faq i {
+            color: #ffffff !important;
         }
         body.dark-mode .btn-faq:hover {
             color: #ffffff !important;
             background: rgba(255, 255, 255, 0.1) !important;
         }
+        body.dark-mode .btn-faq:hover i {
+            color: #ffffff !important;
+        }
+
         body.dark-mode .contenedor {
             background: #0a0a0a !important;
         }
@@ -113,7 +144,7 @@
             background: rgba(155, 89, 182, 0.2) !important;
         }
 
-       
+        
 
         /* ===== BOTONES CIRCULARES ===== */
         .btn-icon-only,
@@ -472,21 +503,21 @@
                     </a>
                     <span class="tooltip">Inicio</span>
                 </div>
-                <!-- 2. BOTÓN MODO OSCURO - NEGRO -->
+                <!-- 2. BOTÓN MODO OSCURO - NEGRO (BLANCO EN MODO OSCURO) -->
                 <div class="btn-con-tooltip">
                     <button class="btn-dark-mode" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
                     </button>
                     <span class="tooltip">Modo oscuro</span>
                 </div>
-                <!-- 3. BOTÓN PREGUNTAS FRECUENTES - NEGRO -->
+                <!-- 3. BOTÓN PREGUNTAS FRECUENTES - NEGRO (BLANCO EN MODO OSCURO) -->
                 <div class="btn-con-tooltip">
                     <button class="btn-faq" id="btnFaq">
                         <i class="fas fa-info-circle"></i>
                     </button>
                     <span class="tooltip">Preguntas Frecuentes</span>
                 </div>
-                <!-- 4. BOTÓN AYUDA - NEGRO -->
+                <!-- 4. BOTÓN AYUDA - NEGRO (BLANCO EN MODO OSCURO) -->
                 <div class="btn-con-tooltip">
                     <button class="btn-ayuda" id="btnAyuda">
                         <i class="fas fa-circle-question"></i>
@@ -831,45 +862,7 @@
                                 </div>
                             </div>
                             
-                            <div class="faq-modal-item">
-                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
-                                    <span>💬 ¿Cómo puedo empezar a usar la plataforma?</span>
-                                    <i class="fas fa-chevron-down"></i>
-                                </div>
-                                <div class="faq-modal-respuesta">
-                                    <p>Solo necesitas crear una cuenta gratuita. Una vez registrado, podrás acceder al diario personal, explorar reflexiones, unirte a la comunidad y empezar tu viaje de crecimiento.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="faq-modal-item">
-                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
-                                    <span>📖 ¿Qué puedo escribir en mi diario personal?</span>
-                                    <i class="fas fa-chevron-down"></i>
-                                </div>
-                                <div class="faq-modal-respuesta">
-                                    <p>Todo lo que desees: tus pensamientos, agradecimientos, logros, reflexiones diarias o cualquier cosa que te ayude a liberar tu mente y conectar contigo mismo.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="faq-modal-item">
-                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
-                                    <span>⭐ ¿Cómo funcionan los logros y estrellas?</span>
-                                    <i class="fas fa-chevron-down"></i>
-                                </div>
-                                <div class="faq-modal-respuesta">
-                                    <p>Completando desafíos como escribir en tu diario, publicar en la comunidad o completar tu perfil, desbloqueas logros. Cada logro te da una estrella que acumulas para alcanzar nuevos niveles.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="faq-modal-item">
-                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
-                                    <span>🔒 ¿Mis datos están seguros?</span>
-                                    <i class="fas fa-chevron-down"></i>
-                                </div>
-                                <div class="faq-modal-respuesta">
-                                    <p>Absolutamente. Tus reflexiones y datos personales son privados y solo tú puedes acceder a ellos. Usamos autenticación segura con Supabase.</p>
-                                </div>
-                            </div>
+                          
                             
                             <div class="faq-modal-item">
                                 <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">

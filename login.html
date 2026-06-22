@@ -620,46 +620,108 @@ document.getElementById('btnAyuda').addEventListener('click', function() {
         // 5. REGISTRO DE USUARIO
         // ============================================================
         document.getElementById('formRegister').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPass').value;
-            const confirm = document.getElementById('confirmPass').value;
-            const nombre = document.getElementById('regNombre').value;
-            const genero_id = document.getElementById('regGenero').value;
+    e.preventDefault();
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPass').value;
+    const confirm = document.getElementById('confirmPass').value;
+    const nombre = document.getElementById('regNombre').value;
+    const genero_id = document.getElementById('regGenero').value;
 
-            if (password !== confirm) {
-                return Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+    if (password !== confirm) {
+        return Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+    }
+
+    Swal.showLoading();
+    
+    const valGenero = genero_id ? parseInt(genero_id) : null;
+
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({ 
+        email, 
+        password,
+        options: {
+            emailRedirectTo: 'https://programas2024.github.io/medicuraty/',
+            data: {
+                nombre: nombre,
+                genero_id: valGenero
             }
+        }
+    });
 
-            Swal.showLoading();
-            
-            const valGenero = genero_id ? parseInt(genero_id) : null;
-
-            const { data: authData, error: authError } = await supabaseClient.auth.signUp({ 
-                email, 
-                password,
-                options: {
-                    emailRedirectTo: 'https://programas2024.github.io/medicuraty/',
-                    data: {
-                        nombre: nombre,
-                        genero_id: valGenero
-                    }
-                }
-            });
-
-            if (authError) {
-                console.error("Error de registro:", authError);
-                return Swal.fire('Error', authError.message || "No pudimos crear tu cuenta", 'error');
-            }
-
-            if (authData.user && !authData.session) {
-                Swal.fire('¡Casi listo!', 'Cuenta creada. Por favor, revisa tu correo para confirmar tu registro.', 'info')
-                    .then(() => window.location.href = 'login.html');
-            } else if (authData.user) {
-                Swal.fire('¡Éxito!', 'Cuenta creada correctamente.', 'success')
-                    .then(() => window.location.href = 'login.html');
+    if (authError) {
+        console.error("Error de registro:", authError);
+        
+        return Swal.fire({
+            title: '⚠️ Error de conexión',
+            html: `
+                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                    <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 3px solid #e74c3c; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+                <p style="color: #e74c3c; font-weight: 600; margin-bottom: 8px;">No pudimos crear tu cuenta</p>
+                <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                    <i class="fas fa-wifi" style="color: #e74c3c;"></i> 
+                    Por favor, revisa tu conexión a internet e inténtalo en unos segundos.
+                </p>
+                <p style="color: #bdc3c7; font-size: 0.8rem; margin-top: 10px; font-style: italic;">
+                    Si el problema persiste, contacta con soporte.
+                </p>
+            `,
+            showConfirmButton: true,
+            confirmButtonColor: '#9b59b6',
+            confirmButtonText: 'Intentar de nuevo',
+            background: '#fdfaff',
+            showCloseButton: true,
+            customClass: {
+                popup: 'swal-registro-error'
             }
         });
+    }
+
+    if (authData.user && !authData.session) {
+        Swal.fire({
+            title: '¡Casi listo!',
+            html: `
+                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #9b59b6; box-shadow: 0 5px 20px rgba(155, 89, 182, 0.3);">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+                <p style="color: #2c1b4e; font-weight: 600; margin-bottom: 5px;">Cuenta creada correctamente</p>
+                <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">Por favor, revisa tu correo para confirmar tu registro.</p>
+            `,
+            showConfirmButton: true,
+            confirmButtonColor: '#9b59b6',
+            confirmButtonText: 'Ir a iniciar sesión',
+            background: '#fdfaff',
+            showCloseButton: true,
+            customClass: {
+                popup: 'swal-registro-exito'
+            }
+        }).then(() => window.location.href = 'login.html');
+    } else if (authData.user) {
+        Swal.fire({
+            title: '¡Éxito!',
+            html: `
+                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #27ae60; box-shadow: 0 5px 20px rgba(39, 174, 96, 0.3);">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+                <p style="color: #2c1b4e; font-weight: 600; margin-bottom: 5px;">¡Bienvenido a Medicurativo!</p>
+                <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">Tu cuenta ha sido creada correctamente.</p>
+            `,
+            showConfirmButton: true,
+            confirmButtonColor: '#9b59b6',
+            confirmButtonText: 'Ir a iniciar sesión',
+            background: '#fdfaff',
+            showCloseButton: true,
+            customClass: {
+                popup: 'swal-registro-exito'
+            }
+        }).then(() => window.location.href = 'login.html');
+    }
+});
 
         // ============================================================
         // 6. LOGIN DE USUARIO

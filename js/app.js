@@ -1137,7 +1137,6 @@ window.obtenerTituloPorEstrellas = obtenerTituloPorEstrellas;
     document.getElementById('btnAgradecimientos')?.addEventListener('click', window.mostrarAgradecimientos);
     
 
-
 // --- Lógica de Perfil de Usuario ---
 document.getElementById('btnPerfil')?.addEventListener('click', async function() {
     try {
@@ -1443,6 +1442,17 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         </div>
                         <div class="swal-perfil-section-content" id="diary-content">
                             <button onclick="window.location.href='diario.html'" class="swal-perfil-btn"><i class="fas fa-edit"></i> Escribir en mi Diario</button>
+                        </div>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN: ¿Quiénes somos? -->
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header about" data-target="about-content">
+                            <span><i class="fas fa-users"></i> ¿Quiénes somos?</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="about-content">
+                            <button onclick="window.location.href='somos.html'" class="swal-perfil-btn"><i class="fas fa-info-circle"></i> Conoce más sobre nosotros</button>
                         </div>
                     </div>
 

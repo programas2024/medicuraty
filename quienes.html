@@ -144,8 +144,6 @@
             background: rgba(155, 89, 182, 0.2) !important;
         }
 
-        
-
         /* ===== BOTONES CIRCULARES ===== */
         .btn-icon-only,
         .btn-dark-mode,
@@ -418,10 +416,128 @@
             font-weight: 500;
         }
 
+        /* ===== SECCIÓN INVITACIÓN (NUEVA) ===== */
+        .somos-invitacion {
+            background: linear-gradient(135deg, #f8f4ff, #f0e6ff);
+            border-radius: 40px;
+            padding: 40px 35px;
+            text-align: center;
+            margin: 30px 0 20px;
+            border: 2px solid #9b59b6;
+            box-shadow: 0 10px 40px rgba(155, 89, 182, 0.1);
+            transition: all 0.3s ease;
+        }
+        .somos-invitacion:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(155, 89, 182, 0.15);
+        }
+        .somos-invitacion .invitacion-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #9b59b6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 15px;
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.3);
+        }
+        .somos-invitacion h3 {
+            color: #2c1b4e;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .somos-invitacion p {
+            color: #4a4a6a;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 550px;
+            margin: 0 auto 20px;
+        }
+        .somos-invitacion .btn-grupo {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .somos-invitacion .btn-primario {
+            background: #9b59b6;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.3);
+            cursor: pointer;
+        }
+        .somos-invitacion .btn-primario:hover {
+            transform: scale(1.05);
+            background: #7d3c98;
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.4);
+        }
+        .somos-invitacion .btn-secundario {
+            background: transparent;
+            color: #9b59b6;
+            padding: 14px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            border: 2px solid #9b59b6;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .somos-invitacion .btn-secundario:hover {
+            background: #9b59b6;
+            color: white;
+            transform: scale(1.05);
+        }
+        .somos-invitacion .texto-pequeno {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+        .somos-invitacion .texto-pequeno i {
+            color: #27ae60;
+        }
+
+        /* Modo oscuro para invitación */
+        body.dark-mode .somos-invitacion {
+            background: linear-gradient(135deg, #1a1a2e, #2a1a3e);
+            border-color: #9b59b6;
+        }
+        body.dark-mode .somos-invitacion h3 {
+            color: #ffffff;
+        }
+        body.dark-mode .somos-invitacion p {
+            color: #cccccc;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .valores-grid {
                 grid-template-columns: 1fr;
+            }
+            .somos-invitacion h3 {
+                font-size: 1.3rem;
+            }
+            .somos-invitacion p {
+                font-size: 0.95rem;
+            }
+            .somos-invitacion .btn-primario,
+            .somos-invitacion .btn-secundario {
+                padding: 12px 25px;
+                font-size: 0.9rem;
             }
         }
         @media (max-width: 600px) {
@@ -468,6 +584,18 @@
             .valor-card {
                 padding: 20px 16px;
             }
+            .somos-invitacion {
+                padding: 30px 20px;
+            }
+            .somos-invitacion .btn-grupo {
+                flex-direction: column;
+                align-items: center;
+            }
+            .somos-invitacion .btn-primario,
+            .somos-invitacion .btn-secundario {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -480,6 +608,12 @@
             }
             .somos-card {
                 padding: 20px 15px;
+            }
+            .somos-invitacion h3 {
+                font-size: 1.1rem;
+            }
+            .somos-invitacion p {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -498,7 +632,7 @@
             <div class="header-utils">
                 <!-- 1. BOTÓN INICIO (CASITA) - MORADO -->
                 <div class="btn-con-tooltip">
-                    <a href="principal.html" class="btn-icon-only">
+                    <a href="index.html" class="btn-icon-only">
                         <i class="fas fa-home"></i>
                     </a>
                     <span class="tooltip">Inicio</span>
@@ -677,6 +811,32 @@
                 </p>
             </div>
 
+            <!-- ============================================================ -->
+            <!-- NUEVA SECCIÓN: INVITACIÓN PARA USUARIOS NO REGISTRADOS         -->
+            <!-- ============================================================ -->
+            <div class="somos-invitacion animacion-entrada" style="animation-delay: 0.8s;">
+                <div class="invitacion-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <h3>🌱 ¿Te identificas con nuestra historia?</h3>
+                <p>
+                    Únete a nuestra comunidad y comienza tu viaje de crecimiento personal. 
+                    <span style="color: #9b59b6; font-weight: 600;">Es gratis y siempre serás bienvenido.</span>
+                </p>
+                <div class="btn-grupo">
+                    <a href="registro.html" class="btn-primario">
+                        <i class="fas fa-user-plus"></i> Crear cuenta gratis
+                    </a>
+                    <a href="index.html" class="btn-secundario">
+                        <i class="fas fa-globe"></i> Explorar contenido
+                    </a>
+                </div>
+                <p class="texto-pequeno">
+                    <i class="fas fa-check-circle"></i> 
+                    Únete a +500 personas que ya están cultivando su bienestar
+                </p>
+            </div>
+
         </div>
 
         <!-- FOOTER -->
@@ -740,323 +900,308 @@
             icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
         });
 
-       // ============================================================
-// FAQ - PREGUNTAS FRECUENTES
-// ============================================================
-document.getElementById('btnFaq').addEventListener('click', function() {
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    
-    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
-    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
-    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
-    const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
-    const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
-    
-    const style = document.createElement('style');
-    style.id = 'swal-faq-style';
-    style.textContent = `
-        /* Resetear estilos de SweetAlert2 para centrado */
-        .swal2-container {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            padding: 10px !important;
-        }
-        
-        .swal2-popup.swal-faq-popup {
-            border-radius: 60px !important;
-            padding: 30px 25px !important;
-            max-width: 550px !important;
-            width: 95% !important;
-            margin: auto !important;
-            position: relative !important;
-            left: auto !important;
-            right: auto !important;
-            top: auto !important;
-            bottom: auto !important;
-            transform: none !important;
-        }
-        
-        .swal-faq-popup .swal2-close {
-            border-radius: 50% !important;
-            background: rgba(155, 89, 182, 0.1) !important;
-            color: #9b59b6 !important;
-            width: 36px !important;
-            height: 36px !important;
-            font-size: 1.5rem !important;
-            transition: 0.3s !important;
-            position: absolute !important;
-            right: 16px !important;
-            top: 16px !important;
-            z-index: 10 !important;
-        }
-        .swal-faq-popup .swal2-close:hover {
-            background: rgba(155, 89, 182, 0.2) !important;
-            transform: scale(1.1) !important;
-        }
-        .swal-faq-popup .swal2-html-container {
-            padding: 0 !important;
-            margin: 0 !important;
-            overflow: visible !important;
-        }
-        
-        @media (max-width: 480px) {
-            .swal2-popup.swal-faq-popup {
-                border-radius: 40px !important;
-                padding: 20px 15px !important;
-                max-width: 92% !important;
-                width: 92% !important;
-                margin: 10px auto !important;
-            }
-            .swal-faq-popup .swal2-close {
-                right: 12px !important;
-                top: 12px !important;
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 1.2rem !important;
-            }
-        }
-        
-        .swal-faq-popup .faq-modal-item {
-            background: ${cardBg};
-            border-radius: 20px;
-            border: 2px solid ${borderColor};
-            margin-bottom: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .swal-faq-popup .faq-modal-item:hover {
-            border-color: #9b59b6;
-        }
-        .swal-faq-popup .faq-modal-pregunta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            font-weight: 700;
-            color: ${textColor};
-            font-size: 0.9rem;
-            user-select: none;
-            gap: 12px;
-        }
-        .swal-faq-popup .faq-modal-pregunta i {
-            color: #9b59b6;
-            font-size: 1rem;
-            transition: transform 0.4s ease;
-            flex-shrink: 0;
-        }
-        .swal-faq-popup .faq-modal-respuesta {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
-            padding: 0 18px;
-            color: ${subTextColor};
-            font-size: 0.88rem;
-            line-height: 1.7;
-        }
-        .swal-faq-popup .faq-modal-item.active .faq-modal-respuesta {
-            max-height: 300px;
-            padding: 0 18px 16px 18px;
-        }
-        .swal-faq-popup .faq-modal-item.active .faq-modal-pregunta i {
-            transform: rotate(180deg);
-        }
-        .swal-faq-popup .faq-modal-item.active {
-            border-color: #9b59b6;
-            box-shadow: 0 5px 25px rgba(155, 89, 182, 0.1);
-        }
-    `;
-    
-    const oldStyle = document.getElementById('swal-faq-style');
-    if (oldStyle) oldStyle.remove();
-    document.head.appendChild(style);
-    
-    Swal.fire({
-        title: '',
-        background: bgColor,
-        html: `
-            <div style="text-align: center; padding: 5px;">
-                <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
-                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
-                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+        // ============================================================
+        // FAQ - PREGUNTAS FRECUENTES
+        // ============================================================
+        document.getElementById('btnFaq').addEventListener('click', function() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+            const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+            
+            const style = document.createElement('style');
+            style.id = 'swal-faq-style';
+            style.textContent = `
+                .swal2-container {
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    padding: 10px !important;
+                }
+                .swal2-popup.swal-faq-popup {
+                    border-radius: 60px !important;
+                    padding: 30px 25px !important;
+                    max-width: 550px !important;
+                    width: 95% !important;
+                    margin: auto !important;
+                    position: relative !important;
+                    left: auto !important;
+                    right: auto !important;
+                    top: auto !important;
+                    bottom: auto !important;
+                    transform: none !important;
+                }
+                .swal-faq-popup .swal2-close {
+                    border-radius: 50% !important;
+                    background: rgba(155, 89, 182, 0.1) !important;
+                    color: #9b59b6 !important;
+                    width: 36px !important;
+                    height: 36px !important;
+                    font-size: 1.5rem !important;
+                    transition: 0.3s !important;
+                    position: absolute !important;
+                    right: 16px !important;
+                    top: 16px !important;
+                    z-index: 10 !important;
+                }
+                .swal-faq-popup .swal2-close:hover {
+                    background: rgba(155, 89, 182, 0.2) !important;
+                    transform: scale(1.1) !important;
+                }
+                .swal-faq-popup .swal2-html-container {
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    overflow: visible !important;
+                }
+                @media (max-width: 480px) {
+                    .swal2-popup.swal-faq-popup {
+                        border-radius: 40px !important;
+                        padding: 20px 15px !important;
+                        max-width: 92% !important;
+                        width: 92% !important;
+                        margin: 10px auto !important;
+                    }
+                    .swal-faq-popup .swal2-close {
+                        right: 12px !important;
+                        top: 12px !important;
+                        width: 32px !important;
+                        height: 32px !important;
+                        font-size: 1.2rem !important;
+                    }
+                }
+                .swal-faq-popup .faq-modal-item {
+                    background: ${cardBg};
+                    border-radius: 20px;
+                    border: 2px solid ${borderColor};
+                    margin-bottom: 12px;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                }
+                .swal-faq-popup .faq-modal-item:hover {
+                    border-color: #9b59b6;
+                }
+                .swal-faq-popup .faq-modal-pregunta {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 14px 18px;
+                    font-weight: 700;
+                    color: ${textColor};
+                    font-size: 0.9rem;
+                    user-select: none;
+                    gap: 12px;
+                }
+                .swal-faq-popup .faq-modal-pregunta i {
+                    color: #9b59b6;
+                    font-size: 1rem;
+                    transition: transform 0.4s ease;
+                    flex-shrink: 0;
+                }
+                .swal-faq-popup .faq-modal-respuesta {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+                    padding: 0 18px;
+                    color: ${subTextColor};
+                    font-size: 0.88rem;
+                    line-height: 1.7;
+                }
+                .swal-faq-popup .faq-modal-item.active .faq-modal-respuesta {
+                    max-height: 300px;
+                    padding: 0 18px 16px 18px;
+                }
+                .swal-faq-popup .faq-modal-item.active .faq-modal-pregunta i {
+                    transform: rotate(180deg);
+                }
+                .swal-faq-popup .faq-modal-item.active {
+                    border-color: #9b59b6;
+                    box-shadow: 0 5px 25px rgba(155, 89, 182, 0.1);
+                }
+            `;
+            
+            const oldStyle = document.getElementById('swal-faq-style');
+            if (oldStyle) oldStyle.remove();
+            document.head.appendChild(style);
+            
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
                         </div>
+                        <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 4px;"> Preguntas Frecuentes</h2>
+                        <p style="color: #9b59b6; font-weight: 600; margin-bottom: 18px;">Todo lo que necesitas saber sobre Medicurativo</p>
+                        <div style="text-align: left; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                            <div class="faq-modal-item">
+                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
+                                    <span>🌱 ¿Qué es Medicurativo?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-modal-respuesta">
+                                    <p>Medicurativo es un espacio digital creado para cultivar el bienestar emocional y el crecimiento personal. Ofrece reflexiones, herramientas y una comunidad para ayudarte a encontrar paz y propósito.</p>
+                                </div>
+                            </div>
+                            <div class="faq-modal-item">
+                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
+                                    <span>🌿 ¿Cuál es el propósito de Medicurativo?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-modal-respuesta">
+                                    <p>Recordar a las personas el lado positivo de la vida, invitarlas a reír antes de dejarse ganar por las angustias y demostrar que la vida es linda si aún conservas la capacidad de sonreír.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic; opacity: 0.7;">
+                            <i class="fas fa-heart" style="color: #9b59b6;"></i>
+                            Si tienes más dudas, contáctanos a través del soporte
+                        </p>
                     </div>
-                </div>
-
-                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 4px;"> Preguntas Frecuentes</h2>
-                <p style="color: #9b59b6; font-weight: 600; margin-bottom: 18px;">Todo lo que necesitas saber sobre Medicurativo</p>
-                
-                <div style="text-align: left; max-height: 400px; overflow-y: auto; padding-right: 5px;">
-                    <div class="faq-modal-item">
-                        <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
-                            <span>🌱 ¿Qué es Medicurativo?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-modal-respuesta">
-                            <p>Medicurativo es un espacio digital creado para cultivar el bienestar emocional y el crecimiento personal. Ofrece reflexiones, herramientas y una comunidad para ayudarte a encontrar paz y propósito.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="faq-modal-item">
-                        <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
-                            <span>🌿 ¿Cuál es el propósito de Medicurativo?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-modal-respuesta">
-                            <p>Recordar a las personas el lado positivo de la vida, invitarlas a reír antes de dejarse ganar por las angustias y demostrar que la vida es linda si aún conservas la capacidad de sonreír.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <p style="margin-top: 15px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic; opacity: 0.7;">
-                    <i class="fas fa-heart" style="color: #9b59b6;"></i>
-                    Si tienes más dudas, contáctanos a través del soporte
-                </p>
-            </div>
-        `,
-        showConfirmButton: false,
-        showCloseButton: true,
-        customClass: { 
-            popup: 'swal-faq-popup'
-        },
-        didOpen: () => {
-            document.querySelectorAll('.faq-modal-item').forEach(item => {
-                item.classList.remove('active');
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-faq-popup'
+                },
+                didOpen: () => {
+                    document.querySelectorAll('.faq-modal-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                }
             });
-        }
-    });
-});
+        });
 
-function toggleFaqModal(element) {
-    const item = element.closest('.faq-modal-item');
-    if (item) {
-        item.classList.toggle('active');
-    }
-}
-
-// ============================================================
-// AYUDA - SWEETALERT CORTO
-// ============================================================
-document.getElementById('btnAyuda').addEventListener('click', function() {
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    
-    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
-    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
-    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
-    const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
-    const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
-    
-    const style = document.createElement('style');
-    style.id = 'swal-ayuda-style';
-    style.textContent = `
-        /* Resetear estilos de SweetAlert2 para centrado */
-        .swal2-container {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            padding: 10px !important;
-        }
-        
-        .swal2-popup.swal-ayuda-popup {
-            border-radius: 60px !important;
-            padding: 30px 25px !important;
-            max-width: 480px !important;
-            width: 95% !important;
-            margin: auto !important;
-            position: relative !important;
-            left: auto !important;
-            right: auto !important;
-            top: auto !important;
-            bottom: auto !important;
-            transform: none !important;
-        }
-        
-        .swal-ayuda-popup .swal2-close {
-            border-radius: 50% !important;
-            background: rgba(155, 89, 182, 0.1) !important;
-            color: #9b59b6 !important;
-            width: 36px !important;
-            height: 36px !important;
-            font-size: 1.5rem !important;
-            transition: 0.3s !important;
-            position: absolute !important;
-            right: 16px !important;
-            top: 16px !important;
-            z-index: 10 !important;
-        }
-        .swal-ayuda-popup .swal2-close:hover {
-            background: rgba(155, 89, 182, 0.2) !important;
-            transform: scale(1.1) !important;
-        }
-        .swal-ayuda-popup .swal2-html-container {
-            padding: 0 !important;
-            margin: 0 !important;
-            overflow: visible !important;
-        }
-        
-        @media (max-width: 480px) {
-            .swal2-popup.swal-ayuda-popup {
-                border-radius: 40px !important;
-                padding: 20px 15px !important;
-                max-width: 92% !important;
-                width: 92% !important;
-                margin: 10px auto !important;
-            }
-            .swal-ayuda-popup .swal2-close {
-                right: 12px !important;
-                top: 12px !important;
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 1.2rem !important;
+        function toggleFaqModal(element) {
+            const item = element.closest('.faq-modal-item');
+            if (item) {
+                item.classList.toggle('active');
             }
         }
-    `;
-    
-    const oldStyle = document.getElementById('swal-ayuda-style');
-    if (oldStyle) oldStyle.remove();
-    document.head.appendChild(style);
-    
-    Swal.fire({
-        title: '',
-        background: bgColor,
-        html: `
-            <div style="text-align: center; padding: 5px;">
-                <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
-                    <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
-                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
-                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+
+        // ============================================================
+        // AYUDA - SWEETALERT CORTO
+        // ============================================================
+        document.getElementById('btnAyuda').addEventListener('click', function() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+            const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+            
+            const style = document.createElement('style');
+            style.id = 'swal-ayuda-style';
+            style.textContent = `
+                .swal2-container {
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    padding: 10px !important;
+                }
+                .swal2-popup.swal-ayuda-popup {
+                    border-radius: 60px !important;
+                    padding: 30px 25px !important;
+                    max-width: 480px !important;
+                    width: 95% !important;
+                    margin: auto !important;
+                    position: relative !important;
+                    left: auto !important;
+                    right: auto !important;
+                    top: auto !important;
+                    bottom: auto !important;
+                    transform: none !important;
+                }
+                .swal-ayuda-popup .swal2-close {
+                    border-radius: 50% !important;
+                    background: rgba(155, 89, 182, 0.1) !important;
+                    color: #9b59b6 !important;
+                    width: 36px !important;
+                    height: 36px !important;
+                    font-size: 1.5rem !important;
+                    transition: 0.3s !important;
+                    position: absolute !important;
+                    right: 16px !important;
+                    top: 16px !important;
+                    z-index: 10 !important;
+                }
+                .swal-ayuda-popup .swal2-close:hover {
+                    background: rgba(155, 89, 182, 0.2) !important;
+                    transform: scale(1.1) !important;
+                }
+                .swal-ayuda-popup .swal2-html-container {
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    overflow: visible !important;
+                }
+                @media (max-width: 480px) {
+                    .swal2-popup.swal-ayuda-popup {
+                        border-radius: 40px !important;
+                        padding: 20px 15px !important;
+                        max-width: 92% !important;
+                        width: 92% !important;
+                        margin: 10px auto !important;
+                    }
+                    .swal-ayuda-popup .swal2-close {
+                        right: 12px !important;
+                        top: 12px !important;
+                        width: 32px !important;
+                        height: 32px !important;
+                        font-size: 1.2rem !important;
+                    }
+                }
+            `;
+            
+            const oldStyle = document.getElementById('swal-ayuda-style');
+            if (oldStyle) oldStyle.remove();
+            document.head.appendChild(style);
+            
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
+                            <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 6px;">✨ Medicurativo</h2>
+                        <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Medicina que cultiva el alma</p>
+                        <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 40px; border: 2px solid ${borderColor};">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div style="background: #f0e6ff; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-seedling" style="color: #9b59b6; font-size: 0.85rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>¿Quiénes somos?</strong> Un legado de amor, respeto y crecimiento.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div style="background: #e6fffa; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-heart" style="color: #27ae60; font-size: 0.85rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Nuestro propósito:</strong> Recordar el lado positivo de la vida.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="background: #fff9e6; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-smile" style="color: #f1c40f; font-size: 0.85rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Frase:</strong> "La vida es linda si aún conservas la capacidad de sonreír."</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 6px;">✨ Medicurativo</h2>
-                <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Medicina que cultiva el alma</p>
-                
-                <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 40px; border: 2px solid ${borderColor};">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                        <div style="background: #f0e6ff; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-seedling" style="color: #9b59b6; font-size: 0.85rem;"></i></div>
-                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>¿Quiénes somos?</strong> Un legado de amor, respeto y crecimiento.</p>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                        <div style="background: #e6fffa; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-heart" style="color: #27ae60; font-size: 0.85rem;"></i></div>
-                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Nuestro propósito:</strong> Recordar el lado positivo de la vida.</p>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="background: #fff9e6; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-smile" style="color: #f1c40f; font-size: 0.85rem;"></i></div>
-                        <p style="margin: 0; color: ${textColor}; font-size: 0.95rem;"><strong>Frase:</strong> "La vida es linda si aún conservas la capacidad de sonreír."</p>
-                    </div>
-                </div>
-            </div>
-        `,
-        showConfirmButton: false,
-        showCloseButton: true,
-        customClass: { 
-            popup: 'swal-ayuda-popup'
-        }
-    });
-});
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-ayuda-popup'
+                }
+            });
+        });
 
         // ============================================================
         // CONFETTI DE BIENVENIDA

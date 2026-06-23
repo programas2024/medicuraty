@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Personalidad · Medicurativo</title>
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <link rel="stylesheet" href="css/swafire.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+
+    <style>
+        /* ===== ESTILOS MODO OSCURO ===== */
+        body.dark-mode {
+            background: #0a0a0a !important;
+            color: #ffffff !important;
+        }
+        body.dark-mode .header {
+            background: #0a0a0a !important;
+            border-bottom: 1px solid #333333 !important;
+        }
+        body.dark-mode .header .titulo h1 {
+            color: #ffffff !important;
+        }
+        body.dark-mode .header .titulo p {
+            color: #b07cc6 !important;
+        }
+        body.dark-mode .header .titulo p i {
+            color: #b07cc6 !important;
+        }
+        body.dark-mode .footer {
+            background: #0a0a0a !important;
+            border-top: 1px solid #333333 !important;
+            color: #aaaaaa !important;
+        }
+        body.dark-mode .btn-icon-only {
+            color: #b07cc6 !important;
+            background: transparent !important;
+        }
+        body.dark-mode .btn-icon-only:hover {
+            color: #d4b0e6 !important;
+            background: rgba(155, 89, 182, 0.15) !important;
+        }
+        body.dark-mode .btn-icon-only i {
+            color: #b07cc6 !important;
+        }
+        body.dark-mode .btn-icon-only:hover i {
+            color: #d4b0e6 !important;
+        }
+        body.dark-mode .btn-dark-mode {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        body.dark-mode .btn-dark-mode i {
+            color: #ffffff !important;
+        }
+        body.dark-mode .btn-dark-mode:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        body.dark-mode .btn-dark-mode:hover i {
+            color: #ffffff !important;
+        }
+        body.dark-mode .btn-ayuda {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        body.dark-mode .btn-ayuda i {
+            color: #ffffff !important;
+        }
+        body.dark-mode .btn-ayuda:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        body.dark-mode .btn-ayuda:hover i {
+            color: #ffffff !important;
+        }
+        body.dark-mode .btn-faq {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        body.dark-mode .btn-faq i {
+            color: #ffffff !important;
+        }
+        body.dark-mode .btn-faq:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        body.dark-mode .btn-faq:hover i {
+            color: #ffffff !important;
+        }
+        body.dark-mode .contenedor {
+            background: #0a0a0a !important;
+        }
+        body.dark-mode .test-hero {
+            background: linear-gradient(135deg, #1a1a2e, #0a0a0a) !important;
+        }
+        body.dark-mode .test-card {
+            background: #1a1a1a !important;
+            border-color: #333333 !important;
+        }
+        body.dark-mode .test-card h3 {
+            color: #ffffff !important;
+        }
+        body.dark-mode .test-card p {
+            color: #cccccc !important;
+        }
+        body.dark-mode .test-option {
+            background: #252525 !important;
+            border-color: #3a3a3a !important;
+            color: #ffffff !important;
+        }
+        body.dark-mode .test-option:hover {
+            border-color: #9b59b6 !important;
+            background: #2a1a3e !important;
+        }
+        body.dark-mode .test-option.selected {
+            border-color: #9b59b6 !important;
+            background: #2a1a3e !important;
+        }
+        body.dark-mode .test-pregunta-card {
+            background: #1a1a1a !important;
+            border-color: #333333 !important;
+        }
+        body.dark-mode .test-pregunta-texto {
+            color: #ffffff !important;
+        }
+        body.dark-mode .test-progress-bar {
+            background: #333333 !important;
+        }
+        body.dark-mode .test-progress-fill {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad) !important;
+        }
+        body.dark-mode .test-result-card {
+            background: #1a1a1a !important;
+            border-color: #333333 !important;
+        }
+        body.dark-mode .test-result-card h3 {
+            color: #ffffff !important;
+        }
+        body.dark-mode .test-result-card p {
+            color: #cccccc !important;
+        }
+        body.dark-mode #preguntas-container {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)) !important;
+            border-color: rgba(155, 89, 182, 0.2) !important;
+        }
+        body.dark-mode .btn-nav.btn-prev {
+            background: #333333 !important;
+            color: #ffffff !important;
+        }
+        body.dark-mode .btn-nav.btn-prev:hover {
+            background: #444444 !important;
+        }
+
+        /* ===== BOTONES CIRCULARES ===== */
+        .btn-icon-only,
+        .btn-dark-mode,
+        .btn-ayuda,
+        .btn-faq {
+            background: rgba(0, 0, 0, 0.06) !important;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #2c1b4e !important;
+        }
+        .btn-icon-only i,
+        .btn-dark-mode i,
+        .btn-ayuda i,
+        .btn-faq i {
+            color: #2c1b4e !important;
+        }
+        .btn-icon-only:hover,
+        .btn-dark-mode:hover,
+        .btn-ayuda:hover,
+        .btn-faq:hover {
+            background: rgba(0, 0, 0, 0.12) !important;
+            transform: scale(1.05);
+        }
+        .btn-icon-only {
+            background: rgba(155, 89, 182, 0.12) !important;
+            color: #9b59b6 !important;
+        }
+        .btn-icon-only i {
+            color: #9b59b6 !important;
+        }
+        .btn-icon-only:hover {
+            background: rgba(155, 89, 182, 0.25) !important;
+            color: #7d3c98 !important;
+        }
+        .btn-icon-only:hover i {
+            color: #7d3c98 !important;
+        }
+
+        /* ===== HERO ===== */
+        .test-hero {
+            background: linear-gradient(135deg, #f8f4ff, #f0e6ff, #e6fffa);
+            padding: 60px 20px 40px;
+            text-align: center;
+            border-radius: 0 0 60px 60px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-top: -70px;
+        }
+        .test-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(155,89,182,0.05) 0%, transparent 70%);
+            animation: heroFloat 20s ease-in-out infinite;
+        }
+        @keyframes heroFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(10%, 10%) rotate(5deg); }
+        }
+        .test-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        .test-hero .hero-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 15px 40px rgba(155, 89, 182, 0.2);
+            margin-bottom: 20px;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 40px rgba(155, 89, 182, 0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 50px rgba(155, 89, 182, 0.3); }
+        }
+        .test-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #2c1b4e;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        .test-hero h1 span {
+            color: #9b59b6;
+        }
+        .test-hero .hero-sub {
+            font-size: 1.15rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            max-width: 600px;
+            margin: 0 auto 8px;
+        }
+        .test-hero .hero-frase {
+            font-size: 1.1rem;
+            color: #9b59b6;
+            font-weight: 600;
+            background: rgba(255,255,255,0.7);
+            padding: 14px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+            margin-top: 15px;
+            border: 2px solid rgba(155, 89, 182, 0.15);
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.08);
+        }
+
+        /* ===== CONTENIDO ===== */
+        .test-contenido {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        /* ===== TARJETA DE INICIO ===== */
+        .test-card {
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            border: 2px solid #f3e9ff;
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.06);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .test-card .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(155, 89, 182, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #9b59b6;
+            margin: 0 auto 15px;
+        }
+        .test-card h3 {
+            color: #2c1b4e;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .test-card p {
+            color: #4a4a6a;
+            line-height: 1.8;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        /* ===== BOTÓN COMENZAR ===== */
+        .btn-comenzar {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-comenzar:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(155, 89, 182, 0.4);
+        }
+        .btn-comenzar i {
+            font-size: 1.1rem;
+        }
+
+        /* ===== PREGUNTAS CON FONDO SUAVE ===== */
+        #preguntas-container {
+            display: none;
+            background: linear-gradient(135deg, #f8f0ff, #f0e6ff, #e8d9ff);
+            border-radius: 40px;
+            padding: 30px;
+            border: 2px solid #dcc8f0;
+            box-shadow: 0 10px 40px rgba(155, 89, 182, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .test-pregunta-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px 35px;
+            border: 2px solid #f3e9ff;
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.06);
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .test-pregunta-numero {
+            display: inline-block;
+            background: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .test-pregunta-texto {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c1b4e;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .test-opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .test-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border: 2px solid #f0e6ff;
+            border-radius: 16px;
+            background: #fdfaff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            color: #2c1b4e;
+        }
+        .test-option:hover {
+            border-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.05);
+            transform: translateX(5px);
+        }
+        .test-option.selected {
+            border-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.1);
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+        }
+        .test-option .radio-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #d5c6e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .test-option.selected .radio-circle {
+            border-color: #9b59b6;
+            background: #9b59b6;
+        }
+        .test-option.selected .radio-circle::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+        }
+        .test-option .option-label {
+            flex: 1;
+        }
+
+        /* ===== PROGRESO ===== */
+        .test-progress-container {
+            margin-bottom: 20px;
+            padding: 0 5px;
+        }
+        .test-progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #5a4a7a;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .test-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0d0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .test-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* ===== BOTONES NAVEGACIÓN ===== */
+        .test-navegacion {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn-nav {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-nav.btn-prev {
+            background: #f0e6ff;
+            color: #2c1b4e;
+        }
+        .btn-nav.btn-prev:hover {
+            background: #e0d0f0;
+            transform: translateX(-3px);
+        }
+        .btn-nav.btn-next {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.25);
+        }
+        .btn-nav.btn-next:hover {
+            transform: translateX(3px);
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.35);
+        }
+        .btn-nav.btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-nav.btn-submit {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            box-shadow: 0 5px 20px rgba(39, 174, 96, 0.25);
+        }
+        .btn-nav.btn-submit:hover {
+            transform: translateX(3px);
+            box-shadow: 0 8px 30px rgba(39, 174, 96, 0.35);
+        }
+        .btn-nav.btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ===== RESULTADO ===== */
+        #resultado-container {
+            display: none;
+            animation: fadeInUp 0.8s ease;
+        }
+        .test-result-card {
+            background: white;
+            border-radius: 40px;
+            padding: 45px 40px;
+            border: 2px solid #f3e9ff;
+            box-shadow: 0 15px 40px rgba(155, 89, 182, 0.1);
+            text-align: center;
+        }
+        .test-result-card .result-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        .test-result-card .result-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .test-result-card h3 {
+            color: #2c1b4e;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .test-result-card .result-sub {
+            color: #9b59b6;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .test-result-card p {
+            color: #4a4a6a;
+            line-height: 1.8;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-result-card .result-flores {
+            font-size: 2.5rem;
+            margin: 15px 0;
+            letter-spacing: 8px;
+        }
+        .btn-reiniciar {
+            background: #f0e6ff;
+            color: #2c1b4e;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-reiniciar:hover {
+            background: #e0d0f0;
+            transform: scale(1.03);
+        }
+
+        /* ===== SWEETALERT PERSONALIZADO ===== */
+        .swal-resultado-popup {
+            border-radius: 60px !important;
+            padding: 20px 25px 30px !important;
+            max-width: 480px !important;
+            width: 95% !important;
+            border: 3px solid #9b59b6 !important;
+            box-shadow: 0 25px 60px rgba(155, 89, 182, 0.25) !important;
+        }
+        .swal-resultado-popup .swal2-close {
+            border-radius: 50% !important;
+            background: rgba(155, 89, 182, 0.1) !important;
+            color: #9b59b6 !important;
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 1.5rem !important;
+            transition: 0.3s !important;
+        }
+        .swal-resultado-popup .swal2-close:hover {
+            background: rgba(155, 89, 182, 0.2) !important;
+            transform: scale(1.1) !important;
+        }
+
+        /* ===== SWEETALERT ERROR CONEXIÓN/SERVIDOR ===== */
+        .swal-error-popup {
+            border-radius: 60px !important;
+            padding: 25px 25px 30px !important;
+            max-width: 480px !important;
+            width: 95% !important;
+            border: 3px solid #e74c3c !important;
+            box-shadow: 0 25px 60px rgba(231, 76, 60, 0.2) !important;
+        }
+        .swal-error-popup .swal2-close {
+            border-radius: 50% !important;
+            background: rgba(231, 76, 60, 0.1) !important;
+            color: #e74c3c !important;
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 1.5rem !important;
+            transition: 0.3s !important;
+        }
+        .swal-error-popup .swal2-close:hover {
+            background: rgba(231, 76, 60, 0.2) !important;
+            transform: scale(1.1) !important;
+        }
+
+        /* ===== SWEETALERT AYUDA ===== */
+        .swal-ayuda-popup {
+            border-radius: 60px !important;
+            padding: 30px 25px !important;
+            max-width: 480px !important;
+            width: 95% !important;
+            margin: auto !important;
+            position: relative !important;
+            left: auto !important;
+            right: auto !important;
+            top: auto !important;
+            bottom: auto !important;
+            transform: none !important;
+        }
+        .swal-ayuda-popup .swal2-close {
+            border-radius: 50% !important;
+            background: rgba(155, 89, 182, 0.1) !important;
+            color: #9b59b6 !important;
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 1.5rem !important;
+            transition: 0.3s !important;
+            position: absolute !important;
+            right: 16px !important;
+            top: 16px !important;
+            z-index: 10 !important;
+        }
+        .swal-ayuda-popup .swal2-close:hover {
+            background: rgba(155, 89, 182, 0.2) !important;
+            transform: scale(1.1) !important;
+        }
+        .swal-ayuda-popup .swal2-html-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+        }
+        .swal-ayuda-popup .ayuda-item {
+            background: rgba(155, 89, 182, 0.05);
+            border-radius: 16px;
+            border: 2px solid rgba(155, 89, 182, 0.1);
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .swal-ayuda-popup .ayuda-item:hover {
+            border-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.08);
+        }
+        .swal-ayuda-popup .ayuda-item i {
+            color: #9b59b6;
+            width: 24px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .swal-ayuda-popup {
+                border-radius: 40px !important;
+                padding: 20px 15px !important;
+                max-width: 92% !important;
+                margin: 10px auto !important;
+            }
+            .swal-ayuda-popup .swal2-close {
+                right: 12px !important;
+                top: 12px !important;
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 1.2rem !important;
+            }
+            .swal-error-popup {
+                border-radius: 40px !important;
+                padding: 20px 15px 25px !important;
+                max-width: 92% !important;
+            }
+            .swal-resultado-popup {
+                border-radius: 40px !important;
+                padding: 15px 15px 25px !important;
+                max-width: 92% !important;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+            .header-utils {
+                gap: 6px;
+            }
+            .btn-icon-only,
+            .btn-dark-mode,
+            .btn-ayuda,
+            .btn-faq {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+            }
+            .test-hero {
+                padding: 40px 15px 30px;
+                border-radius: 0 0 40px 40px;
+            }
+            .test-hero h1 {
+                font-size: 2rem;
+            }
+            .test-hero .hero-sub {
+                font-size: 1rem;
+            }
+            .test-hero .hero-frase {
+                font-size: 0.95rem;
+                padding: 12px 18px;
+            }
+            .test-card {
+                padding: 25px 20px;
+                border-radius: 30px;
+            }
+            .test-pregunta-card {
+                padding: 20px 16px;
+                border-radius: 25px;
+            }
+            .test-pregunta-texto {
+                font-size: 1rem;
+            }
+            .test-option {
+                padding: 12px 14px;
+                font-size: 0.9rem;
+            }
+            .test-navegacion {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .btn-nav {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+                flex: 1;
+                justify-content: center;
+                min-width: 80px;
+            }
+            .test-result-card {
+                padding: 30px 20px;
+                border-radius: 30px;
+            }
+            .test-result-card h3 {
+                font-size: 1.4rem;
+            }
+            #preguntas-container {
+                padding: 15px;
+                border-radius: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .test-hero h1 {
+                font-size: 1.6rem;
+            }
+            .test-hero .hero-frase {
+                font-size: 0.85rem;
+                padding: 10px 14px;
+            }
+            .test-card {
+                padding: 20px 15px;
+            }
+            .test-pregunta-card {
+                padding: 16px 12px;
+            }
+            .btn-comenzar {
+                padding: 14px 32px;
+                font-size: 1rem;
+            }
+            #preguntas-container {
+                padding: 10px;
+                border-radius: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <img src="imganes/logosmedi.png" alt="Medicurativo" loading="lazy">
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> medicina que cultiva el alma</p>
+            </div>
+            <div class="header-utils">
+                <div class="btn-con-tooltip">
+                    <a href="principal.html" class="btn-icon-only">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Inicio</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-dark-mode" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="tooltip">Modo oscuro</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-faq" id="btnFaq">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    <span class="tooltip">Preguntas Frecuentes</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-ayuda" id="btnAyuda">
+                        <i class="fas fa-circle-question"></i>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- HERO -->
+        <div class="test-hero">
+            <div class="test-hero-content">
+                <img src="imganes/logosmedi.png" alt="Medicurativo" class="hero-logo">
+                <h1>Test de <span>Personalidad</span></h1>
+                <p class="hero-sub">Descubre quién eres realmente y qué flor te representa</p>
+                <div class="hero-frase">
+                    <i class="fas fa-seedling" style="margin-right: 10px;"></i>
+                    Conócete a ti mismo para florecer
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="test-contenido">
+
+            <!-- TARJETA DE INICIO -->
+            <div id="inicio-container" class="test-card">
+                <div class="card-icon"><i class="fas fa-brain"></i></div>
+                <h3>🌿 Test de Personalidad</h3>
+                <p>
+                    <strong>¿Qué tipo de persona eres?</strong> Este test te ayudará a conocerte mejor, 
+                    identificando tu estado de ánimo predominante y la flor que mejor te representa.
+                </p>
+                <p style="font-size: 0.9rem; color: #7f8c8d;">
+                    <i class="fas fa-clock" style="color: #9b59b6;"></i> 15 preguntas · Aprox. 5 minutos
+                </p>
+                <button class="btn-comenzar" onclick="comenzarTest()">
+                    <i class="fas fa-play"></i> Comenzar Test
+                </button>
+            </div>
+
+            <!-- PREGUNTAS -->
+            <div id="preguntas-container">
+                <div class="test-progress-container">
+                    <div class="test-progress-info">
+                        <span id="pregunta-contador">Pregunta 1 de 15</span>
+                        <span id="pregunta-porcentaje">0%</span>
+                    </div>
+                    <div class="test-progress-bar">
+                        <div class="test-progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div id="pregunta-card" class="test-pregunta-card">
+                    <div class="test-pregunta-numero" id="pregunta-numero">Pregunta 1</div>
+                    <div class="test-pregunta-texto" id="pregunta-texto">Cargando...</div>
+                    <div class="test-opciones" id="opciones-container"></div>
+                    <div class="test-navegacion">
+                        <button class="btn-nav btn-prev" id="btn-prev" onclick="preguntaAnterior()">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button class="btn-nav btn-next" id="btn-next" onclick="preguntaSiguiente()">
+                            Siguiente <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn-nav btn-submit" id="btn-submit" style="display:none;" onclick="finalizarTest()">
+                            <i class="fas fa-check"></i> Ver Resultado
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTADO -->
+            <div id="resultado-container">
+                <div class="test-result-card" id="resultado-card">
+                    <div class="result-icon" id="result-icon">🌻</div>
+                    <div class="result-badge" id="result-badge">Resultado</div>
+                    <h3 id="result-titulo">Tu Tipo de Personalidad</h3>
+                    <div class="result-sub" id="result-sub">Estado de ánimo predominante</div>
+                    <div class="result-flores" id="result-flores">🌸 🌻 🌷</div>
+                    <p id="result-descripcion">Descripción de tu personalidad...</p>
+                    <button class="btn-reiniciar" onclick="reiniciarTest()">
+                        <i class="fas fa-redo"></i> Realizar Test Nuevamente
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · medicina que cultiva <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2026 · sembrando bienestar <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURACIÓN SUPABASE
+        // ============================================================
+        const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
+        const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        window.supabaseClient = supabaseClient;
+
+        // ============================================================
+        // MODO OSCURO
+        // ============================================================
+        (function cargarTema() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('#darkModeToggle i');
+                if (icon) icon.className = 'fas fa-sun';
+            }
+        })();
+
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            const icon = this.querySelector('i');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        });
+
+        // ============================================================
+        // FUNCIÓN PARA MOSTRAR ERROR DE CONEXIÓN/SERVIDOR
+        // ============================================================
+        function mostrarErrorConexion(error) {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            
+            // Determinar si es error de internet o servidor
+            let tituloError = '⚠️ Problemas de Conexión';
+            let mensajeError = 'Por favor revisa tu conexión a internet e inténtalo de nuevo.';
+            let iconoError = '🌐';
+            
+            if (error && error.message) {
+                if (error.message.includes('Failed to fetch') || 
+                    error.message.includes('NetworkError') ||
+                    error.message.includes('ERR_INTERNET_DISCONNECTED') ||
+                    error.message.includes('ERR_NETWORK')) {
+                    tituloError = '🌐 Sin Conexión a Internet';
+                    mensajeError = 'Vaya, parece que no tienes conexión a internet. Por favor revisa tu conexión e inténtalo de nuevo.';
+                    iconoError = '🌐';
+                } else if (error.message.includes('500') || 
+                          error.message.includes('502') || 
+                          error.message.includes('503') ||
+                          error.message.includes('504') ||
+                          error.message.includes('Internal Server Error')) {
+                    tituloError = '🔄 Error del Servidor';
+                    mensajeError = 'El servidor está teniendo problemas. Por favor inténtalo más tarde. Estamos trabajando para resolverlo.';
+                    iconoError = '🔄';
+                } else if (error.message.includes('timeout') || error.message.includes('Timeout')) {
+                    tituloError = '⏱️ Tiempo de Espera Agotado';
+                    mensajeError = 'La conexión está demorando demasiado. Por favor verifica tu internet e inténtalo de nuevo.';
+                    iconoError = '⏱️';
+                }
+            }
+            
+            // Estilos para el error
+            const style = document.createElement('style');
+            style.id = 'swal-error-style';
+            style.textContent = `
+                .swal-error-popup .error-icono {
+                    font-size: 3.5rem;
+                    margin-bottom: 8px;
+                }
+                .swal-error-popup .error-titulo {
+                    font-size: 1.3rem;
+                    font-weight: 800;
+                    color: ${textColor};
+                    margin-bottom: 6px;
+                }
+                .swal-error-popup .error-mensaje {
+                    color: ${subTextColor};
+                    font-size: 0.95rem;
+                    line-height: 1.6;
+                    margin: 6px 0;
+                }
+                .swal-error-popup .error-consejo {
+                    background: rgba(231, 76, 60, 0.06);
+                    border-radius: 16px;
+                    padding: 12px 16px;
+                    margin-top: 10px;
+                    border-left: 4px solid #e74c3c;
+                    text-align: left;
+                }
+                .swal-error-popup .error-consejo i {
+                    color: #e74c3c;
+                    margin-right: 8px;
+                }
+                .swal-error-popup .error-consejo span {
+                    color: ${textColor};
+                    font-size: 0.9rem;
+                }
+            `;
+            const oldStyle = document.getElementById('swal-error-style');
+            if (oldStyle) oldStyle.remove();
+            document.head.appendChild(style);
+            
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #fde8e8, #fce4e4); padding: 4px; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15); border: 3px solid #e74c3c;">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="error-icono">${iconoError}</div>
+                        <div class="error-titulo">${tituloError}</div>
+                        <div class="error-mensaje">${mensajeError}</div>
+                        <div class="error-consejo">
+                            <i class="fas fa-lightbulb"></i>
+                            <span><strong>Consejo:</strong> Intenta recargar la página o vuelve a intentarlo en unos minutos.</span>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 0.75rem; color: ${subTextColor}; opacity: 0.6;">
+                            <i class="fas fa-info-circle"></i> Si el problema persiste, contacta con soporte
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido 💜',
+                confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                allowOutsideClick: true,
+                customClass: { 
+                    popup: 'swal-error-popup',
+                    closeButton: 'swal2-close-custom',
+                    confirmButton: 'swal2-confirm-custom'
+                },
+                buttonsStyling: false
+            });
+        }
+
+        // ============================================================
+        // FAQ - PREGUNTAS FRECUENTES
+        // ============================================================
+        document.getElementById('btnFaq').addEventListener('click', function() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+            const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+            
+            const style = document.createElement('style');
+            style.id = 'swal-faq-style';
+            style.textContent = `
+                .swal2-container { display: flex !important; align-items: center !important; justify-content: center !important; padding: 10px !important; }
+                .swal2-popup.swal-faq-popup { border-radius: 60px !important; padding: 30px 25px !important; max-width: 550px !important; width: 95% !important; margin: auto !important; position: relative !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; transform: none !important; }
+                .swal-faq-popup .swal2-close { border-radius: 50% !important; background: rgba(155, 89, 182, 0.1) !important; color: #9b59b6 !important; width: 36px !important; height: 36px !important; font-size: 1.5rem !important; transition: 0.3s !important; position: absolute !important; right: 16px !important; top: 16px !important; z-index: 10 !important; }
+                .swal-faq-popup .swal2-close:hover { background: rgba(155, 89, 182, 0.2) !important; transform: scale(1.1) !important; }
+                .swal-faq-popup .swal2-html-container { padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+                @media (max-width: 480px) { .swal2-popup.swal-faq-popup { border-radius: 40px !important; padding: 20px 15px !important; max-width: 92% !important; width: 92% !important; margin: 10px auto !important; } .swal-faq-popup .swal2-close { right: 12px !important; top: 12px !important; width: 32px !important; height: 32px !important; font-size: 1.2rem !important; } }
+                .swal-faq-popup .faq-modal-item { background: ${cardBg}; border-radius: 20px; border: 2px solid ${borderColor}; margin-bottom: 12px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; }
+                .swal-faq-popup .faq-modal-item:hover { border-color: #9b59b6; }
+                .swal-faq-popup .faq-modal-pregunta { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; font-weight: 700; color: ${textColor}; font-size: 0.9rem; user-select: none; gap: 12px; }
+                .swal-faq-popup .faq-modal-pregunta i { color: #9b59b6; font-size: 1rem; transition: transform 0.4s ease; flex-shrink: 0; }
+                .swal-faq-popup .faq-modal-respuesta { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease; padding: 0 18px; color: ${subTextColor}; font-size: 0.88rem; line-height: 1.7; }
+                .swal-faq-popup .faq-modal-item.active .faq-modal-respuesta { max-height: 300px; padding: 0 18px 16px 18px; }
+                .swal-faq-popup .faq-modal-item.active .faq-modal-pregunta i { transform: rotate(180deg); }
+                .swal-faq-popup .faq-modal-item.active { border-color: #9b59b6; box-shadow: 0 5px 25px rgba(155, 89, 182, 0.1); }
+            `;
+            const oldStyle = document.getElementById('swal-faq-style');
+            if (oldStyle) oldStyle.remove();
+            document.head.appendChild(style);
+            
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 4px;">❓ Preguntas Frecuentes</h2>
+                        <p style="color: #9b59b6; font-weight: 600; margin-bottom: 18px;">Todo lo que necesitas saber sobre el test</p>
+                        <div style="text-align: left; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                            <div class="faq-modal-item">
+                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
+                                    <span>🧠 ¿Qué mide este test?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-modal-respuesta">
+                                    <p>Este test evalúa tu tipo de personalidad, estado de ánimo predominante y te asocia con una flor que representa tu esencia.</p>
+                                </div>
+                            </div>
+                            <div class="faq-modal-item">
+                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
+                                    <span>⏱️ ¿Cuánto tiempo toma?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-modal-respuesta">
+                                    <p>Aproximadamente 5 minutos. Son 15 preguntas de respuesta rápida.</p>
+                                </div>
+                            </div>
+                            <div class="faq-modal-item">
+                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
+                                    <span>🌸 ¿Qué significan las flores?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-modal-respuesta">
+                                    <p>Cada flor representa una cualidad especial: Girasol (alegría), Rosa (amor), Loto (sabiduría), Orquídea (elegancia), Árbol (fortaleza).</p>
+                                </div>
+                            </div>
+                            <div class="faq-modal-item">
+                                <div class="faq-modal-pregunta" onclick="toggleFaqModal(this)">
+                                    <span>💾 ¿Se guarda mi resultado?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="faq-modal-respuesta">
+                                    <p>Sí, si inicias sesión, tu resultado se guarda automáticamente en tu perfil para que puedas verlo cuando quieras.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic; opacity: 0.7;">
+                            <i class="fas fa-heart" style="color: #9b59b6;"></i> Conócete para florecer
+                        </p>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: { popup: 'swal-faq-popup' }
+            });
+        });
+
+        function toggleFaqModal(element) {
+            const item = element.closest('.faq-modal-item');
+            if (item) item.classList.toggle('active');
+        }
+
+        // ============================================================
+        // AYUDA
+        // ============================================================
+        document.getElementById('btnAyuda').addEventListener('click', function() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const cardBg = isDarkMode ? 'rgba(255,255,255,0.06)' : '#fdfaff';
+            const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0e6ff';
+            
+            const style = document.createElement('style');
+            style.id = 'swal-ayuda-style';
+            style.textContent = `
+                .swal2-container { display: flex !important; align-items: center !important; justify-content: center !important; padding: 10px !important; }
+                .swal2-popup.swal-ayuda-popup { border-radius: 60px !important; padding: 30px 25px !important; max-width: 480px !important; width: 95% !important; margin: auto !important; position: relative !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; transform: none !important; }
+                .swal-ayuda-popup .swal2-close { border-radius: 50% !important; background: rgba(155, 89, 182, 0.1) !important; color: #9b59b6 !important; width: 36px !important; height: 36px !important; font-size: 1.5rem !important; transition: 0.3s !important; position: absolute !important; right: 16px !important; top: 16px !important; z-index: 10 !important; }
+                .swal-ayuda-popup .swal2-close:hover { background: rgba(155, 89, 182, 0.2) !important; transform: scale(1.1) !important; }
+                .swal-ayuda-popup .swal2-html-container { padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+                .swal-ayuda-popup .ayuda-item { background: ${cardBg}; border-radius: 16px; border: 2px solid ${borderColor}; padding: 14px 18px; margin-bottom: 10px; transition: all 0.3s ease; text-align: left; }
+                .swal-ayuda-popup .ayuda-item:hover { border-color: #9b59b6; background: rgba(155, 89, 182, 0.08); }
+                .swal-ayuda-popup .ayuda-item i { color: #9b59b6; width: 24px; text-align: center; margin-right: 10px; }
+                @media (max-width: 480px) { .swal2-popup.swal-ayuda-popup { border-radius: 40px !important; padding: 20px 15px !important; max-width: 92% !important; width: 92% !important; margin: 10px auto !important; } .swal-ayuda-popup .swal2-close { right: 12px !important; top: 12px !important; width: 32px !important; height: 32px !important; font-size: 1.2rem !important; } }
+            `;
+            const oldStyle = document.getElementById('swal-ayuda-style');
+            if (oldStyle) oldStyle.remove();
+            document.head.appendChild(style);
+            
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 4px;">✨ Guía Rápida</h2>
+                        <p style="color: #9b59b6; font-weight: 600; margin-bottom: 18px;">Consejos para realizar el test</p>
+                        <div style="text-align: left;">
+                            <div class="ayuda-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span style="color: ${textColor}; font-weight: 500;">Responde con honestidad</span>
+                                <p style="color: ${subTextColor}; font-size: 0.85rem; margin: 4px 0 0 34px;">No hay respuestas correctas o incorrectas</p>
+                            </div>
+                            <div class="ayuda-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span style="color: ${textColor}; font-weight: 500;">Elige lo que más se acerque a ti</span>
+                                <p style="color: ${subTextColor}; font-size: 0.85rem; margin: 4px 0 0 34px;">Confía en tu primera intuición</p>
+                            </div>
+                            <div class="ayuda-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span style="color: ${textColor}; font-weight: 500;">Disfruta el proceso</span>
+                                <p style="color: ${subTextColor}; font-size: 0.85rem; margin: 4px 0 0 34px;">Es una oportunidad para conocerte mejor</p>
+                            </div>
+                            <div class="ayuda-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span style="color: ${textColor}; font-weight: 500;">Guarda tu resultado</span>
+                                <p style="color: ${subTextColor}; font-size: 0.85rem; margin: 4px 0 0 34px;">Inicia sesión para guardarlo en tu perfil</p>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic; opacity: 0.7;">
+                            <i class="fas fa-heart" style="color: #9b59b6;"></i> Conócete para florecer
+                        </p>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: { popup: 'swal-ayuda-popup' }
+            });
+        });
+
+        // ============================================================
+        // LOGICA DEL TEST - 15 PREGUNTAS
+        // ============================================================
+        const preguntas = [
+            { texto: "En una situación difícil, ¿qué sueles hacer primero?", 
+              opciones: ["Buscar soluciones prácticas", "Hablar con alguien de confianza", "Analizar el problema", "Dejarlo pasar"] },
+            { texto: "¿Cómo te sientes cuando estás solo/a?", 
+              opciones: ["En paz", "Reflexivo/a", "Creativo/a", "Un poco ansioso/a"] },
+            { texto: "Cuando alguien te cuenta un problema, ¿qué haces?", 
+              opciones: ["Escuchas atentamente", "Das consejos", "Ofreces apoyo emocional", "Buscas soluciones"] },
+            { texto: "¿Qué tipo de actividades te hacen sentir más vivo/a?", 
+              opciones: ["Estar en la naturaleza", "Aprender cosas nuevas", "Ayudar a otros", "Crear arte"] },
+            { texto: "¿Cómo describirías tu estado de ánimo habitual?", 
+              opciones: ["Optimista", "Tranquilo/a", "Apasionado/a", "Reflexivo/a"] },
+            { texto: "¿Qué valoras más en una amistad?", 
+              opciones: ["Lealtad", "Comprensión", "Alegría", "Sabiduría"] },
+            { texto: "Cuando tienes un conflicto, ¿cómo actúas?", 
+              opciones: ["Buscas diálogo", "Te alejas", "Enfrentas directamente", "Medias"] },
+            { texto: "¿Qué te motiva a levantarte cada día?", 
+              opciones: ["Mis sueños", "Mi familia", "Ayudar a otros", "Mi propósito"] },
+            { texto: "¿Cómo manejas el estrés?", 
+              opciones: ["Ejercicio", "Meditación", "Hablando con alguien", "Arte o música"] },
+            { texto: "¿Qué flor te atrae más?", 
+              opciones: ["Girasol", "Rosa", "Loto", "Orquídea"] },
+            { texto: "En un grupo, ¿qué rol sueles tener?", 
+              opciones: ["El líder", "El mediador", "El creativo", "El observador"] },
+            { texto: "¿Qué te hace sentir más agradecido/a?", 
+              opciones: ["Las personas que me quieren", "Las pequeñas cosas", "Mis logros", "La vida misma"] },
+            { texto: "¿Cómo te gusta aprender?", 
+              opciones: ["Leyendo", "Practicando", "Escuchando", "Observando"] },
+            { texto: "Si tuvieras un superpoder, ¿cuál sería?", 
+              opciones: ["Sanar", "Volar", "Leer mentes", "Ser invisible"] },
+            { texto: "¿Qué frase te representa más?", 
+              opciones: ["La vida es bella", "Siempre hay esperanza", "El amor lo puede todo", "Conócete a ti mismo"] }
+        ];
+
+        const resultados = [
+            { 
+                id: "alegre", 
+                titulo: "🌻 El Girasol", 
+                subtitulo: "Alegría y Optimismo",
+                icono: "🌻",
+                flores: "🌻 🌸 🌷",
+                fraseAnimo: "¡Sigue brillando como el sol! Tu alegría ilumina el mundo. 🌞",
+                descripcion: "Eres una persona llena de luz y energía positiva. Tu optimismo contagia a quienes te rodean y siempre encuentras el lado bueno de las cosas. Como el girasol, sigues la luz y iluminas el camino de los demás. Tu estado de ánimo predominante es la alegría y la esperanza."
+            },
+            { 
+                id: "amoroso", 
+                titulo: "🌹 La Rosa", 
+                subtitulo: "Amor y Sensibilidad",
+                icono: "🌹",
+                flores: "🌹 🌷 🌺",
+                fraseAnimo: "Tu amor es un regalo que transforma vidas. Sigue floreciendo con ternura. 💕",
+                descripcion: "Eres una persona profundamente amorosa y sensible. Valoras las relaciones y das lo mejor de ti por quienes quieres. Como la rosa, tienes una belleza interior que florece en el amor y la compasión. Tu estado de ánimo predominante es la empatía y la conexión emocional."
+            },
+            { 
+                id: "sabio", 
+                titulo: "🪷 El Loto", 
+                subtitulo: "Sabiduría y Paz Interior",
+                icono: "🪷",
+                flores: "🪷 🌸 🌿",
+                fraseAnimo: "Tu sabiduría es un faro en la tormenta. Sigue floreciendo en paz. 🧘",
+                descripcion: "Eres una persona sabia y reflexiva. Buscas la paz interior y la comprensión profunda de la vida. Como el loto, floreces en medio de las dificultades con serenidad y gracia. Tu estado de ánimo predominante es la tranquilidad y la introspección."
+            },
+            { 
+                id: "elegante", 
+                titulo: "🌸 La Orquídea", 
+                subtitulo: "Elegancia y Creatividad",
+                icono: "🌸",
+                flores: "🌸 🌺 🌷",
+                fraseAnimo: "Tu creatividad es única y especial. Sigue creando belleza a tu alrededor. 🎨",
+                descripcion: "Eres una persona creativa y única. Tienes una elegancia natural y una forma especial de ver el mundo. Como la orquídea, destacas por tu autenticidad y belleza singular. Tu estado de ánimo predominante es la inspiración y la creatividad."
+            },
+            { 
+                id: "fuerte", 
+                titulo: "🌿 El Árbol", 
+                subtitulo: "Fortaleza y Resiliencia",
+                icono: "🌿",
+                flores: "🌿 🍃 🌳",
+                fraseAnimo: "Eres más fuerte de lo que crees. Sigue creciendo con raíces profundas. 🌳",
+                descripcion: "Eres una persona fuerte y resiliente. Te mantienes firme ante las adversidades y creces a partir de las dificultades. Como el árbol, tienes raíces profundas y una fortaleza que inspira. Tu estado de ánimo predominante es la determinación y la perseverancia."
+            }
+        ];
+
+        let respuestas = [];
+        let preguntaActual = 0;
+
+        function comenzarTest() {
+            document.getElementById('inicio-container').style.display = 'none';
+            document.getElementById('preguntas-container').style.display = 'block';
+            respuestas = [];
+            preguntaActual = 0;
+            mostrarPregunta();
+        }
+
+        function mostrarPregunta() {
+            const pregunta = preguntas[preguntaActual];
+            document.getElementById('pregunta-numero').textContent = `Pregunta ${preguntaActual + 1}`;
+            document.getElementById('pregunta-texto').textContent = pregunta.texto;
+            document.getElementById('pregunta-contador').textContent = `Pregunta ${preguntaActual + 1} de ${preguntas.length}`;
+            
+            const porcentaje = ((preguntaActual + 1) / preguntas.length) * 100;
+            document.getElementById('progress-fill').style.width = porcentaje + '%';
+            document.getElementById('pregunta-porcentaje').textContent = Math.round(porcentaje) + '%';
+
+            const container = document.getElementById('opciones-container');
+            container.innerHTML = '';
+            
+            const letras = ['A', 'B', 'C', 'D'];
+            pregunta.opciones.forEach((opcion, index) => {
+                const div = document.createElement('div');
+                div.className = 'test-option';
+                if (respuestas[preguntaActual] === index) {
+                    div.classList.add('selected');
+                }
+                div.innerHTML = `
+                    <div class="radio-circle"></div>
+                    <span class="option-label"><strong>${letras[index]}.</strong> ${opcion}</span>
+                `;
+                div.onclick = () => seleccionarOpcion(index);
+                container.appendChild(div);
+            });
+
+            document.getElementById('btn-prev').style.display = preguntaActual === 0 ? 'none' : 'inline-flex';
+            document.getElementById('btn-next').style.display = preguntaActual === preguntas.length - 1 ? 'none' : 'inline-flex';
+            document.getElementById('btn-submit').style.display = preguntaActual === preguntas.length - 1 ? 'inline-flex' : 'none';
+            
+            document.getElementById('btn-next').disabled = respuestas[preguntaActual] === undefined;
+            document.getElementById('btn-submit').disabled = respuestas[preguntaActual] === undefined;
+        }
+
+        function seleccionarOpcion(index) {
+            respuestas[preguntaActual] = index;
+            const options = document.querySelectorAll('.test-option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+            document.getElementById('btn-next').disabled = false;
+            document.getElementById('btn-submit').disabled = false;
+        }
+
+        function preguntaSiguiente() {
+            if (respuestas[preguntaActual] === undefined) return;
+            if (preguntaActual < preguntas.length - 1) {
+                preguntaActual++;
+                mostrarPregunta();
+                window.scrollTo({ top: document.getElementById('preguntas-container').offsetTop - 20, behavior: 'smooth' });
+            }
+        }
+
+        function preguntaAnterior() {
+            if (preguntaActual > 0) {
+                preguntaActual--;
+                mostrarPregunta();
+                window.scrollTo({ top: document.getElementById('preguntas-container').offsetTop - 20, behavior: 'smooth' });
+            }
+        }
+
+        async function finalizarTest() {
+            if (respuestas.some(r => r === undefined)) {
+                Swal.fire({
+                    title: '⚠️ Preguntas sin responder',
+                    text: 'Responde todas las preguntas para ver tu resultado.',
+                    icon: 'warning',
+                    confirmButtonColor: '#9b59b6',
+                    confirmButtonText: 'Continuar',
+                    customClass: { popup: 'swal-popup-redondo' }
+                });
+                return;
+            }
+
+            // Calcular resultado
+            const conteo = [0, 0, 0, 0, 0];
+            respuestas.forEach(r => {
+                if (r === 0) conteo[0]++;
+                else if (r === 1) conteo[1]++;
+                else if (r === 2) conteo[2]++;
+                else if (r === 3) conteo[3]++;
+            });
+
+            let maxIndex = 0;
+            let maxCount = 0;
+            conteo.forEach((count, index) => {
+                if (count > maxCount) {
+                    maxCount = count;
+                    maxIndex = index;
+                }
+            });
+
+            const mapResult = ['alegre', 'amoroso', 'sabio', 'elegante', 'fuerte'];
+            const resultId = mapResult[maxIndex] || 'alegre';
+            const resultado = resultados.find(r => r.id === resultId) || resultados[0];
+
+            // Mostrar SweetAlert con resultado
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 3rem; margin-bottom: 5px;">${resultado.icono}</div>
+                        <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 2px; font-size: 1.4rem;">${resultado.titulo}</h2>
+                        <p style="color: #9b59b6; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">${resultado.subtitulo}</p>
+                        <div style="font-size: 1.8rem; margin: 5px 0; letter-spacing: 6px;">${resultado.flores}</div>
+                        <div style="background: rgba(155, 89, 182, 0.08); border-radius: 20px; padding: 12px 16px; margin: 8px 0;">
+                            <p style="color: ${textColor}; font-size: 0.9rem; line-height: 1.6; margin: 0; text-align: left;">${resultado.descripcion}</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.12), rgba(155, 89, 182, 0.05)); border-radius: 16px; padding: 10px 16px; margin: 8px 0; border-left: 4px solid #9b59b6;">
+                            <p style="color: #9b59b6; font-weight: 700; font-size: 0.95rem; margin: 0; font-style: italic;">
+                                <i class="fas fa-sparkles" style="margin-right: 8px;"></i>
+                                ${resultado.fraseAnimo}
+                            </p>
+                        </div>
+                        <div id="swal-guardando-status" style="margin-top: 8px; font-size: 0.8rem; color: ${subTextColor};">
+                            <i class="fas fa-spinner fa-spin"></i> Guardando tu resultado...
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                allowOutsideClick: false,
+                background: bgColor,
+                customClass: { 
+                    popup: 'swal-resultado-popup',
+                    closeButton: 'swal2-close-custom'
+                }
+            });
+
+            // Guardar en Supabase con manejo de errores
+            let guardadoExitoso = false;
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                
+                if (session) {
+                    const userId = session.user.id;
+                    
+                    const { error: saveError } = await supabaseClient
+                        .from('test_resultados')
+                        .insert({
+                            usuario_id: userId,
+                            tipo_personalidad: resultId,
+                            titulo: resultado.titulo,
+                            subtitulo: resultado.subtitulo,
+                            descripcion: resultado.descripcion,
+                            icono: resultado.icono,
+                            flores: resultado.flores,
+                            frase_animo: resultado.fraseAnimo,
+                            fecha_realizado: new Date().toISOString()
+                        });
+                    
+                    if (saveError) {
+                        console.error('Error al guardar test:', saveError);
+                        // Si es error de tabla no existe
+                        if (saveError.code === '42P01') {
+                            document.getElementById('swal-guardando-status').innerHTML = `
+                                <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i> 
+                                Tabla no encontrada. El resultado no se guardó.
+                                <br><small>Contacta al administrador.</small>
+                            `;
+                        } else if (saveError.code === '23502' || saveError.code === '42703') {
+                            // Error de columna faltante
+                            document.getElementById('swal-guardando-status').innerHTML = `
+                                <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i> 
+                                Error de estructura. El resultado no se guardó.
+                                <br><small>Contacta al administrador.</small>
+                            `;
+                        } else {
+                            // Otros errores de Supabase
+                            document.getElementById('swal-guardando-status').innerHTML = `
+                                <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i> 
+                                Error al guardar: ${saveError.message || 'Error desconocido'}
+                            `;
+                        }
+                    } else {
+                        guardadoExitoso = true;
+                        document.getElementById('swal-guardando-status').innerHTML = `
+                            <i class="fas fa-check-circle" style="color: #27ae60;"></i> 
+                            ✅ Resultado guardado exitosamente en tu perfil
+                        `;
+                    }
+                } else {
+                    document.getElementById('swal-guardando-status').innerHTML = `
+                        <i class="fas fa-info-circle" style="color: #3498db;"></i> 
+                        Inicia sesión para guardar tu resultado en tu perfil
+                    `;
+                }
+            } catch (error) {
+                console.error('Error al guardar test:', error);
+                
+                // Mostrar el SweetAlert de error personalizado
+                mostrarErrorConexion(error);
+                
+                // Actualizar el estado en el SweetAlert actual
+                document.getElementById('swal-guardando-status').innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i> 
+                    Error de conexión. El resultado no se guardó.
+                `;
+            }
+
+            // Actualizar el contenido del resultado en la página
+            document.getElementById('result-icon').textContent = resultado.icono;
+            document.getElementById('result-badge').textContent = '🌟 Tu Resultado';
+            document.getElementById('result-titulo').textContent = resultado.titulo;
+            document.getElementById('result-sub').textContent = resultado.subtitulo;
+            document.getElementById('result-flores').textContent = resultado.flores;
+            document.getElementById('result-descripcion').textContent = resultado.descripcion;
+
+            // Confetti
+            if (typeof confetti === 'function') {
+                try {
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 80,
+                            spread: 80,
+                            origin: { y: 0.2 },
+                            colors: ['#9b59b6', '#f1c40f', '#27ae60', '#e84393', '#3498db']
+                        });
+                        setTimeout(() => {
+                            confetti({
+                                particleCount: 50,
+                                spread: 60,
+                                origin: { y: 0.3, x: 0.3 },
+                                colors: ['#9b59b6', '#f1c40f', '#27ae60']
+                            });
+                            confetti({
+                                particleCount: 50,
+                                spread: 60,
+                                origin: { y: 0.3, x: 0.7 },
+                                colors: ['#9b59b6', '#f1c40f', '#27ae60']
+                            });
+                        }, 400);
+                    }, 300);
+                } catch (e) {
+                    console.log('Error en confetti:', e);
+                }
+            }
+
+            // Mostrar resultado en la página después del SweetAlert
+            setTimeout(() => {
+                document.getElementById('preguntas-container').style.display = 'none';
+                document.getElementById('resultado-container').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 1500);
+        }
+
+        function reiniciarTest() {
+            document.getElementById('resultado-container').style.display = 'none';
+            document.getElementById('inicio-container').style.display = 'block';
+            respuestas = [];
+            preguntaActual = 0;
+            document.getElementById('preguntas-container').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================================
+        // CONFETTI DE BIENVENIDA
+        // ============================================================
+        if (typeof confetti === 'function') {
+            setTimeout(() => {
+                try {
+                    confetti({
+                        particleCount: 40,
+                        spread: 60,
+                        origin: { y: 0.15 },
+                        colors: ['#9b59b6', '#f1c40f', '#27ae60', '#e84393', '#3498db']
+                    });
+                } catch (e) {
+                    console.log('Error en confetti de bienvenida:', e);
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>

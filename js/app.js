@@ -1182,6 +1182,8 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         let tamañoNombre = '1.4rem';
         let marcoAvatar = '';
         let tamañoAvatar = '60px';
+        let tamañoMarco = '130px';
+        let imagenMarco = 'imganes/marco.png';
         let decoracionAvatar = '';
         let efectoFondo = '';
         let mostrarEfecto = false;
@@ -1196,15 +1198,25 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             colorNombre = '#ffd700';
             colorBordePerfil = '#ffd700';
             tamañoNombre = '2rem';
+            tamañoMarco = '160px';
+            tamañoAvatar = '85px';
+            imagenMarco = 'imganes/marco2.png';
             marcoAvatar = `
-                border: 4px solid #ffd700;
-                box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.2);
-                background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
-                padding: 12px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: ${tamañoMarco};
+                height: ${tamañoMarco};
+                background: url('${imagenMarco}') no-repeat center center;
+                background-size: contain;
+                z-index: 10;
+                animation: glowMarcoPremium 2s ease-in-out infinite;
+                pointer-events: none;
+                filter: drop-shadow(0 0 30px rgba(255,215,0,0.5));
             `;
-            tamañoAvatar = '75px';
             decoracionAvatar = `
-                <div style="position: absolute; top: -15px; right: -15px; font-size: 1.5rem; animation: pulse 2s infinite;">👑</div>
+                <div style="position: absolute; top: -20px; right: -20px; font-size: 2rem; animation: pulse 2s infinite; z-index: 15;">👑</div>
             `;
             mostrarEfecto = true;
             efectoFondo = `
@@ -1228,15 +1240,25 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             colorNombre = '#c0a000';
             colorBordePerfil = '#c0a000';
             tamañoNombre = '1.8rem';
+            tamañoMarco = '150px';
+            tamañoAvatar = '80px';
+            imagenMarco = 'imganes/marco2.png';
             marcoAvatar = `
-                border: 4px solid #c0a000;
-                box-shadow: 0 0 35px rgba(192, 160, 0, 0.5), 0 0 60px rgba(192, 160, 0, 0.15);
-                background: radial-gradient(circle, rgba(192,160,0,0.12) 0%, transparent 70%);
-                padding: 10px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: ${tamañoMarco};
+                height: ${tamañoMarco};
+                background: url('${imagenMarco}') no-repeat center center;
+                background-size: contain;
+                z-index: 10;
+                animation: glowMarco 2s ease-in-out infinite;
+                pointer-events: none;
+                filter: drop-shadow(0 0 20px rgba(192,160,0,0.4));
             `;
-            tamañoAvatar = '70px';
             decoracionAvatar = `
-                <div style="position: absolute; top: -12px; right: -12px; font-size: 1.3rem;">⭐</div>
+                <div style="position: absolute; top: -15px; right: -15px; font-size: 1.5rem; z-index: 15;">⭐</div>
             `;
             mostrarEfecto = true;
             efectoFondo = `
@@ -1259,15 +1281,25 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             colorNombre = '#e8b800';
             colorBordePerfil = '#e8b800';
             tamañoNombre = '1.6rem';
+            tamañoMarco = '140px';
+            tamañoAvatar = '75px';
+            imagenMarco = 'imganes/marco1.png';
             marcoAvatar = `
-                border: 4px solid #e8b800;
-                box-shadow: 0 0 30px rgba(232, 184, 0, 0.4), 0 0 50px rgba(232, 184, 0, 0.1);
-                background: radial-gradient(circle, rgba(232,184,0,0.1) 0%, transparent 70%);
-                padding: 10px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: ${tamañoMarco};
+                height: ${tamañoMarco};
+                background: url('${imagenMarco}') no-repeat center center;
+                background-size: contain;
+                z-index: 10;
+                animation: glowMarco 2s ease-in-out infinite;
+                pointer-events: none;
+                filter: drop-shadow(0 0 15px rgba(232,184,0,0.3));
             `;
-            tamañoAvatar = '65px';
             decoracionAvatar = `
-                <div style="position: absolute; top: -10px; right: -10px; font-size: 1.2rem;">✨</div>
+                <div style="position: absolute; top: -12px; right: -12px; font-size: 1.3rem; z-index: 15;">✨</div>
             `;
             mostrarEfecto = true;
             efectoFondo = `
@@ -1289,13 +1321,21 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             colorNombre = '#d4a017';
             colorBordePerfil = '#d4a017';
             tamañoNombre = '1.5rem';
+            tamañoMarco = '130px';
+            tamañoAvatar = '70px';
+            imagenMarco = 'imganes/marco.png';
             marcoAvatar = `
-                border: 3px solid #d4a017;
-                box-shadow: 0 0 20px rgba(212, 160, 23, 0.3);
-                background: radial-gradient(circle, rgba(212,160,23,0.08) 0%, transparent 70%);
-                padding: 8px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: ${tamañoMarco};
+                height: ${tamañoMarco};
+                background: url('${imagenMarco}') no-repeat center center;
+                background-size: contain;
+                z-index: 10;
+                pointer-events: none;
             `;
-            tamañoAvatar = '60px';
             decoracionAvatar = '';
             mostrarEfecto = false;
             estrellasVisuales = '⭐'.repeat(3);
@@ -1305,12 +1345,21 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             colorNombre = '#b8860b';
             colorBordePerfil = '#b8860b';
             tamañoNombre = '1.4rem';
+            tamañoMarco = '120px';
+            tamañoAvatar = '65px';
+            imagenMarco = 'imganes/marco.png';
             marcoAvatar = `
-                border: 3px solid #b8860b;
-                box-shadow: 0 0 15px rgba(184, 134, 11, 0.25);
-                padding: 6px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: ${tamañoMarco};
+                height: ${tamañoMarco};
+                background: url('${imagenMarco}') no-repeat center center;
+                background-size: contain;
+                z-index: 10;
+                pointer-events: none;
             `;
-            tamañoAvatar = '55px';
             decoracionAvatar = '';
             mostrarEfecto = false;
             estrellasVisuales = '⭐';
@@ -1352,17 +1401,38 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             }, 300);
         }
 
+        // Construir la parte del avatar con marco encima
+        let avatarHtml = '';
+        if (tieneMarco) {
+            avatarHtml = `
+                <div style="position: relative; display: inline-block; margin-bottom: 5px;">
+                    <div style="position: relative; width: ${tamañoMarco}; height: ${tamañoMarco}; margin: 0 auto;">
+                        <!-- Avatar (detrás del marco) -->
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; font-size: ${tamañoAvatar}; line-height: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                            ${avatar}
+                        </div>
+                        <!-- Marco (encima del avatar) -->
+                        <div style="${marcoAvatar}"></div>
+                        ${decoracionAvatar}
+                    </div>
+                </div>
+            `;
+        } else {
+            avatarHtml = `
+                <div style="position: relative; display: inline-block; margin-bottom: 5px;">
+                    <div style="font-size: ${tamañoAvatar}; display: inline-block; border-radius: 50%;">
+                        ${avatar}
+                    </div>
+                </div>
+            `;
+        }
+
         Swal.fire({
             title: 'Perfil de Usuario',
             html: `
                 <div style="text-align: center; padding: 5px; position: relative; z-index: 10;">
                     ${efectoFondo}
-                    <div style="position: relative; display: inline-block; margin-bottom: 5px;">
-                        <div style="font-size: ${tamañoAvatar}; display: inline-block; border-radius: 50%; transition: all 0.5s ease; ${tieneMarco ? marcoAvatar : ''}">
-                            ${avatar}
-                        </div>
-                        ${tieneMarco ? decoracionAvatar : ''}
-                    </div>
+                    ${avatarHtml}
                     <h3 class="swal-perfil-nombre" style="color: ${colorNombre}; transition: color 0.5s ease; margin-bottom: 2px; font-size: ${tamañoNombre};">
                         ${nombre}
                     </h3>
@@ -1406,6 +1476,22 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         </div>
                         <div class="swal-perfil-section-content" id="security-content">
                             <button onclick="window.recuperarPassword()" class="swal-perfil-btn"><i class="fas fa-key"></i> Cambiar Contraseña</button>
+                        </div>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN TEST -->
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header test" data-target="test-content" style="border-left-color: #9b59b6;">
+                            <span><i class="fas fa-brain" style="color: #9b59b6;"></i> Test de Personalidad</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="test-content">
+                            <button onclick="window.location.href='test.html'" class="swal-perfil-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);">
+                                <i class="fas fa-brain"></i> Realizar Test de Personalidad
+                            </button>
+                            <p style="font-size: 0.75rem; color: #b0a4e3; margin-top: 6px; font-style: italic;">
+                                Descubre tu tipo de personalidad y fortalezas
+                            </p>
                         </div>
                     </div>
 
@@ -1492,6 +1578,20 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     @keyframes pulse {
                         0%, 100% { transform: scale(1); }
                         50% { transform: scale(1.1); }
+                    }
+                    @keyframes glowMarco {
+                        0%, 100% { filter: drop-shadow(0 0 15px rgba(255,215,0,0.3)); }
+                        50% { filter: drop-shadow(0 0 35px rgba(255,215,0,0.7)); }
+                    }
+                    @keyframes glowMarcoPremium {
+                        0%, 100% { 
+                            filter: drop-shadow(0 0 25px rgba(255,215,0,0.5));
+                            transform: translate(-50%, -50%) scale(1);
+                        }
+                        50% { 
+                            filter: drop-shadow(0 0 50px rgba(255,215,0,0.9));
+                            transform: translate(-50%, -50%) scale(1.05);
+                        }
                     }
                 `;
                 document.head.appendChild(style);
@@ -1642,7 +1742,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 })();
 
                 // ================================================
-                // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS EN SWEETALERT BONITO
+                // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS CON IMAGEN PRIMERO
                 // ================================================
                 function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
                     const esMovil = window.innerWidth <= 768;
@@ -1705,8 +1805,28 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                                 .badge-estrellas i {
                                     margin-right: 5px;
                                 }
+                                .logo-logros {
+                                    width: 70px;
+                                    height: 70px;
+                                    border-radius: 50%;
+                                    object-fit: cover;
+                                    border: 3px solid #9b59b6;
+                                    box-shadow: 0 5px 20px rgba(155, 89, 182, 0.3);
+                                    margin-bottom: 8px;
+                                    display: block;
+                                    margin-left: auto;
+                                    margin-right: auto;
+                                }
                             </style>
-                            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 8px;">
+                            <!-- IMAGEN PRIMERO -->
+                            <div style="text-align: center; margin-bottom: 8px;">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" class="logo-logros">
+                            </div>
+                            <!-- LUEGO EL TÍTULO -->
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <span style="color: #2c1b4e; font-weight: 800; font-size: 1.2rem;">🏆 Todos mis Logros</span>
+                            </div>
+                            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '50vh' : '350px'}; overflow-y: auto; padding-right: 8px;">
                                 <div style="margin-bottom: 20px;">
                                     <div style="text-align: center;">
                                         <span class="titulo-logros-completados">
@@ -1782,7 +1902,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     `;
 
                     Swal.fire({
-                        title: '<span style="color: #2c1b4e; font-weight: 800; font-size: 1.4rem;">🏆 Todos mis Logros</span>',
+                        title: '',
                         html: html,
                         confirmButtonColor: '#9b59b6',
                         confirmButtonText: 'Cerrar ✕',
@@ -1804,14 +1924,11 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 // FUNCIÓN PARA RECLAMAR DESDE EL MODAL
                 // ================================================
                 window.reclamarLogroDesdeModal = async function(logroKey, logroTexto, userId) {
-                    // Cerrar el modal actual
                     Swal.close();
                     
-                    // Esperar un momento y reclamar
                     setTimeout(async () => {
                         const reclamado = await window.reclamarLogro(userId, logroKey, logroTexto);
                         if (reclamado) {
-                            // Recargar el perfil para actualizar las estrellas
                             document.getElementById('btnPerfil').click();
                         }
                     }, 300);
@@ -1989,8 +2106,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         });
     }
 });
-
-
 // ============================================================
 async function reclamarLogro(userId, logroKey, logroTexto) {
     try {

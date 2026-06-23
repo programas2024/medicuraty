@@ -15,6 +15,35 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+        /* Estilo para el popup redondo */
+.swal-popup-redondo {
+    border-radius: 40px !important;
+    padding: 25px !important;
+}
+
+/* Estilo para el botón de cerrar (X) */
+.swal-close-button-styled {
+    border-radius: 50% !important;
+    background: rgba(155, 89, 182, 0.1) !important;
+    color: #9b59b6 !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1.5rem !important;
+    transition: 0.3s !important;
+    position: absolute !important;
+    right: 16px !important;
+    top: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 2px solid rgba(155, 89, 182, 0.2) !important;
+}
+
+.swal-close-button-styled:hover {
+    background: rgba(155, 89, 182, 0.2) !important;
+    transform: scale(1.1) !important;
+    border-color: #9b59b6 !important;
+}
         /* ===== ESTILOS MODO OSCURO ===== */
         body.dark-mode {
             background: #0a0a0a !important;
@@ -767,35 +796,154 @@ document.getElementById('btnAyuda').addEventListener('click', function() {
         // 7. RECUPERAR CONTRASEÑA
         // ============================================================
         async function recuperarPassword() {
-            const { value: email } = await Swal.fire({
-                title: 'Recuperar Contraseña',
-                input: 'email',
-                inputLabel: 'Ingresa tu correo electrónico',
-                inputPlaceholder: 'tu-correo@ejemplo.com',
-                confirmButtonText: 'Enviar enlace',
-                confirmButtonColor: '#9b59b6',
-                showCancelButton: true,
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-
-            if (email) {
-                Swal.showLoading();
-                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: 'https://programas2024.github.io/medicuraty/restablecer.html',
-                });
-
-                if (error) {
-                    Swal.fire('Error', error.message, 'error');
-                } else {
-                    Swal.fire({
-                        title: '¡Correo enviado!',
-                        text: 'Revisa tu bandeja de entrada para restablecer tu contraseña.',
-                        icon: 'success',
-                        customClass: { popup: 'swal-popup-redondo' }
-                    });
-                }
+    const { value: email } = await Swal.fire({
+        title: '',
+        html: `
+            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #9b59b6; box-shadow: 0 5px 20px rgba(155, 89, 182, 0.3);">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+            <p style="color: #2c1b4e; font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Recuperar Contraseña</p>
+            <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 18px;">Te enviaremos un enlace para crear una nueva</p>
+            
+            <div style="position: relative; width: 100%;">
+                <div style="position: relative;">
+                    <i class="fas fa-envelope" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9b59b6; font-size: 1rem; opacity: 0.7;"></i>
+                    <input type="email" id="swal-input-email" placeholder="tu-correo@ejemplo.com" style="
+                        width: 100%;
+                        padding: 14px 16px 14px 46px;
+                        border: 2px solid #e8d9ff;
+                        border-radius: 50px;
+                        font-size: 1rem;
+                        outline: none;
+                        transition: all 0.3s ease;
+                        background: #fdfaff;
+                        color: #2c1b4e;
+                        font-family: inherit;
+                        box-sizing: border-box;
+                    " onfocus="this.style.borderColor='#9b59b6'; this.style.boxShadow='0 0 0 4px rgba(155,89,182,0.15)'" onblur="this.style.borderColor='#e8d9ff'; this.style.boxShadow='none'">
+                </div>
+            </div>
+            
+            <div id="email-error" style="
+                display: none;
+                color: #e74c3c;
+                font-size: 0.85rem;
+                margin-top: 8px;
+                text-align: left;
+                padding-left: 5px;
+            ">
+                <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
+                <span id="email-error-message">Por favor ingresa un correo válido</span>
+            </div>
+        `,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Enviar enlace ✨',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#9b59b6',
+        cancelButtonColor: '#bdc3c7',
+        background: '#fdfaff',
+        reverseButtons: true, // <--- Esto intercambia la posición de los botones
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'swal-close-button-styled'
+        },
+        showCloseButton: true,
+        didOpen: () => {
+            // Enfocar el input automáticamente
+            const input = document.getElementById('swal-input-email');
+            if (input) setTimeout(() => input.focus(), 100);
+        },
+        preConfirm: () => {
+            const input = document.getElementById('swal-input-email');
+            const errorDiv = document.getElementById('email-error');
+            const errorMsg = document.getElementById('email-error-message');
+            const email = input.value.trim();
+            
+            // Validar
+            if (!email) {
+                errorMsg.textContent = '¡Necesitamos tu correo electrónico!';
+                errorDiv.style.display = 'block';
+                input.style.borderColor = '#e74c3c';
+                input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
+                return false;
             }
+            
+            if (!email.includes('@') || !email.includes('.')) {
+                errorMsg.textContent = 'Ingresa un correo electrónico válido (ej: usuario@dominio.com)';
+                errorDiv.style.display = 'block';
+                input.style.borderColor = '#e74c3c';
+                input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
+                return false;
+            }
+            
+            // Ocultar error si todo está bien
+            errorDiv.style.display = 'none';
+            input.style.borderColor = '#27ae60';
+            input.style.boxShadow = '0 0 0 4px rgba(39, 174, 96, 0.15)';
+            
+            return email;
         }
+    });
+
+    if (email) {
+        Swal.showLoading();
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: 'https://programas2024.github.io/medicuraty/restablecer.html',
+        });
+
+        if (error) {
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #e74c3c; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                    <p style="color: #e74c3c; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px;">⚠️ Algo salió mal</p>
+                    <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">${error.message || 'No pudimos enviar el enlace. Revisa tu conexión.'}</p>
+                `,
+                confirmButtonColor: '#9b59b6',
+                confirmButtonText: 'Intentar de nuevo',
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    closeButton: 'swal-close-button-styled'
+                },
+                background: '#fdfaff'
+            });
+        } else {
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #27ae60; box-shadow: 0 5px 20px rgba(39, 174, 96, 0.3);">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                    <p style="color: #2c1b4e; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px;">📨 ¡Revisa tu correo!</p>
+                    <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                        Hemos enviado un enlace a <strong style="color: #9b59b6;">${email}</strong>
+                    </p>
+                    <p style="color: #bdc3c7; font-size: 0.8rem; margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> Si no lo ves, revisa la carpeta de spam
+                    </p>
+                `,
+                confirmButtonColor: '#9b59b6',
+                confirmButtonText: 'Entendido 💜',
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    closeButton: 'swal-close-button-styled'
+                },
+                background: '#fdfaff'
+            });
+        }
+    }
+}
     </script>
 </body>
 </html>

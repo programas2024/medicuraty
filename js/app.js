@@ -1321,10 +1321,8 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         // Determinar qué mostrar en estrellas
         let estrellasDisplay = '';
         if (totalEstrellas >= 3) {
-            // 3+ estrellas - mostrar solo una con glow
             estrellasDisplay = glowEstrella;
         } else if (totalEstrellas > 0) {
-            // 1-2 estrellas - mostrar normales
             estrellasDisplay = `<span style="font-size: 3rem; letter-spacing: 8px;">${estrellasVisuales}</span>`;
         }
 
@@ -1407,7 +1405,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             <i class="fas fa-chevron-right"></i>
                         </div>
                         <div class="swal-perfil-section-content" id="security-content">
-                            <button onclick="window.location.href='restablecer.html'" class="swal-perfil-btn"><i class="fas fa-key"></i> Cambiar Contraseña</button>
+                            <button onclick="window.recuperarPassword()" class="swal-perfil-btn"><i class="fas fa-key"></i> Cambiar Contraseña</button>
                         </div>
                     </div>
 
@@ -1445,7 +1443,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         </div>
                     </div>
 
-                    <!-- NUEVA SECCIÓN: ¿Quiénes somos? -->
                     <div class="swal-perfil-section">
                         <div class="swal-perfil-section-header about" data-target="about-content">
                             <span><i class="fas fa-users"></i> ¿Quiénes somos?</span>
@@ -1536,7 +1533,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     container.innerHTML = '<div style="text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Cargando logros...</div>';
 
                     try {
-                        // Obtener logros de la tabla
                         const { data: logros, error } = await supabaseClient
                             .from('logros')
                             .select('*')
@@ -1545,7 +1541,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
 
                         if (error) throw error;
 
-                        // Lista de todos los logros posibles
                         const listaLogros = [
                             { key: 'cambio_nombre', icono: 'fa-id-card', texto: 'Identidad Única', desc: 'Cambiaste tu nombre' },
                             { key: 'cambio_genero', icono: 'fa-venus-mars', texto: 'Autenticidad', desc: 'Definiste tu género' },
@@ -1558,7 +1553,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             { key: 'reflexion_emocion', icono: 'fa-face-smile', texto: 'Emocional', desc: 'Reflexión con emoción' }
                         ];
 
-                        // Si no hay registros, crear uno por defecto
                         let logrosData = logros;
                         if (!logrosData) {
                             logrosData = {
@@ -1574,7 +1568,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             };
                         }
 
-                        // Separar logros completados y pendientes
                         const completados = [];
                         const pendientes = [];
 
@@ -1586,7 +1579,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             }
                         });
                    
-                        // Si no hay logros completados
                         if (completados.length === 0) {
                             container.innerHTML = `
                                 <div style="text-align: center; padding: 15px;">
@@ -1599,7 +1591,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             return;
                         }
 
-                        // Mostrar SOLO 3 logros completados
                         const primeros3 = completados.slice(0, 3);
                         let html = '';
 
@@ -1621,7 +1612,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             `;
                         });
 
-                        // Mostrar contador de logros
                         const totalCompletados = completados.length;
                         const totalPendientes = pendientes.length;
 
@@ -1635,7 +1625,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
 
                         container.innerHTML = html;
 
-                        // Mostrar botón "Ver más" si hay más de 3 logros o pendientes
                         if (completados.length > 3 || pendientes.length > 0) {
                             btnVerTodos.style.display = 'block';
                             btnVerTodos.onclick = () => {
@@ -1653,163 +1642,163 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 })();
 
                 // ================================================
-             // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS EN SWEETALERT BONITO
-// ================================================
-function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
-    const esMovil = window.innerWidth <= 768;
-    
-    let html = `
-        <div style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 5px;">
-            <style>
-                .modal-logros-scroll::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .modal-logros-scroll::-webkit-scrollbar-track {
-                    background: #f0e6ff;
-                    border-radius: 10px;
-                }
-                .modal-logros-scroll::-webkit-scrollbar-thumb {
-                    background: #9b59b6;
-                    border-radius: 10px;
-                }
-                .titulo-logros-completados {
-                    background: linear-gradient(135deg, #27ae60, #2ecc71);
-                    padding: 10px 20px;
-                    border-radius: 50px;
-                    display: inline-block;
-                    color: white;
-                    font-weight: 700;
-                    font-size: 0.95rem;
-                    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
-                    letter-spacing: 0.5px;
-                    margin-bottom: 5px;
-                }
-                .titulo-logros-pendientes {
-                    background: linear-gradient(135deg, #8e44ad, #9b59b6);
-                    padding: 10px 20px;
-                    border-radius: 50px;
-                    display: inline-block;
-                    color: white;
-                    font-weight: 700;
-                    font-size: 0.95rem;
-                    box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
-                    letter-spacing: 0.5px;
-                    margin-bottom: 5px;
-                }
-                .contador-logros {
-                    background: rgba(255,255,255,0.3);
-                    padding: 2px 12px;
-                    border-radius: 50px;
-                    font-size: 0.75rem;
-                    margin-left: 8px;
-                }
-                .badge-estrellas {
-                    background: linear-gradient(135deg, #f1c40f, #f39c12);
-                    color: white;
-                    padding: 6px 16px;
-                    border-radius: 50px;
-                    font-weight: 700;
-                    font-size: 0.8rem;
-                    display: inline-block;
-                    box-shadow: 0 2px 10px rgba(241, 196, 15, 0.3);
-                }
-                .badge-estrellas i {
-                    margin-right: 5px;
-                }
-            </style>
-            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 8px;">
-                <div style="margin-bottom: 20px;">
-                    <div style="text-align: center;">
-                        <span class="titulo-logros-completados">
-                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-                            Logros Completados
-                            <span class="contador-logros">${completados.length}</span>
-                        </span>
-                    </div>
-                `;
+                // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS EN SWEETALERT BONITO
+                // ================================================
+                function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
+                    const esMovil = window.innerWidth <= 768;
+                    
+                    let html = `
+                        <div style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 5px;">
+                            <style>
+                                .modal-logros-scroll::-webkit-scrollbar {
+                                    width: 4px;
+                                }
+                                .modal-logros-scroll::-webkit-scrollbar-track {
+                                    background: #f0e6ff;
+                                    border-radius: 10px;
+                                }
+                                .modal-logros-scroll::-webkit-scrollbar-thumb {
+                                    background: #9b59b6;
+                                    border-radius: 10px;
+                                }
+                                .titulo-logros-completados {
+                                    background: linear-gradient(135deg, #27ae60, #2ecc71);
+                                    padding: 10px 20px;
+                                    border-radius: 50px;
+                                    display: inline-block;
+                                    color: white;
+                                    font-weight: 700;
+                                    font-size: 0.95rem;
+                                    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+                                    letter-spacing: 0.5px;
+                                    margin-bottom: 5px;
+                                }
+                                .titulo-logros-pendientes {
+                                    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+                                    padding: 10px 20px;
+                                    border-radius: 50px;
+                                    display: inline-block;
+                                    color: white;
+                                    font-weight: 700;
+                                    font-size: 0.95rem;
+                                    box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+                                    letter-spacing: 0.5px;
+                                    margin-bottom: 5px;
+                                }
+                                .contador-logros {
+                                    background: rgba(255,255,255,0.3);
+                                    padding: 2px 12px;
+                                    border-radius: 50px;
+                                    font-size: 0.75rem;
+                                    margin-left: 8px;
+                                }
+                                .badge-estrellas {
+                                    background: linear-gradient(135deg, #f1c40f, #f39c12);
+                                    color: white;
+                                    padding: 6px 16px;
+                                    border-radius: 50px;
+                                    font-weight: 700;
+                                    font-size: 0.8rem;
+                                    display: inline-block;
+                                    box-shadow: 0 2px 10px rgba(241, 196, 15, 0.3);
+                                }
+                                .badge-estrellas i {
+                                    margin-right: 5px;
+                                }
+                            </style>
+                            <div class="modal-logros-scroll" style="max-height: ${esMovil ? '65vh' : '450px'}; overflow-y: auto; padding-right: 8px;">
+                                <div style="margin-bottom: 20px;">
+                                    <div style="text-align: center;">
+                                        <span class="titulo-logros-completados">
+                                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                                            Logros Completados
+                                            <span class="contador-logros">${completados.length}</span>
+                                        </span>
+                                    </div>
+                                `;
 
-    if (completados.length === 0) {
-        html += `<p style="text-align: center; color: #7f8c8d; font-size: 0.85rem; padding: 15px 0;">Aún no has completado logros</p>`;
-    } else {
-        completados.forEach(logro => {
-            const reclamado = estrellasReclamadas.includes(logro.key);
-            html += `
-                <div style="background: linear-gradient(135deg, #f0faf0, #e8f5e9); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #27ae60; transition: transform 0.2s;">
-                    <i class="fas ${logro.icono}" style="color: #27ae60; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
-                    <div style="flex: 1; text-align: left; min-width: 0;">
-                        <strong style="font-size: 0.85rem; color: #2c1b4e; display: block; word-wrap: break-word;">${logro.texto}</strong>
-                        <small style="color: #7f8c8d; font-size: 0.7rem; display: block;">${logro.desc}</small>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-                        ${reclamado ? '<i class="fas fa-star" style="color: #f1c40f; font-size: 1.1rem; text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);"></i>' : ''}
-                        ${!reclamado ? `<button onclick="reclamarLogroDesdeModal('${logro.key}', '${logro.texto}', '${userId}')" style="background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s; box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);">
-                            ⭐ Reclamar
-                        </button>` : ''}
-                    </div>
-                </div>
-            `;
-        });
-    }
+                    if (completados.length === 0) {
+                        html += `<p style="text-align: center; color: #7f8c8d; font-size: 0.85rem; padding: 15px 0;">Aún no has completado logros</p>`;
+                    } else {
+                        completados.forEach(logro => {
+                            const reclamado = estrellasReclamadas.includes(logro.key);
+                            html += `
+                                <div style="background: linear-gradient(135deg, #f0faf0, #e8f5e9); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #27ae60; transition: transform 0.2s;">
+                                    <i class="fas ${logro.icono}" style="color: #27ae60; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                                    <div style="flex: 1; text-align: left; min-width: 0;">
+                                        <strong style="font-size: 0.85rem; color: #2c1b4e; display: block; word-wrap: break-word;">${logro.texto}</strong>
+                                        <small style="color: #7f8c8d; font-size: 0.7rem; display: block;">${logro.desc}</small>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                                        ${reclamado ? '<i class="fas fa-star" style="color: #f1c40f; font-size: 1.1rem; text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);"></i>' : ''}
+                                        ${!reclamado ? `<button onclick="window.reclamarLogroDesdeModal('${logro.key}', '${logro.texto}', '${userId}')" style="background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s; box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);">
+                                            ⭐ Reclamar
+                                        </button>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
 
-    html += `
-                </div>
-                <div style="border-top: 2px dashed #e0d0f0; padding-top: 20px; margin-top: 5px;">
-                    <div style="text-align: center;">
-                        <span class="titulo-logros-pendientes">
-                            <i class="fas fa-hourglass-half" style="margin-right: 8px;"></i>
-                            Logros Pendientes
-                            <span class="contador-logros">${pendientes.length}</span>
-                        </span>
-                    </div>
-    `;
+                    html += `
+                                </div>
+                                <div style="border-top: 2px dashed #e0d0f0; padding-top: 20px; margin-top: 5px;">
+                                    <div style="text-align: center;">
+                                        <span class="titulo-logros-pendientes">
+                                            <i class="fas fa-hourglass-half" style="margin-right: 8px;"></i>
+                                            Logros Pendientes
+                                            <span class="contador-logros">${pendientes.length}</span>
+                                        </span>
+                                    </div>
+                    `;
 
-    if (pendientes.length === 0) {
-        html += `<p style="text-align: center; color: #27ae60; font-size: 0.9rem; padding: 15px 0;">🎉 ¡Has completado TODOS los logros!</p>`;
-    } else {
-        pendientes.forEach(logro => {
-            html += `
-                <div style="background: #faf8ff; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #d5c6e0; opacity: 0.6; transition: opacity 0.2s;">
-                    <i class="fas ${logro.icono}" style="color: #b0a4e3; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
-                    <div style="flex: 1; text-align: left; min-width: 0;">
-                        <strong style="font-size: 0.85rem; color: #7f8c8d; display: block; word-wrap: break-word;">${logro.texto}</strong>
-                        <small style="color: #b0a4e3; font-size: 0.7rem; display: block;">${logro.desc}</small>
-                    </div>
-                    <i class="fas fa-lock" style="color: #b0a4e3; font-size: 1rem; flex-shrink: 0;"></i>
-                </div>
-            `;
-        });
-    }
+                    if (pendientes.length === 0) {
+                        html += `<p style="text-align: center; color: #27ae60; font-size: 0.9rem; padding: 15px 0;">🎉 ¡Has completado TODOS los logros!</p>`;
+                    } else {
+                        pendientes.forEach(logro => {
+                            html += `
+                                <div style="background: #faf8ff; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border-left: 4px solid #d5c6e0; opacity: 0.6; transition: opacity 0.2s;">
+                                    <i class="fas ${logro.icono}" style="color: #b0a4e3; font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0;"></i>
+                                    <div style="flex: 1; text-align: left; min-width: 0;">
+                                        <strong style="font-size: 0.85rem; color: #7f8c8d; display: block; word-wrap: break-word;">${logro.texto}</strong>
+                                        <small style="color: #b0a4e3; font-size: 0.7rem; display: block;">${logro.desc}</small>
+                                    </div>
+                                    <i class="fas fa-lock" style="color: #b0a4e3; font-size: 1rem; flex-shrink: 0;"></i>
+                                </div>
+                            `;
+                        });
+                    }
 
-    html += `
-                </div>
-                <div style="text-align: center; margin-top: 15px; padding: 10px 15px; background: linear-gradient(135deg, #fdfaff, #f8f4ff); border-radius: 12px; border: 1px solid #f0e6ff;">
-                    <span class="badge-estrellas">
-                        <i class="fas fa-star"></i>
-                        Estrellas reclamadas: ${estrellasReclamadas.length}
-                    </span>
-                </div>
-            </div>
-        </div>
-    `;
+                    html += `
+                                </div>
+                                <div style="text-align: center; margin-top: 15px; padding: 10px 15px; background: linear-gradient(135deg, #fdfaff, #f8f4ff); border-radius: 12px; border: 1px solid #f0e6ff;">
+                                    <span class="badge-estrellas">
+                                        <i class="fas fa-star"></i>
+                                        Estrellas reclamadas: ${estrellasReclamadas.length}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
 
-    Swal.fire({
-        title: '<span style="color: #2c1b4e; font-weight: 800; font-size: 1.4rem;">🏆 Todos mis Logros</span>',
-        html: html,
-        confirmButtonColor: '#9b59b6',
-        confirmButtonText: 'Cerrar ✕',
-        showCloseButton: true,
-        closeButtonHtml: '✕',
-        customClass: {
-            popup: 'swal-ver-todas swal-popup-redondo',
-            confirmButton: 'swal2-confirm-custom',
-            closeButton: 'swal2-close-custom'
-        },
-        buttonsStyling: false,
-        width: esMovil ? '95%' : '550px',
-        maxWidth: esMovil ? '95%' : '600px',
-        padding: '20px'
-    });
-}
+                    Swal.fire({
+                        title: '<span style="color: #2c1b4e; font-weight: 800; font-size: 1.4rem;">🏆 Todos mis Logros</span>',
+                        html: html,
+                        confirmButtonColor: '#9b59b6',
+                        confirmButtonText: 'Cerrar ✕',
+                        showCloseButton: true,
+                        closeButtonHtml: '✕',
+                        customClass: {
+                            popup: 'swal-ver-todas swal-popup-redondo',
+                            confirmButton: 'swal2-confirm-custom',
+                            closeButton: 'swal2-close-custom'
+                        },
+                        buttonsStyling: false,
+                        width: esMovil ? '95%' : '550px',
+                        maxWidth: esMovil ? '95%' : '600px',
+                        padding: '20px'
+                    });
+                }
 
                 // ================================================
                 // FUNCIÓN PARA RECLAMAR DESDE EL MODAL
@@ -1828,13 +1817,167 @@ function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, use
                     }, 300);
                 };
 
-                // Logout
-                document.getElementById('btnLogout').addEventListener('click', async () => {
+                // ============================================================
+                // RECUPERAR CONTRASEÑA (FUNCIÓN GLOBAL)
+                // ============================================================
+                window.recuperarPassword = async function() {
+                    const { value: email } = await Swal.fire({
+                        title: '',
+                        html: `
+                            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #9b59b6; box-shadow: 0 5px 20px rgba(155, 89, 182, 0.3);">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                            <p style="color: #2c1b4e; font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Recuperar Contraseña</p>
+                            <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 18px;">Te enviaremos un enlace para crear una nueva</p>
+                            
+                            <div style="position: relative; width: 100%;">
+                                <div style="position: relative;">
+                                    <i class="fas fa-envelope" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9b59b6; font-size: 1rem; opacity: 0.7;"></i>
+                                    <input type="email" id="swal-input-email" placeholder="tu-correo@ejemplo.com" style="
+                                        width: 100%;
+                                        padding: 14px 16px 14px 46px;
+                                        border: 2px solid #e8d9ff;
+                                        border-radius: 50px;
+                                        font-size: 1rem;
+                                        outline: none;
+                                        transition: all 0.3s ease;
+                                        background: #fdfaff;
+                                        color: #2c1b4e;
+                                        font-family: inherit;
+                                        box-sizing: border-box;
+                                    " onfocus="this.style.borderColor='#9b59b6'; this.style.boxShadow='0 0 0 4px rgba(155,89,182,0.15)'" onblur="this.style.borderColor='#e8d9ff'; this.style.boxShadow='none'">
+                                </div>
+                            </div>
+                            
+                            <div id="email-error" style="
+                                display: none;
+                                color: #e74c3c;
+                                font-size: 0.85rem;
+                                margin-top: 8px;
+                                text-align: left;
+                                padding-left: 5px;
+                            ">
+                                <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
+                                <span id="email-error-message">Por favor ingresa un correo válido</span>
+                            </div>
+                        `,
+                        showConfirmButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Enviar enlace ✨',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#9b59b6',
+                        cancelButtonColor: '#bdc3c7',
+                        background: '#fdfaff',
+                        reverseButtons: true,
+                        customClass: { 
+                            popup: 'swal-popup-redondo',
+                            closeButton: 'swal-close-button-styled'
+                        },
+                        showCloseButton: true,
+                        didOpen: () => {
+                            const input = document.getElementById('swal-input-email');
+                            if (input) setTimeout(() => input.focus(), 100);
+                        },
+                        preConfirm: () => {
+                            const input = document.getElementById('swal-input-email');
+                            const errorDiv = document.getElementById('email-error');
+                            const errorMsg = document.getElementById('email-error-message');
+                            const email = input.value.trim();
+                            
+                            if (!email) {
+                                errorMsg.textContent = '¡Necesitamos tu correo electrónico!';
+                                errorDiv.style.display = 'block';
+                                input.style.borderColor = '#e74c3c';
+                                input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
+                                return false;
+                            }
+                            
+                            if (!email.includes('@') || !email.includes('.')) {
+                                errorMsg.textContent = 'Ingresa un correo electrónico válido (ej: usuario@dominio.com)';
+                                errorDiv.style.display = 'block';
+                                input.style.borderColor = '#e74c3c';
+                                input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
+                                return false;
+                            }
+                            
+                            errorDiv.style.display = 'none';
+                            input.style.borderColor = '#27ae60';
+                            input.style.boxShadow = '0 0 0 4px rgba(39, 174, 96, 0.15)';
+                            
+                            return email;
+                        }
+                    });
+
+                    if (email) {
+                        Swal.showLoading();
+                        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                            redirectTo: 'https://programas2024.github.io/medicuraty/restablecer.html',
+                        });
+
+                        if (error) {
+                            Swal.fire({
+                                title: '',
+                                html: `
+                                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                                        <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #e74c3c; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);">
+                                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <p style="color: #e74c3c; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px;">⚠️ Algo salió mal</p>
+                                    <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">${error.message || 'No pudimos enviar el enlace. Revisa tu conexión.'}</p>
+                                `,
+                                confirmButtonColor: '#9b59b6',
+                                confirmButtonText: 'Intentar de nuevo',
+                                showCloseButton: true,
+                                customClass: { 
+                                    popup: 'swal-popup-redondo',
+                                    closeButton: 'swal-close-button-styled'
+                                },
+                                background: '#fdfaff'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: '',
+                                html: `
+                                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                                        <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #27ae60; box-shadow: 0 5px 20px rgba(39, 174, 96, 0.3);">
+                                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <p style="color: #2c1b4e; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px;">📨 ¡Revisa tu correo!</p>
+                                    <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                                        Hemos enviado un enlace a <strong style="color: #9b59b6;">${email}</strong>
+                                    </p>
+                                    <p style="color: #bdc3c7; font-size: 0.8rem; margin-top: 10px;">
+                                        <i class="fas fa-info-circle"></i> Si no lo ves, revisa la carpeta de spam
+                                    </p>
+                                `,
+                                confirmButtonColor: '#9b59b6',
+                                confirmButtonText: 'Entendido 💜',
+                                showCloseButton: true,
+                                customClass: { 
+                                    popup: 'swal-popup-redondo',
+                                    closeButton: 'swal-close-button-styled'
+                                },
+                                background: '#fdfaff'
+                            });
+                        }
+                    }
+                };
+
+                // ================================================
+                // LOGOUT
+                // ================================================
+                document.getElementById('btnLogout')?.addEventListener('click', async () => {
                     await supabaseClient.auth.signOut();
                     window.location.href = 'index.html';
                 });
+
             }
         });
+
     } catch (error) {
         console.error('Error al abrir perfil:', error);
         Swal.fire({

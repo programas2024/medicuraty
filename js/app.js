@@ -51,6 +51,23 @@ async function getDestinoInicio() {
     return 'index.html';
 }
 
+// ============================================================
+// FUNCIÓN PARA OCULTAR EL SALUDO
+// ============================================================
+function ocultarSaludo() {
+    const contenedorSaludo = document.getElementById('contenedorSaludo');
+    if (contenedorSaludo) {
+        contenedorSaludo.style.display = 'none';
+    }
+    
+    // También ocultar cualquier elemento relacionado con el usuario
+    const spanNombre = document.getElementById('usuarioNombreLogueado');
+    if (spanNombre) {
+        spanNombre.textContent = '';
+    }
+    
+    console.log('👋 Saludo ocultado (sesión cerrada)');
+}
 // ===== ACTUALIZAR BOTÓN INICIO =====
 // ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO =====
 async function actualizarBotonInicio() {
@@ -1139,10 +1156,59 @@ window.obtenerTituloPorEstrellas = obtenerTituloPorEstrellas;
 
 // --- Lógica de Perfil de Usuario ---
 document.getElementById('btnPerfil')?.addEventListener('click', async function() {
+    // ============================================================
+    // MOSTRAR SWEETALERT DE CARGANDO
+    // ============================================================
+    let loadingSwal = null;
+    
+    function mostrarLoading() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+        const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+        
+        loadingSwal = Swal.fire({
+            title: '',
+            html: `
+                <div style="text-align: center; padding: 10px 5px;">
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                            <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 6px;">
+                        <div class="loading-spinner" style="width: 28px; height: 28px; border: 3px solid #f0e6ff; border-top: 3px solid #9b59b6; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                        <span style="color: ${textColor}; font-weight: 700; font-size: 1.2rem;">Cargando perfil...</span>
+                    </div>
+                    <p style="color: #9b59b6; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">
+                        <i class="fas fa-spa" style="margin-right: 6px;"></i> Preparando tu experiencia
+                    </p>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: false,
+            allowOutsideClick: false,
+            background: bgColor,
+            customClass: { 
+                popup: 'swal-loading-popup'
+            }
+        });
+    }
+
     try {
+        mostrarLoading();
+
         const { data: { session } } = await supabaseClient.auth.getSession();
 
         if (!session) {
+            if (loadingSwal) loadingSwal.close();
             return Swal.fire({
                 title: 'Mi Cuenta',
                 text: 'Inicia sesión para ver tu perfil y personalizar tu experiencia.',
@@ -1159,6 +1225,26 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         const generoId = session.user.user_metadata?.genero_id;
         const avatar = generoId == 1 ? '👨‍💻' : (generoId == 2 ? '👩‍💻' : '👤');
         const generoTexto = generoId == 1 ? "Caballero" : (generoId == 2 ? "Dama" : "No especificado");
+
+        // ============================================================
+        // OBTENER RESULTADO DEL TEST DE PERSONALIDAD
+        // ============================================================
+        let resultadoTest = null;
+        try {
+            const { data: testData, error: testError } = await supabaseClient
+                .from('test_resultados')
+                .select('tipo_personalidad, titulo, icono, subtitulo')
+                .eq('usuario_id', userId)
+                .order('fecha_realizado', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (!testError && testData) {
+                resultadoTest = testData;
+            }
+        } catch (e) {
+            console.log('No se pudo obtener el test:', e);
+        }
 
         // Verificar logros ANTES de mostrar el perfil
         if (window.verificarLogros) {
@@ -1188,7 +1274,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         let efectoFondo = '';
         let mostrarEfecto = false;
         
-        // Estrellas visuales
         let estrellasVisuales = '';
         let glowEstrella = '';
         
@@ -1367,7 +1452,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
 
         const tieneMarco = totalEstrellas > 0;
 
-        // Determinar qué mostrar en estrellas
         let estrellasDisplay = '';
         if (totalEstrellas >= 3) {
             estrellasDisplay = glowEstrella;
@@ -1375,7 +1459,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             estrellasDisplay = `<span style="font-size: 3rem; letter-spacing: 8px;">${estrellasVisuales}</span>`;
         }
 
-        // Efecto de confeti al abrir si tiene 5+ estrellas
         if (mostrarEfecto && typeof confetti === 'function') {
             setTimeout(() => {
                 confetti({
@@ -1401,17 +1484,78 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             }, 300);
         }
 
-        // Construir la parte del avatar con marco encima
+        // ================================================
+        // CONSTRUIR ETIQUETA DEL TEST (CORREGIDA)
+        // ================================================
+        let testBadgeHtml = '';
+        if (resultadoTest) {
+            // EXTRAER SOLO EL TEXTO DEL TÍTULO (sin el icono que ya está en la base de datos)
+            let tituloLimpio = resultadoTest.titulo || 'Test de Personalidad';
+            // Si el título comienza con emoji, lo removemos para no duplicar
+            tituloLimpio = tituloLimpio.replace(/^[^\w\s]+\s*/, '').trim();
+            
+            // Usar el icono de la base de datos, si no tiene usar uno por defecto
+            const iconoTest = resultadoTest.icono || '🧠';
+            
+            // Colores según tipo de personalidad
+            let badgeColor = '#9b59b6';
+            let badgeBg = 'rgba(155, 89, 182, 0.15)';
+            let borderColor = '#9b59b660';
+            if (resultadoTest.tipo_personalidad === 'alegre') {
+                badgeColor = '#f1c40f';
+                badgeBg = 'rgba(241, 196, 15, 0.18)';
+                borderColor = '#f1c40f70';
+            } else if (resultadoTest.tipo_personalidad === 'amoroso') {
+                badgeColor = '#e84393';
+                badgeBg = 'rgba(232, 67, 147, 0.15)';
+                borderColor = '#e8439370';
+            } else if (resultadoTest.tipo_personalidad === 'sabio') {
+                badgeColor = '#3498db';
+                badgeBg = 'rgba(52, 152, 219, 0.15)';
+                borderColor = '#3498db70';
+            } else if (resultadoTest.tipo_personalidad === 'elegante') {
+                badgeColor = '#27ae60';
+                badgeBg = 'rgba(39, 174, 96, 0.15)';
+                borderColor = '#27ae6070';
+            } else if (resultadoTest.tipo_personalidad === 'fuerte') {
+                badgeColor = '#e67e22';
+                badgeBg = 'rgba(230, 126, 34, 0.15)';
+                borderColor = '#e67e2270';
+            }
+            
+            testBadgeHtml = `
+                <span style="
+                    display: inline-block;
+                    background: ${badgeBg};
+                    color: ${badgeColor};
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    padding: 5px 14px 5px 12px;
+                    border-radius: 50px;
+                    margin-left: 10px;
+                    vertical-align: middle;
+                    border: 2px solid ${borderColor};
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+                    white-space: nowrap;
+                    letter-spacing: 0.3px;
+                    line-height: 1.5;
+                ">
+                    ${iconoTest} ${tituloLimpio}
+                </span>
+            `;
+        }
+
+        // ================================================
+        // CONSTRUIR AVATAR CON MARCO
+        // ================================================
         let avatarHtml = '';
         if (tieneMarco) {
             avatarHtml = `
                 <div style="position: relative; display: inline-block; margin-bottom: 5px;">
                     <div style="position: relative; width: ${tamañoMarco}; height: ${tamañoMarco}; margin: 0 auto;">
-                        <!-- Avatar (detrás del marco) -->
                         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; font-size: ${tamañoAvatar}; line-height: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
                             ${avatar}
                         </div>
-                        <!-- Marco (encima del avatar) -->
                         <div style="${marcoAvatar}"></div>
                         ${decoracionAvatar}
                     </div>
@@ -1427,14 +1571,20 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             `;
         }
 
+        if (loadingSwal) loadingSwal.close();
+
+        // ================================================
+        // MOSTRAR SWEETALERT DEL PERFIL
+        // ================================================
         Swal.fire({
             title: 'Perfil de Usuario',
             html: `
                 <div style="text-align: center; padding: 5px; position: relative; z-index: 10;">
                     ${efectoFondo}
                     ${avatarHtml}
-                    <h3 class="swal-perfil-nombre" style="color: ${colorNombre}; transition: color 0.5s ease; margin-bottom: 2px; font-size: ${tamañoNombre};">
+                    <h3 class="swal-perfil-nombre" style="color: ${colorNombre}; transition: color 0.5s ease; margin-bottom: 2px; font-size: ${tamañoNombre}; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2px;">
                         ${nombre}
+                        ${testBadgeHtml}
                     </h3>
                     ${totalEstrellas > 0 ? `
                         <div style="margin: 5px 0;">
@@ -1479,7 +1629,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         </div>
                     </div>
 
-                    <!-- NUEVA SECCIÓN TEST -->
                     <div class="swal-perfil-section">
                         <div class="swal-perfil-section-header test" data-target="test-content" style="border-left-color: #9b59b6;">
                             <span><i class="fas fa-brain" style="color: #9b59b6;"></i> Test de Personalidad</span>
@@ -1557,14 +1706,12 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 closeButton: 'swal2-close-custom'
             },
             didOpen: () => {
-                // Aplicar borde de color al SweetAlert según nivel
                 const popup = document.querySelector('.swal-popup-perfil');
                 if (popup && totalEstrellas > 0) {
                     popup.style.border = `3px solid ${colorBordePerfil}`;
                     popup.style.boxShadow = `0 25px 60px ${colorBordePerfil}40, 0 0 40px ${colorBordePerfil}20`;
                 }
 
-                // Inyectar animaciones CSS
                 const style = document.createElement('style');
                 style.textContent = `
                     @keyframes floatStar {
@@ -1596,7 +1743,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 `;
                 document.head.appendChild(style);
 
-                // Toggle de secciones
                 document.querySelectorAll('.swal-perfil-section-header').forEach(header => {
                     header.addEventListener('click', function() {
                         const targetId = this.dataset.target;
@@ -1608,7 +1754,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     });
                 });
 
-                // Cargar calificación del usuario
+                // Cargar calificación
                 (async () => {
                     try {
                         const { data } = await supabaseClient.from('comentarios').select('estrellas').eq('usuario_id', userId);
@@ -1624,9 +1770,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     }
                 })();
 
-                // ================================================
-                // CARGAR LOGROS - MOSTRAR 3 CON OPCIÓN "VER MÁS"
-                // ================================================
+                // Cargar logros
                 (async () => {
                     const container = document.getElementById('userAchievementsDisplay');
                     const btnVerTodos = document.getElementById('btnVerTodosLogros');
@@ -1741,9 +1885,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     }
                 })();
 
-                // ================================================
-                // FUNCIÓN PARA MOSTRAR TODOS LOS LOGROS CON IMAGEN PRIMERO
-                // ================================================
+                // Función mostrarTodosLosLogros
                 function mostrarTodosLosLogros(completados, pendientes, estrellasReclamadas, userId) {
                     const esMovil = window.innerWidth <= 768;
                     
@@ -1818,11 +1960,9 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                                     margin-right: auto;
                                 }
                             </style>
-                            <!-- IMAGEN PRIMERO -->
                             <div style="text-align: center; margin-bottom: 8px;">
                                 <img src="imganes/logosmedi.png" alt="Medicurativo" class="logo-logros">
                             </div>
-                            <!-- LUEGO EL TÍTULO -->
                             <div style="text-align: center; margin-bottom: 15px;">
                                 <span style="color: #2c1b4e; font-weight: 800; font-size: 1.2rem;">🏆 Todos mis Logros</span>
                             </div>
@@ -1920,12 +2060,9 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     });
                 }
 
-                // ================================================
-                // FUNCIÓN PARA RECLAMAR DESDE EL MODAL
-                // ================================================
+                // Función reclamarLogroDesdeModal
                 window.reclamarLogroDesdeModal = async function(logroKey, logroTexto, userId) {
                     Swal.close();
-                    
                     setTimeout(async () => {
                         const reclamado = await window.reclamarLogro(userId, logroKey, logroTexto);
                         if (reclamado) {
@@ -1934,9 +2071,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     }, 300);
                 };
 
-                // ============================================================
-                // RECUPERAR CONTRASEÑA (FUNCIÓN GLOBAL)
-                // ============================================================
+                // Recuperar Contraseña
                 window.recuperarPassword = async function() {
                     const { value: email } = await Swal.fire({
                         title: '',
@@ -1948,7 +2083,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             </div>
                             <p style="color: #2c1b4e; font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Recuperar Contraseña</p>
                             <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 18px;">Te enviaremos un enlace para crear una nueva</p>
-                            
                             <div style="position: relative; width: 100%;">
                                 <div style="position: relative;">
                                     <i class="fas fa-envelope" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9b59b6; font-size: 1rem; opacity: 0.7;"></i>
@@ -1967,15 +2101,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                                     " onfocus="this.style.borderColor='#9b59b6'; this.style.boxShadow='0 0 0 4px rgba(155,89,182,0.15)'" onblur="this.style.borderColor='#e8d9ff'; this.style.boxShadow='none'">
                                 </div>
                             </div>
-                            
-                            <div id="email-error" style="
-                                display: none;
-                                color: #e74c3c;
-                                font-size: 0.85rem;
-                                margin-top: 8px;
-                                text-align: left;
-                                padding-left: 5px;
-                            ">
+                            <div id="email-error" style="display: none; color: #e74c3c; font-size: 0.85rem; margin-top: 8px; text-align: left; padding-left: 5px;">
                                 <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
                                 <span id="email-error-message">Por favor ingresa un correo válido</span>
                             </div>
@@ -2002,7 +2128,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             const errorDiv = document.getElementById('email-error');
                             const errorMsg = document.getElementById('email-error-message');
                             const email = input.value.trim();
-                            
                             if (!email) {
                                 errorMsg.textContent = '¡Necesitamos tu correo electrónico!';
                                 errorDiv.style.display = 'block';
@@ -2010,7 +2135,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                                 input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
                                 return false;
                             }
-                            
                             if (!email.includes('@') || !email.includes('.')) {
                                 errorMsg.textContent = 'Ingresa un correo electrónico válido (ej: usuario@dominio.com)';
                                 errorDiv.style.display = 'block';
@@ -2018,11 +2142,9 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                                 input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
                                 return false;
                             }
-                            
                             errorDiv.style.display = 'none';
                             input.style.borderColor = '#27ae60';
                             input.style.boxShadow = '0 0 0 4px rgba(39, 174, 96, 0.15)';
-                            
                             return email;
                         }
                     });
@@ -2032,7 +2154,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                             redirectTo: 'https://programas2024.github.io/medicuraty/restablecer.html',
                         });
-
                         if (error) {
                             Swal.fire({
                                 title: '',
@@ -2084,9 +2205,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     }
                 };
 
-                // ================================================
-                // LOGOUT
-                // ================================================
+                // Logout
                 document.getElementById('btnLogout')?.addEventListener('click', async () => {
                     await supabaseClient.auth.signOut();
                     window.location.href = 'index.html';
@@ -2097,6 +2216,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
 
     } catch (error) {
         console.error('Error al abrir perfil:', error);
+        if (loadingSwal) loadingSwal.close();
         Swal.fire({
             title: 'Error',
             text: 'Hubo un problema al cargar tu perfil.',
@@ -2104,6 +2224,994 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             confirmButtonColor: '#ff7675',
             customClass: { popup: 'swal-popup-redondo' }
         });
+    }
+});
+
+
+// ============================================================
+// EDITAR NOMBRE - SWEETALERT MEJORADO
+// ============================================================
+window.editarNombre = async function() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const inputBg = isDarkMode ? '#252525' : '#fdfaff';
+    const inputBorder = isDarkMode ? '#3a3a3a' : '#e8d9ff';
+    
+    // Obtener nombre actual
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const nombreActual = session?.user?.user_metadata?.nombre || '';
+    
+    const { value: nuevoNombre } = await Swal.fire({
+        title: '',
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2); border: 3px solid #9b59b6;">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 4px; font-size: 1.3rem;">✏️ Editar Nombre</h2>
+                <p style="color: #9b59b6; font-weight: 500; font-size: 0.9rem; margin-bottom: 18px;">
+                    <i class="fas fa-user-edit" style="margin-right: 6px;"></i>
+                    Actualiza tu nombre de usuario
+                </p>
+                
+                <div style="position: relative; width: 100%;">
+                    <div style="position: relative;">
+                        <i class="fas fa-user" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9b59b6; font-size: 1rem; opacity: 0.7; z-index: 2;"></i>
+                        <input 
+                            type="text" 
+                            id="swal-input-nombre" 
+                            value="${nombreActual}" 
+                            placeholder="Tu nombre aquí..." 
+                            style="
+                                width: 100%;
+                                padding: 14px 16px 14px 46px;
+                                border: 2px solid ${inputBorder};
+                                border-radius: 50px;
+                                font-size: 1rem;
+                                outline: none;
+                                transition: all 0.3s ease;
+                                background: ${inputBg};
+                                color: ${textColor};
+                                font-family: inherit;
+                                box-sizing: border-box;
+                            " 
+                            onfocus="this.style.borderColor='#9b59b6'; this.style.boxShadow='0 0 0 4px rgba(155,89,182,0.15)'" 
+                            onblur="this.style.borderColor='${inputBorder}'; this.style.boxShadow='none'"
+                        >
+                    </div>
+                </div>
+                
+                <div id="nombre-error" style="
+                    display: none;
+                    color: #e74c3c;
+                    font-size: 0.85rem;
+                    margin-top: 10px;
+                    text-align: left;
+                    padding-left: 5px;
+                ">
+                    <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
+                    <span id="nombre-error-message">El nombre no puede estar vacío</span>
+                </div>
+                
+                <p style="margin-top: 12px; font-size: 0.75rem; color: #b0a4e3; font-style: italic;">
+                    <i class="fas fa-info-circle"></i> Elige un nombre que te represente (mínimo 2 caracteres)
+                </p>
+            </div>
+        `,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar ✨',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#9b59b6',
+        cancelButtonColor: '#bdc3c7',
+        background: bgColor,
+        reverseButtons: true,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'swal-close-button-styled'
+        },
+        showCloseButton: true,
+        didOpen: () => {
+            const input = document.getElementById('swal-input-nombre');
+            if (input) {
+                setTimeout(() => {
+                    input.focus();
+                    input.select();
+                }, 100);
+            }
+        },
+        preConfirm: () => {
+            const input = document.getElementById('swal-input-nombre');
+            const errorDiv = document.getElementById('nombre-error');
+            const errorMsg = document.getElementById('nombre-error-message');
+            const nombre = input.value.trim();
+            
+            if (!nombre || nombre.length < 2) {
+                errorMsg.textContent = 'El nombre debe tener al menos 2 caracteres';
+                errorDiv.style.display = 'block';
+                input.style.borderColor = '#e74c3c';
+                input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
+                return false;
+            }
+            
+            if (nombre.length > 50) {
+                errorMsg.textContent = 'El nombre no puede tener más de 50 caracteres';
+                errorDiv.style.display = 'block';
+                input.style.borderColor = '#e74c3c';
+                input.style.boxShadow = '0 0 0 4px rgba(231, 76, 60, 0.15)';
+                return false;
+            }
+            
+            errorDiv.style.display = 'none';
+            input.style.borderColor = '#27ae60';
+            input.style.boxShadow = '0 0 0 4px rgba(39, 174, 96, 0.15)';
+            
+            return nombre;
+        }
+    });
+
+    if (nuevoNombre) {
+        // ============================================================
+        // MOSTRAR SWEETALERT DE ACTUALIZANDO
+        // ============================================================
+        const loadingBg = isDarkMode ? '#1a1a2e' : '#fdfaff';
+        const loadingText = isDarkMode ? '#ffffff' : '#2c1b4e';
+        
+        Swal.fire({
+            title: '',
+            html: `
+                <div style="text-align: center; padding: 10px 5px;">
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                            <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 6px;">
+                        <div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #f0e6ff; border-top: 3px solid #9b59b6; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                        <span style="color: ${loadingText}; font-weight: 700; font-size: 1.1rem;">Actualizando tu elección...</span>
+                    </div>
+                    <p style="color: #9b59b6; font-size: 0.8rem; margin-top: 4px; font-weight: 500;">
+                        <i class="fas fa-spa" style="margin-right: 6px;"></i> Un momento por favor
+                    </p>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: false,
+            allowOutsideClick: false,
+            background: loadingBg,
+            customClass: { 
+                popup: 'swal-loading-popup'
+            }
+        });
+
+        try {
+            // Actualizar en Supabase Auth
+            const { error: updateError } = await supabaseClient.auth.updateUser({
+                data: { nombre: nuevoNombre }
+            });
+
+            if (updateError) {
+                throw updateError;
+            }
+
+            // También actualizar en la tabla usuarios
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                await supabaseClient
+                    .from('usuarios')
+                    .update({ nombre: nuevoNombre })
+                    .eq('id', session.user.id);
+            }
+
+            // Verificar logros después de cambiar nombre
+            if (window.verificarLogros) {
+                await window.verificarLogros(session.user.id);
+            }
+
+            if (window.actualizarSaludo) {
+    setTimeout(() => {
+        window.actualizarSaludo();
+    }, 500);
+}
+
+            // Cerrar loading y mostrar éxito
+            Swal.close();
+
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 4px; box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2); border: 3px solid #27ae60;">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color: #27ae60; font-weight: 700; font-size: 1.5rem; margin-bottom: 4px;">✅ ¡Nombre actualizado!</p>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                            Ahora te llamas <strong style="color: #9b59b6;">${nuevoNombre}</strong>
+                        </p>
+                        <p style="color: #b0a4e3; font-size: 0.8rem; margin-top: 10px; font-style: italic;">
+                            <i class="fas fa-sparkles" style="color: #f1c40f;"></i>
+                            Tu identidad única ha sido actualizada
+                        </p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonColor: '#9b59b6',
+                confirmButtonText: 'Ver Perfil 💜',
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    closeButton: 'swal-close-button-styled'
+                },
+                background: bgColor
+            }).then(() => {
+                // Recargar perfil sin recargar página
+                document.getElementById('btnPerfil')?.click();
+            });
+
+        } catch (error) {
+            console.error('Error al actualizar nombre:', error);
+            Swal.close();
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #fde8e8, #fce4e4); padding: 4px; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15); border: 3px solid #e74c3c;">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color: #e74c3c; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px;">⚠️ Error al actualizar</p>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                            ${error.message || 'No se pudo actualizar el nombre. Intenta de nuevo.'}
+                        </p>
+                    </div>
+                `,
+                icon: 'error',
+                confirmButtonColor: '#e74c3c',
+                confirmButtonText: 'Intentar de nuevo',
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    closeButton: 'swal-close-button-styled'
+                },
+                background: bgColor
+            });
+        }
+    }
+};
+
+
+
+// ============================================================
+// FUNCIÓN PARA VERIFICAR Y RENOVAR SESIÓN AUTOMÁTICAMENTE
+// ============================================================
+async function verificarYRenovarSesion() {
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        
+        if (error && error.message && error.message.includes('expired')) {
+            console.log('Token expirado, renovando...');
+            const { data: refreshData, error: refreshError } = await supabaseClient.auth.refreshSession();
+            
+            if (refreshError) {
+                console.error('Error al renovar sesión:', refreshError);
+                return false;
+            }
+            
+            if (refreshData && refreshData.session) {
+                console.log('Sesión renovada exitosamente');
+                return true;
+            }
+        }
+        
+        return !!session;
+    } catch (error) {
+        console.error('Error al verificar sesión:', error);
+        return false;
+    }
+}
+
+// ============================================================
+// ESCUCHAR CAMBIOS EN LA SESIÓN DE AUTENTICACIÓN
+// ============================================================
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    console.log('Evento de autenticación:', event);
+    
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        setTimeout(() => {
+            actualizarSaludo();
+        }, 300);
+    }
+    
+    if (event === 'SIGNED_OUT') {
+        ocultarSaludo();
+    }
+});
+
+// ============================================================
+// INICIALIZAR SALUDO AL CARGAR LA PÁGINA
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Primero verificar y renovar sesión si es necesario
+    verificarYRenovarSesion().then((sesionValida) => {
+        if (sesionValida) {
+            setTimeout(() => {
+                actualizarSaludo();
+            }, 300);
+        } else {
+            ocultarSaludo();
+        }
+    });
+});
+
+// ============================================================
+// RECUPERAR SESIÓN PERDIDA (cuando el usuario recarga la página)
+// ============================================================
+async function recuperarSesionPerdida() {
+    try {
+        // Intentar obtener la sesión del almacenamiento local
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (!session) {
+            // Intentar recuperar con refresh token
+            const { data, error } = await supabaseClient.auth.refreshSession();
+            
+            if (error) {
+                console.log('No se pudo recuperar la sesión:', error.message);
+                return false;
+            }
+            
+            if (data && data.session) {
+                console.log('Sesión recuperada exitosamente');
+                return true;
+            }
+        }
+        
+        return !!session;
+    } catch (error) {
+        console.error('Error al recuperar sesión:', error);
+        return false;
+    }
+}
+
+// ============================================================
+// FUNCIÓN PARA CERRAR SESIÓN SEGURA
+// ============================================================
+async function cerrarSesionSegura() {
+    try {
+        await supabaseClient.auth.signOut();
+        ocultarSaludo();
+        // Limpiar cualquier dato de sesión en localStorage
+        localStorage.removeItem('supabase.auth.token');
+        return true;
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+        return false;
+    }
+}
+
+// ============================================================
+// INTERCEPTOR PARA ERRORES DE TOKEN EXPIRADO EN PETICIONES
+// ============================================================
+// Sobrescribir el método de supabase para manejar errores de token
+const originalFrom = supabaseClient.from;
+supabaseClient.from = function(table) {
+    const queryBuilder = originalFrom.call(this, table);
+    
+    // Interceptar el método .then para manejar errores de autenticación
+    const originalThen = queryBuilder.then;
+    queryBuilder.then = function(onFulfilled, onRejected) {
+        return originalThen.call(this, 
+            (result) => {
+                // Si hay error de token expirado, intentar renovar y reintentar
+                if (result.error && result.error.message && 
+                    (result.error.message.includes('JWT') || 
+                     result.error.message.includes('expired') ||
+                     result.error.message.includes('invalid'))) {
+                    
+                    console.log('Error de autenticación en petición, renovando sesión...');
+                    
+                    return verificarYRenovarSesion().then((renovado) => {
+                        if (renovado) {
+                            // Reintentar la misma consulta
+                            return originalFrom.call(supabaseClient, table)
+                                .select('*')
+                                .then(onFulfilled, onRejected);
+                        } else {
+                            // Si no se puede renovar, rechazar
+                            return Promise.reject(result.error);
+                        }
+                    });
+                }
+                
+                return onFulfilled ? onFulfilled(result) : result;
+            },
+            onRejected
+        );
+    };
+    
+    return queryBuilder;
+};
+
+window.verificarYRenovarSesion = verificarYRenovarSesion;
+window.cerrarSesionSegura = cerrarSesionSegura;
+window.recuperarSesionPerdida = recuperarSesionPerdida;
+
+
+async function cargarSplashConMarcoReal() {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        // Marco por defecto (básico)
+        let marcoUrl = 'imganes/marco.png';
+        let tamanioMarco = '130px';
+        let shadowIntensity = '0 0 20px rgba(155, 89, 182, 0.3)';
+        let animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
+        let bordeMarco = '2px solid rgba(155, 89, 182, 0.2)';
+        
+        if (session) {
+            const userId = session.user.id;
+            
+            // Obtener estrellas reclamadas
+            let estrellasReclamadas = [];
+            if (window.obtenerEstrellasReclamadas) {
+                estrellasReclamadas = await window.obtenerEstrellasReclamadas(userId);
+            }
+            const totalEstrellas = estrellasReclamadas.length;
+            
+            // ================================================
+            // MISMO MARCO QUE EN EL PERFIL
+            // ================================================
+            if (totalEstrellas >= 9) {
+                marcoUrl = 'imganes/marco2.png';
+                tamanioMarco = '160px';
+                shadowIntensity = '0 0 50px rgba(255,215,0,0.6)';
+                animacionMarco = 'glowMarcoPremiumLoader 2s ease-in-out infinite';
+                bordeMarco = '3px solid #ffd700';
+            } else if (totalEstrellas >= 7) {
+                marcoUrl = 'imganes/marco2.png';
+                tamanioMarco = '150px';
+                shadowIntensity = '0 0 35px rgba(192,160,0,0.5)';
+                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
+                bordeMarco = '3px solid #c0a000';
+            } else if (totalEstrellas >= 5) {
+                marcoUrl = 'imganes/marco1.png';
+                tamanioMarco = '140px';
+                shadowIntensity = '0 0 30px rgba(232,184,0,0.4)';
+                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
+                bordeMarco = '3px solid #e8b800';
+            } else if (totalEstrellas >= 3) {
+                marcoUrl = 'imganes/marco.png';
+                tamanioMarco = '130px';
+                shadowIntensity = '0 0 25px rgba(155, 89, 182, 0.35)';
+                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
+                bordeMarco = '2px solid #d4a017';
+            } else if (totalEstrellas >= 1) {
+                marcoUrl = 'imganes/marco.png';
+                tamanioMarco = '120px';
+                shadowIntensity = '0 0 20px rgba(155, 89, 182, 0.25)';
+                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
+                bordeMarco = '2px solid #b8860b';
+            }
+        }
+        
+        // ================================================
+        // ACTUALIZAR EL MARCO EN EL SPLASH
+        // ================================================
+        const marcoElement = document.getElementById('splash-marco');
+        const logoContainer = document.getElementById('splash-logo-container');
+        
+        if (marcoElement) {
+            marcoElement.style.width = tamanioMarco;
+            marcoElement.style.height = tamanioMarco;
+            marcoElement.style.background = `url('${marcoUrl}') no-repeat center center`;
+            marcoElement.style.backgroundSize = 'contain';
+            marcoElement.style.filter = `drop-shadow(${shadowIntensity})`;
+            marcoElement.style.animation = animacionMarco;
+            marcoElement.style.border = bordeMarco;
+            marcoElement.style.borderRadius = '50%';
+        }
+        
+        if (logoContainer) {
+            logoContainer.style.width = tamanioMarco;
+            logoContainer.style.height = tamanioMarco;
+        }
+        
+        // También actualizar el tamaño del logo interno
+        const logoImg = document.querySelector('#splash-logo-container img');
+        if (logoImg) {
+            const tamañoLogo = parseInt(tamanioMarco) * 0.62;
+            logoImg.style.width = tamañoLogo + 'px';
+            logoImg.style.height = tamañoLogo + 'px';
+        }
+        
+        console.log('Marco cargado:', marcoUrl, 'para', totalEstrellas || 0, 'estrellas');
+        
+    } catch (error) {
+        console.error('Error al cargar marco del splash:', error);
+        // Usar marco por defecto si hay error
+        const marcoElement = document.getElementById('splash-marco');
+        if (marcoElement) {
+            marcoElement.style.background = `url('imganes/marco.png') no-repeat center center`;
+            marcoElement.style.backgroundSize = 'contain';
+        }
+    }
+}
+
+// ============================================================
+// INICIALIZAR SPLASH SCREEN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const loaderWrapper = document.getElementById('loader-wrapper');
+    const loaderMessage = document.getElementById('loader-message');
+    const mensajes = [
+        'Bienvenido a Medicurativo...',
+        'Cargando tu experiencia...',
+        'Preparando el camino...',
+        'Sembrando bienestar...',
+        'Cultivando el alma...'
+    ];
+    
+    // PRIMERO: Cargar el marco REAL del usuario
+    cargarSplashConMarcoReal().then(() => {
+        let mensajeIndex = 0;
+        
+        // Cambiar mensajes cada 800ms
+        const intervalMensajes = setInterval(() => {
+            mensajeIndex = (mensajeIndex + 1) % mensajes.length;
+            if (loaderMessage) {
+                loaderMessage.style.opacity = '0.5';
+                setTimeout(() => {
+                    loaderMessage.textContent = mensajes[mensajeIndex];
+                    loaderMessage.style.opacity = '1';
+                }, 200);
+            }
+        }, 800);
+        
+        // Ocultar loader después de 3.5 segundos
+        setTimeout(() => {
+            clearInterval(intervalMensajes);
+            if (loaderWrapper) {
+                loaderWrapper.classList.add('loaded');
+                setTimeout(() => {
+                    loaderWrapper.style.display = 'none';
+                }, 800);
+            }
+            // Mostrar saludo después del splash
+            setTimeout(() => {
+                if (typeof actualizarSaludo === 'function') {
+                    actualizarSaludo();
+                }
+            }, 400);
+        }, 3500);
+    });
+});
+
+// ============================================================
+// FUNCIÓN PARA OBTENER ESTRELLAS RECLAMADAS
+// ============================================================
+window.obtenerEstrellasReclamadas = async function(userId) {
+    try {
+        const { data, error } = await supabaseClient
+            .from('estrellas_reclamadas')
+            .select('logro_key')
+            .eq('usuario_id', userId);
+        
+        if (error) throw error;
+        return data ? data.map(item => item.logro_key) : [];
+    } catch (error) {
+        console.error('Error al obtener estrellas reclamadas:', error);
+        return [];
+    }
+};
+// ============================================================
+// EDITAR GÉNERO - SWEETALERT MEJORADO (SOLO HOMBRE/MUJER)
+// ============================================================
+window.editarGenero = async function() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+    const optionBg = isDarkMode ? '#252525' : '#fdfaff';
+    const optionBorder = isDarkMode ? '#3a3a3a' : '#f0e6ff';
+    
+    // Obtener género actual
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const generoActual = session?.user?.user_metadata?.genero_id || null;
+    
+    // Opciones de género - SOLO HOMBRE Y MUJER
+    const generos = [
+        { id: 1, nombre: 'Hombre', emoji: '👨', desc: 'Masculino' },
+        { id: 2, nombre: 'Mujer', emoji: '👩', desc: 'Femenino' }
+    ];
+    
+    // Construir opciones HTML
+    let opcionesHtml = '';
+    generos.forEach(g => {
+        const selected = generoActual === g.id ? 'selected' : '';
+        opcionesHtml += `
+            <div class="genero-option ${selected}" data-id="${g.id}" style="
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 14px 20px;
+                border: 2px solid ${optionBorder};
+                border-radius: 16px;
+                background: ${optionBg};
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-bottom: 8px;
+                ${selected ? `border-color: #9b59b6; background: rgba(155, 89, 182, 0.08); box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);` : ''}
+            ">
+                <div style="font-size: 2rem; width: 44px; text-align: center; flex-shrink: 0;">${g.emoji}</div>
+                <div style="flex: 1; text-align: left;">
+                    <div style="font-weight: 700; color: ${textColor}; font-size: 1.1rem;">${g.nombre}</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">${g.desc}</div>
+                </div>
+                <div style="
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    border: 2px solid ${selected ? '#9b59b6' : '#d5c6e0'};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    transition: all 0.3s ease;
+                    ${selected ? 'background: #9b59b6;' : ''}
+                ">
+                    ${selected ? '<div style="width: 10px; height: 10px; border-radius: 50%; background: white;"></div>' : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    const { value: generoId } = await Swal.fire({
+        title: '',
+        html: `
+            <div style="text-align: center; padding: 5px;">
+                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2); border: 3px solid #9b59b6;">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 4px; font-size: 1.3rem;">🌸 Editar Género</h2>
+                <p style="color: #9b59b6; font-weight: 500; font-size: 0.9rem; margin-bottom: 18px;">
+                    <i class="fas fa-venus-mars" style="margin-right: 6px;"></i>
+                    Selecciona tu identidad de género
+                </p>
+                
+                <div style="text-align: left; margin-top: 5px;">
+                    ${opcionesHtml}
+                </div>
+                
+                <p style="margin-top: 12px; font-size: 0.75rem; color: #b0a4e3; font-style: italic;">
+                    <i class="fas fa-heart" style="color: #e84393;"></i>
+                    Tu identidad es valiosa y respetada
+                </p>
+            </div>
+        `,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar ✨',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#9b59b6',
+        cancelButtonColor: '#bdc3c7',
+        background: bgColor,
+        reverseButtons: true,
+        customClass: { 
+            popup: 'swal-popup-redondo',
+            closeButton: 'swal-close-button-styled'
+        },
+        showCloseButton: true,
+        didOpen: () => {
+            document.querySelectorAll('.genero-option').forEach(opt => {
+                opt.addEventListener('click', function() {
+                    document.querySelectorAll('.genero-option').forEach(o => {
+                        o.classList.remove('selected');
+                        o.style.borderColor = '#f0e6ff';
+                        o.style.background = '#fdfaff';
+                        o.style.boxShadow = 'none';
+                        const circle = o.querySelector('div:last-child');
+                        if (circle) {
+                            circle.style.borderColor = '#d5c6e0';
+                            circle.style.background = 'transparent';
+                            circle.innerHTML = '';
+                        }
+                    });
+                    
+                    this.classList.add('selected');
+                    this.style.borderColor = '#9b59b6';
+                    this.style.background = 'rgba(155, 89, 182, 0.08)';
+                    this.style.boxShadow = '0 0 0 3px rgba(155, 89, 182, 0.1)';
+                    
+                    const circle = this.querySelector('div:last-child');
+                    if (circle) {
+                        circle.style.borderColor = '#9b59b6';
+                        circle.style.background = '#9b59b6';
+                        circle.innerHTML = '<div style="width: 10px; height: 10px; border-radius: 50%; background: white;"></div>';
+                    }
+                });
+            });
+        },
+        preConfirm: () => {
+            const selected = document.querySelector('.genero-option.selected');
+            if (!selected) {
+                Swal.showValidationMessage('Por favor selecciona una opción');
+                return false;
+            }
+            return parseInt(selected.dataset.id);
+        }
+    });
+
+    if (generoId) {
+        // ============================================================
+        // MOSTRAR SWEETALERT DE ACTUALIZANDO
+        // ============================================================
+        const loadingBg = isDarkMode ? '#1a1a2e' : '#fdfaff';
+        const loadingText = isDarkMode ? '#ffffff' : '#2c1b4e';
+        
+        Swal.fire({
+            title: '',
+            html: `
+                <div style="text-align: center; padding: 10px 5px;">
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                            <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 6px;">
+                        <div class="loading-spinner" style="width: 24px; height: 24px; border: 3px solid #f0e6ff; border-top: 3px solid #9b59b6; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                        <span style="color: ${loadingText}; font-weight: 700; font-size: 1.1rem;">Actualizando tu elección...</span>
+                    </div>
+                    <p style="color: #9b59b6; font-size: 0.8rem; margin-top: 4px; font-weight: 500;">
+                        <i class="fas fa-spa" style="margin-right: 6px;"></i> Un momento por favor
+                    </p>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: false,
+            allowOutsideClick: false,
+            background: loadingBg,
+            customClass: { 
+                popup: 'swal-loading-popup'
+            }
+        });
+
+        try {
+            // Actualizar en Supabase Auth
+            const { error: updateError } = await supabaseClient.auth.updateUser({
+                data: { genero_id: generoId }
+            });
+
+            if (updateError) {
+                throw updateError;
+            }
+
+            // También actualizar en la tabla usuarios
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                await supabaseClient
+                    .from('usuarios')
+                    .update({ genero_id: generoId })
+                    .eq('id', session.user.id);
+            }
+
+            // Verificar logros después de cambiar género
+            if (window.verificarLogros) {
+                await window.verificarLogros(session.user.id);
+            }
+
+            const generoSeleccionado = generos.find(g => g.id === generoId);
+            const nombreGenero = generoSeleccionado ? generoSeleccionado.nombre : 'No especificado';
+            const emojiGenero = generoSeleccionado ? generoSeleccionado.emoji : '👤';
+
+            // Cerrar loading y mostrar éxito
+            Swal.close();
+
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 4px; box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2); border: 3px solid #27ae60;">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color: #27ae60; font-weight: 700; font-size: 1.5rem; margin-bottom: 4px;">✅ ¡Género actualizado!</p>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                            Ahora te identificas como <strong style="color: #9b59b6;">${emojiGenero} ${nombreGenero}</strong>
+                        </p>
+                        <p style="color: #b0a4e3; font-size: 0.8rem; margin-top: 10px; font-style: italic;">
+                            <i class="fas fa-sparkles" style="color: #f1c40f;"></i>
+                            Tu autenticidad brilla con luz propia
+                        </p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonColor: '#9b59b6',
+                confirmButtonText: 'Ver Perfil 💜',
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    closeButton: 'swal-close-button-styled'
+                },
+                background: bgColor
+            }).then(() => {
+                // Recargar perfil sin recargar página
+                document.getElementById('btnPerfil')?.click();
+            });
+
+        } catch (error) {
+            console.error('Error al actualizar género:', error);
+            Swal.close();
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #fde8e8, #fce4e4); padding: 4px; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15); border: 3px solid #e74c3c;">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color: #e74c3c; font-weight: 700; font-size: 1.2rem; margin-bottom: 4px;">⚠️ Error al actualizar</p>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">
+                            ${error.message || 'No se pudo actualizar el género. Intenta de nuevo.'}
+                        </p>
+                    </div>
+                `,
+                icon: 'error',
+                confirmButtonColor: '#e74c3c',
+                confirmButtonText: 'Intentar de nuevo',
+                showCloseButton: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    closeButton: 'swal-close-button-styled'
+                },
+                background: bgColor
+            });
+        }
+    }
+};
+
+// ============================================================
+// FUNCIÓN PARA ACTUALIZAR EL SALUDO CON EL NOMBRE DEL USUARIO
+// ============================================================
+// ============================================================
+// FUNCIÓN PARA ACTUALIZAR EL SALUDO CON EL NOMBRE DEL USUARIO
+// ============================================================
+async function actualizarSaludo() {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (session) {
+            const nombre = session.user.user_metadata?.nombre || 'Amigo';
+            const spanNombre = document.getElementById('usuarioNombreLogueado');
+            const contenedorSaludo = document.getElementById('contenedorSaludo');
+            
+            if (spanNombre) {
+                spanNombre.style.transition = 'all 0.3s ease';
+                spanNombre.style.opacity = '0.5';
+                spanNombre.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    spanNombre.textContent = nombre;
+                    spanNombre.style.opacity = '1';
+                    spanNombre.style.transform = 'scale(1)';
+                }, 200);
+            }
+            
+            if (contenedorSaludo) {
+                contenedorSaludo.style.display = 'flex';
+                contenedorSaludo.style.animation = 'fadeIn 0.8s ease';
+            }
+            
+            // Actualizar también el saludo dinámico según la hora
+            actualizarSaludoDinamico();
+        } else {
+            // Usar la función ocultarSaludo cuando no hay sesión
+            ocultarSaludo();
+        }
+    } catch (error) {
+        console.error('Error al actualizar saludo:', error);
+        ocultarSaludo();
+    }
+}
+
+// ============================================================
+// FUNCIÓN PARA SALUDO DINÁMICO SEGÚN LA HORA
+// ============================================================
+function actualizarSaludoDinamico() {
+    const saludoSpan = document.getElementById('saludoDinamico');
+    if (!saludoSpan) return;
+    
+    const hora = new Date().getHours();
+    let saludo = '';
+    
+    if (hora >= 5 && hora < 12) {
+        saludo = '🌅 ¡Buenos días! Que tengas un hermoso día';
+    } else if (hora >= 12 && hora < 18) {
+        saludo = '☀️ ¡Buenas tardes! Sigue brillando con luz propia';
+    } else if (hora >= 18 && hora < 22) {
+        saludo = '🌅 ¡Buenas noches! Disfruta de esta hermosa tarde';
+    } else {
+        saludo = '🌙 ¡Buenas noches! Descansa y sueña bonito';
+    }
+    
+    saludoSpan.textContent = saludo;
+}
+
+// ============================================================
+// ESCUCHAR CAMBIOS EN EL NOMBRE DEL USUARIO
+// ============================================================
+// Función para forzar actualización del saludo desde cualquier parte
+window.actualizarSaludo = actualizarSaludo;
+
+// Escuchar cambios en la sesión de autenticación
+// ============================================================
+// ESCUCHAR CAMBIOS EN LA SESIÓN DE AUTENTICACIÓN
+// ============================================================
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    console.log('Evento de autenticación:', event);
+    
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        setTimeout(() => {
+            actualizarSaludo();
+        }, 300);
+    }
+    
+    if (event === 'SIGNED_OUT') {
+        // Usar la función ocultarSaludo
+        ocultarSaludo();
+    }
+});
+
+// ============================================================
+// INICIALIZAR SALUDO AL CARGAR LA PÁGINA
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Esperar a que Supabase esté listo
+    setTimeout(() => {
+        actualizarSaludo();
+    }, 500);
+});
+
+// También actualizar cuando la página se vuelva visible (si el usuario cambia en otra pestaña)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        actualizarSaludo();
     }
 });
 // ============================================================

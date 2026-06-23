@@ -18,19 +18,54 @@
     <link rel="stylesheet" href="css/folter.css">
     <link rel="stylesheet" href="css/galeria.css">
     <link rel="stylesheet" href="css/swafire.css"> <!-- NUEVO -->
+    <link rel="stylesheet" href="css/banner.css">
     
 </head>
 <body>
-    <!-- PANTALLA DE CARGA (Splash Screen) -->
-    <div id="loader-wrapper">
-        <div id="loader-content">
-            <img src="imganes/logosmedi.png" alt="Logo" class="loader-logo">
-            <p id="loader-message">Bienvenido a Medicurativo...</p>
-            <div class="loader-bar-container">
-                <div class="loader-bar"></div>
+  <!-- PANTALLA DE CARGA (Splash Screen) -->
+<div id="loader-wrapper">
+ 
+    <div id="loader-content">
+        <!-- Logo con marco circular del usuario -->
+        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+            <div id="splash-logo-container" style="position: relative; width: 130px; height: 130px; margin: 0 auto;">
+                <!-- Avatar (detrás del marco) -->
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                </div>
+                <!-- Marco REAL del usuario (se actualiza dinámicamente) -->
+                <div id="splash-marco" style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 130px;
+                    height: 130px;
+                    
+                    background-size: contain;
+                    z-index: 10;
+                    pointer-events: none;
+                    animation: glowMarcoLoader 2s ease-in-out infinite;
+                    filter: drop-shadow(0 0 20px rgba(155, 89, 182, 0.3));
+                    transition: all 0.5s ease;
+                "></div>
             </div>
         </div>
+        
+        <p id="loader-message" style="color: #2c1b4e; font-weight: 600; font-size: 1.1rem; margin: 10px 0 15px 0; letter-spacing: 0.5px;">
+            Bienvenido a Medicurativo...
+        </p>
+        
+        <div class="loader-bar-container">
+            <div class="loader-bar"></div>
+        </div>
+        
+        <p style="color: #b0a4e3; font-size: 0.75rem; margin-top: 15px; font-style: italic; opacity: 0.7;">
+            <i class="fas fa-spa" style="margin-right: 6px;"></i>
+            medicina que cultiva el alma
+        </p>
     </div>
+</div>
 
     <div class="contenedor">
         

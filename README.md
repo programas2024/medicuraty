@@ -15,13 +15,13 @@
 
 | 🧠 Test de Personalidad | 🏆 Ranking & Estrellas |
 | :---: | :---: |
-| ![Test de Personalidad](\imganes\test.png) | ![Ranking y Estrellas](\imganes\rankestrellas.png)|
+| ![Test de Personalidad](./imganes/test.png) | ![Ranking y Estrellas](./imganes/rankestrellas.png)|
 | **✨ Marcos Dinámicos** | **🤖 Asistencia (Bots)** |
-| ![Marcos Dinámicos](\imganes\marco.png) | ![Bots de Asistencia](\imganes\bot.png) |
+| ![Marcos Dinámicos](./imganes/marco.png) | ![Bots de Asistencia](./imganes/bot.png) |
 
 | 🖼️ Galería de Imágenes Comunitaria |
 | :---: |
-| ![Galería Comunitaria](\imganes\galeria.png) |
+| ![Galería Comunitaria](.\imganes\galeria.png) |
 
 ---
 

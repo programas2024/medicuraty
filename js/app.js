@@ -3570,8 +3570,8 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
         });
     };
 
-    // --- Función global para Ver Opiniones ---
- window.verOpinionesSweetAlert = async function() {
+ // --- Función global para Ver Opiniones ---
+window.verOpinionesSweetAlert = async function() {
     const { data: allOpinions, error } = await supabaseClient
         .from('comentarios')
         .select('estrellas, comentario, creado_en, usuarios(nombre)');
@@ -3590,20 +3590,23 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
     const cardSubTextColor = isDarkMode ? '#d0c0e0' : '#b0a4e3';
     const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
 
+    // Determinar si es móvil
+    const isMobile = window.innerWidth <= 768;
+
     const renderOpinionsList = (ops) => {
         if (!ops || ops.length === 0) return '<p style="text-align:center; opacity:0.6; padding: 20px; color:' + subTextColor + ';">Aún no hay opiniones. ¡Sé el primero!</p>';
         return ops.map(op => `
-            <div style="background: ${cardBg}; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid #f1c40f; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <div style="display:flex; align-items:center; gap: 8px;">
-                        <i class="fas fa-user-circle" style="color: #9b59b6; font-size: 1.1rem;"></i>
-                        <strong style="font-size: 0.9rem; color: ${textColor};">${op.usuarios?.nombre || 'Usuario'}</strong>
+            <div style="background: ${cardBg}; padding: ${isMobile ? '12px' : '18px'}; border-radius: ${isMobile ? '16px' : '20px'}; margin-bottom: ${isMobile ? '10px' : '14px'}; border-left: ${isMobile ? '5px' : '6px'} solid #f1c40f; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${isMobile ? '6px' : '10px'};">
+                    <div style="display:flex; align-items:center; gap: ${isMobile ? '6px' : '10px'};">
+                        <i class="fas fa-user-circle" style="color: #9b59b6; font-size: ${isMobile ? '0.9rem' : '1.3rem'};"></i>
+                        <strong style="font-size: ${isMobile ? '0.8rem' : '1.1rem'}; color: ${textColor};">${op.usuarios?.nombre || 'Usuario'}</strong>
                     </div>
-                    <span style="color: #f1c40f; font-size: 0.9rem;">${'★'.repeat(op.estrellas)}${'☆'.repeat(5-op.estrellas)}</span>
+                    <span style="color: #f1c40f; font-size: ${isMobile ? '0.8rem' : '1.2rem'}; letter-spacing: 2px;">${'★'.repeat(op.estrellas)}${'☆'.repeat(5-op.estrellas)}</span>
                 </div>
-                <p style="font-size: 0.85rem; margin: 0; color: ${cardTextColor}; font-style: italic; line-height: 1.4;">"${op.comentario}"</p>
-                <div style="text-align: right; margin-top: 5px;">
-                    <small style="color: ${cardSubTextColor}; font-size: 0.7rem;">${new Date(op.creado_en).toLocaleDateString()}</small>
+                <p style="font-size: ${isMobile ? '0.8rem' : '1.05rem'}; margin: 0; color: ${cardTextColor}; font-style: italic; line-height: ${isMobile ? '1.3' : '1.6'};">"${op.comentario}"</p>
+                <div style="text-align: right; margin-top: ${isMobile ? '4px' : '8px'};">
+                    <small style="color: ${cardSubTextColor}; font-size: ${isMobile ? '0.65rem' : '0.85rem'};">${new Date(op.creado_en).toLocaleDateString()}</small>
                 </div>
             </div>
         `).join('');
@@ -3612,35 +3615,191 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
     Swal.fire({
         title: '',
         html: `
-            <div style="text-align: center;">
-                <!-- Círculo con imagen arriba del título -->
-                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
-                    <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 4px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+            <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0;">
+                <!-- Círculo con imagen -->
+                <div style="display: flex; justify-content: center; margin-top: ${isMobile ? '0px' : '10px'}; margin-bottom: ${isMobile ? '8px' : '20px'}; width: 100%;">
+                    <div style="width: ${isMobile ? '50px' : '90px'}; height: ${isMobile ? '50px' : '90px'}; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: ${isMobile ? '3px' : '6px'}; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.15);">
                         <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
                             <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>
                 </div>
 
-                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: ${isMobile ? '4px' : '12px'}; text-align: center; width: 100%; font-size: ${isMobile ? '1rem' : '1.8rem'};">
                     <i class="fas fa-comments" style="color: #9b59b6;"></i> Comunidad Medicurativo
                 </h2>
                 
-                <div style="padding: 5px; max-height: 380px; overflow-y: auto; scrollbar-width: none; margin-top: 10px;">
-                    ${renderOpinionsList(allOpinions ? [...allOpinions].reverse() : [])}
+                <!-- Contenedor con scroll interno -->
+                <div style="padding: ${isMobile ? '2px' : '5px'}; max-height: ${isMobile ? '250px' : '450px'}; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; margin: ${isMobile ? '5px 0 0 0' : '15px 0 0 0'}; width: 100%; max-width: 700px; text-align: left;">
+                    <style>
+                        /* Ocultar scrollbar en todos los navegadores */
+                        .swal-ver-opiniones-scroll::-webkit-scrollbar {
+                            display: none;
+                            width: 0;
+                            height: 0;
+                        }
+                    </style>
+                    <div class="swal-ver-opiniones-scroll" style="padding: ${isMobile ? '2px' : '5px'};">
+                        ${renderOpinionsList(allOpinions ? [...allOpinions].reverse() : [])}
+                    </div>
                 </div>
-                <p style="font-size: 0.8rem; color: ${subTextColor}; margin-top: 15px;">Gracias por ayudarnos a crecer día tras día.</p>
+                <p style="font-size: ${isMobile ? '0.7rem' : '1rem'}; color: ${subTextColor}; margin-top: ${isMobile ? '8px' : '20px'}; text-align: center; width: 100%; opacity: 0.8; font-weight: ${isMobile ? '400' : '500'};">
+                    Gracias por ayudarnos a crecer día tras día ❤️
+                </p>
             </div>
         `,
         showConfirmButton: false,
         showCloseButton: true,
         background: bgColor,
+        width: isMobile ? '92%' : '650px',
+        maxWidth: isMobile ? '400px' : '750px',
+        padding: isMobile ? '0.8rem' : '2rem',
         customClass: { 
-            popup: 'swal-popup-redondo',
-            closeButton: 'custom-close-btn-left'
+            popup: 'swal-popup-redondo swal-ver-opiniones',
+            closeButton: 'custom-close-btn-right',
+            htmlContainer: 'swal-html-ver-opiniones'
+        },
+        didOpen: () => {
+            // Forzar centrado y tamaño
+            const popup = document.querySelector('.swal-ver-opiniones');
+            if (popup) {
+                popup.style.margin = '0 auto';
+                popup.style.display = 'flex';
+                popup.style.flexDirection = 'column';
+                popup.style.alignItems = 'center';
+                popup.style.justifyContent = 'center';
+                
+                if (isMobile) {
+                    popup.style.maxHeight = '85vh';
+                    popup.style.height = 'auto';
+                    popup.style.borderRadius = '20px';
+                } else {
+                    popup.style.maxHeight = '85vh';
+                    popup.style.height = 'auto';
+                    popup.style.borderRadius = '28px';
+                    popup.style.boxShadow = '0 20px 60px rgba(0,0,0,0.15)';
+                }
+            }
+            
+            // Mover el botón de cerrar a la derecha
+            const closeBtn = document.querySelector('.swal-ver-opiniones .swal2-close');
+            if (closeBtn) {
+                closeBtn.style.position = 'absolute';
+                closeBtn.style.right = '15px';
+                closeBtn.style.top = '15px';
+                closeBtn.style.left = 'auto';
+                closeBtn.style.fontSize = isMobile ? '1.5rem' : '2.2rem';
+                closeBtn.style.padding = '5px 12px';
+            }
         }
     });
 };
+
+// CSS específico solo para este Swal
+(function addSpecificStyles() {
+    if (document.getElementById('swal-ver-opiniones-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'swal-ver-opiniones-styles';
+    style.textContent = `
+        .swal-ver-opiniones {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            left: 0 !important;
+            right: 0 !important;
+            position: relative !important;
+        }
+        
+        /* Botón cerrar a la derecha */
+        .swal-ver-opiniones .swal2-close {
+            position: absolute !important;
+            right: 15px !important;
+            top: 15px !important;
+            left: auto !important;
+            padding: 5px 12px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .swal-ver-opiniones .swal2-close:hover {
+            transform: rotate(90deg) !important;
+            color: #9b59b6 !important;
+        }
+        
+        /* Ocultar scrollbar en el contenedor interno */
+        .swal-ver-opiniones-scroll::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        .swal-ver-opiniones-scroll {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            .swal-ver-opiniones {
+                width: 92% !important;
+                max-width: 400px !important;
+                margin: 0 auto !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                position: fixed !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-height: 85vh !important;
+                padding: 1rem !important;
+                border-radius: 20px !important;
+            }
+            
+            .swal-html-ver-opiniones {
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                justify-content: center !important;
+                max-height: calc(85vh - 60px) !important;
+            }
+            
+            .swal2-popup.swal-ver-opiniones .swal2-html-container {
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-height: calc(85vh - 60px) !important;
+            }
+            
+            .swal-ver-opiniones .swal2-close {
+                font-size: 1.5rem !important;
+                padding: 5px 10px !important;
+                right: 5px !important;
+                top: 5px !important;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .swal-ver-opiniones {
+                width: 650px !important;
+                max-width: 750px !important;
+                padding: 2rem !important;
+                border-radius: 28px !important;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.15) !important;
+            }
+            
+            .swal-html-ver-opiniones {
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            .swal2-popup.swal-ver-opiniones .swal2-html-container {
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+})();
 
     document.getElementById('btnVerOpiniones')?.addEventListener('click', () => {
         window.verOpinionesSweetAlert();

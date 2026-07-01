@@ -601,10 +601,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
+
 function mostrarSoporte() {
     // Detectar modo oscuro
     const isDarkMode = document.body.classList.contains('dark-mode') || 
                        localStorage.getItem('theme') === 'dark';
+    
+    // Detectar si es móvil
+    const isMobile = window.innerWidth <= 768;
     
     // Colores según modo
     const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
@@ -616,113 +620,260 @@ function mostrarSoporte() {
     Swal.fire({
         title: '',
         background: bgColor,
+        width: isMobile ? '92%' : undefined,
+        maxWidth: isMobile ? '420px' : undefined,
+        padding: isMobile ? '1.5rem 1rem' : '2rem',
+        position: 'center',
         html: `
-            <div style="text-align: center; padding: 5px;">
-                <!-- Círculo con imagen -->
-                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
-                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
-                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="text-align: center; padding: 0; max-height: 85vh; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; margin: 0 auto;">
+                <style>
+                    .swal-soporte-scroll::-webkit-scrollbar {
+                        display: none;
+                        width: 0;
+                        height: 0;
+                    }
+                </style>
+                <div class="swal-soporte-scroll" style="padding: 0; width: 100%; max-width: 100%; display: flex; flex-direction: column; align-items: center; margin: 0 auto;">
+                    <!-- Círculo con imagen -->
+                    <div style="display: flex; justify-content: center; margin-top: ${isMobile ? '5px' : '5px'}; margin-bottom: ${isMobile ? '10px' : '15px'}; width: 100%;">
+                        <div style="width: ${isMobile ? '70px' : '80px'}; height: ${isMobile ? '70px' : '80px'}; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: ${isMobile ? '5px' : '5px'}; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2); flex-shrink: 0;">
+                            <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <h2 style="color: ${textColor}; font-weight: 800; font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;">
-                    <i class="fas fa-headset" style="color: #9b59b6; font-size: 32px;"></i>
-                    Soporte Medicurativo
-                </h2>
-                
-                <div style="background: ${isDarkMode ? 'rgba(155,89,182,0.15)' : '#f8f0ff'}; padding: 25px; border-radius: 60px; margin: 15px 0; border: 2px solid ${isDarkMode ? 'rgba(155,89,182,0.2)' : '#f0e6ff'};">
-                    <p style="font-size: 18px; color: ${textColor}; margin: 10px 0; line-height: 1.8; font-weight: 500;">
-                        Hola, somos el equipo Medicurativo.<br>
-                        ¿En qué te podemos ayudar?<br>
-                        <span style="color: #9b59b6; font-weight: 600;">Cuéntanos qué necesitas.</span>
-                    </p>
-
-                    <!-- Gmail -->
-                    <div style="background: linear-gradient(135deg, #2c1b4e, #4a2360); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(44, 27, 78, 0.3);" 
-                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                        <i class="fas fa-envelope" style="font-size: 24px; color: white;"></i>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=joacoxx2340@gmail.com&su=Soporte%20Medicurativo&body=Hola%2C%20somos%20el%20equipo%20Medicurativo.%20%C2%BFEn%20qu%C3%A9%20te%20podemos%20ayudar%3F%20Cu%C3%A9ntanos.%0A%0AP%C3%A1gina%20o%20secci%C3%B3n%3A%0AProblema%20o%20duda%3A%0ADescripci%C3%B3n%3A%0A" 
-                           target="_blank" rel="noopener" 
-                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
-                            Gmail
-                        </a>
-                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
-                    </div>
-
-                    <!-- WhatsApp -->
-                    <div style="background: linear-gradient(135deg, #27ae60, #1a8a4a); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); cursor: pointer;"
-                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"
-                         onclick="abrirWhatsAppDirecto()">
-                        <i class="fab fa-whatsapp" style="font-size: 24px; color: white;"></i>
-                        <span style="color: white; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;">
-                            WhatsApp
-                        </span>
-                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
-                    </div>
-
-                    <!-- Bot Medi -->
-                    <div style="background: linear-gradient(135deg, #9b59b6, #7a3d91); padding: 16px 20px; border-radius: 50px; margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);"
-                         onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                        <i class="fas fa-robot" style="font-size: 24px; color: white;"></i>
-                        <a href="bot.html" 
-                           style="color: white; font-size: 18px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
-                            Bot Medi
-                        </a>
-                        <i class="fas fa-arrow-right" style="color: white; font-size: 16px;"></i>
-                    </div>
-
-                    <div style="margin-top: 20px; padding: 15px; background: ${cardBg}; border-radius: 30px; border: 1px solid ${borderColor};">
-                        <p style="font-size: 15px; color: ${textColor}; margin: 0; line-height: 1.6;">
-                            <i class="fas fa-info-circle" style="color: #9b59b6; font-size: 18px;"></i>
-                            <br>
-                            Puedes escribir por Gmail, WhatsApp o hablar con Bot Medi.
-                            <br>
-                            <span style="color: ${subTextColor}; font-size: 0.9rem;">
-                                Describe qué estabas haciendo, en qué página pasó y si puedes agrega una captura.
-                            </span>
-                            <br>
-                            <strong style="color: #9b59b6;">Respondemos lo antes posible.</strong>
+                    <h2 style="color: ${textColor}; font-weight: 800; font-size: ${isMobile ? '1.3rem' : '28px'}; margin-bottom: ${isMobile ? '8px' : '8px'}; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; text-align: center;">
+                        <i class="fas fa-headset" style="color: #9b59b6; font-size: ${isMobile ? '1.4rem' : '32px'};"></i>
+                        <span style="text-align: center;">Soporte Medicurativo</span>
+                    </h2>
+                    
+                    <div style="background: ${isDarkMode ? 'rgba(155,89,182,0.15)' : '#f8f0ff'}; padding: ${isMobile ? '16px' : '25px'}; border-radius: ${isMobile ? '30px' : '60px'}; margin: ${isMobile ? '8px 0' : '15px 0'}; border: 2px solid ${isDarkMode ? 'rgba(155,89,182,0.2)' : '#f0e6ff'}; width: 100%; box-sizing: border-box;">
+                        <p style="font-size: ${isMobile ? '0.9rem' : '18px'}; color: ${textColor}; margin: 8px 0; line-height: 1.8; font-weight: 500; text-align: center;">
+                            Hola, somos el equipo Medicurativo.<br>
+                            ¿En qué te podemos ayudar?<br>
+                            <span style="color: #9b59b6; font-weight: 600;">Cuéntanos qué necesitas.</span>
                         </p>
+
+                        <!-- Gmail -->
+                        <div style="background: linear-gradient(135deg, #2c1b4e, #4a2360); padding: ${isMobile ? '12px 16px' : '16px 20px'}; border-radius: 50px; margin: ${isMobile ? '10px 0' : '15px 0'}; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(44, 27, 78, 0.3); width: 100%; box-sizing: border-box;" 
+                             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fas fa-envelope" style="font-size: ${isMobile ? '1.1rem' : '24px'}; color: white;"></i>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=joacoxx2340@gmail.com&su=Soporte%20Medicurativo&body=Hola%2C%20somos%20el%20equipo%20Medicurativo.%20%C2%BFEn%20qu%C3%A9%20te%20podemos%20ayudar%3F%20Cu%C3%A9ntanos.%0A%0AP%C3%A1gina%20o%20secci%C3%B3n%3A%0AProblema%20o%20duda%3A%0ADescripci%C3%B3n%3A%0A" 
+                               target="_blank" rel="noopener" 
+                               style="color: white; font-size: ${isMobile ? '0.9rem' : '18px'}; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                                Gmail
+                            </a>
+                            <i class="fas fa-arrow-right" style="color: white; font-size: ${isMobile ? '0.8rem' : '16px'};"></i>
+                        </div>
+
+                        <!-- WhatsApp -->
+                        <div style="background: linear-gradient(135deg, #27ae60, #1a8a4a); padding: ${isMobile ? '12px 16px' : '16px 20px'}; border-radius: 50px; margin: ${isMobile ? '10px 0' : '15px 0'}; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); cursor: pointer; width: 100%; box-sizing: border-box;"
+                             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"
+                             onclick="abrirWhatsAppDirecto()">
+                            <i class="fab fa-whatsapp" style="font-size: ${isMobile ? '1.1rem' : '24px'}; color: white;"></i>
+                            <span style="color: white; font-size: ${isMobile ? '0.9rem' : '18px'}; font-weight: 600; letter-spacing: 0.5px;">
+                                WhatsApp
+                            </span>
+                            <i class="fas fa-arrow-right" style="color: white; font-size: ${isMobile ? '0.8rem' : '16px'};"></i>
+                        </div>
+
+                        <!-- Bot Medi -->
+                        <div style="background: linear-gradient(135deg, #9b59b6, #7a3d91); padding: ${isMobile ? '12px 16px' : '16px 20px'}; border-radius: 50px; margin: ${isMobile ? '10px 0' : '15px 0'}; display: flex; align-items: center; justify-content: center; gap: 12px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3); width: 100%; box-sizing: border-box;"
+                             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fas fa-robot" style="font-size: ${isMobile ? '1.1rem' : '24px'}; color: white;"></i>
+                            <a href="bot.html" 
+                               style="color: white; font-size: ${isMobile ? '0.9rem' : '18px'}; font-weight: 600; text-decoration: none; letter-spacing: 0.5px;">
+                                Bot Medi
+                            </a>
+                            <i class="fas fa-arrow-right" style="color: white; font-size: ${isMobile ? '0.8rem' : '16px'};"></i>
+                        </div>
+
+                        <div style="margin-top: ${isMobile ? '12px' : '20px'}; padding: ${isMobile ? '10px' : '15px'}; background: ${cardBg}; border-radius: ${isMobile ? '20px' : '30px'}; border: 1px solid ${borderColor}; width: 100%; box-sizing: border-box;">
+                            <p style="font-size: ${isMobile ? '0.8rem' : '15px'}; color: ${textColor}; margin: 0; line-height: 1.6; text-align: center;">
+                                <i class="fas fa-info-circle" style="color: #9b59b6; font-size: ${isMobile ? '0.9rem' : '18px'};"></i>
+                                <br>
+                                Puedes escribir por Gmail, WhatsApp o hablar con Bot Medi.
+                                <br>
+                                <span style="color: ${subTextColor}; font-size: ${isMobile ? '0.75rem' : '0.9rem'};">
+                                    Describe qué estabas haciendo, en qué página pasó y si puedes agrega una captura.
+                                </span>
+                                <br>
+                                <strong style="color: #9b59b6;">Respondemos lo antes posible.</strong>
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Badges de soporte -->
-                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
-                    <span style="background: ${isDarkMode ? 'rgba(155,89,182,0.2)' : '#f0e6ff'}; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: ${textColor}; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-envelope" style="color: #9b59b6;"></i> Gmail
-                    </span>
-                    <span style="background: ${isDarkMode ? 'rgba(39,174,96,0.2)' : '#e6fffa'}; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: ${textColor}; display: flex; align-items: center; gap: 8px;">
-                        <i class="fab fa-whatsapp" style="color: #27ae60;"></i> WhatsApp
-                    </span>
-                    <span style="background: ${isDarkMode ? 'rgba(241,196,15,0.2)' : '#fff9e6'}; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; color: ${textColor}; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-robot" style="color: #f1c40f;"></i> Bot Medi
-                    </span>
-                </div>
+                    <!-- Badges de soporte -->
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: ${isMobile ? '10px' : '15px'}; flex-wrap: wrap; width: 100%;">
+                        <span style="background: ${isDarkMode ? 'rgba(155,89,182,0.2)' : '#f0e6ff'}; padding: ${isMobile ? '5px 12px' : '8px 18px'}; border-radius: 30px; font-size: ${isMobile ? '0.7rem' : '0.85rem'}; color: ${textColor}; display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-envelope" style="color: #9b59b6;"></i> Gmail
+                        </span>
+                        <span style="background: ${isDarkMode ? 'rgba(39,174,96,0.2)' : '#e6fffa'}; padding: ${isMobile ? '5px 12px' : '8px 18px'}; border-radius: 30px; font-size: ${isMobile ? '0.7rem' : '0.85rem'}; color: ${textColor}; display: flex; align-items: center; gap: 6px;">
+                            <i class="fab fa-whatsapp" style="color: #27ae60;"></i> WhatsApp
+                        </span>
+                        <span style="background: ${isDarkMode ? 'rgba(241,196,15,0.2)' : '#fff9e6'}; padding: ${isMobile ? '5px 12px' : '8px 18px'}; border-radius: 30px; font-size: ${isMobile ? '0.7rem' : '0.85rem'}; color: ${textColor}; display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-robot" style="color: #f1c40f;"></i> Bot Medi
+                        </span>
+                    </div>
 
-                <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <i class="fas fa-check-circle" style="font-size: 20px; color: #27ae60;"></i>
-                    <span style="color: ${subTextColor}; font-size: 0.9rem; font-weight: 500;">Soporte gratuito por Gmail, WhatsApp y Bot Medi</span>
-                </div>
+                    <div style="margin-top: ${isMobile ? '10px' : '15px'}; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+                        <i class="fas fa-check-circle" style="font-size: ${isMobile ? '0.9rem' : '20px'}; color: #27ae60;"></i>
+                        <span style="color: ${subTextColor}; font-size: ${isMobile ? '0.75rem' : '0.9rem'}; font-weight: 500; text-align: center;">Soporte gratuito por Gmail, WhatsApp y Bot Medi</span>
+                    </div>
 
-                <div style="margin-top: 15px;">
-                    <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: all 0.3s; width: 100%;" 
-                            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                        Entendido
-                    </button>
+                    <div style="margin-top: ${isMobile ? '12px' : '15px'}; width: 100%; display: flex; justify-content: center;">
+                        <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: ${isMobile ? '10px 30px' : '12px 40px'}; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: ${isMobile ? '0.9rem' : '1rem'}; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: all 0.3s; width: ${isMobile ? '100%' : 'auto'};" 
+                                onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            Entendido
+                        </button>
+                    </div>
                 </div>
             </div>
         `,
         showCloseButton: true,
         showConfirmButton: false,
         customClass: { 
-            popup: 'swal-popup-redondo',
+            popup: 'swal-soporte-popup',
             closeButton: 'custom-close-btn-left'
+        },
+        didOpen: () => {
+            // Forzar centrado en móvil con JavaScript directo
+            if (isMobile) {
+                // Esperar un momento para que SweetAlert renderice
+                setTimeout(() => {
+                    // Obtener el popup
+                    const popup = document.querySelector('.swal-soporte-popup');
+                    if (popup) {
+                        // Forzar estilos para centrar y agregar más borde
+                        popup.style.position = 'fixed';
+                        popup.style.top = '50%';
+                        popup.style.left = '50%';
+                        popup.style.transform = 'translate(-50%, -50%)';
+                        popup.style.margin = '0';
+                        popup.style.width = '92%';
+                        popup.style.maxWidth = '420px';
+                        popup.style.maxHeight = '90vh';
+                        popup.style.display = 'flex';
+                        popup.style.alignItems = 'center';
+                        popup.style.justifyContent = 'center';
+                        popup.style.overflow = 'hidden';
+                        popup.style.padding = '1.5rem 1rem';
+                        popup.style.borderRadius = '20px';
+                        popup.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)';
+                    }
+                    
+                    // Obtener el contenedor HTML
+                    const htmlContainer = document.querySelector('.swal-soporte-popup .swal2-html-container');
+                    if (htmlContainer) {
+                        htmlContainer.style.display = 'flex';
+                        htmlContainer.style.justifyContent = 'center';
+                        htmlContainer.style.alignItems = 'center';
+                        htmlContainer.style.width = '100%';
+                        htmlContainer.style.padding = '0';
+                        htmlContainer.style.margin = '0';
+                        htmlContainer.style.overflow = 'hidden';
+                        htmlContainer.style.maxHeight = '90vh';
+                    }
+                    
+                    // Obtener el contenedor de contenido
+                    const contentDiv = document.querySelector('.swal-soporte-popup .swal2-html-container > div');
+                    if (contentDiv) {
+                        contentDiv.style.width = '100%';
+                        contentDiv.style.display = 'flex';
+                        contentDiv.style.flexDirection = 'column';
+                        contentDiv.style.alignItems = 'center';
+                        contentDiv.style.margin = '0 auto';
+                    }
+                }, 50);
+            } else {
+                // Para PC también agregar más padding
+                const popup = document.querySelector('.swal-soporte-popup');
+                if (popup) {
+                    popup.style.padding = '2rem';
+                    popup.style.borderRadius = '24px';
+                    popup.style.boxShadow = '0 20px 60px rgba(0,0,0,0.25)';
+                }
+            }
         }
     });
 }
 
+// CSS específico mejorado con más borde
+(function addSoporteMobileStyles() {
+    if (document.getElementById('swal-soporte-mobile-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'swal-soporte-mobile-styles';
+    style.textContent = `
+        .swal-soporte-scroll::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        .swal-soporte-scroll {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+        
+        /* Forzar centrado y más borde en móvil */
+        @media (max-width: 768px) {
+            .swal-soporte-popup.swal2-popup {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                margin: 0 !important;
+                width: 92% !important;
+                max-width: 420px !important;
+                max-height: 90vh !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 1.5rem 1rem !important;
+                border-radius: 20px !important;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .swal-soporte-popup .swal2-html-container {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-height: 90vh !important;
+                overflow: hidden !important;
+            }
+            
+            .swal-soporte-popup .swal2-html-container > div {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+            }
+            
+            /* Botón de cerrar más grande */
+            .swal-soporte-popup .swal2-close {
+                font-size: 2.5rem !important;
+                padding: 0.8rem !important;
+                margin: 0.5rem !important;
+            }
+        }
+        
+        /* Estilos para PC también */
+        .swal-soporte-popup.swal2-popup {
+            padding: 2rem !important;
+            border-radius: 24px !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25) !important;
+        }
+    `;
+    document.head.appendChild(style);
+})();
 // ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
 window.mostrarSoporte = mostrarSoporte;
 // ⬇️ FUNCIÓN PARA ABRIR WHATSAPP DIRECTO (APP O WEB) ⬇️
@@ -748,11 +899,14 @@ function abrirWhatsAppDirecto() {
 // ⬇️ EXPONER FUNCIONES GLOBALMENTE ⬇️
 window.mostrarSoporte = mostrarSoporte;
 window.abrirWhatsAppDirecto = abrirWhatsAppDirecto;
-    // ===== FUNCIÓN MOSTRAR MISIÓN =====
+ // ===== FUNCIÓN MOSTRAR MISIÓN =====
 window.mostrarMision = function() {
     // Detectar modo oscuro
     const isDarkMode = document.body.classList.contains('dark-mode') || 
                        localStorage.getItem('theme') === 'dark';
+    
+    // Detectar si es móvil
+    const isMobile = window.innerWidth <= 768;
     
     // Colores según modo
     const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
@@ -765,49 +919,91 @@ window.mostrarMision = function() {
     Swal.fire({
         title: '',
         background: bgColor,
+        width: isMobile ? '92%' : undefined,
+        maxWidth: isMobile ? '420px' : undefined,
+        padding: isMobile ? '1rem' : undefined,
         html: `
-            <div style="text-align: center; padding: 5px;">
-                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+            <div style="text-align: center; padding: ${isMobile ? '0px' : '5px'};">
+                <div style="display: flex; justify-content: center; margin-top: ${isMobile ? '0px' : '5px'}; margin-bottom: ${isMobile ? '12px' : '15px'};">
+                    <div style="width: ${isMobile ? '70px' : '80px'}; height: ${isMobile ? '70px' : '80px'}; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: ${isMobile ? '5px' : '5px'}; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
                         <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
                             <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>
                 </div>
 
-                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">Nuestra Misión</h2>
+                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: ${isMobile ? '8px' : '8px'}; font-size: ${isMobile ? '1.4rem' : '1.6rem'};">
+                    Nuestra Misión
+                </h2>
                 
-                <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 30px; border: 2px solid ${borderColor}; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
-                    <p style="color: ${textColor}; font-size: 1rem; line-height: 1.8; text-align: center;">
-                        <i class="fas fa-quote-left" style="color: #9b59b6; font-size: 1.2rem;"></i>
+                <div style="text-align: left; background: ${cardBg}; padding: ${isMobile ? '18px' : '20px'}; border-radius: ${isMobile ? '25px' : '30px'}; border: 2px solid ${borderColor}; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                    <p style="color: ${textColor}; font-size: ${isMobile ? '0.95rem' : '1rem'}; line-height: ${isMobile ? '1.7' : '1.8'}; text-align: center;">
+                        <i class="fas fa-quote-left" style="color: #9b59b6; font-size: ${isMobile ? '1.1rem' : '1.2rem'};"></i>
                         Esta página web está hecha para ayudarte en conocimiento en temas
                         que nos ayudan a <strong style="color: #9b59b6;">crecer como persona</strong>
                         en esta vida y ser <strong style="color: #9b59b6;">mejores cada día</strong>.
                     </p>
                     
-                    <div style="background: ${cardBg2}; padding: 15px; border-radius: 20px; margin: 15px 0; border-left: 5px solid #9b59b6;">
-                        <p style="color: ${textColor}; font-size: 1rem; font-weight: 500; text-align: center; margin: 0;">
+                    <div style="background: ${cardBg2}; padding: ${isMobile ? '14px' : '15px'}; border-radius: ${isMobile ? '18px' : '20px'}; margin: ${isMobile ? '14px 0' : '15px 0'}; border-left: 5px solid #9b59b6;">
+                        <p style="color: ${textColor}; font-size: ${isMobile ? '0.95rem' : '1rem'}; font-weight: 500; text-align: center; margin: 0;">
                             🌱 <strong>Crecemos juntos, un tema a la vez</strong>
                         </p>
                     </div>
                 </div>
                 
-                <div style="margin-top: 20px; display: flex; justify-content: center;">
-                    <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 1rem; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: 0.3s;">
+                <div style="margin-top: ${isMobile ? '18px' : '20px'}; display: flex; justify-content: center;">
+                    <button onclick="Swal.close()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: ${isMobile ? '12px 35px' : '12px 40px'}; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: ${isMobile ? '0.95rem' : '1rem'}; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); transition: 0.3s;">
                         ✨ Entendido
                     </button>
                 </div>
-                <p style="margin-top: 15px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic;">"El conocimiento es el primer paso hacia la transformación."</p>
+                <p style="margin-top: ${isMobile ? '14px' : '15px'}; font-size: ${isMobile ? '0.75rem' : '0.8rem'}; color: ${subTextColor}; font-style: italic;">"El conocimiento es el primer paso hacia la transformación."</p>
             </div>
         `,
         showCloseButton: true,
         showConfirmButton: false,
         customClass: { 
-            popup: 'swal-popup-redondo',
+            popup: 'swal-popup-redondo swal-mision-popup',
             closeButton: 'custom-close-btn-left'
+        },
+        didOpen: () => {
+            // Forzar centrado en móvil
+            if (isMobile) {
+                const popup = document.querySelector('.swal-mision-popup');
+                if (popup) {
+                    popup.style.margin = '0 auto';
+                    popup.style.left = '50%';
+                    popup.style.transform = 'translateX(-50%)';
+                    popup.style.position = 'fixed';
+                    popup.style.top = '50%';
+                    popup.style.transform = 'translate(-50%, -50%)';
+                }
+            }
         }
     });
 };
+
+// CSS específico para centrar en móvil
+(function addMisionMobileStyles() {
+    if (document.getElementById('swal-mision-mobile-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'swal-mision-mobile-styles';
+    style.textContent = `
+        @media (max-width: 768px) {
+            .swal-mision-popup {
+                width: 92% !important;
+                max-width: 420px !important;
+                margin: 0 auto !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                position: fixed !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+})();
     function mostrarNovedades(userId) {
         Swal.fire({
             title: '🚀 ¡Nuevas Actualizaciones!',

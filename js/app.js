@@ -864,7 +864,7 @@ function mostrarSoporte() {
                 margin: 0.5rem !important;
             }
         }
-            
+
         
         /* Estilos para PC también */
         .swal-soporte-popup.swal2-popup {
@@ -1035,6 +1035,9 @@ window.mostrarMision = function() {
     const isDarkMode = document.body.classList.contains('dark-mode') || 
                        localStorage.getItem('theme') === 'dark';
     
+    // Detectar si es móvil
+    const isMobile = window.innerWidth <= 768;
+    
     // Colores según modo
     const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
     const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
@@ -1045,76 +1048,222 @@ window.mostrarMision = function() {
     Swal.fire({
         title: '',
         background: bgColor,
+        width: isMobile ? '92%' : undefined,
+        maxWidth: isMobile ? '420px' : undefined,
+        padding: isMobile ? '1.5rem 1rem' : '2rem',
+        position: 'center',
         html: `
-            <div style="text-align: center; padding: 5px;">
-                <!-- Círculo con imagen - Con margen superior reducido -->
-                <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
-                    <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
-                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
-                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                    </div>
-                </div>
-
-                <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: 8px;">¿Qué puedes hacer aquí?</h2>
-                <p style="color: #9b59b6; font-weight: 600; margin-bottom: 20px;">Tu espacio de crecimiento personal 🌿</p>
-                
-                <div style="text-align: left; background: ${cardBg}; padding: 20px; border-radius: 30px; border: 2px solid ${borderColor}; box-shadow: 0 5px 20px rgba(0,0,0,0.05); max-height: 300px; overflow-y: auto;">
-                    <div style="margin-bottom: 20px;">
-                        <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible sin cuenta</h4>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-th-list" style="color: #27ae60; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;">Ver todas las <strong>categorías</strong> y sus reflexiones.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Buscar</strong> temas de inspiración libremente.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="background: #eaf6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-images" style="color: #3498db; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;">Explorar la <strong>galería</strong> de imágenes reflexivas.</p>
+            <div style="text-align: center; padding: 0; max-height: 85vh; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; margin: 0 auto;">
+                <style>
+                    .swal-invitacion-scroll::-webkit-scrollbar {
+                        display: none;
+                        width: 0;
+                        height: 0;
+                    }
+                </style>
+                <div class="swal-invitacion-scroll" style="padding: 0; width: 100%; max-width: 100%; display: flex; flex-direction: column; align-items: center; margin: 0 auto;">
+                    <!-- Círculo con imagen -->
+                    <div style="display: flex; justify-content: center; margin-top: ${isMobile ? '5px' : '10px'}; margin-bottom: ${isMobile ? '15px' : '20px'}; width: 100%;">
+                        <div style="width: ${isMobile ? '75px' : '90px'}; height: ${isMobile ? '75px' : '90px'}; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2); flex-shrink: 0;">
+                            <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Solo con cuenta</h4>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #f39c12; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Gana Estrellas:</strong> Avanza en el sistema y desbloquea nuevos niveles.</p>
+                    <h2 style="color: ${textColor}; font-weight: 800; margin-bottom: ${isMobile ? '6px' : '8px'}; width: 100%; text-align: center; font-size: ${isMobile ? '1.4rem' : '1.8rem'};">
+                        ¿Qué puedes hacer aquí?
+                    </h2>
+                    <p style="color: #9b59b6; font-weight: 600; margin-bottom: ${isMobile ? '15px' : '20px'}; text-align: center; font-size: ${isMobile ? '0.95rem' : '1rem'};">
+                        Tu espacio de crecimiento personal 🌿
+                    </p>
+                    
+                    <div style="text-align: left; background: ${cardBg}; padding: ${isMobile ? '16px' : '20px'}; border-radius: 30px; border: 2px solid ${borderColor}; box-shadow: 0 5px 20px rgba(0,0,0,0.05); max-height: 300px; overflow-y: auto; width: 100%; box-sizing: border-box;">
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #27ae60; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-check-circle"></i> Disponible sin cuenta</h4>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
+                                <div style="background: #e6fffa; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-th-list" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;">Ver todas las <strong>categorías</strong> y sus reflexiones.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
+                                <div style="background: #f0e6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-search" style="color: #9b59b6; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;"><strong>Buscar</strong> temas de inspiración libremente.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                                <div style="background: #eaf6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-images" style="color: #3498db; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;">Explorar la <strong>galería</strong> de imágenes reflexivas.</p>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Completar logros:</strong> Desbloquea trofeos y medallas.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <div style="background: #e8f8f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-book" style="color: #1abc9c; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Diario Personal:</strong> Guarda tus pensamientos en un espacio privado.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #e84393; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Calificar</strong> y dar like a las reflexiones.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60; font-size: 0.8rem;"></i></div>
-                            <p style="margin: 0; color: ${textColor}; font-size: 0.9rem;"><strong>Comunidad:</strong> Comparte y participa con otros usuarios.</p>
+
+                        <div>
+                            <h4 style="color: #e67e22; font-size: 0.85rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-lock"></i> Solo con cuenta</h4>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
+                                <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #f39c12; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;"><strong>Gana Estrellas:</strong> Avanza en el sistema y desbloquea nuevos niveles.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
+                                <div style="background: #fff9e6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-trophy" style="color: #f1c40f; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;"><strong>Completar logros:</strong> Desbloquea trofeos y medallas.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
+                                <div style="background: #e8f8f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-book" style="color: #1abc9c; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;"><strong>Diario Personal:</strong> Guarda tus pensamientos en un espacio privado.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
+                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-star" style="color: #e84393; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;"><strong>Calificar</strong> y dar like a las reflexiones.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                                <div style="background: #fff0f5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-users" style="color: #27ae60; font-size: 0.8rem;"></i></div>
+                                <p style="margin: 0; color: ${textColor}; font-size: ${isMobile ? '0.85rem' : '0.9rem'}; text-align: left;"><strong>Comunidad:</strong> Comparte y participa con otros usuarios.</p>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div style="margin-top: ${isMobile ? '15px' : '20px'}; width: 100%; display: flex; justify-content: center;">
+                        <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: ${isMobile ? '12px 25px' : '14px 30px'}; border-radius: 50px; font-weight: 700; cursor: pointer; width: ${isMobile ? '100%' : '100%'}; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); font-size: ${isMobile ? '0.95rem' : '1rem'}; transition: 0.3s;">✨ ¡Crear cuenta y desbloquear todo!</button>
+                    </div>
+                    <p style="margin-top: ${isMobile ? '10px' : '12px'}; font-size: ${isMobile ? '0.75rem' : '0.8rem'}; color: ${subTextColor}; font-style: italic; text-align: center; width: 100%;">"La paz interior es el mejor regalo que te puedes dar hoy."</p>
                 </div>
-                
-                <div style="margin-top: 20px;">
-                    <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 14px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3); font-size: 1rem; transition: 0.3s;">✨ ¡Crear cuenta y desbloquear todo!</button>
-                </div>
-                <p style="margin-top: 12px; font-size: 0.8rem; color: ${subTextColor}; font-style: italic;">"La paz interior es el mejor regalo que te puedes dar hoy."</p>
             </div>
         `,
         showConfirmButton: false,
         showCloseButton: true,
         customClass: { 
-            popup: 'swal-popup-redondo',
+            popup: 'swal-invitacion-popup',
             closeButton: 'custom-close-btn-left'
+        },
+        didOpen: () => {
+            // Forzar centrado en móvil con JavaScript directo
+            if (isMobile) {
+                setTimeout(() => {
+                    const popup = document.querySelector('.swal-invitacion-popup');
+                    if (popup) {
+                        popup.style.position = 'fixed';
+                        popup.style.top = '50%';
+                        popup.style.left = '50%';
+                        popup.style.transform = 'translate(-50%, -50%)';
+                        popup.style.margin = '0';
+                        popup.style.width = '92%';
+                        popup.style.maxWidth = '420px';
+                        popup.style.maxHeight = '90vh';
+                        popup.style.display = 'flex';
+                        popup.style.alignItems = 'center';
+                        popup.style.justifyContent = 'center';
+                        popup.style.overflow = 'hidden';
+                        popup.style.padding = '1.5rem 1rem';
+                        popup.style.borderRadius = '20px';
+                        popup.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)';
+                    }
+                    
+                    const htmlContainer = document.querySelector('.swal-invitacion-popup .swal2-html-container');
+                    if (htmlContainer) {
+                        htmlContainer.style.display = 'flex';
+                        htmlContainer.style.justifyContent = 'center';
+                        htmlContainer.style.alignItems = 'center';
+                        htmlContainer.style.width = '100%';
+                        htmlContainer.style.padding = '0';
+                        htmlContainer.style.margin = '0';
+                        htmlContainer.style.overflow = 'hidden';
+                        htmlContainer.style.maxHeight = '90vh';
+                    }
+                    
+                    const contentDiv = document.querySelector('.swal-invitacion-popup .swal2-html-container > div');
+                    if (contentDiv) {
+                        contentDiv.style.width = '100%';
+                        contentDiv.style.display = 'flex';
+                        contentDiv.style.flexDirection = 'column';
+                        contentDiv.style.alignItems = 'center';
+                        contentDiv.style.margin = '0 auto';
+                    }
+                }, 50);
+            } else {
+                // Para PC también agregar más padding
+                const popup = document.querySelector('.swal-invitacion-popup');
+                if (popup) {
+                    popup.style.padding = '2rem';
+                    popup.style.borderRadius = '24px';
+                    popup.style.boxShadow = '0 20px 60px rgba(0,0,0,0.25)';
+                }
+            }
         }
     });
 }
+
+// CSS específico para invitación con más borde
+(function addInvitacionMobileStyles() {
+    if (document.getElementById('swal-invitacion-mobile-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'swal-invitacion-mobile-styles';
+    style.textContent = `
+        .swal-invitacion-scroll::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        .swal-invitacion-scroll {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+        
+        /* Forzar centrado y más borde en móvil */
+        @media (max-width: 768px) {
+            .swal-invitacion-popup.swal2-popup {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                margin: 0 !important;
+                width: 92% !important;
+                max-width: 420px !important;
+                max-height: 90vh !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 1.5rem 1rem !important;
+                border-radius: 20px !important;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .swal-invitacion-popup .swal2-html-container {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-height: 90vh !important;
+                overflow: hidden !important;
+            }
+            
+            .swal-invitacion-popup .swal2-html-container > div {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+            }
+            
+            .swal-invitacion-popup .swal2-close {
+                font-size: 2.5rem !important;
+                padding: 0.8rem !important;
+                margin: 0.5rem !important;
+            }
+        }
+        
+        /* Estilos para PC también */
+        .swal-invitacion-popup.swal2-popup {
+            padding: 2rem !important;
+            border-radius: 24px !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25) !important;
+        }
+    `;
+    document.head.appendChild(style);
+})();
 
 // ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
 window.mostrarInvitacionRegistro = mostrarInvitacionRegistro;

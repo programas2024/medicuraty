@@ -864,6 +864,7 @@ function mostrarSoporte() {
                 margin: 0.5rem !important;
             }
         }
+            
         
         /* Estilos para PC también */
         .swal-soporte-popup.swal2-popup {

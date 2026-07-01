@@ -21,7 +21,7 @@
 
 | 🖼️ Galería de Imágenes Comunitaria |
 | :---: |
-| ![Galería Comunitaria](.\imganes\galeria.png) |
+| ![Galería Comunitaria](./imganes/galeria.png) |
 
 ---
 

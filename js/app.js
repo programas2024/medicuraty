@@ -1631,7 +1631,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             tamañoNombre = '2rem';
             tamañoMarco = '160px';
             tamañoAvatar = '85px';
-            imagenMarco = 'imganes/marco2.png';
+            imagenMarco = 'imganes/marco3.png';
             marcoAvatar = `
                 position: absolute;
                 top: 50%;

@@ -1500,7 +1500,437 @@ window.obtenerTituloPorEstrellas = obtenerTituloPorEstrellas;
     document.getElementById('btnAgradecimientos')?.addEventListener('click', window.mostrarAgradecimientos);
     
 
+// ================================================
+// VARIABLES GLOBALES (DECLARAR AL INICIO)
+// ================================================
+window.totalEstrellas = 0;
+window.totalPublicaciones = 0;
+window.userIdGlobal = null;
+
+// ================================================
+// FUNCIÓN PARA OBTENER ESTRELLAS DEL USUARIO DESDE TABLA LOGROS
+// ================================================
+window.obtenerEstrellasUsuario = async function(userId) {
+    try {
+        console.log('🔍 Buscando estrellas para usuario:', userId);
+        
+        // Obtener los logros del usuario desde la tabla 'logros'
+        const { data: logrosData, error: logrosError } = await supabaseClient
+            .from('logros')
+            .select('*')
+            .eq('usuario_id', userId)
+            .maybeSingle();
+        
+        if (logrosError) {
+            console.error('❌ Error al obtener logros:', logrosError);
+            return [];
+        }
+        
+        if (!logrosData) {
+            console.log('⚠️ No se encontraron logros para el usuario');
+            return [];
+        }
+        
+        // Lista de todos los logros posibles (keys que representan logros)
+        const keysLogros = [
+            'cambio_nombre',
+            'cambio_genero',
+            'completado_perfil',
+            'primera_publicacion',
+            'cinco_publicaciones',
+            'primera_reflexion',
+            'cinco_reflexiones',
+            'diez_reflexiones',
+            'reflexion_emocion'
+        ];
+        
+        // Filtrar solo los logros que están en true (completados)
+        const estrellas = keysLogros.filter(key => logrosData[key] === true);
+        
+        console.log('⭐ Estrellas encontradas:', estrellas.length, estrellas);
+        return estrellas;
+        
+    } catch (error) {
+        console.error('❌ Error al obtener estrellas:', error);
+        return [];
+    }
+};
+
+// ================================================
+// FUNCIÓN PARA CONTAR PUBLICACIONES DEL USUARIO
+// ================================================
+window.contarPublicacionesUsuario = async function(userId) {
+    try {
+        const { count, error } = await supabaseClient
+            .from('publicaciones')
+            .select('*', { count: 'exact', head: true })
+            .eq('usuario_id', userId);
+        
+        if (error) {
+            console.error('❌ Error al contar publicaciones:', error);
+            return 0;
+        }
+        
+        console.log('📊 Publicaciones encontradas:', count || 0);
+        return count || 0;
+        
+    } catch (error) {
+        console.error('❌ Excepción al contar publicaciones:', error);
+        return 0;
+    }
+};
+
+// ================================================
+// FUNCIÓN PARA VERIFICAR Y GUARDAR LOGROS
+// ================================================
+async function verificarLogros(userId) {
+    try {
+        console.log('🔍 Verificando logros para usuario:', userId);
+        
+        // Obtener datos del usuario
+        const { data: userData } = await supabaseClient
+            .from('usuarios')
+            .select('nombre, genero_id')
+            .eq('id', userId)
+            .single();
+
+        const tieneNombre = userData && userData.nombre && userData.nombre !== 'Amigo' && userData.nombre !== 'No definido';
+        const tieneGenero = userData && userData.genero_id !== null;
+
+        // Contar publicaciones
+        const { count: countPublicaciones } = await supabaseClient
+            .from('publicaciones')
+            .select('*', { count: 'exact', head: true })
+            .eq('usuario_id', userId);
+
+        // Contar reflexiones (diario)
+        const { count: countReflexiones } = await supabaseClient
+            .from('diarios')
+            .select('*', { count: 'exact', head: true })
+            .eq('usuario_id', userId);
+
+        // Verificar reflexión con emoción
+        const { data: reflexionesConEmocion } = await supabaseClient
+            .from('diarios')
+            .select('id')
+            .eq('usuario_id', userId)
+            .not('emocion', 'is', null)
+            .limit(1);
+
+        const tieneReflexionConEmocion = reflexionesConEmocion && reflexionesConEmocion.length > 0;
+
+        // Construir objeto de logros
+        const logros = {
+            cambio_nombre: tieneNombre,
+            cambio_genero: tieneGenero,
+            completado_perfil: tieneNombre && tieneGenero,
+            primera_publicacion: countPublicaciones >= 1,
+            cinco_publicaciones: countPublicaciones >= 5,
+            primera_reflexion: countReflexiones >= 1,
+            cinco_reflexiones: countReflexiones >= 5,
+            diez_reflexiones: countReflexiones >= 10,
+            reflexion_emocion: tieneReflexionConEmocion
+        };
+
+        console.log('📊 Logros verificados:', logros);
+
+        // Guardar o actualizar en la tabla logros
+        const { error } = await supabaseClient
+            .from('logros')
+            .upsert({
+                usuario_id: userId,
+                ...logros,
+                actualizado_en: new Date().toISOString()
+            });
+
+        if (error) {
+            console.error('❌ Error al guardar logros:', error);
+        } else {
+            console.log('✅ Logros guardados correctamente');
+        }
+
+        return logros;
+
+    } catch (error) {
+        console.error('❌ Error en verificarLogros:', error);
+        return null;
+    }
+}
+
+// ================================================
+// FUNCIÓN PARA RECLAMAR LOGRO (DAR ESTRELLA)
+// ================================================
+async function reclamarLogro(userId, logroKey, logroTexto) {
+    try {
+        // Primero verificar si el logro está completado
+        const { data: logrosData, error: logrosError } = await supabaseClient
+            .from('logros')
+            .select(logroKey)
+            .eq('usuario_id', userId)
+            .maybeSingle();
+
+        if (logrosError) throw logrosError;
+
+        if (!logrosData || logrosData[logroKey] !== true) {
+            Swal.fire({
+                title: '⚠️ Logro no completado',
+                text: `Aún no has completado el logro: "${logroTexto}"`,
+                icon: 'info',
+                confirmButtonColor: '#9b59b6',
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+            return false;
+        }
+
+        // Verificar si ya fue reclamado (usando tabla reclamos)
+        const { data: existe, error: checkError } = await supabaseClient
+            .from('reclamos')
+            .select('id')
+            .eq('usuario_id', userId)
+            .eq('logro_key', logroKey)
+            .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        if (existe) {
+            Swal.fire({
+                title: '⭐ Ya reclamaste esta estrella',
+                text: `Ya reclamaste la estrella por "${logroTexto}"`,
+                icon: 'info',
+                confirmButtonColor: '#9b59b6',
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+            return false;
+        }
+
+        // Reclamar el logro (guardar en reclamos)
+        const { error: insertError } = await supabaseClient
+            .from('reclamos')
+            .insert({
+                usuario_id: userId,
+                logro_key: logroKey
+            });
+
+        if (insertError) {
+            if (insertError.code === '42501') {
+                Swal.fire({
+                    title: '⚠️ Error de permisos',
+                    text: 'No se pudo reclamar la estrella. Contacta al administrador.',
+                    icon: 'error',
+                    confirmButtonColor: '#ff7675',
+                    customClass: { popup: 'swal-popup-redondo' }
+                });
+                return false;
+            }
+            throw insertError;
+        }
+
+        // Éxito - mostrar confeti y estrella
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 80,
+                spread: 60,
+                origin: { y: 0.6 },
+                colors: ['#f1c40f', '#ffd700', '#9b59b6']
+            });
+        }
+
+        // Actualizar contador de estrellas global
+        const estrellasActuales = await window.obtenerEstrellasUsuario(userId);
+        window.totalEstrellas = estrellasActuales.length;
+
+        Swal.fire({
+            title: '⭐ ¡Estrella Reclamada!',
+            html: `
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 4rem; margin-bottom: 10px;">⭐</div>
+                    <p style="color: #2c1b4e; font-weight: 600;">¡Has ganado una estrella por:</p>
+                    <p style="color: #9b59b6; font-weight: 800; font-size: 1.1rem;">"${logroTexto}"</p>
+                    <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 10px;">Sigue así, cada logro cuenta 🌟</p>
+                </div>
+            `,
+            icon: 'success',
+            timer: 2500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+
+        // Sonido de logro
+        if (window.achievementSound) {
+            window.achievementSound.currentTime = 0;
+            window.achievementSound.play().catch(() => {});
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error('❌ Error al reclamar logro:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'No pudimos reclamar tu estrella. Intenta de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#ff7675',
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+        return false;
+    }
+}
+
+// ================================================
+// FUNCIÓN PARA MOSTRAR MARCOS EN SWEETALERT
+// ================================================
+window.mostrarMarcosSweetAlert = async function() {
+    console.log('📊 ABRIENDO MARCOS - Estrellas:', window.totalEstrellas, 'Publicaciones:', window.totalPublicaciones);
+    
+    // Si no hay datos, recargar del usuario actual
+    if (window.totalEstrellas === 0 && window.totalPublicaciones === 0 && window.userIdGlobal) {
+        console.log('🔄 Recargando datos del usuario...');
+        const estrellas = await window.obtenerEstrellasUsuario(window.userIdGlobal);
+        const publicaciones = await window.contarPublicacionesUsuario(window.userIdGlobal);
+        window.totalEstrellas = estrellas.length;
+        window.totalPublicaciones = publicaciones;
+        console.log('🔄 Datos recargados - Estrellas:', window.totalEstrellas, 'Publicaciones:', window.totalPublicaciones);
+    }
+    
+    // Definir los marcos disponibles
+    const marcosDisponibles = [
+        {
+            id: 'marco_base',
+            nombre: 'Marco Base',
+            imagen: 'imganes/marco.png',
+            estrellasRequeridas: 0,
+            publicacionesRequeridas: 0,
+            descripcion: 'Marco inicial para todos los usuarios'
+        },
+        {
+            id: 'marco_nivel1',
+            nombre: 'Marco Bronce',
+            imagen: 'imganes/marco1.png',
+            estrellasRequeridas: 3,
+            publicacionesRequeridas: 0,
+            descripcion: 'Alcanza 3 estrellas'
+        },
+        {
+            id: 'marco_nivel2',
+            nombre: 'Marco Plata',
+            imagen: 'imganes/marco2.png',
+            estrellasRequeridas: 5,
+            publicacionesRequeridas: 0,
+            descripcion: 'Alcanza 5 estrellas'
+        },
+        {
+            id: 'marco_nivel3',
+            nombre: 'Marco Oro',
+            imagen: 'imganes/marco3.png',
+            estrellasRequeridas: 9,
+            publicacionesRequeridas: 0,
+            descripcion: 'Alcanza 9 estrellas'
+        },
+        {
+            id: 'marco_comunidad',
+            nombre: '🌟 Marco Comunidad',
+            imagen: 'imganes/comunidad.png',
+            estrellasRequeridas: 0,
+            publicacionesRequeridas: 10,
+            descripcion: '¡Haz 10 publicaciones en la comunidad!'
+        }
+    ];
+
+    // Obtener datos del usuario desde las variables globales
+    const estrellasUsuario = window.totalEstrellas || 0;
+    const publicacionesUsuario = window.totalPublicaciones || 0;
+
+    console.log('📊 DATOS FINALES - Estrellas:', estrellasUsuario, 'Publicaciones:', publicacionesUsuario);
+
+    // Generar HTML para cada marco
+    let marcosHtml = '';
+    marcosDisponibles.forEach(marco => {
+        const cumpleEstrellas = estrellasUsuario >= marco.estrellasRequeridas;
+        const cumplePublicaciones = publicacionesUsuario >= marco.publicacionesRequeridas;
+        
+        const desbloqueado = (marco.estrellasRequeridas === 0 && marco.publicacionesRequeridas === 0) 
+            ? true 
+            : cumpleEstrellas && cumplePublicaciones;
+        
+        const claseEstado = desbloqueado ? 'desbloqueado' : 'bloqueado';
+        
+        let textoEstado = '';
+        if (marco.publicacionesRequeridas > 0) {
+            textoEstado = desbloqueado 
+                ? '✅ Desbloqueado' 
+                : `🔒 Requiere ${marco.publicacionesRequeridas} publicaciones (tienes ${publicacionesUsuario})`;
+        } else if (marco.estrellasRequeridas > 0) {
+            textoEstado = desbloqueado 
+                ? '✅ Desbloqueado' 
+                : `🔒 Requiere ${marco.estrellasRequeridas} ⭐ (tienes ${estrellasUsuario})`;
+        } else {
+            textoEstado = '✅ Siempre disponible';
+        }
+        
+        const claseTextoEstado = desbloqueado ? 'desbloqueado-text' : 'bloqueado-text';
+
+        marcosHtml += `
+            <div class="marco-item ${claseEstado}">
+                <img src="${marco.imagen}" alt="${marco.nombre}" loading="lazy" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect width=%22120%22 height=%22120%22 fill=%22%23333%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23fff%22 font-size=%2214%22%3EMarco%3C/text%3E%3C/svg%3E'">
+                <span class="nombre-marco">${marco.nombre}</span>
+                <span class="estado-marco ${claseTextoEstado}">${textoEstado}</span>
+                <small style="display:block; font-size:0.65rem; color:#7f8c8d; margin-top:4px;">${marco.descripcion}</small>
+                ${desbloqueado ? `<span style="font-size:1.2rem; margin-top:4px; display:block;">${marco.id === 'marco_comunidad' ? '🌟' : '👑'}</span>` : ''}
+            </div>
+        `;
+    });
+
+    // Mostrar SweetAlert con los marcos
+    Swal.fire({
+        title: '🏆 Todos los Marcos',
+        html: `
+            <div style="max-height: 500px; overflow-y: auto; padding: 5px;">
+                <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <p style="color: #b0a4e3; font-size: 0.9rem; margin: 0;">
+                        <i class="fas fa-star" style="color: #ffd700;"></i> 
+                        Tus estrellas: ${'⭐'.repeat(Math.min(estrellasUsuario, 10))} (${estrellasUsuario})
+                    </p>
+                    <p style="color: #b0a4e3; font-size: 0.9rem; margin: 0;">
+                        <i class="fas fa-users" style="color: #9b59b6;"></i> 
+                        Tus publicaciones: ${publicacionesUsuario}
+                    </p>
+                </div>
+                <div class="marcos-grid">
+                    ${marcosHtml}
+                </div>
+                <p style="color: #7f8c8d; font-size: 0.75rem; margin-top: 15px; font-style: italic;">
+                    <i class="fas fa-info-circle"></i> 
+                    ${publicacionesUsuario >= 10 ? '🎉 ¡Felicidades! Has desbloqueado el Marco Comunidad.' : 'Comparte más en la comunidad para desbloquear el marco especial.'}
+                </p>
+            </div>
+        `,
+        showConfirmButton: true,
+        confirmButtonColor: '#ffd700',
+        confirmButtonText: 'Cerrar',
+        customClass: {
+            popup: 'swal-popup-redondo'
+        }
+    });
+};
+
+// ================================================
+// FUNCIÓN PARA RECLAMAR LOGRO DESDE MODAL
+// ================================================
+window.reclamarLogroDesdeModal = async function(logroKey, logroTexto, userId) {
+    Swal.close();
+    setTimeout(async () => {
+        const reclamado = await reclamarLogro(userId, logroKey, logroTexto);
+        if (reclamado) {
+            // Recargar el perfil
+            document.getElementById('btnPerfil')?.click();
+        }
+    }, 300);
+};
+
+// ============================================================
 // --- Lógica de Perfil de Usuario ---
+// ============================================================
 document.getElementById('btnPerfil')?.addEventListener('click', async function() {
     // ============================================================
     // MOSTRAR SWEETALERT DE CARGANDO
@@ -1592,20 +2022,45 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             console.log('No se pudo obtener el test:', e);
         }
 
-        // Verificar logros ANTES de mostrar el perfil
-        if (window.verificarLogros) {
-            await window.verificarLogros(userId);
-        }
+        // ============================================================
+        // VERIFICAR LOGROS DEL USUARIO
+        // ============================================================
+        await verificarLogros(userId);
 
-        // Obtener estrellas reclamadas
+        // ============================================================
+        // OBTENER ESTRELLAS DEL USUARIO (DESDE TABLA LOGROS)
+        // ============================================================
         let estrellasReclamadas = [];
-        if (window.obtenerEstrellasReclamadas) {
-            estrellasReclamadas = await window.obtenerEstrellasReclamadas(userId);
+        try {
+            estrellasReclamadas = await window.obtenerEstrellasUsuario(userId);
+            console.log('⭐ Estrellas obtenidas:', estrellasReclamadas.length, estrellasReclamadas);
+        } catch (e) {
+            console.error('❌ Error al obtener estrellas:', e);
         }
         const totalEstrellas = estrellasReclamadas.length;
 
+        // ============================================================
+        // CONTAR PUBLICACIONES DEL USUARIO
+        // ============================================================
+        let totalPublicaciones = 0;
+        try {
+            totalPublicaciones = await window.contarPublicacionesUsuario(userId);
+            console.log('📊 Publicaciones obtenidas:', totalPublicaciones);
+        } catch (e) {
+            console.error('❌ Error al contar publicaciones:', e);
+        }
+
         // ================================================
-        // TÍTULO, COLOR Y MARCO SEGÚN ESTRELLAS
+        // ACTUALIZAR VARIABLES GLOBALES
+        // ================================================
+        window.totalEstrellas = totalEstrellas;
+        window.totalPublicaciones = totalPublicaciones;
+        window.userIdGlobal = userId;
+
+        console.log('🌍 VARIABLES GLOBALES - Estrellas:', window.totalEstrellas, 'Publicaciones:', window.totalPublicaciones);
+
+        // ================================================
+        // TÍTULO, COLOR Y MARCO SEGÚN ESTRELLAS Y PUBLICACIONES
         // ================================================
         let tituloUsuario = '🕊️ Buscador de Paz';
         let fraseUsuario = 'Cada día es una nueva oportunidad para crecer';
@@ -1622,8 +2077,56 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         
         let estrellasVisuales = '';
         let glowEstrella = '';
-        
-        if (totalEstrellas >= 9) {
+
+        // Verificar si tiene el marco comunidad (10+ publicaciones)
+        const tieneMarcoComunidad = totalPublicaciones >= 10;
+        console.log('🎯 ¿Tiene marco comunidad?', tieneMarcoComunidad, 'Publicaciones:', totalPublicaciones);
+
+        if (tieneMarcoComunidad) {
+            // ⭐ MARCO COMUNIDAD (prioridad máxima)
+            tituloUsuario = '🌟 Leyenda Medicurativo';
+            fraseUsuario = '✨ Iluminas el camino de los demás con tu luz';
+            colorNombre = '#ffd700';
+            colorBordePerfil = '#ffd700';
+            tamañoNombre = '2rem';
+            tamañoMarco = '160px';
+            tamañoAvatar = '85px';
+            imagenMarco = 'imganes/comunidad.png';
+            marcoAvatar = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: ${tamañoMarco};
+                height: ${tamañoMarco};
+                background: url('${imagenMarco}') no-repeat center center;
+                background-size: contain;
+                z-index: 10;
+                animation: glowMarcoPremium 2s ease-in-out infinite;
+                pointer-events: none;
+                filter: drop-shadow(0 0 30px rgba(255,215,0,0.5));
+            `;
+            decoracionAvatar = `
+                <div style="position: absolute; top: -20px; right: -20px; font-size: 2rem; animation: pulse 2s infinite; z-index: 15;">👑</div>
+            `;
+            mostrarEfecto = true;
+            efectoFondo = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden;">
+                    <div style="position: absolute; top: 10%; left: 5%; font-size: 2rem; animation: floatStar 8s ease-in-out infinite;">⭐</div>
+                    <div style="position: absolute; top: 20%; right: 10%; font-size: 1.5rem; animation: floatStar 10s ease-in-out infinite 2s;">✨</div>
+                    <div style="position: absolute; bottom: 30%; left: 8%; font-size: 1.8rem; animation: floatStar 9s ease-in-out infinite 4s;">🌟</div>
+                    <div style="position: absolute; bottom: 20%; right: 5%; font-size: 2.2rem; animation: floatStar 7s ease-in-out infinite 1s;">⭐</div>
+                </div>
+            `;
+            glowEstrella = `
+                <div style="position: relative; display: inline-block;">
+                    <div style="font-size: 6rem; animation: pulseGlow 2s ease-in-out infinite; text-shadow: 0 0 40px rgba(255,215,0,0.8), 0 0 80px rgba(255,215,0,0.4), 0 0 120px rgba(255,215,0,0.2);">
+                        ⭐
+                    </div>
+                </div>
+            `;
+            
+        } else if (totalEstrellas >= 9) {
             tituloUsuario = '🌟 Leyenda Medicurativo';
             fraseUsuario = '✨ Iluminas el camino de los demás con tu luz';
             colorNombre = '#ffd700';
@@ -1796,7 +2299,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             estrellasVisuales = '⭐';
         }
 
-        const tieneMarco = totalEstrellas > 0;
+        const tieneMarco = totalEstrellas > 0 || totalPublicaciones >= 10;
 
         let estrellasDisplay = '';
         if (totalEstrellas >= 3) {
@@ -1831,19 +2334,15 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         }
 
         // ================================================
-        // CONSTRUIR ETIQUETA DEL TEST (CORREGIDA)
+        // CONSTRUIR ETIQUETA DEL TEST
         // ================================================
         let testBadgeHtml = '';
         if (resultadoTest) {
-            // EXTRAER SOLO EL TEXTO DEL TÍTULO (sin el icono que ya está en la base de datos)
             let tituloLimpio = resultadoTest.titulo || 'Test de Personalidad';
-            // Si el título comienza con emoji, lo removemos para no duplicar
             tituloLimpio = tituloLimpio.replace(/^[^\w\s]+\s*/, '').trim();
             
-            // Usar el icono de la base de datos, si no tiene usar uno por defecto
             const iconoTest = resultadoTest.icono || '🧠';
             
-            // Colores según tipo de personalidad
             let badgeColor = '#9b59b6';
             let badgeBg = 'rgba(155, 89, 182, 0.15)';
             let borderColor = '#9b59b660';
@@ -1990,6 +2489,22 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         </div>
                     </div>
 
+                    <!-- 🆕 SECCIÓN: MARCOS -->
+                    <div class="swal-perfil-section">
+                        <div class="swal-perfil-section-header marcos" data-target="marcos-content" style="border-left-color: #ffd700;">
+                            <span><i class="fas fa-image" style="color: #ffd700;"></i> Marcos</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="swal-perfil-section-content" id="marcos-content">
+                            <button onclick="window.mostrarMarcosSweetAlert()" class="swal-perfil-btn" style="background: linear-gradient(135deg, #ffd700, #f0c000); color: #333; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">
+                                <i class="fas fa-image"></i> Ver todos los Marcos disponibles
+                            </button>
+                            <p style="font-size: 0.75rem; color: #b0a4e3; margin-top: 6px; font-style: italic;">
+                                Desbloquea marcos según tu nivel de estrellas y publicaciones
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="swal-perfil-section">
                         <div class="swal-perfil-section-header rating" data-target="rating-content">
                             <span><i class="fas fa-star"></i> Calificación de Página</span>
@@ -2053,7 +2568,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             },
             didOpen: () => {
                 const popup = document.querySelector('.swal-popup-perfil');
-                if (popup && totalEstrellas > 0) {
+                if (popup && (totalEstrellas > 0 || totalPublicaciones >= 10)) {
                     popup.style.border = `3px solid ${colorBordePerfil}`;
                     popup.style.boxShadow = `0 25px 60px ${colorBordePerfil}40, 0 0 40px ${colorBordePerfil}20`;
                 }
@@ -2085,6 +2600,62 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             filter: drop-shadow(0 0 50px rgba(255,215,0,0.9));
                             transform: translate(-50%, -50%) scale(1.05);
                         }
+                    }
+                    /* Estilos para la galería de marcos */
+                    .marcos-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                        gap: 20px;
+                        padding: 15px;
+                        margin-top: 10px;
+                    }
+                    .marco-item {
+                        background: rgba(255, 255, 255, 0.05);
+                        border-radius: 15px;
+                        padding: 15px;
+                        text-align: center;
+                        transition: all 0.3s ease;
+                        border: 2px solid transparent;
+                        cursor: default;
+                    }
+                    .marco-item:hover {
+                        transform: translateY(-5px);
+                        border-color: rgba(255, 215, 0, 0.3);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    }
+                    .marco-item.desbloqueado {
+                        border-color: #ffd700;
+                        background: rgba(255, 215, 0, 0.08);
+                    }
+                    .marco-item.bloqueado {
+                        opacity: 0.5;
+                        filter: grayscale(1);
+                    }
+                    .marco-item img {
+                        width: 100%;
+                        max-width: 120px;
+                        height: auto;
+                        border-radius: 10px;
+                        margin-bottom: 8px;
+                    }
+                    .marco-item .nombre-marco {
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                        color: #fff;
+                        display: block;
+                        margin-top: 5px;
+                    }
+                    .marco-item .estado-marco {
+                        font-size: 0.75rem;
+                        color: #b0a4e3;
+                        display: block;
+                        margin-top: 3px;
+                    }
+                    .marco-item .estado-marco.desbloqueado-text {
+                        color: #ffd700;
+                    }
+                    .marco-item .estado-marco.bloqueado-text {
+                        color: #e74c3c;
                     }
                 `;
                 document.head.appendChild(style);
@@ -2123,7 +2694,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     container.innerHTML = '<div style="text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Cargando logros...</div>';
 
                     try {
-                        const { data: logros, error } = await supabaseClient
+                        const { data: logrosData, error } = await supabaseClient
                             .from('logros')
                             .select('*')
                             .eq('usuario_id', userId)
@@ -2143,9 +2714,9 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                             { key: 'reflexion_emocion', icono: 'fa-face-smile', texto: 'Emocional', desc: 'Reflexión con emoción' }
                         ];
 
-                        let logrosData = logros;
-                        if (!logrosData) {
-                            logrosData = {
+                        let logros = logrosData;
+                        if (!logros) {
+                            logros = {
                                 cambio_nombre: false,
                                 cambio_genero: false,
                                 completado_perfil: false,
@@ -2162,7 +2733,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                         const pendientes = [];
 
                         listaLogros.forEach(logro => {
-                            if (logrosData[logro.key] === true) {
+                            if (logros[logro.key] === true) {
                                 completados.push(logro);
                             } else {
                                 pendientes.push(logro);
@@ -2406,17 +2977,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     });
                 }
 
-                // Función reclamarLogroDesdeModal
-                window.reclamarLogroDesdeModal = async function(logroKey, logroTexto, userId) {
-                    Swal.close();
-                    setTimeout(async () => {
-                        const reclamado = await window.reclamarLogro(userId, logroKey, logroTexto);
-                        if (reclamado) {
-                            document.getElementById('btnPerfil').click();
-                        }
-                    }, 300);
-                };
-
                 // Recuperar Contraseña
                 window.recuperarPassword = async function() {
                     const { value: email } = await Swal.fire({
@@ -2556,7 +3116,6 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     await supabaseClient.auth.signOut();
                     window.location.href = 'index.html';
                 });
-
             }
         });
 
@@ -2573,9 +3132,8 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
     }
 });
 
-
 // ============================================================
-// EDITAR NOMBRE - SWEETALERT MEJORADO
+// FUNCIONES DE EDICIÓN (Nombre y Género)
 // ============================================================
 window.editarNombre = async function() {
     const isDarkMode = document.body.classList.contains('dark-mode');
@@ -2584,7 +3142,6 @@ window.editarNombre = async function() {
     const inputBg = isDarkMode ? '#252525' : '#fdfaff';
     const inputBorder = isDarkMode ? '#3a3a3a' : '#e8d9ff';
     
-    // Obtener nombre actual
     const { data: { session } } = await supabaseClient.auth.getSession();
     const nombreActual = session?.user?.user_metadata?.nombre || '';
     
@@ -2632,14 +3189,7 @@ window.editarNombre = async function() {
                     </div>
                 </div>
                 
-                <div id="nombre-error" style="
-                    display: none;
-                    color: #e74c3c;
-                    font-size: 0.85rem;
-                    margin-top: 10px;
-                    text-align: left;
-                    padding-left: 5px;
-                ">
+                <div id="nombre-error" style="display: none; color: #e74c3c; font-size: 0.85rem; margin-top: 10px; text-align: left; padding-left: 5px;">
                     <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
                     <span id="nombre-error-message">El nombre no puede estar vacío</span>
                 </div>
@@ -2702,9 +3252,6 @@ window.editarNombre = async function() {
     });
 
     if (nuevoNombre) {
-        // ============================================================
-        // MOSTRAR SWEETALERT DE ACTUALIZANDO
-        // ============================================================
         const loadingBg = isDarkMode ? '#1a1a2e' : '#fdfaff';
         const loadingText = isDarkMode ? '#ffffff' : '#2c1b4e';
         
@@ -2726,12 +3273,6 @@ window.editarNombre = async function() {
                     <p style="color: #9b59b6; font-size: 0.8rem; margin-top: 4px; font-weight: 500;">
                         <i class="fas fa-spa" style="margin-right: 6px;"></i> Un momento por favor
                     </p>
-                    <style>
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                    </style>
                 </div>
             `,
             showConfirmButton: false,
@@ -2744,16 +3285,12 @@ window.editarNombre = async function() {
         });
 
         try {
-            // Actualizar en Supabase Auth
             const { error: updateError } = await supabaseClient.auth.updateUser({
                 data: { nombre: nuevoNombre }
             });
 
-            if (updateError) {
-                throw updateError;
-            }
+            if (updateError) throw updateError;
 
-            // También actualizar en la tabla usuarios
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 await supabaseClient
@@ -2763,17 +3300,14 @@ window.editarNombre = async function() {
             }
 
             // Verificar logros después de cambiar nombre
-            if (window.verificarLogros) {
-                await window.verificarLogros(session.user.id);
-            }
+            await verificarLogros(session.user.id);
 
             if (window.actualizarSaludo) {
-    setTimeout(() => {
-        window.actualizarSaludo();
-    }, 500);
-}
+                setTimeout(() => {
+                    window.actualizarSaludo();
+                }, 500);
+            }
 
-            // Cerrar loading y mostrar éxito
             Swal.close();
 
             Swal.fire({
@@ -2807,7 +3341,6 @@ window.editarNombre = async function() {
                 },
                 background: bgColor
             }).then(() => {
-                // Recargar perfil sin recargar página
                 document.getElementById('btnPerfil')?.click();
             });
 
@@ -2845,333 +3378,6 @@ window.editarNombre = async function() {
     }
 };
 
-
-
-// ============================================================
-// FUNCIÓN PARA VERIFICAR Y RENOVAR SESIÓN AUTOMÁTICAMENTE
-// ============================================================
-async function verificarYRenovarSesion() {
-    try {
-        const { data: { session }, error } = await supabaseClient.auth.getSession();
-        
-        if (error && error.message && error.message.includes('expired')) {
-            console.log('Token expirado, renovando...');
-            const { data: refreshData, error: refreshError } = await supabaseClient.auth.refreshSession();
-            
-            if (refreshError) {
-                console.error('Error al renovar sesión:', refreshError);
-                return false;
-            }
-            
-            if (refreshData && refreshData.session) {
-                console.log('Sesión renovada exitosamente');
-                return true;
-            }
-        }
-        
-        return !!session;
-    } catch (error) {
-        console.error('Error al verificar sesión:', error);
-        return false;
-    }
-}
-
-// ============================================================
-// ESCUCHAR CAMBIOS EN LA SESIÓN DE AUTENTICACIÓN
-// ============================================================
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log('Evento de autenticación:', event);
-    
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-        setTimeout(() => {
-            actualizarSaludo();
-        }, 300);
-    }
-    
-    if (event === 'SIGNED_OUT') {
-        ocultarSaludo();
-    }
-});
-
-// ============================================================
-// INICIALIZAR SALUDO AL CARGAR LA PÁGINA
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    // Primero verificar y renovar sesión si es necesario
-    verificarYRenovarSesion().then((sesionValida) => {
-        if (sesionValida) {
-            setTimeout(() => {
-                actualizarSaludo();
-            }, 300);
-        } else {
-            ocultarSaludo();
-        }
-    });
-});
-
-// ============================================================
-// RECUPERAR SESIÓN PERDIDA (cuando el usuario recarga la página)
-// ============================================================
-async function recuperarSesionPerdida() {
-    try {
-        // Intentar obtener la sesión del almacenamiento local
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        
-        if (!session) {
-            // Intentar recuperar con refresh token
-            const { data, error } = await supabaseClient.auth.refreshSession();
-            
-            if (error) {
-                console.log('No se pudo recuperar la sesión:', error.message);
-                return false;
-            }
-            
-            if (data && data.session) {
-                console.log('Sesión recuperada exitosamente');
-                return true;
-            }
-        }
-        
-        return !!session;
-    } catch (error) {
-        console.error('Error al recuperar sesión:', error);
-        return false;
-    }
-}
-
-// ============================================================
-// FUNCIÓN PARA CERRAR SESIÓN SEGURA
-// ============================================================
-async function cerrarSesionSegura() {
-    try {
-        await supabaseClient.auth.signOut();
-        ocultarSaludo();
-        // Limpiar cualquier dato de sesión en localStorage
-        localStorage.removeItem('supabase.auth.token');
-        return true;
-    } catch (error) {
-        console.error('Error al cerrar sesión:', error);
-        return false;
-    }
-}
-
-// ============================================================
-// INTERCEPTOR PARA ERRORES DE TOKEN EXPIRADO EN PETICIONES
-// ============================================================
-// Sobrescribir el método de supabase para manejar errores de token
-const originalFrom = supabaseClient.from;
-supabaseClient.from = function(table) {
-    const queryBuilder = originalFrom.call(this, table);
-    
-    // Interceptar el método .then para manejar errores de autenticación
-    const originalThen = queryBuilder.then;
-    queryBuilder.then = function(onFulfilled, onRejected) {
-        return originalThen.call(this, 
-            (result) => {
-                // Si hay error de token expirado, intentar renovar y reintentar
-                if (result.error && result.error.message && 
-                    (result.error.message.includes('JWT') || 
-                     result.error.message.includes('expired') ||
-                     result.error.message.includes('invalid'))) {
-                    
-                    console.log('Error de autenticación en petición, renovando sesión...');
-                    
-                    return verificarYRenovarSesion().then((renovado) => {
-                        if (renovado) {
-                            // Reintentar la misma consulta
-                            return originalFrom.call(supabaseClient, table)
-                                .select('*')
-                                .then(onFulfilled, onRejected);
-                        } else {
-                            // Si no se puede renovar, rechazar
-                            return Promise.reject(result.error);
-                        }
-                    });
-                }
-                
-                return onFulfilled ? onFulfilled(result) : result;
-            },
-            onRejected
-        );
-    };
-    
-    return queryBuilder;
-};
-
-window.verificarYRenovarSesion = verificarYRenovarSesion;
-window.cerrarSesionSegura = cerrarSesionSegura;
-window.recuperarSesionPerdida = recuperarSesionPerdida;
-
-
-async function cargarSplashConMarcoReal() {
-    try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        
-        // Marco por defecto (básico)
-        let marcoUrl = 'imganes/marco.png';
-        let tamanioMarco = '130px';
-        let shadowIntensity = '0 0 20px rgba(155, 89, 182, 0.3)';
-        let animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
-        let bordeMarco = '2px solid rgba(155, 89, 182, 0.2)';
-        
-        if (session) {
-            const userId = session.user.id;
-            
-            // Obtener estrellas reclamadas
-            let estrellasReclamadas = [];
-            if (window.obtenerEstrellasReclamadas) {
-                estrellasReclamadas = await window.obtenerEstrellasReclamadas(userId);
-            }
-            const totalEstrellas = estrellasReclamadas.length;
-            
-            // ================================================
-            // MISMO MARCO QUE EN EL PERFIL
-            // ================================================
-            if (totalEstrellas >= 9) {
-                marcoUrl = 'imganes/marco2.png';
-                tamanioMarco = '160px';
-                shadowIntensity = '0 0 50px rgba(255,215,0,0.6)';
-                animacionMarco = 'glowMarcoPremiumLoader 2s ease-in-out infinite';
-                bordeMarco = '3px solid #ffd700';
-            } else if (totalEstrellas >= 7) {
-                marcoUrl = 'imganes/marco2.png';
-                tamanioMarco = '150px';
-                shadowIntensity = '0 0 35px rgba(192,160,0,0.5)';
-                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
-                bordeMarco = '3px solid #c0a000';
-            } else if (totalEstrellas >= 5) {
-                marcoUrl = 'imganes/marco1.png';
-                tamanioMarco = '140px';
-                shadowIntensity = '0 0 30px rgba(232,184,0,0.4)';
-                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
-                bordeMarco = '3px solid #e8b800';
-            } else if (totalEstrellas >= 3) {
-                marcoUrl = 'imganes/marco.png';
-                tamanioMarco = '130px';
-                shadowIntensity = '0 0 25px rgba(155, 89, 182, 0.35)';
-                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
-                bordeMarco = '2px solid #d4a017';
-            } else if (totalEstrellas >= 1) {
-                marcoUrl = 'imganes/marco.png';
-                tamanioMarco = '120px';
-                shadowIntensity = '0 0 20px rgba(155, 89, 182, 0.25)';
-                animacionMarco = 'glowMarcoLoader 2s ease-in-out infinite';
-                bordeMarco = '2px solid #b8860b';
-            }
-        }
-        
-        // ================================================
-        // ACTUALIZAR EL MARCO EN EL SPLASH
-        // ================================================
-        const marcoElement = document.getElementById('splash-marco');
-        const logoContainer = document.getElementById('splash-logo-container');
-        
-        if (marcoElement) {
-            marcoElement.style.width = tamanioMarco;
-            marcoElement.style.height = tamanioMarco;
-            marcoElement.style.background = `url('${marcoUrl}') no-repeat center center`;
-            marcoElement.style.backgroundSize = 'contain';
-            marcoElement.style.filter = `drop-shadow(${shadowIntensity})`;
-            marcoElement.style.animation = animacionMarco;
-            marcoElement.style.border = bordeMarco;
-            marcoElement.style.borderRadius = '50%';
-        }
-        
-        if (logoContainer) {
-            logoContainer.style.width = tamanioMarco;
-            logoContainer.style.height = tamanioMarco;
-        }
-        
-        // También actualizar el tamaño del logo interno
-        const logoImg = document.querySelector('#splash-logo-container img');
-        if (logoImg) {
-            const tamañoLogo = parseInt(tamanioMarco) * 0.62;
-            logoImg.style.width = tamañoLogo + 'px';
-            logoImg.style.height = tamañoLogo + 'px';
-        }
-        
-        console.log('Marco cargado:', marcoUrl, 'para', totalEstrellas || 0, 'estrellas');
-        
-    } catch (error) {
-        console.error('Error al cargar marco del splash:', error);
-        // Usar marco por defecto si hay error
-        const marcoElement = document.getElementById('splash-marco');
-        if (marcoElement) {
-            marcoElement.style.background = `url('imganes/marco.png') no-repeat center center`;
-            marcoElement.style.backgroundSize = 'contain';
-        }
-    }
-}
-
-// ============================================================
-// INICIALIZAR SPLASH SCREEN
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    const loaderWrapper = document.getElementById('loader-wrapper');
-    const loaderMessage = document.getElementById('loader-message');
-    const mensajes = [
-        'Bienvenido a Medicurativo...',
-        'Cargando tu experiencia...',
-        'Preparando el camino...',
-        'Sembrando bienestar...',
-        'Cultivando el alma...'
-    ];
-    
-    // PRIMERO: Cargar el marco REAL del usuario
-    cargarSplashConMarcoReal().then(() => {
-        let mensajeIndex = 0;
-        
-        // Cambiar mensajes cada 800ms
-        const intervalMensajes = setInterval(() => {
-            mensajeIndex = (mensajeIndex + 1) % mensajes.length;
-            if (loaderMessage) {
-                loaderMessage.style.opacity = '0.5';
-                setTimeout(() => {
-                    loaderMessage.textContent = mensajes[mensajeIndex];
-                    loaderMessage.style.opacity = '1';
-                }, 200);
-            }
-        }, 800);
-        
-        // Ocultar loader después de 3.5 segundos
-        setTimeout(() => {
-            clearInterval(intervalMensajes);
-            if (loaderWrapper) {
-                loaderWrapper.classList.add('loaded');
-                setTimeout(() => {
-                    loaderWrapper.style.display = 'none';
-                }, 800);
-            }
-            // Mostrar saludo después del splash
-            setTimeout(() => {
-                if (typeof actualizarSaludo === 'function') {
-                    actualizarSaludo();
-                }
-            }, 400);
-        }, 3500);
-    });
-});
-
-// ============================================================
-// FUNCIÓN PARA OBTENER ESTRELLAS RECLAMADAS
-// ============================================================
-window.obtenerEstrellasReclamadas = async function(userId) {
-    try {
-        const { data, error } = await supabaseClient
-            .from('estrellas_reclamadas')
-            .select('logro_key')
-            .eq('usuario_id', userId);
-        
-        if (error) throw error;
-        return data ? data.map(item => item.logro_key) : [];
-    } catch (error) {
-        console.error('Error al obtener estrellas reclamadas:', error);
-        return [];
-    }
-};
-// ============================================================
-// EDITAR GÉNERO - SWEETALERT MEJORADO (SOLO HOMBRE/MUJER)
-// ============================================================
 window.editarGenero = async function() {
     const isDarkMode = document.body.classList.contains('dark-mode');
     const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
@@ -3179,17 +3385,14 @@ window.editarGenero = async function() {
     const optionBg = isDarkMode ? '#252525' : '#fdfaff';
     const optionBorder = isDarkMode ? '#3a3a3a' : '#f0e6ff';
     
-    // Obtener género actual
     const { data: { session } } = await supabaseClient.auth.getSession();
     const generoActual = session?.user?.user_metadata?.genero_id || null;
     
-    // Opciones de género - SOLO HOMBRE Y MUJER
     const generos = [
         { id: 1, nombre: 'Hombre', emoji: '👨', desc: 'Masculino' },
         { id: 2, nombre: 'Mujer', emoji: '👩', desc: 'Femenino' }
     ];
     
-    // Construir opciones HTML
     let opcionesHtml = '';
     generos.forEach(g => {
         const selected = generoActual === g.id ? 'selected' : '';
@@ -3311,9 +3514,6 @@ window.editarGenero = async function() {
     });
 
     if (generoId) {
-        // ============================================================
-        // MOSTRAR SWEETALERT DE ACTUALIZANDO
-        // ============================================================
         const loadingBg = isDarkMode ? '#1a1a2e' : '#fdfaff';
         const loadingText = isDarkMode ? '#ffffff' : '#2c1b4e';
         
@@ -3335,12 +3535,6 @@ window.editarGenero = async function() {
                     <p style="color: #9b59b6; font-size: 0.8rem; margin-top: 4px; font-weight: 500;">
                         <i class="fas fa-spa" style="margin-right: 6px;"></i> Un momento por favor
                     </p>
-                    <style>
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                    </style>
                 </div>
             `,
             showConfirmButton: false,
@@ -3353,16 +3547,12 @@ window.editarGenero = async function() {
         });
 
         try {
-            // Actualizar en Supabase Auth
             const { error: updateError } = await supabaseClient.auth.updateUser({
                 data: { genero_id: generoId }
             });
 
-            if (updateError) {
-                throw updateError;
-            }
+            if (updateError) throw updateError;
 
-            // También actualizar en la tabla usuarios
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 await supabaseClient
@@ -3372,15 +3562,12 @@ window.editarGenero = async function() {
             }
 
             // Verificar logros después de cambiar género
-            if (window.verificarLogros) {
-                await window.verificarLogros(session.user.id);
-            }
+            await verificarLogros(session.user.id);
 
             const generoSeleccionado = generos.find(g => g.id === generoId);
             const nombreGenero = generoSeleccionado ? generoSeleccionado.nombre : 'No especificado';
             const emojiGenero = generoSeleccionado ? generoSeleccionado.emoji : '👤';
 
-            // Cerrar loading y mostrar éxito
             Swal.close();
 
             Swal.fire({
@@ -3414,7 +3601,6 @@ window.editarGenero = async function() {
                 },
                 background: bgColor
             }).then(() => {
-                // Recargar perfil sin recargar página
                 document.getElementById('btnPerfil')?.click();
             });
 
@@ -3453,10 +3639,7 @@ window.editarGenero = async function() {
 };
 
 // ============================================================
-// FUNCIÓN PARA ACTUALIZAR EL SALUDO CON EL NOMBRE DEL USUARIO
-// ============================================================
-// ============================================================
-// FUNCIÓN PARA ACTUALIZAR EL SALUDO CON EL NOMBRE DEL USUARIO
+// FUNCIÓN PARA ACTUALIZAR EL SALUDO
 // ============================================================
 async function actualizarSaludo() {
     try {
@@ -3484,10 +3667,8 @@ async function actualizarSaludo() {
                 contenedorSaludo.style.animation = 'fadeIn 0.8s ease';
             }
             
-            // Actualizar también el saludo dinámico según la hora
             actualizarSaludoDinamico();
         } else {
-            // Usar la función ocultarSaludo cuando no hay sesión
             ocultarSaludo();
         }
     } catch (error) {
@@ -3496,9 +3677,6 @@ async function actualizarSaludo() {
     }
 }
 
-// ============================================================
-// FUNCIÓN PARA SALUDO DINÁMICO SEGÚN LA HORA
-// ============================================================
 function actualizarSaludoDinamico() {
     const saludoSpan = document.getElementById('saludoDinamico');
     if (!saludoSpan) return;
@@ -3519,314 +3697,76 @@ function actualizarSaludoDinamico() {
     saludoSpan.textContent = saludo;
 }
 
-// ============================================================
-// ESCUCHAR CAMBIOS EN EL NOMBRE DEL USUARIO
-// ============================================================
-// Función para forzar actualización del saludo desde cualquier parte
-window.actualizarSaludo = actualizarSaludo;
+function ocultarSaludo() {
+    const contenedorSaludo = document.getElementById('contenedorSaludo');
+    if (contenedorSaludo) {
+        contenedorSaludo.style.display = 'none';
+    }
+}
 
-// Escuchar cambios en la sesión de autenticación
 // ============================================================
-// ESCUCHAR CAMBIOS EN LA SESIÓN DE AUTENTICACIÓN
+// FUNCIÓN PARA OBTENER ESTRELLAS DEL USUARIO (SIN ERRORES)
 // ============================================================
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log('Evento de autenticación:', event);
-    
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-        setTimeout(() => {
-            actualizarSaludo();
-        }, 300);
+window.obtenerEstrellasReclamadas = async function(userId) {
+    try {
+        console.log('🔍 Buscando estrellas para usuario:', userId);
+        
+        // Obtener los logros del usuario desde la tabla 'logros'
+        const { data: logrosData, error: logrosError } = await supabaseClient
+            .from('logros')
+            .select('*')
+            .eq('usuario_id', userId)
+            .maybeSingle();
+        
+        if (logrosError) {
+            console.error('❌ Error al obtener logros:', logrosError);
+            return [];
+        }
+        
+        if (!logrosData) {
+            console.log('⚠️ No se encontraron logros para el usuario');
+            return [];
+        }
+        
+        // Lista de todos los logros posibles (keys que representan logros)
+        const keysLogros = [
+            'cambio_nombre',
+            'cambio_genero',
+            'completado_perfil',
+            'primera_publicacion',
+            'cinco_publicaciones',
+            'primera_reflexion',
+            'cinco_reflexiones',
+            'diez_reflexiones',
+            'reflexion_emocion'
+        ];
+        
+        // Filtrar solo los logros que están en true (completados)
+        const estrellas = keysLogros.filter(key => logrosData[key] === true);
+        
+        console.log('⭐ Estrellas encontradas:', estrellas.length, estrellas);
+        return estrellas;
+        
+    } catch (error) {
+        console.error('❌ Error al obtener estrellas:', error);
+        return [];
     }
-    
-    if (event === 'SIGNED_OUT') {
-        // Usar la función ocultarSaludo
-        ocultarSaludo();
-    }
-});
+};
+
+// También mantener el alias para compatibilidad
+window.obtenerEstrellasUsuario = window.obtenerEstrellasReclamadas;
+window.actualizarSaludo = actualizarSaludo;
+window.verificarLogros = verificarLogros;
+window.reclamarLogro = reclamarLogro;
 
 // ============================================================
 // INICIALIZAR SALUDO AL CARGAR LA PÁGINA
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Esperar a que Supabase esté listo
     setTimeout(() => {
         actualizarSaludo();
     }, 500);
 });
-
-// También actualizar cuando la página se vuelva visible (si el usuario cambia en otra pestaña)
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        actualizarSaludo();
-    }
-});
-// ============================================================
-async function reclamarLogro(userId, logroKey, logroTexto) {
-    try {
-        // Verificar si ya fue reclamado
-        const { data: existe, error: checkError } = await supabaseClient
-            .from('reclamos')
-            .select('id')
-            .eq('usuario_id', userId)
-            .eq('logro_key', logroKey)
-            .maybeSingle();
-
-        if (checkError) throw checkError;
-
-        if (existe) {
-            Swal.fire({
-                title: 'Ya reclamaste esta estrella ⭐',
-                text: `Ya reclamaste la estrella por "${logroTexto}"`,
-                icon: 'info',
-                confirmButtonColor: '#9b59b6',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return false;
-        }
-
-        // Reclamar el logro
-        const { error: insertError } = await supabaseClient
-            .from('reclamos')
-            .insert({
-                usuario_id: userId,
-                logro_key: logroKey
-            });
-
-        if (insertError) {
-            // Error específico de RLS
-            if (insertError.code === '42501') {
-                Swal.fire({
-                    title: '⚠️ Error de permisos',
-                    text: 'No se pudo reclamar la estrella. Contacta al administrador.',
-                    icon: 'error',
-                    confirmButtonColor: '#ff7675',
-                    customClass: { popup: 'swal-popup-redondo' }
-                });
-                return false;
-            }
-            throw insertError;
-        }
-
-        // Éxito - mostrar confeti y estrella
-        if (typeof confetti === 'function') {
-            confetti({
-                particleCount: 80,
-                spread: 60,
-                origin: { y: 0.6 },
-                colors: ['#f1c40f', '#ffd700', '#9b59b6']
-            });
-        }
-
-        Swal.fire({
-            title: '⭐ ¡Estrella Reclamada!',
-            html: `
-                <div style="text-align: center; padding: 10px;">
-                    <div style="font-size: 4rem; margin-bottom: 10px;">⭐</div>
-                    <p style="color: #2c1b4e; font-weight: 600;">¡Has ganado una estrella por:</p>
-                    <p style="color: #9b59b6; font-weight: 800; font-size: 1.1rem;">"${logroTexto}"</p>
-                    <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 10px;">Sigue así, cada logro cuenta 🌟</p>
-                </div>
-            `,
-            icon: 'success',
-            timer: 2500,
-            showConfirmButton: false,
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-
-        // Sonido de logro
-        if (window.achievementSound) {
-            window.achievementSound.currentTime = 0;
-            window.achievementSound.play().catch(() => {});
-        }
-
-        return true;
-
-    } catch (error) {
-        console.error('Error al reclamar logro:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'No pudimos reclamar tu estrella. Intenta de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#ff7675',
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-        return false;
-    }
-}
-// ============================================================
-// FUNCIÓN PARA VERIFICAR Y GUARDAR LOGROS
-// ============================================================
-async function verificarLogros(userId) {
-    try {
-        // Obtener datos del usuario
-        const { data: userData } = await supabaseClient
-            .from('usuarios')
-            .select('nombre, genero_id')
-            .eq('id', userId)
-            .single();
-
-        const tieneNombre = userData && userData.nombre && userData.nombre !== 'Amigo';
-        const tieneGenero = userData && userData.genero_id !== null;
-
-        // Contar publicaciones
-        const { count: countPublicaciones } = await supabaseClient
-            .from('publicaciones')
-            .select('*', { count: 'exact', head: true })
-            .eq('usuario_id', userId);
-
-        // Contar reflexiones
-        const { count: countReflexiones } = await supabaseClient
-            .from('diarios')
-            .select('*', { count: 'exact', head: true })
-            .eq('usuario_id', userId);
-
-        // Verificar reflexión con emoción
-        const { data: reflexionesConEmocion } = await supabaseClient
-            .from('diarios')
-            .select('id')
-            .eq('usuario_id', userId)
-            .not('emocion', 'is', null)
-            .limit(1);
-
-        const tieneReflexionConEmocion = reflexionesConEmocion && reflexionesConEmocion.length > 0;
-
-        // Construir objeto de logros
-        const logros = {
-            cambio_nombre: tieneNombre,
-            cambio_genero: tieneGenero,
-            completado_perfil: tieneNombre && tieneGenero,
-            primera_publicacion: countPublicaciones >= 1,
-            cinco_publicaciones: countPublicaciones >= 5,
-            primera_reflexion: countReflexiones >= 1,
-            cinco_reflexiones: countReflexiones >= 5,
-            diez_reflexiones: countReflexiones >= 10,
-            reflexion_emocion: tieneReflexionConEmocion
-        };
-
-        // Guardar o actualizar en la tabla logros
-        const { error } = await supabaseClient
-            .from('logros')
-            .upsert({
-                usuario_id: userId,
-                ...logros,
-                actualizado_en: new Date().toISOString()
-            });
-
-        if (error) {
-            console.error('Error al guardar logros:', error);
-        }
-
-        return logros;
-
-    } catch (error) {
-        console.error('Error en verificarLogros:', error);
-        return null;
-    }
-}
-
-// Exponer función globalmente
-window.verificarLogros = verificarLogros;
-
-// ============================================================
-// FUNCIÓN PARA RECLAMAR LOGRO (DAR ESTRELLA)
-// ============================================================
-async function reclamarLogro(userId, logroKey, logroTexto) {
-    try {
-        // Verificar si ya fue reclamado
-        const { data: existe, error: checkError } = await supabaseClient
-            .from('reclamos')
-            .select('id')
-            .eq('usuario_id', userId)
-            .eq('logro_key', logroKey)
-            .maybeSingle();
-
-        if (checkError) throw checkError;
-
-        if (existe) {
-            Swal.fire({
-                title: 'Ya reclamaste esta estrella ⭐',
-                text: `Ya reclamaste la estrella por "${logroTexto}"`,
-                icon: 'info',
-                confirmButtonColor: '#9b59b6',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return false;
-        }
-
-        // Reclamar el logro
-        const { error: insertError } = await supabaseClient
-            .from('reclamos')
-            .insert({
-                usuario_id: userId,
-                logro_key: logroKey
-            });
-
-        if (insertError) throw insertError;
-
-        // Éxito - mostrar confeti y estrella
-        if (typeof confetti === 'function') {
-            confetti({
-                particleCount: 80,
-                spread: 60,
-                origin: { y: 0.6 },
-                colors: ['#f1c40f', '#ffd700', '#9b59b6']
-            });
-        }
-
-        Swal.fire({
-            title: '⭐ ¡Estrella Reclamada!',
-            html: `
-                <div style="text-align: center; padding: 10px;">
-                    <div style="font-size: 4rem; margin-bottom: 10px;">⭐</div>
-                    <p style="color: #2c1b4e; font-weight: 600;">¡Has ganado una estrella por:</p>
-                    <p style="color: #9b59b6; font-weight: 800; font-size: 1.1rem;">"${logroTexto}"</p>
-                    <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 10px;">Sigue así, cada logro cuenta 🌟</p>
-                </div>
-            `,
-            icon: 'success',
-            timer: 2500,
-            showConfirmButton: false,
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-
-        // Sonido de logro
-        if (window.achievementSound) {
-            window.achievementSound.currentTime = 0;
-            window.achievementSound.play().catch(() => {});
-        }
-
-        return true;
-
-    } catch (error) {
-        console.error('Error al reclamar logro:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'No pudimos reclamar tu estrella. Intenta de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#ff7675',
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-        return false;
-    }
-}
-
-// Obtener estrellas reclamadas
-async function obtenerEstrellasReclamadas(userId) {
-    try {
-        const { data, error } = await supabaseClient
-            .from('reclamos')
-            .select('logro_key')
-            .eq('usuario_id', userId);
-
-        if (error) throw error;
-        return data.map(r => r.logro_key);
-
-    } catch (error) {
-        console.error('Error al obtener estrellas:', error);
-        return [];
-    }
-}
-
 // Exponer funciones globalmente
 window.reclamarLogro = reclamarLogro;
 window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;

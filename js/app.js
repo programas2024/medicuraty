@@ -1776,12 +1776,62 @@ async function reclamarLogro(userId, logroKey, logroTexto) {
     }
 }
 
+window.getMarcoSeleccionado = async function() {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const metadataMarco = session?.user?.user_metadata?.marco_seleccionado;
+        if (metadataMarco) {
+            return metadataMarco;
+        }
+    } catch (error) {
+        console.warn('No se pudo leer el marco desde auth metadata:', error);
+    }
+
+    try {
+        const guardado = localStorage.getItem('medicurativo.marco_seleccionado');
+        if (guardado) return guardado;
+    } catch (error) {
+        console.warn('No se pudo leer el marco desde localStorage:', error);
+    }
+
+    return 'marco_base';
+};
+
+window.guardarMarcoSeleccionado = async function(marcoId) {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const usuarioId = session?.user?.id || window.userIdGlobal;
+
+        if (session?.user) {
+            await supabaseClient.auth.updateUser({ data: { marco_seleccionado: marcoId } });
+        }
+
+        if (usuarioId) {
+            try {
+                await supabaseClient.from('usuarios').update({ marco_seleccionado: marcoId }).eq('id', usuarioId);
+            } catch (error) {
+                console.warn('No se pudo guardar el marco en usuarios, se usará fallback local:', error);
+            }
+        }
+
+        localStorage.setItem('medicurativo.marco_seleccionado', marcoId);
+        return true;
+    } catch (error) {
+        localStorage.setItem('medicurativo.marco_seleccionado', marcoId);
+        console.error('No se pudo guardar el marco:', error);
+        return false;
+    }
+};
+
 // ================================================
 // FUNCIÓN PARA MOSTRAR MARCOS EN SWEETALERT
 // ================================================
 window.mostrarMarcosSweetAlert = async function() {
     console.log('📊 ABRIENDO MARCOS - Estrellas:', window.totalEstrellas, 'Publicaciones:', window.totalPublicaciones);
-    
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const usuarioId = session?.user?.id || window.userIdGlobal;
+
     // Si no hay datos, recargar del usuario actual
     if (window.totalEstrellas === 0 && window.totalPublicaciones === 0 && window.userIdGlobal) {
         console.log('🔄 Recargando datos del usuario...');
@@ -1840,6 +1890,8 @@ window.mostrarMarcosSweetAlert = async function() {
     const estrellasUsuario = window.totalEstrellas || 0;
     const publicacionesUsuario = window.totalPublicaciones || 0;
 
+    let marcoSeleccionadoActual = await window.getMarcoSeleccionado();
+
     console.log('📊 DATOS FINALES - Estrellas:', estrellasUsuario, 'Publicaciones:', publicacionesUsuario);
 
     // Generar HTML para cada marco
@@ -1868,15 +1920,18 @@ window.mostrarMarcosSweetAlert = async function() {
         }
         
         const claseTextoEstado = desbloqueado ? 'desbloqueado-text' : 'bloqueado-text';
+        const esSeleccionado = marcoSeleccionadoActual === marco.id;
+        const botonSeleccionar = desbloqueado ? `<button class="swal-perfil-btn" style="margin-top:8px; padding:8px 12px; font-size:0.8rem; ${esSeleccionado ? 'background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white;' : ''}" onclick="window.seleccionarMarco('${marco.id}', '${usuarioId}')">${esSeleccionado ? '✅ Seleccionado' : 'Elegir marco'}</button>` : '';
 
         marcosHtml += `
-            <div class="marco-item ${claseEstado}">
+            <div class="marco-item ${claseEstado} ${esSeleccionado ? 'marco-item-seleccionado' : ''}">
                 <img src="${marco.imagen}" alt="${marco.nombre}" loading="lazy" 
                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect width=%22120%22 height=%22120%22 fill=%22%23333%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23fff%22 font-size=%2214%22%3EMarco%3C/text%3E%3C/svg%3E'">
                 <span class="nombre-marco">${marco.nombre}</span>
                 <span class="estado-marco ${claseTextoEstado}">${textoEstado}</span>
                 <small style="display:block; font-size:0.65rem; color:#7f8c8d; margin-top:4px;">${marco.descripcion}</small>
                 ${desbloqueado ? `<span style="font-size:1.2rem; margin-top:4px; display:block;">${marco.id === 'marco_comunidad' ? '🌟' : '👑'}</span>` : ''}
+                ${botonSeleccionar}
             </div>
         `;
     });
@@ -1912,6 +1967,32 @@ window.mostrarMarcosSweetAlert = async function() {
             popup: 'swal-popup-redondo'
         }
     });
+};
+
+window.seleccionarMarco = async function(marcoId, usuarioId) {
+    const guardado = await window.guardarMarcoSeleccionado(marcoId);
+
+    if (guardado) {
+        Swal.fire({
+            title: '¡Marco actualizado! ✨',
+            text: 'Tu selección se ha guardado y se verá en tu perfil.',
+            icon: 'success',
+            confirmButtonColor: '#9b59b6',
+            customClass: { popup: 'swal-popup-redondo' }
+        }).then(() => {
+            if (document.getElementById('btnPerfil')) {
+                document.getElementById('btnPerfil').click();
+            }
+        });
+    } else {
+        Swal.fire({
+            title: 'No se pudo guardar',
+            text: 'Intenta de nuevo en unos segundos.',
+            icon: 'error',
+            confirmButtonColor: '#ff7675',
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+    }
 };
 
 // ================================================
@@ -2074,15 +2155,32 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
         let decoracionAvatar = '';
         let efectoFondo = '';
         let mostrarEfecto = false;
+        let marcoSeleccionado = await window.getMarcoSeleccionado();
         
         let estrellasVisuales = '';
         let glowEstrella = '';
 
-        // Verificar si tiene el marco comunidad (10+ publicaciones)
+        const marcoMap = {
+            marco_base: { imagen: 'imganes/marco.png', titulo: '🕊️ Buscador de Paz', frase: 'Cada día es una nueva oportunidad para crecer', color: '#2c1b4e', borde: '#e0d0f0', tamañoNombre: '1.4rem', tamañoMarco: '130px', tamañoAvatar: '60px' },
+            marco_nivel1: { imagen: 'imganes/marco1.png', titulo: '🌱 Aprendiz de la Vida', frase: '🌻 Cada paso te acerca más a tu esencia', color: '#d4a017', borde: '#d4a017', tamañoNombre: '1.5rem', tamañoMarco: '130px', tamañoAvatar: '70px' },
+            marco_nivel2: { imagen: 'imganes/marco2.png', titulo: '✨ Explorador de Luz', frase: '🌱 Sigues brillando en tu viaje interior', color: '#e8b800', borde: '#e8b800', tamañoNombre: '1.6rem', tamañoMarco: '140px', tamañoAvatar: '75px' },
+            marco_nivel3: { imagen: 'imganes/marco3.png', titulo: '🌟 Leyenda Medicurativo', frase: '✨ Iluminas el camino de los demás con tu luz', color: '#ffd700', borde: '#ffd700', tamañoNombre: '2rem', tamañoMarco: '160px', tamañoAvatar: '85px' },
+            marco_comunidad: { imagen: 'imganes/comunidad.png', titulo: '🌟 Leyenda Medicurativo', frase: '✨ Iluminas el camino de los demás con tu luz', color: '#ffd700', borde: '#ffd700', tamañoNombre: '2rem', tamañoMarco: '160px', tamañoAvatar: '85px' }
+        };
+
+        const marcoGuardado = marcoMap[marcoSeleccionado] || marcoMap.marco_base;
         const tieneMarcoComunidad = totalPublicaciones >= 10;
+        const marcoSeleccionadoEsValido = marcoSeleccionado === 'marco_base' ||
+            (marcoSeleccionado === 'marco_nivel1' && totalEstrellas >= 3) ||
+            (marcoSeleccionado === 'marco_nivel2' && totalEstrellas >= 5) ||
+            (marcoSeleccionado === 'marco_nivel3' && totalEstrellas >= 9) ||
+            (marcoSeleccionado === 'marco_comunidad' && totalPublicaciones >= 10);
+        const marcoElegido = marcoSeleccionadoEsValido
+            ? marcoSeleccionado
+            : (tieneMarcoComunidad ? 'marco_comunidad' : totalEstrellas >= 9 ? 'marco_nivel3' : totalEstrellas >= 5 ? 'marco_nivel2' : totalEstrellas >= 3 ? 'marco_nivel1' : 'marco_base');
         console.log('🎯 ¿Tiene marco comunidad?', tieneMarcoComunidad, 'Publicaciones:', totalPublicaciones);
 
-        if (tieneMarcoComunidad) {
+        if (tieneMarcoComunidad && marcoElegido === 'marco_comunidad') {
             // ⭐ MARCO COMUNIDAD (prioridad máxima)
             tituloUsuario = '🌟 Leyenda Medicurativo';
             fraseUsuario = '✨ Iluminas el camino de los demás con tu luz';
@@ -2126,7 +2224,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 </div>
             `;
             
-        } else if (totalEstrellas >= 9) {
+        } else if (marcoElegido === 'marco_nivel3' && totalEstrellas >= 9) {
             tituloUsuario = '🌟 Leyenda Medicurativo';
             fraseUsuario = '✨ Iluminas el camino de los demás con tu luz';
             colorNombre = '#ffd700';
@@ -2168,7 +2266,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     </div>
                 </div>
             `;
-        } else if (totalEstrellas >= 7) {
+        } else if (marcoElegido === 'marco_nivel2' && totalEstrellas >= 5) {
             tituloUsuario = '⭐ Maestro del Crecimiento';
             fraseUsuario = '🌿 Has alcanzado la sabiduría del alma';
             colorNombre = '#c0a000';
@@ -2209,7 +2307,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     </div>
                 </div>
             `;
-        } else if (totalEstrellas >= 5) {
+        } else if (marcoElegido === 'marco_nivel1' && totalEstrellas >= 3) {
             tituloUsuario = '✨ Explorador de Luz';
             fraseUsuario = '🌱 Sigues brillando en tu viaje interior';
             colorNombre = '#e8b800';
@@ -2299,13 +2397,28 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
             estrellasVisuales = '⭐';
         }
 
-        const tieneMarco = totalEstrellas > 0 || totalPublicaciones >= 10;
+        const tieneMarco = totalEstrellas > 0 || totalPublicaciones >= 10 || marcoElegido !== 'marco_base';
 
         let estrellasDisplay = '';
         if (totalEstrellas >= 3) {
             estrellasDisplay = glowEstrella;
         } else if (totalEstrellas > 0) {
             estrellasDisplay = `<span style="font-size: 3rem; letter-spacing: 8px;">${estrellasVisuales}</span>`;
+        }
+
+        if (marcoElegido !== 'marco_base' && marcoElegido !== 'marco_nivel1' && marcoElegido !== 'marco_nivel2' && marcoElegido !== 'marco_nivel3' && marcoElegido !== 'marco_comunidad') {
+            imagenMarco = 'imganes/marco.png';
+        }
+
+        if (marcoGuardado && marcoGuardado.imagen && marcoSeleccionadoEsValido) {
+            imagenMarco = marcoGuardado.imagen;
+            tituloUsuario = marcoGuardado.titulo;
+            fraseUsuario = marcoGuardado.frase;
+            colorNombre = marcoGuardado.color;
+            colorBordePerfil = marcoGuardado.borde;
+            tamañoNombre = marcoGuardado.tamañoNombre;
+            tamañoMarco = marcoGuardado.tamañoMarco;
+            tamañoAvatar = marcoGuardado.tamañoAvatar;
         }
 
         if (mostrarEfecto && typeof confetti === 'function') {
@@ -2626,6 +2739,11 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                     .marco-item.desbloqueado {
                         border-color: #ffd700;
                         background: rgba(255, 215, 0, 0.08);
+                    }
+                    .marco-item-seleccionado {
+                        border-color: #9b59b6 !important;
+                        box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.25), 0 10px 25px rgba(155, 89, 182, 0.2);
+                        transform: translateY(-3px);
                     }
                     .marco-item.bloqueado {
                         opacity: 0.5;

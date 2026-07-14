@@ -19,6 +19,633 @@
        /* ============================================================
    ESTILOS PARA COMENTARIOS Y RESPUESTAS (COMPLETO)
    ============================================================ */
+/* ============================================================
+   BANNER DE VISTA ÚNICA
+   ============================================================ */
+
+.banner-vista-unica {
+    background: linear-gradient(135deg, #f3e9ff, #e8d5f5) !important;
+    padding: 15px 25px !important;
+    border-radius: 16px !important;
+    margin-bottom: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    border: 2px solid #9b59b6 !important;
+    box-shadow: 0 4px 20px rgba(155, 89, 182, 0.1) !important;
+}
+
+body.dark-mode .banner-vista-unica {
+    background: linear-gradient(135deg, #2a1f3d, #3d2a5c) !important;
+    border-color: #9b59b6 !important;
+}
+
+.banner-vista-unica .banner-icono {
+    color: #9b59b6;
+    font-size: 1.3rem;
+}
+
+body.dark-mode .banner-vista-unica .banner-icono {
+    color: #c084d8;
+}
+
+.banner-vista-unica .banner-titulo {
+    font-weight: 700;
+    color: #2c1b4e;
+    font-size: 1rem;
+}
+
+body.dark-mode .banner-vista-unica .banner-titulo {
+    color: #d4c4e8;
+}
+
+.banner-vista-unica .banner-subtitulo {
+    font-size: 0.8rem;
+    color: #6a5a7e;
+    margin: 0;
+}
+
+body.dark-mode .banner-vista-unica .banner-subtitulo {
+    color: #a894b8;
+}
+
+.banner-vista-unica .btn-volver {
+    background: #9b59b6;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.banner-vista-unica .btn-volver:hover {
+    background: #8e44ad;
+    transform: scale(1.02);
+}
+
+body.dark-mode .banner-vista-unica .btn-volver {
+    background: #9b59b6;
+}
+
+body.dark-mode .banner-vista-unica .btn-volver:hover {
+    background: #8e44ad;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .banner-vista-unica {
+        flex-direction: column;
+        align-items: center !important;
+        text-align: center;
+        padding: 12px 16px !important;
+    }
+    
+    .banner-vista-unica .btn-volver {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+/* Botón Ignorar reporte */
+.btn-ignorar-reporte {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.btn-ignorar-reporte:hover {
+    background: #219a52;
+    transform: scale(1.02);
+}
+
+.btn-ignorar-reporte:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Botón Eliminar comentario (desde reporte) */
+.btn-eliminar-comentario-reporte {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.btn-eliminar-comentario-reporte:hover {
+    background: #c0392b;
+    transform: scale(1.02);
+}
+
+.btn-eliminar-comentario-reporte:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode .btn-ignorar-reporte {
+    background: #2ecc71;
+}
+
+body.dark-mode .btn-ignorar-reporte:hover {
+    background: #27ae60;
+}
+
+body.dark-mode .btn-eliminar-comentario-reporte {
+    background: #e74c3c;
+}
+
+body.dark-mode .btn-eliminar-comentario-reporte:hover {
+    background: #c0392b;
+}
+
+/* ===== ESTILOS PARA EL REPORTE EN EL BUZÓN ===== */
+
+/* ============================================================
+   ESTILOS PARA REPORTES EN EL BUZÓN (MODO OSCURO + ENLACES)
+   ============================================================ */
+
+/* Tarjeta de reporte - Modo oscuro mejorado */
+body.dark-mode .reporte-pendiente {
+    background: #2a1f3d !important;
+    border-left-color: #e74c3c !important;
+    border-color: #3d2a5c !important;
+}
+
+body.dark-mode .reporte-pendiente:hover {
+    border-color: #e74c3c !important;
+    box-shadow: 0 4px 20px rgba(231, 76, 60, 0.15) !important;
+}
+
+/* Preview del comentario reportado - Modo oscuro */
+body.dark-mode .comentario-reportado-preview {
+    background: #1f1630 !important;
+    border-left-color: #e74c3c !important;
+}
+
+body.dark-mode .comentario-reportado-preview .texto-reportado {
+    color: #d4c4e8 !important;
+}
+
+body.dark-mode .comentario-reportado-preview .meta-reportado {
+    color: #a894b8 !important;
+}
+
+/* Enlace a la publicación - Modo oscuro */
+body.dark-mode .enlace-publicacion-reporte {
+    color: #c084d8 !important;
+}
+
+body.dark-mode .enlace-publicacion-reporte:hover {
+    color: #d4a0e8 !important;
+    text-decoration: underline !important;
+}
+
+/* Badge de reporte - Modo oscuro */
+body.dark-mode .badge-reporte {
+    background: rgba(231, 76, 60, 0.2) !important;
+    color: #e74c3c !important;
+}
+
+/* Información del reporte - Modo oscuro */
+body.dark-mode .info-reporte {
+    color: #d4c4e8 !important;
+}
+
+body.dark-mode .reportado-por {
+    color: #a894b8 !important;
+}
+
+body.dark-mode .fecha-reporte {
+    color: #7a6a8e !important;
+}
+
+/* Enlace a publicación - Estilos generales */
+.enlace-publicacion-reporte {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #9b59b6;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(155, 89, 182, 0.08);
+    transition: 0.3s;
+    border: 1px solid rgba(155, 89, 182, 0.15);
+    cursor: pointer;
+}
+
+.enlace-publicacion-reporte:hover {
+    background: rgba(155, 89, 182, 0.15);
+    transform: translateX(2px);
+    text-decoration: none;
+    color: #8e44ad;
+}
+
+body.dark-mode .enlace-publicacion-reporte {
+    background: rgba(155, 89, 182, 0.12);
+    border-color: rgba(155, 89, 182, 0.2);
+    color: #c084d8;
+}
+
+body.dark-mode .enlace-publicacion-reporte:hover {
+    background: rgba(155, 89, 182, 0.2);
+    color: #d4a0e8;
+}
+
+/* Contenedor de acciones del reporte */
+.reporte-acciones {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0edf5;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .reporte-acciones {
+    border-top-color: #3d2a5c;
+}
+
+/* Preview del comentario con enlace */
+.preview-con-enlace {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.preview-con-enlace .comentario-reportado-preview {
+    margin: 0 !important;
+}
+
+.preview-con-enlace .enlace-publicacion-reporte {
+    align-self: flex-start;
+}
+
+/* Icono de enlace */
+.icono-enlace {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .enlace-publicacion-reporte {
+        font-size: 0.65rem;
+        padding: 3px 10px;
+    }
+    
+    .preview-con-enlace .enlace-publicacion-reporte {
+        align-self: stretch;
+        justify-content: center;
+    }
+    
+    .reporte-acciones {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+
+   /* ============================================================
+   MODAL DE ACCIONES DE COMENTARIOS
+   ============================================================ */
+
+/* Botón de acciones (tres puntos) */
+.btn-acciones-comentario {
+    background: none;
+    border: none;
+    color: #95a5a6;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 50%;
+    transition: 0.3s;
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+
+.btn-acciones-comentario:hover {
+    opacity: 1;
+    background: rgba(155, 89, 182, 0.1);
+    color: #9b59b6;
+}
+
+body.dark-mode .btn-acciones-comentario {
+    color: #7a6a8e;
+}
+
+body.dark-mode .btn-acciones-comentario:hover {
+    color: #c084d8;
+    background: rgba(155, 89, 182, 0.2);
+}
+
+/* Modal de acciones (SweetAlert personalizado) */
+.swal-acciones-comentario .swal2-popup {
+    border-radius: 24px !important;
+    padding: 20px 25px 25px !important;
+    max-width: 380px !important;
+}
+
+.swal-acciones-comentario .swal2-title {
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    color: #2c1b4e !important;
+    padding-bottom: 5px !important;
+}
+
+body.dark-mode .swal-acciones-comentario .swal2-popup {
+    background: #2a1f3d !important;
+}
+
+body.dark-mode .swal-acciones-comentario .swal2-title {
+    color: #d4c4e8 !important;
+}
+
+/* Opciones del modal */
+.opcion-accion {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 1px solid transparent;
+    margin: 4px 0;
+}
+
+.opcion-accion:hover {
+    background: #f8f5fc;
+    border-color: #e0d6eb;
+    transform: translateX(4px);
+}
+
+body.dark-mode .opcion-accion:hover {
+    background: #1f1630;
+    border-color: #3d2a5c;
+}
+
+.opcion-accion .icono-accion {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.opcion-accion .icono-accion.morado {
+    background: rgba(155, 89, 182, 0.15);
+    color: #9b59b6;
+}
+
+.opcion-accion .icono-accion.rojo {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+}
+
+.opcion-accion .icono-accion.azul {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
+.opcion-accion .icono-accion.naranja {
+    background: rgba(243, 156, 18, 0.15);
+    color: #f39c12;
+}
+
+.opcion-accion .texto-accion {
+    flex: 1;
+}
+
+.opcion-accion .texto-accion .titulo-accion {
+    font-weight: 600;
+    color: #2c1b4e;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .opcion-accion .texto-accion .titulo-accion {
+    color: #d4c4e8;
+}
+
+.opcion-accion .texto-accion .descripcion-accion {
+    font-size: 0.75rem;
+    color: #95a5a6;
+}
+
+body.dark-mode .opcion-accion .texto-accion .descripcion-accion {
+    color: #7a6a8e;
+}
+
+.opcion-accion.peligro {
+    border-color: rgba(231, 76, 60, 0.2);
+}
+
+.opcion-accion.peligro:hover {
+    background: rgba(231, 76, 60, 0.08);
+    border-color: #e74c3c;
+}
+
+body.dark-mode .opcion-accion.peligro:hover {
+    background: rgba(231, 76, 60, 0.15);
+}
+
+/* Badge de reportado */
+.badge-reportado {
+    display: inline-block;
+    background: #e74c3c;
+    color: white;
+    font-size: 0.5rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    animation: pulse 1.5s ease infinite;
+}
+
+/* Banner de comentario reportado */
+.comentario-reportado {
+    opacity: 0.7;
+    border-left: 4px solid #e74c3c !important;
+}
+
+.comentario-reportado .comentario-texto {
+    text-decoration: line-through;
+    color: #95a5a6 !important;
+}
+
+/* Contenedor de reacciones */
+.reacciones-container {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Botón de reacción */
+.btn-reaccion {
+    background: none;
+    border: 1px solid #e0d6eb;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #7f8c8d;
+}
+
+.btn-reaccion:hover {
+    background: rgba(155, 89, 182, 0.08);
+    border-color: #9b59b6;
+    transform: scale(1.05);
+}
+
+.btn-reaccion .emoji {
+    font-size: 0.9rem;
+}
+
+.btn-reaccion .count {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.btn-reaccion.reaccion-activa {
+    background: rgba(155, 89, 182, 0.15);
+    border-color: #9b59b6;
+}
+
+.btn-reaccion.reaccion-activa .count {
+    color: #9b59b6;
+}
+
+body.dark-mode .btn-reaccion {
+    border-color: #3d2a5c;
+    color: #a894b8;
+}
+
+body.dark-mode .btn-reaccion:hover {
+    background: rgba(155, 89, 182, 0.2);
+    border-color: #c084d8;
+}
+
+body.dark-mode .btn-reaccion .count {
+    color: #a894b8;
+}
+
+body.dark-mode .btn-reaccion.reaccion-activa {
+    background: rgba(155, 89, 182, 0.25);
+    border-color: #c084d8;
+}
+
+body.dark-mode .btn-reaccion.reaccion-activa .count {
+    color: #c084d8;
+}
+
+/* Selector de reacciones (popup) */
+.reacciones-selector {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 30px;
+    border: 2px solid #e0d6eb;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    position: absolute;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+body.dark-mode .reacciones-selector {
+    background: #2a1f3d;
+    border-color: #3d2a5c;
+}
+
+.reacciones-selector .emoji-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 50%;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reacciones-selector .emoji-btn:hover {
+    transform: scale(1.3);
+    background: rgba(155, 89, 182, 0.1);
+}
+
+.reacciones-selector .emoji-btn:active {
+    transform: scale(0.9);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Reacciones en móvil */
+@media (max-width: 480px) {
+    .btn-reaccion {
+        font-size: 0.65rem;
+        padding: 1px 6px;
+    }
+    
+    .btn-reaccion .emoji {
+        font-size: 0.75rem;
+    }
+    
+    .btn-reaccion .count {
+        font-size: 0.55rem;
+    }
+    
+    .reacciones-selector .emoji-btn {
+        font-size: 1.2rem;
+        padding: 3px 4px;
+    }
+}
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .comentarios-container {
@@ -2666,6 +3293,704 @@ let comentariosVisibles = {};
 let respondiendoA = {}; // Guarda a quién se está respondiendo
 let respuestasVisibles = {}; // Controla visibilidad de respuestas
 
+// ============================================================
+// CARGAR PUBLICACIÓN ESPECÍFICA (PARA REPORTES)
+// ============================================================
+
+// Detectar si hay un parámetro "ver" en la URL
+const urlParams = new URLSearchParams(window.location.search);
+const publicacionIdVer = urlParams.get('ver');
+
+// Variable para saber si estamos viendo una publicación específica
+let esVistaUnica = false;
+let publicacionUnicaId = null;
+
+if (publicacionIdVer) {
+    esVistaUnica = true;
+    publicacionUnicaId = parseInt(publicacionIdVer);
+    console.log('📌 Vista de publicación única ID:', publicacionUnicaId);
+}
+
+// ===== SOBRECARGAR cargarPublicaciones para vista única =====
+// Esta función se ejecutará DESPUÉS de cargarPublicaciones original
+
+// Guardamos la función original
+const cargarPublicacionesOriginal = cargarPublicaciones;
+
+// Reemplazamos la función
+cargarPublicaciones = async function() {
+    try {
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return await cargarPublicaciones();
+        }
+        
+        console.log('📰 Cargando publicaciones...');
+        
+        let query = window.supabaseClient
+            .from('publicaciones')
+            .select(`
+                *,
+                usuarios!publicaciones_usuario_id_fkey(
+                    nombre,
+                    genero_id,
+                    avatar
+                )
+            `)
+            .eq('estado', 'aprobado');
+        
+        // Si es vista única, filtramos por ID
+        if (esVistaUnica && publicacionUnicaId) {
+            query = query.eq('id', publicacionUnicaId);
+            console.log('🔍 Filtrando publicación ID:', publicacionUnicaId);
+        }
+        
+        const { data: publicaciones, error } = await query.order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('❌ Error al cargar publicaciones:', error);
+            return;
+        }
+
+        console.log('📰 Publicaciones cargadas:', publicaciones?.length || 0);
+        todasPublicaciones = publicaciones || [];
+        
+        // Si es vista única y no hay publicaciones, mostrar mensaje
+        if (esVistaUnica && publicaciones?.length === 0) {
+            const muro = document.getElementById('muroComunidad');
+            if (muro) {
+                muro.innerHTML = `
+                    <div style="text-align:center; padding: 60px 20px; background: #fdfaff; border-radius: 30px; border: 2px solid #f0edf5;">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #9b59b6; opacity: 0.5;"></i>
+                        <h3 style="color: #2c1b4e; margin-top: 20px;">Publicación no encontrada</h3>
+                        <p style="color: #7f8c8d;">La publicación que buscas no existe o ha sido eliminada.</p>
+                        <button onclick="window.location.href='comunidad.html'" style="
+                            margin-top: 20px;
+                            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+                            border: none;
+                            padding: 12px 30px;
+                            border-radius: 50px;
+                            color: white;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: 0.3s;
+                        ">
+                            <i class="fas fa-arrow-left"></i> Volver a la comunidad
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+        }
+        
+        // Limpiar caché
+        comentariosCache = {};
+        comentariosVisibles = {};
+        
+        renderizarPublicaciones(tabActual);
+        
+        // Si es vista única, mostrar banner y ocultar elementos innecesarios
+        if (esVistaUnica) {
+            mostrarBannerVistaUnica();
+        }
+        
+    } catch (error) {
+        console.error('❌ Error en cargarPublicaciones:', error);
+    }
+};
+
+// ===== MOSTRAR BANNER DE VISTA ÚNICA =====
+function mostrarBannerVistaUnica() {
+    // Ocultar elementos que no necesitamos en vista única
+    const contenedorSubir = document.getElementById('contenedorBotonSubir');
+    if (contenedorSubir) contenedorSubir.style.display = 'none';
+    
+    const tabsWrapper = document.querySelector('.comunidad-tabs-wrapper');
+    if (tabsWrapper) {
+        // Ocultar los tabs
+        const tabs = tabsWrapper.querySelector('.comunidad-tabs');
+        if (tabs) tabs.style.display = 'none';
+    }
+    
+    // Agregar banner informativo
+    const muro = document.getElementById('muroComunidad');
+    if (muro) {
+        const banner = document.createElement('div');
+        banner.style.cssText = `
+            background: linear-gradient(135deg, #f3e9ff, #e8d5f5);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 2px solid #9b59b6;
+            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.1);
+        `;
+        banner.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-eye" style="color: #9b59b6; font-size: 1.3rem;"></i>
+                <div>
+                    <span style="font-weight: 700; color: #2c1b4e; font-size: 1rem;">
+                        🛡️ Vista de publicación específica
+                    </span>
+                    <p style="font-size: 0.8rem; color: #6a5a7e; margin: 0;">
+                        Estás viendo solo la publicación relacionada con un reporte
+                    </p>
+                </div>
+            </div>
+            <a href="comunidad.html" style="
+                background: #9b59b6;
+                color: white;
+                padding: 8px 20px;
+                border-radius: 30px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: 0.3s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            " onmouseover="this.style.background='#8e44ad'" onmouseout="this.style.background='#9b59b6'">
+                <i class="fas fa-arrow-left"></i> Volver a la comunidad
+            </a>
+        `;
+        muro.prepend(banner);
+        
+        // Agregar estilos para modo oscuro
+        if (document.body.classList.contains('dark-mode')) {
+            banner.style.background = 'linear-gradient(135deg, #2a1f3d, #3d2a5c)';
+            banner.style.borderColor = '#9b59b6';
+            banner.querySelector('span').style.color = '#d4c4e8';
+            banner.querySelector('p').style.color = '#a894b8';
+        }
+    }
+}
+
+// ===== DETECTAR CAMBIOS DE MODO OSCURO PARA EL BANNER =====
+const observerModoOscuro = new MutationObserver(() => {
+    const banner = document.querySelector('.banner-vista-unica');
+    if (banner) {
+        if (document.body.classList.contains('dark-mode')) {
+            banner.style.background = 'linear-gradient(135deg, #2a1f3d, #3d2a5c)';
+            banner.style.borderColor = '#9b59b6';
+            const span = banner.querySelector('span');
+            const p = banner.querySelector('p');
+            if (span) span.style.color = '#d4c4e8';
+            if (p) p.style.color = '#a894b8';
+        } else {
+            banner.style.background = 'linear-gradient(135deg, #f3e9ff, #e8d5f5)';
+            banner.style.borderColor = '#9b59b6';
+            const span = banner.querySelector('span');
+            const p = banner.querySelector('p');
+            if (span) span.style.color = '#2c1b4e';
+            if (p) p.style.color = '#6a5a7e';
+        }
+    }
+});
+
+observerModoOscuro.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class']
+});
+
+
+// ============================================================
+// REACCIONES A COMENTARIOS
+// ============================================================
+
+const EMOJIS_REACCIONES = [
+    { emoji: '❤️', nombre: 'Me encanta' },
+    { emoji: '😂', nombre: 'Me divierte' },
+    { emoji: '🐵', nombre: 'Mono' },
+    { emoji: '🐓', nombre: 'Gallo' },
+    { emoji: '🌟', nombre: 'Brillante' },
+    { emoji: '💡', nombre: 'Idea' },
+    { emoji: '🙏', nombre: 'Gracias' },
+    { emoji: '🔥', nombre: 'Fuego' }
+];
+
+const MOTIVOS_REPORTE = [
+    { value: 'ofensivo', label: '💢 Contenido ofensivo', desc: 'Lenguaje inapropiado o insultos' },
+    { value: 'spam', label: '📢 Spam o publicidad', desc: 'Contenido promocional no deseado' },
+    { value: 'acoso', label: '😰 Acoso', desc: 'Acoso a otros usuarios' },
+    { value: 'inapropiado', label: '🚫 Contenido inapropiado', desc: 'No relacionado o inadecuado' },
+    { value: 'falso', label: '❌ Información falsa', desc: 'Desinformación o engaño' },
+    { value: 'otro', label: '📌 Otro', desc: 'Otro motivo' }
+];
+
+// ===== REPORTAR COMENTARIO =====
+async function reportarComentario(comentarioId) {
+    if (!usuarioActual) {
+        Swal.fire({
+            title: '💜 Para reportar',
+            text: 'Necesitas iniciar sesión para reportar un comentario.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#9b59b6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
+            }
+        });
+        return;
+    }
+
+    // Verificar si ya reportó este comentario
+    const { data: existing } = await window.supabaseClient
+        .from('reportes_comentarios')
+        .select('id')
+        .eq('comentario_id', comentarioId)
+        .eq('usuario_id', usuarioActual.id)
+        .maybeSingle();
+
+    if (existing) {
+        Swal.fire({
+            title: '⚠️ Ya reportaste esto',
+            text: 'Ya has reportado este comentario anteriormente.',
+            icon: 'info',
+            timer: 2000,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+        return;
+    }
+
+    // Mostrar selector de motivos
+    const motivoOptions = MOTIVOS_REPORTE.map(m => 
+        `<option value="${m.value}">${m.label}</option>`
+    ).join('');
+
+    const { value: motivo } = await Swal.fire({
+        title: '🚨 Reportar comentario',
+        html: `
+            <div style="text-align: left; padding: 5px 0;">
+                <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 12px;">
+                    <i class="fas fa-shield-alt" style="color: #9b59b6;"></i>
+                    Ayúdanos a mantener la comunidad segura.
+                </p>
+                <label style="font-weight: 600; color: #2c1b4e; font-size: 0.9rem;">
+                    ¿Cuál es el motivo?
+                </label>
+                <select id="motivo-reporte" style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 2px solid #e0d6eb;
+                    border-radius: 12px;
+                    font-size: 0.9rem;
+                    margin-top: 6px;
+                    background: #fdfaff;
+                    color: #2c1b4e;
+                    font-family: inherit;
+                ">
+                    <option value="">Selecciona un motivo...</option>
+                    ${motivoOptions}
+                </select>
+                <label style="
+                    font-weight: 600; 
+                    color: #2c1b4e; 
+                    font-size: 0.9rem; 
+                    margin-top: 12px; 
+                    display: block;
+                ">
+                    Descripción (opcional)
+                </label>
+                <textarea id="descripcion-reporte" style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 2px solid #e0d6eb;
+                    border-radius: 12px;
+                    font-size: 0.9rem;
+                    margin-top: 6px;
+                    resize: vertical;
+                    min-height: 60px;
+                    background: #fdfaff;
+                    color: #2c1b4e;
+                    font-family: inherit;
+                " placeholder="Explica brevemente el motivo..."></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '📨 Enviar reporte',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#e74c3c',
+        cancelButtonColor: '#95a5a6',
+        preConfirm: () => {
+            const motivo = document.getElementById('motivo-reporte').value;
+            const descripcion = document.getElementById('descripcion-reporte').value;
+            if (!motivo) {
+                Swal.showValidationMessage('Por favor selecciona un motivo');
+                return false;
+            }
+            return { motivo, descripcion };
+        },
+        customClass: { popup: 'swal-popup-redondo' }
+    });
+
+    if (!motivo) return;
+
+    try {
+        const { error } = await window.supabaseClient
+            .from('reportes_comentarios')
+            .insert({
+                comentario_id: comentarioId,
+                usuario_id: usuarioActual.id,
+                motivo: motivo.motivo,
+                descripcion: motivo.descripcion || null,
+                estado: 'pendiente'
+            });
+
+        if (error) throw error;
+
+        // Confetti y mensaje
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 30,
+                spread: 40,
+                origin: { y: 0.7 },
+                colors: ['#e74c3c', '#f1c40f', '#3498db']
+            });
+        }
+
+        Swal.fire({
+            title: '✅ ¡Reporte enviado!',
+            html: `
+                <div style="padding: 10px 0;">
+                    <p style="color: #2c1b4e; font-size: 1rem;">
+                        <i class="fas fa-shield-alt" style="color: #9b59b6; font-size: 1.5rem; display: block; margin-bottom: 10px;"></i>
+                        Gracias por ayudar a mantener la comunidad segura.
+                    </p>
+                    <p style="color: #7f8c8d; font-size: 0.85rem;">
+                        El equipo de moderación revisará tu reporte.
+                    </p>
+                </div>
+            `,
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+
+    } catch (error) {
+        console.error('❌ Error al reportar:', error);
+        Swal.fire('Error', 'No se pudo enviar el reporte.', 'error');
+    }
+}
+
+// ===== MOSTRAR MODAL DE ACCIONES DEL COMENTARIO =====
+function mostrarAccionesComentario(comentarioId, esAutor, esAdmin) {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const bgColor = isDarkMode ? '#2a1f3d' : '#ffffff';
+    const textColor = isDarkMode ? '#d4c4e8' : '#2c1b4e';
+    
+    let opciones = [];
+
+    // Opciones para todos
+    opciones.push({
+        icono: '📋',
+        color: 'azul',
+        titulo: 'Copiar texto',
+        descripcion: 'Copiar el comentario al portapapeles',
+        accion: () => {
+            const comentario = document.querySelector(`.comentario-item[data-id="${comentarioId}"] .comentario-texto`);
+            if (comentario) {
+                navigator.clipboard.writeText(comentario.textContent).then(() => {
+                    Swal.fire({
+                        title: '✅ ¡Copiado!',
+                        timer: 1000,
+                        showConfirmButton: false,
+                        customClass: { popup: 'swal-popup-redondo' }
+                    });
+                });
+            }
+        }
+    });
+
+    // Opción de reportar (siempre visible para usuarios autenticados)
+    if (usuarioActual && !esAutor) {
+        opciones.push({
+            icono: '🚨',
+            color: 'naranja',
+            titulo: 'Reportar comentario',
+            descripcion: 'Reportar contenido inapropiado',
+            accion: () => reportarComentario(comentarioId),
+            peligro: true
+        });
+    }
+
+    // Opción de eliminar (solo autor o admin)
+    if (esAutor || esAdmin) {
+        opciones.push({
+            icono: '🗑️',
+            color: 'rojo',
+            titulo: 'Eliminar comentario',
+            descripcion: 'Eliminar este comentario permanentemente',
+            accion: () => {
+                const btn = document.querySelector(`.btn-eliminar-comentario[data-id="${comentarioId}"]`);
+                if (btn) btn.click();
+            },
+            peligro: true
+        });
+    }
+
+    // Si no hay opciones, mostrar mensaje
+    if (opciones.length === 0) {
+        Swal.fire({
+            title: 'ℹ️ Sin acciones',
+            text: 'No hay acciones disponibles para este comentario.',
+            icon: 'info',
+            timer: 1500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+        return;
+    }
+
+    // Renderizar modal
+    const opcionesHTML = opciones.map(op => `
+        <div class="opcion-accion ${op.peligro ? 'peligro' : ''}" data-accion="${op.titulo}">
+            <div class="icono-accion ${op.color}">${op.icono}</div>
+            <div class="texto-accion">
+                <div class="titulo-accion">${op.titulo}</div>
+                <div class="descripcion-accion">${op.descripcion}</div>
+            </div>
+            <i class="fas fa-chevron-right" style="color: #95a5a6; font-size: 0.8rem;"></i>
+        </div>
+    `).join('');
+
+    Swal.fire({
+        title: '⚙️ Acciones',
+        html: `
+            <div style="padding: 5px 0; text-align: left;">
+                ${opcionesHTML}
+            </div>
+        `,
+        showConfirmButton: false,
+        showCloseButton: true,
+        customClass: { 
+            popup: 'swal-popup-redondo swal-acciones-comentario',
+            closeButton: 'swal-close-button'
+        },
+        didOpen: () => {
+            document.querySelectorAll('.opcion-accion').forEach(el => {
+                el.addEventListener('click', () => {
+                    const titulo = el.dataset.accion;
+                    const opcion = opciones.find(o => o.titulo === titulo);
+                    if (opcion) {
+                        Swal.close();
+                        setTimeout(opcion.accion, 300);
+                    }
+                });
+            });
+        }
+    });
+}
+
+// ===== TOGGLE REACCIÓN A COMENTARIO =====
+async function toggleReaccionComentario(comentarioId, emoji) {
+    if (!usuarioActual) {
+        Swal.fire({
+            title: '💜 Para reaccionar',
+            text: 'Necesitas iniciar sesión para reaccionar.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#9b59b6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
+            }
+        });
+        return;
+    }
+
+    try {
+        // Verificar si ya reaccionó con este emoji
+        const { data: existing } = await window.supabaseClient
+            .from('reacciones_comentarios')
+            .select('id')
+            .eq('comentario_id', comentarioId)
+            .eq('usuario_id', usuarioActual.id)
+            .eq('reaccion', emoji)
+            .maybeSingle();
+
+        if (existing) {
+            // Quitar reacción
+            const { error } = await window.supabaseClient
+                .from('reacciones_comentarios')
+                .delete()
+                .eq('id', existing.id);
+
+            if (error) throw error;
+            
+            // Mostrar mensaje
+            Swal.fire({
+                title: `Reacción eliminada ${emoji}`,
+                timer: 800,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+        } else {
+            // Verificar si ya reaccionó con otro emoji
+            const { data: otherReaction } = await window.supabaseClient
+                .from('reacciones_comentarios')
+                .select('id, reaccion')
+                .eq('comentario_id', comentarioId)
+                .eq('usuario_id', usuarioActual.id)
+                .maybeSingle();
+
+            // Si tiene otra reacción, la reemplaza
+            if (otherReaction) {
+                await window.supabaseClient
+                    .from('reacciones_comentarios')
+                    .delete()
+                    .eq('id', otherReaction.id);
+            }
+
+            // Agregar nueva reacción
+            const { error } = await window.supabaseClient
+                .from('reacciones_comentarios')
+                .insert({
+                    comentario_id: comentarioId,
+                    usuario_id: usuarioActual.id,
+                    reaccion: emoji
+                });
+
+            if (error) throw error;
+
+            // Confeti
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 20,
+                    spread: 30,
+                    origin: { y: 0.8 },
+                    colors: ['#9b59b6', '#f1c40f', '#e74c3c']
+                });
+            }
+
+            // Mensaje carismático
+            const mensajes = [
+                `¡${emoji} Excelente reacción!`,
+                `¡${emoji} Me encanta tu estilo!`,
+                `¡${emoji} Qué bien!`,
+                `¡${emoji} Eso es todo!`
+            ];
+            Swal.fire({
+                title: mensajes[Math.floor(Math.random() * mensajes.length)],
+                timer: 800,
+                showConfirmButton: false,
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+        }
+
+        // Recargar comentarios
+        const publicacionId = document.querySelector(`.comentario-item[data-id="${comentarioId}"]`)?.dataset.publicacion;
+        if (publicacionId) {
+            const comentariosNuevos = await obtenerComentarios(publicacionId);
+            comentariosCargados[publicacionId] = comentariosNuevos;
+            renderizarComentarios(publicacionId, comentariosNuevos);
+        }
+
+    } catch (error) {
+        console.error('❌ Error en toggleReaccionComentario:', error);
+        Swal.fire('Error', 'No se pudo procesar la reacción.', 'error');
+    }
+}
+
+// ===== OBTENER REACCIONES DE UN COMENTARIO =====
+async function obtenerReaccionesComentario(comentarioId) {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('reacciones_comentarios')
+            .select('reaccion, usuario_id')
+            .eq('comentario_id', comentarioId);
+
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error('❌ Error en obtenerReaccionesComentario:', error);
+        return [];
+    }
+}
+
+// ===== RENDERIZAR BOTONES DE REACCIÓN =====
+function renderizarBotonesReaccion(comentarioId, reacciones) {
+    // Agrupar reacciones
+    const counts = {};
+    const userReaction = reacciones.find(r => r.usuario_id === usuarioActual?.id);
+    
+    reacciones.forEach(r => {
+        counts[r.reaccion] = (counts[r.reaccion] || 0) + 1;
+    });
+
+    let html = '<div class="reacciones-container">';
+    
+    // Mostrar reacciones existentes
+    for (const [emoji, count] of Object.entries(counts)) {
+        const isActive = userReaction?.reaccion === emoji;
+        html += `
+            <button class="btn-reaccion ${isActive ? 'reaccion-activa' : ''}" 
+                    onclick="toggleReaccionComentario(${comentarioId}, '${emoji}')">
+                <span class="emoji">${emoji}</span>
+                <span class="count">${count}</span>
+            </button>
+        `;
+    }
+
+    // Botón para agregar reacción (si no tiene o tiene una)
+    html += `
+        <button class="btn-reaccion" onclick="mostrarSelectorReacciones(${comentarioId})">
+            <span class="emoji">➕</span>
+        </button>
+    </div>`;
+
+    return html;
+}
+
+// ===== MOSTRAR SELECTOR DE REACCIONES =====
+function mostrarSelectorReacciones(comentarioId) {
+    // Crear el selector flotante
+    const existing = document.querySelector('.reacciones-selector');
+    if (existing) existing.remove();
+
+    const selector = document.createElement('div');
+    selector.className = 'reacciones-selector';
+    selector.style.position = 'fixed';
+    selector.style.bottom = '80px';
+    selector.style.left = '50%';
+    selector.style.transform = 'translateX(-50%)';
+
+    EMOJIS_REACCIONES.forEach(({ emoji, nombre }) => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-btn';
+        btn.innerHTML = emoji;
+        btn.title = nombre;
+        btn.addEventListener('click', () => {
+            toggleReaccionComentario(comentarioId, emoji);
+            selector.remove();
+        });
+        selector.appendChild(btn);
+    });
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', function closeSelector(e) {
+        if (!selector.contains(e.target)) {
+            selector.remove();
+            document.removeEventListener('click', closeSelector);
+        }
+    });
+
+    document.body.appendChild(selector);
+
+    // Animación de entrada
+    selector.style.animation = 'fadeIn 0.3s ease';
+}
+
         // ===== REACCIONES DISPONIBLES =====
         const REACCIONES = [
             { id: 'heart', icono: 'fa-heart', emoji: '❤️', class: 'heart', color: '#e74c3c' },
@@ -2905,7 +4230,7 @@ let respuestasVisibles = {}; // Controla visibilidad de respuestas
         }
 
         // ===== ACTUALIZAR CONTADOR DE PUBLICACIONES PENDIENTES =====
-        // ===== ACTUALIZAR CONTADOR DE PUBLICACIONES PENDIENTES =====
+       // ===== ACTUALIZAR CONTADOR DE NOTIFICACIONES =====
 async function actualizarContadorPendientes() {
     try {
         if (!esAdmin) {
@@ -2919,28 +4244,37 @@ async function actualizarContadorPendientes() {
             return;
         }
         
-        console.log('📊 Consultando publicaciones pendientes...');
+        console.log('📊 Consultando pendientes y reportes...');
         
-        // Usar count directamente sin head para obtener el número exacto
-        const { data, error, count } = await window.supabaseClient
+        // Contar publicaciones pendientes
+        const { count: countPendientes, error: errorPendientes } = await window.supabaseClient
             .from('publicaciones')
-            .select('id', { count: 'exact' })
+            .select('id', { count: 'exact', head: true })
             .eq('estado', 'pendiente');
         
-        if (error) {
-            console.error('❌ Error al contar pendientes:', error);
-            return;
+        if (errorPendientes) {
+            console.error('❌ Error al contar pendientes:', errorPendientes);
         }
         
-        console.log('📊 Publicaciones pendientes:', count);
+        // Contar reportes pendientes
+        const { count: countReportes, error: errorReportes } = await window.supabaseClient
+            .from('reportes_comentarios')
+            .select('id', { count: 'exact', head: true })
+            .eq('estado', 'pendiente');
+        
+        if (errorReportes) {
+            console.error('❌ Error al contar reportes:', errorReportes);
+        }
+        
+        const total = (countPendientes || 0) + (countReportes || 0);
+        console.log('📊 Total pendientes:', total, '(publicaciones:', countPendientes, 'reportes:', countReportes, ')');
         
         const badge = document.getElementById('badgeNotificacion');
         if (badge) {
-            const cantidad = count || 0;
-            if (cantidad > 0) {
-                badge.textContent = cantidad > 99 ? '99+' : cantidad;
+            if (total > 0) {
+                badge.textContent = total > 99 ? '99+' : total;
                 badge.classList.remove('oculto');
-                console.log('🔔 Campanita actualizada con:', cantidad);
+                console.log('🔔 Campanita actualizada con:', total);
             } else {
                 badge.classList.add('oculto');
                 console.log('🔔 Campanita oculta (0 pendientes)');
@@ -3092,6 +4426,7 @@ async function rechazarPublicacion(id) {
     }
 }
 // ===== ABRIR BUZÓN DE APROBACIÓN =====
+// ===== ABRIR BUZÓN DE APROBACIÓN (CON REPORTES) =====
 async function abrirBuzonAprobacion() {
     if (!esAdmin) {
         Swal.fire('Acceso restringido', 'Solo el administrador puede acceder a esta sección.', 'info');
@@ -3112,13 +4447,13 @@ async function abrirBuzonAprobacion() {
                 console.warn('⚠️ Error al cerrar modal anterior:', e);
             }
             swalBuzonInstance = null;
-            // Pequeña pausa para asegurar que el modal anterior se cerró
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
-        console.log('📬 Cargando publicaciones pendientes...');
-        
-        const { data: pendientes, error } = await window.supabaseClient
+        console.log('📬 Cargando publicaciones pendientes y reportes...');
+
+        // 1. Obtener publicaciones pendientes
+        const { data: pendientes, error: errorPendientes } = await window.supabaseClient
             .from('publicaciones')
             .select(`
                 *,
@@ -3131,16 +4466,45 @@ async function abrirBuzonAprobacion() {
             .eq('estado', 'pendiente')
             .order('created_at', { ascending: true });
 
-        if (error) {
-            console.error('❌ Error al cargar pendientes:', error);
-            Swal.fire('Error', 'No se pudieron cargar las publicaciones pendientes.', 'error');
-            return;
+        if (errorPendientes) {
+            console.error('❌ Error al cargar pendientes:', errorPendientes);
         }
 
-        console.log('📬 Publicaciones pendientes encontradas:', pendientes?.length || 0);
+        // 2. Obtener reportes de comentarios pendientes
+        const { data: reportes, error: errorReportes } = await window.supabaseClient
+            .from('reportes_comentarios')
+            .select(`
+                *,
+                comentarios!reportes_comentarios_comentario_id_fkey(
+                    id,
+                    comentario,
+                    created_at,
+                    usuarios:comentarios_usuario_id_fkey(
+                        nombre,
+                        avatar,
+                        genero_id
+                    ),
+                    publicaciones:comentarios_publicacion_id_fkey(
+                        id,
+                        contenido
+                    )
+                )
+            `)
+            .eq('estado', 'pendiente')
+            .order('created_at', { ascending: true });
 
-        if (!pendientes || pendientes.length === 0) {
-            // Actualizar el contador a 0 antes de mostrar el mensaje
+        if (errorReportes) {
+            console.error('❌ Error al cargar reportes:', errorReportes);
+        }
+
+        console.log('📬 Publicaciones pendientes:', pendientes?.length || 0);
+        console.log('📬 Reportes pendientes:', reportes?.length || 0);
+
+        // Verificar si hay algo pendiente
+        const hayPendientes = (pendientes && pendientes.length > 0);
+        const hayReportes = (reportes && reportes.length > 0);
+
+        if (!hayPendientes && !hayReportes) {
             const badge = document.getElementById('badgeNotificacion');
             if (badge) badge.classList.add('oculto');
             
@@ -3149,8 +4513,8 @@ async function abrirBuzonAprobacion() {
                 html: `
                     <div style="text-align:center; padding: 20px 0;">
                         <i class="fas fa-check-circle" style="font-size: 3rem; color: #27ae60; margin-bottom: 15px;"></i>
-                        <p style="color: #2c1b4e; font-size: 1.1rem; font-weight: 600;">No hay publicaciones pendientes</p>
-                        <p style="color: #7f8c8d; font-size: 0.9rem;">Todas las publicaciones han sido revisadas.</p>
+                        <p style="color: #2c1b4e; font-size: 1.1rem; font-weight: 600;">Todo está en orden</p>
+                        <p style="color: #7f8c8d; font-size: 0.9rem;">No hay publicaciones pendientes ni reportes.</p>
                     </div>
                 `,
                 showConfirmButton: true,
@@ -3162,89 +4526,308 @@ async function abrirBuzonAprobacion() {
             return;
         }
 
-        // Renderizar las publicaciones pendientes
-        const pendientesHTML = pendientes.map(pub => {
-            const nombre = pub.usuarios?.nombre || 'Usuario';
-            const avatar = pub.usuarios?.avatar || obtenerAvatarPorGenero(pub.usuarios?.genero_id || 0);
-            const fecha = new Date(pub.created_at).toLocaleDateString('es-ES', { 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-            
-            const esImagen = pub.tipo === 'imagen';
-            const contenidoHTML = esImagen 
-                ? `<img src="${pub.contenido}" class="pendiente-imagen" alt="Imagen pendiente" onclick="abrirImagenZoom('${pub.contenido}', 'Imagen pendiente')">` 
-                : `<div class="pendiente-contenido">${pub.contenido}</div>`;
+        // Construir HTML del buzón
+        let htmlContent = `
+            <div style="max-height: 550px; overflow-y: auto; padding: 5px 5px 10px; width: 100%;">
+                <p style="color: #7f8c8d; font-size: 0.9rem; text-align: center; margin-bottom: 16px;">
+                    <i class="fas fa-info-circle" style="color: #9b59b6;"></i> 
+                    Revisa y gestiona publicaciones pendientes y reportes
+                </p>
+        `;
 
-            return `
-                <div class="publicacion-pendiente" data-id="${pub.id}">
-                    <div class="pendiente-header">
-                        <img src="${avatar}" class="avatar-pendiente" onerror="this.src='imganes/avatar-default.png'">
-                        <span class="nombre-pendiente">${nombre}</span>
-                        <span class="fecha-pendiente"><i class="far fa-clock"></i> ${fecha}</span>
-                    </div>
-                    ${contenidoHTML}
-                    <div class="pendiente-acciones">
-                        <button class="btn-aprobar" data-id="${pub.id}">
-                            <i class="fas fa-check"></i> Aprobar
-                        </button>
-                        <button class="btn-rechazar" data-id="${pub.id}">
-                            <i class="fas fa-times"></i> Rechazar
-                        </button>
-                    </div>
-                </div>
+        // Sección de publicaciones pendientes
+        if (hayPendientes) {
+            htmlContent += `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #2c1b4e; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-clock" style="color: #f39c12;"></i>
+                        Publicaciones pendientes (${pendientes.length})
+                    </h3>
             `;
-        }).join('');
 
-        // Crear una nueva instancia del modal
-        swalBuzonInstance = await Swal.fire({
-            title: '📬 Buzón de aprobación',
-            html: `
-                <div style="max-height: 500px; overflow-y: auto; padding: 5px 5px 10px; width: 100%;">
-                    <p style="color: #7f8c8d; font-size: 0.9rem; text-align: center; margin-bottom: 16px;">
-                        <i class="fas fa-info-circle" style="color: #9b59b6;"></i> 
-                        Revisa y aprueba las publicaciones de la comunidad
-                    </p>
-                    ${pendientesHTML}
+            pendientes.forEach(pub => {
+                const nombre = pub.usuarios?.nombre || 'Usuario';
+                const avatar = pub.usuarios?.avatar || obtenerAvatarPorGenero(pub.usuarios?.genero_id || 0);
+                const fecha = new Date(pub.created_at).toLocaleDateString('es-ES', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                const esImagen = pub.tipo === 'imagen';
+                const contenidoHTML = esImagen 
+                    ? `<img src="${pub.contenido}" class="pendiente-imagen" alt="Imagen pendiente" onclick="abrirImagenZoom('${pub.contenido}', 'Imagen pendiente')">` 
+                    : `<div class="pendiente-contenido">${pub.contenido}</div>`;
+
+                htmlContent += `
+                    <div class="publicacion-pendiente" data-id="${pub.id}" data-tipo="publicacion">
+                        <div class="pendiente-header">
+                            <img src="${avatar}" class="avatar-pendiente" onerror="this.src='imganes/avatar-default.png'">
+                            <span class="nombre-pendiente">${nombre}</span>
+                            <span class="fecha-pendiente"><i class="far fa-clock"></i> ${fecha}</span>
+                        </div>
+                        ${contenidoHTML}
+                        <div class="pendiente-acciones">
+                            <button class="btn-aprobar" data-id="${pub.id}" data-tipo="publicacion">
+                                <i class="fas fa-check"></i> Aprobar
+                            </button>
+                            <button class="btn-rechazar" data-id="${pub.id}" data-tipo="publicacion">
+                                <i class="fas fa-times"></i> Rechazar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            htmlContent += `</div>`;
+        }
+
+        // Sección de reportes
+        if (hayReportes) {
+            htmlContent += `
+                <div style="margin-top: 10px; border-top: 2px solid #f0edf5; padding-top: 15px;">
+                    <h3 style="color: #2c1b4e; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-flag" style="color: #e74c3c;"></i>
+                        Reportes de comentarios (${reportes.length})
+                    </h3>
+            `;
+
+            // Dentro de abrirBuzonAprobacion, en la sección de reportes
+
+reportes.forEach(reporte => {
+    const comentario = reporte.comentarios;
+    const autorComentario = comentario?.usuarios?.nombre || 'Usuario desconocido';
+    const avatarAutor = comentario?.usuarios?.avatar || obtenerAvatarPorGenero(comentario?.usuarios?.genero_id || 0);
+    const fechaReporte = new Date(reporte.created_at).toLocaleDateString('es-ES', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+
+    const motivoLabel = {
+        'ofensivo': '💢 Ofensivo',
+        'spam': '📢 Spam',
+        'acoso': '😰 Acoso',
+        'inapropiado': '🚫 Inapropiado',
+        'falso': '❌ Información falsa',
+        'otro': '📌 Otro'
+    }[reporte.motivo] || reporte.motivo;
+
+    const motivoClass = {
+        'ofensivo': 'ofensivo',
+        'spam': 'spam',
+        'acoso': 'acoso',
+        'inapropiado': 'inapropiado',
+        'falso': 'falso',
+        'otro': 'otro'
+    }[reporte.motivo] || 'otro';
+
+     // Obtener el ID de la publicación para el enlace
+        const publicacionId = comentario?.publicaciones?.id || '';
+        const publicacionPreview = comentario?.publicaciones?.contenido || '';
+        const publicacionPreviewCortado = publicacionPreview.length > 50 
+            ? publicacionPreview.substring(0, 50) + '...' 
+            : publicacionPreview;
+
+        htmlContent += `
+            <div class="publicacion-pendiente reporte-pendiente" data-id="${reporte.id}" data-tipo="reporte" data-comentario-id="${comentario?.id}">
+                <div class="pendiente-header">
+                    <img src="${avatarAutor}" class="avatar-pendiente" onerror="this.src='imganes/avatar-default.png'">
+                    <span class="nombre-pendiente">${autorComentario}</span>
+                    <span class="badge-reporte" style="
+                        display: inline-block;
+                        background: #fde8e8;
+                        color: #e74c3c;
+                        font-size: 0.6rem;
+                        font-weight: 700;
+                        padding: 2px 10px;
+                        border-radius: 12px;
+                        margin-left: 6px;
+                    ">
+                        <i class="fas fa-flag"></i> Reportado
+                    </span>
+                    <span class="fecha-pendiente"><i class="far fa-clock"></i> ${fechaReporte}</span>
                 </div>
-            `,
+                
+                <div class="info-reporte" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 4px 0;">
+                    <span class="badge-motivo ${motivoClass}" style="
+                        display: inline-block;
+                        padding: 2px 12px;
+                        border-radius: 12px;
+                        font-size: 0.7rem;
+                        font-weight: 600;
+                        background: ${motivoClass === 'ofensivo' ? '#fde8e8' : 
+                                   motivoClass === 'spam' ? '#fef9e7' : 
+                                   motivoClass === 'acoso' ? '#fdedec' : 
+                                   motivoClass === 'inapropiado' ? '#ebf5fb' : 
+                                   motivoClass === 'falso' ? '#f4ecf7' : '#f2f4f4'};
+                        color: ${motivoClass === 'ofensivo' ? '#e74c3c' : 
+                               motivoClass === 'spam' ? '#f39c12' : 
+                               motivoClass === 'acoso' ? '#e74c3c' : 
+                               motivoClass === 'inapropiado' ? '#3498db' : 
+                               motivoClass === 'falso' ? '#9b59b6' : '#7f8c8d'};
+                    ">
+                        ${motivoLabel}
+                    </span>
+                    ${reporte.descripcion ? `
+                        <span style="font-size: 0.7rem; color: #7f8c8d;">
+                            - ${reporte.descripcion}
+                        </span>
+                    ` : ''}
+                </div>
+                
+                <div class="preview-con-enlace">
+                    <!-- Preview del comentario reportado -->
+                    <div class="comentario-reportado-preview" style="
+                        background: #f8f0f0;
+                        padding: 10px 14px;
+                        border-radius: 12px;
+                        margin: 6px 0 8px;
+                        border-left: 4px solid #e74c3c;
+                    ">
+                        <div style="font-size: 0.7rem; color: #95a5a6; margin-bottom: 4px;">
+                            <i class="fas fa-quote-left" style="color: #e74c3c; font-size: 0.7rem;"></i>
+                            Comentario reportado:
+                        </div>
+                        <div class="texto-reportado" style="
+                            font-size: 0.9rem;
+                            color: #2c3e50;
+                            line-height: 1.5;
+                            font-style: italic;
+                        ">
+                            "${reporte.comentario_texto || comentario?.comentario || 'Comentario eliminado'}"
+                        </div>
+                    </div>
+                    
+                    <!-- ============================================================ -->
+                    <!-- ===== AQUÍ VA EL ENLACE A LA PUBLICACIÓN ===== -->
+                    <!-- ============================================================ -->
+                    ${publicacionId ? `
+                        <a href="comunidad.html?ver=${publicacionId}" 
+                           target="_blank" 
+                           class="enlace-publicacion-reporte"
+                           style="
+                               display: inline-flex;
+                               align-items: center;
+                               gap: 6px;
+                               color: #9b59b6;
+                               font-weight: 600;
+                               text-decoration: none;
+                               font-size: 0.75rem;
+                               padding: 4px 12px;
+                               border-radius: 12px;
+                               background: rgba(155, 89, 182, 0.08);
+                               transition: 0.3s;
+                               border: 1px solid rgba(155, 89, 182, 0.15);
+                               cursor: pointer;
+                               align-self: flex-start;
+                           "
+                           onmouseover="this.style.background='rgba(155, 89, 182, 0.15)'; this.style.transform='translateX(2px)';"
+                           onmouseout="this.style.background='rgba(155, 89, 182, 0.08)'; this.style.transform='translateX(0)';"
+                        >
+                            <i class="fas fa-external-link-alt icono-enlace"></i>
+                            Ver publicación: "${publicacionPreviewCortado}"
+                        </a>
+                    ` : `
+                        <span style="font-size: 0.7rem; color: #95a5a6;">
+                            <i class="fas fa-link"></i> Publicación no disponible
+                        </span>
+                    `}
+                </div>
+                
+                <div class="reportado-por" style="
+                    font-size: 0.7rem;
+                    color: #7f8c8d;
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                ">
+                    <i class="fas fa-user"></i> Reportado por: ${reporte.reportado_por_nombre || 'Usuario'}
+                </div>
+                
+                <div class="reporte-acciones" style="
+                    display: flex;
+                    gap: 10px;
+                    justify-content: flex-end;
+                    margin-top: 12px;
+                    padding-top: 12px;
+                    border-top: 1px solid #f0edf5;
+                    flex-wrap: wrap;
+                ">
+                    <button class="btn-ignorar-reporte" data-id="${reporte.id}" data-tipo="reporte" style="
+                        background: #27ae60;
+                        color: white;
+                        border: none;
+                        padding: 8px 20px;
+                        border-radius: 30px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: 0.3s;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 0.85rem;
+                    ">
+                        <i class="fas fa-check"></i> Ignorar reporte
+                    </button>
+                    <button class="btn-eliminar-comentario-reporte" data-id="${reporte.id}" data-comentario-id="${comentario?.id}" data-tipo="reporte" style="
+                        background: #e74c3c;
+                        color: white;
+                        border: none;
+                        padding: 8px 20px;
+                        border-radius: 30px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: 0.3s;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 0.85rem;
+                    ">
+                        <i class="fas fa-trash-alt"></i> Eliminar comentario
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+            htmlContent += `</div>`;
+        }
+
+        htmlContent += `</div>`;
+
+        // Mostrar el modal
+        swalBuzonInstance = await Swal.fire({
+            title: '📬 Buzón de administración',
+            html: htmlContent,
             showConfirmButton: false,
             showCloseButton: true,
             customClass: { 
                 popup: 'swal-popup-redondo swal-aprobacion-modal'
             },
             didOpen: () => {
-                // Event listeners para aprobar
-                document.querySelectorAll('.btn-aprobar').forEach(btn => {
+                // ===== EVENTOS PARA PUBLICACIONES =====
+                document.querySelectorAll('.btn-aprobar[data-tipo="publicacion"]').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         e.stopPropagation();
                         const id = btn.dataset.id;
-                        console.log('🔘 Clic en Aprobar para ID:', id);
-                        
-                        // Deshabilitar el botón temporalmente para evitar doble clic
                         btn.disabled = true;
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                         
                         const exito = await aprobarPublicacion(id);
                         if (exito) {
-                            console.log('✅ Publicación aprobada exitosamente');
-                            
-                            // Actualizar contador y recargar publicaciones
                             await actualizarContadorPendientes();
                             await cargarPublicaciones();
-                            
-                            // Cerrar el modal actual
                             if (swalBuzonInstance) {
                                 try {
                                     await swalBuzonInstance.close();
                                 } catch (e) {}
                                 swalBuzonInstance = null;
                             }
-                            
-                            // Esperar un momento y abrir el modal nuevamente con datos frescos
                             await new Promise(resolve => setTimeout(resolve, 300));
                             await abrirBuzonAprobacion();
                         } else {
@@ -3254,12 +4837,10 @@ async function abrirBuzonAprobacion() {
                     });
                 });
 
-                // Event listeners para rechazar
-                document.querySelectorAll('.btn-rechazar').forEach(btn => {
+                document.querySelectorAll('.btn-rechazar[data-tipo="publicacion"]').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         e.stopPropagation();
                         const id = btn.dataset.id;
-                        console.log('🔘 Clic en Rechazar para ID:', id);
                         
                         const confirmar = await Swal.fire({
                             title: '¿Rechazar publicación?',
@@ -3273,32 +4854,118 @@ async function abrirBuzonAprobacion() {
                         });
                         
                         if (confirmar.isConfirmed) {
-                            // Deshabilitar el botón temporalmente
                             btn.disabled = true;
-                            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                             
                             const exito = await rechazarPublicacion(id);
                             if (exito) {
-                                console.log('🗑️ Publicación rechazada exitosamente');
-                                
-                                // Actualizar contador y recargar publicaciones
                                 await actualizarContadorPendientes();
                                 await cargarPublicaciones();
-                                
-                                // Cerrar el modal actual
                                 if (swalBuzonInstance) {
                                     try {
                                         await swalBuzonInstance.close();
                                     } catch (e) {}
                                     swalBuzonInstance = null;
                                 }
-                                
-                                // Esperar un momento y abrir el modal nuevamente con datos frescos
                                 await new Promise(resolve => setTimeout(resolve, 300));
                                 await abrirBuzonAprobacion();
                             } else {
                                 btn.disabled = false;
                                 btn.innerHTML = '<i class="fas fa-times"></i> Rechazar';
+                            }
+                        }
+                    });
+                });
+
+                // ===== EVENTOS PARA REPORTES =====
+                document.querySelectorAll('.btn-ignorar-reporte').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const reporteId = btn.dataset.id;
+                        
+                        const confirmar = await Swal.fire({
+                            title: '¿Ignorar reporte?',
+                            text: 'El comentario permanecerá visible. El reporte se marcará como resuelto.',
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonColor: '#27ae60',
+                            cancelButtonColor: '#95a5a6',
+                            confirmButtonText: 'Sí, ignorar',
+                            cancelButtonText: 'Cancelar'
+                        });
+                        
+                        if (confirmar.isConfirmed) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                            
+                            const { error } = await window.supabaseClient
+                                .from('reportes_comentarios')
+                                .update({ estado: 'resuelto' })
+                                .eq('id', reporteId);
+                            
+                            if (!error) {
+                                await actualizarContadorPendientes();
+                                if (swalBuzonInstance) {
+                                    try {
+                                        await swalBuzonInstance.close();
+                                    } catch (e) {}
+                                    swalBuzonInstance = null;
+                                }
+                                await new Promise(resolve => setTimeout(resolve, 300));
+                                await abrirBuzonAprobacion();
+                            } else {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-check"></i> Ignorar reporte';
+                                Swal.fire('Error', 'No se pudo procesar el reporte.', 'error');
+                            }
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.btn-eliminar-comentario-reporte').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const reporteId = btn.dataset.id;
+                        const comentarioId = btn.dataset.comentarioId;
+                        
+                        const confirmar = await Swal.fire({
+                            title: '¿Eliminar comentario?',
+                            text: 'El comentario será eliminado y el reporte se marcará como resuelto.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#e74c3c',
+                            cancelButtonColor: '#95a5a6',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        });
+                        
+                        if (confirmar.isConfirmed) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                            
+                            // Eliminar comentario
+                            const exito = await eliminarComentario(comentarioId);
+                            
+                            if (exito) {
+                                // Marcar reporte como resuelto
+                                await window.supabaseClient
+                                    .from('reportes_comentarios')
+                                    .update({ estado: 'resuelto' })
+                                    .eq('id', reporteId);
+                                
+                                await actualizarContadorPendientes();
+                                await cargarPublicaciones();
+                                if (swalBuzonInstance) {
+                                    try {
+                                        await swalBuzonInstance.close();
+                                    } catch (e) {}
+                                    swalBuzonInstance = null;
+                                }
+                                await new Promise(resolve => setTimeout(resolve, 300));
+                                await abrirBuzonAprobacion();
+                            } else {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar comentario';
                             }
                         }
                     });
@@ -4594,7 +6261,219 @@ async function eliminarComentario(comentarioId) {
     }
 }
 
-// ===== RENDERIZAR COMENTARIOS (VERSIÓN CORREGIDA - SIN onclick) =====
+// Inicializar caché de reacciones
+if (!window.reaccionesCache) window.reaccionesCache = {};
+
+// ===== FUNCIÓN PARA OBTENER REACCIONES DE UN COMENTARIO =====
+async function obtenerReaccionesComentario(comentarioId) {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('reacciones_comentarios')
+            .select('reaccion, usuario_id')
+            .eq('comentario_id', comentarioId);
+
+        if (error) throw error;
+        
+        window.reaccionesCache[comentarioId] = data || [];
+        return data || [];
+    } catch (error) {
+        console.error('❌ Error en obtenerReaccionesComentario:', error);
+        return [];
+    }
+}
+
+// ===== FUNCIÓN PARA OBTENER REACCIONES (SÍNCRONA - DESDE CACHÉ) =====
+function obtenerReaccionesComentarioSync(comentarioId) {
+    return window.reaccionesCache[comentarioId] || [];
+}
+
+// ===== FUNCIÓN PARA RENDERIZAR BOTONES DE REACCIÓN (SÍNCRONA) =====
+function renderizarBotonesReaccionSync(comentarioId, reacciones) {
+    const counts = {};
+    const userReaction = reacciones.find(r => r.usuario_id === usuarioActual?.id);
+    
+    reacciones.forEach(r => {
+        counts[r.reaccion] = (counts[r.reaccion] || 0) + 1;
+    });
+
+    let html = '<div class="reacciones-container" style="display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; align-items: center;">';
+    
+    for (const [emoji, count] of Object.entries(counts)) {
+        const isActive = userReaction?.reaccion === emoji;
+        html += `
+            <button class="btn-reaccion ${isActive ? 'reaccion-activa' : ''}" 
+                    data-comentario="${comentarioId}" data-emoji="${emoji}">
+                <span class="emoji">${emoji}</span>
+                <span class="count">${count}</span>
+            </button>
+        `;
+    }
+
+    html += `
+        <button class="btn-reaccion btn-agregar-reaccion" data-comentario="${comentarioId}">
+            <span class="emoji">➕</span>
+        </button>
+    </div>`;
+
+    return html;
+}
+
+// ===== TOGGLE REACCIÓN A COMENTARIO =====
+async function toggleReaccionComentario(comentarioId, emoji) {
+    if (!usuarioActual) {
+        Swal.fire({
+            title: '💜 Para reaccionar',
+            text: 'Necesitas iniciar sesión para reaccionar.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#9b59b6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
+            }
+        });
+        return;
+    }
+
+    try {
+        const { data: existing } = await window.supabaseClient
+            .from('reacciones_comentarios')
+            .select('id')
+            .eq('comentario_id', comentarioId)
+            .eq('usuario_id', usuarioActual.id)
+            .eq('reaccion', emoji)
+            .maybeSingle();
+
+        if (existing) {
+            const { error } = await window.supabaseClient
+                .from('reacciones_comentarios')
+                .delete()
+                .eq('id', existing.id);
+
+            if (error) throw error;
+        } else {
+            const { data: otherReaction } = await window.supabaseClient
+                .from('reacciones_comentarios')
+                .select('id, reaccion')
+                .eq('comentario_id', comentarioId)
+                .eq('usuario_id', usuarioActual.id)
+                .maybeSingle();
+
+            if (otherReaction) {
+                await window.supabaseClient
+                    .from('reacciones_comentarios')
+                    .delete()
+                    .eq('id', otherReaction.id);
+            }
+
+            const { error } = await window.supabaseClient
+                .from('reacciones_comentarios')
+                .insert({
+                    comentario_id: comentarioId,
+                    usuario_id: usuarioActual.id,
+                    reaccion: emoji
+                });
+
+            if (error) throw error;
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 20,
+                    spread: 30,
+                    origin: { y: 0.8 },
+                    colors: ['#9b59b6', '#f1c40f', '#e74c3c']
+                });
+            }
+        }
+
+        const publicacionId = document.querySelector(`.comentario-item[data-id="${comentarioId}"]`)?.dataset.publicacion;
+        
+        if (publicacionId) {
+            const comentariosNuevos = await obtenerComentarios(publicacionId);
+            comentariosCargados[publicacionId] = comentariosNuevos;
+            
+            for (const comentario of comentariosNuevos) {
+                await obtenerReaccionesComentario(comentario.id);
+            }
+            
+            renderizarComentarios(publicacionId, comentariosNuevos);
+        }
+
+    } catch (error) {
+        console.error('❌ Error en toggleReaccionComentario:', error);
+        Swal.fire('Error', 'No se pudo procesar la reacción.', 'error');
+    }
+}
+
+// ===== MOSTRAR SELECTOR DE REACCIONES =====
+function mostrarSelectorReacciones(comentarioId) {
+    const existing = document.querySelector('.reacciones-selector');
+    if (existing) existing.remove();
+
+    const selector = document.createElement('div');
+    selector.className = 'reacciones-selector';
+    selector.style.cssText = `
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        padding: 8px 12px;
+        background: white;
+        border-radius: 30px;
+        border: 2px solid #e0d6eb;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        z-index: 1000;
+        animation: fadeIn 0.2s ease;
+    `;
+
+    EMOJIS_REACCIONES.forEach(({ emoji, nombre }) => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-btn';
+        btn.style.cssText = `
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 50%;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        btn.textContent = emoji;
+        btn.title = nombre;
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'scale(1.3)';
+            btn.style.background = 'rgba(155, 89, 182, 0.1)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'scale(1)';
+            btn.style.background = 'none';
+        });
+        btn.addEventListener('click', () => {
+            toggleReaccionComentario(comentarioId, emoji);
+            selector.remove();
+        });
+        selector.appendChild(btn);
+    });
+
+    document.addEventListener('click', function closeSelector(e) {
+        if (!selector.contains(e.target)) {
+            selector.remove();
+            document.removeEventListener('click', closeSelector);
+        }
+    });
+
+    document.body.appendChild(selector);
+}
+
+// ===== RENDERIZAR COMENTARIOS (CON REACCIONES) =====
+// ===== RENDERIZAR COMENTARIOS (CON REACCIONES + ACCIONES) =====
 function renderizarComentarios(publicacionId, comentarios) {
     const container = document.querySelector(`.comentarios-container[data-id="${publicacionId}"]`);
     if (!container) return;
@@ -4602,7 +6481,6 @@ function renderizarComentarios(publicacionId, comentarios) {
     const list = container.querySelector('.comentarios-list');
     if (!list) return;
 
-    // Separar comentarios principales de respuestas
     const principales = comentarios.filter(c => !c.padre_id);
     const respuestas = comentarios.filter(c => c.padre_id);
 
@@ -4616,7 +6494,9 @@ function renderizarComentarios(publicacionId, comentarios) {
         return;
     }
 
-    list.innerHTML = principales.map(com => {
+    let html = '';
+    
+    principales.forEach(com => {
         const nombre = com.usuarios?.nombre || 'Usuario';
         const avatar = com.usuarios?.avatar || obtenerAvatarPorGenero(com.usuarios?.genero_id || 0);
         const fecha = new Date(com.created_at).toLocaleDateString('es-ES', {
@@ -4631,8 +6511,11 @@ function renderizarComentarios(publicacionId, comentarios) {
         const esAdmin = usuarioActual && usuarioActual.nombre === ADMIN_NOMBRE;
         const respuestasDelComentario = respuestas.filter(r => r.padre_id === com.id);
 
-        return `
-            <div class="comentario-item" data-id="${com.id}">
+        const reacciones = obtenerReaccionesComentarioSync(com.id);
+        const reaccionesHTML = renderizarBotonesReaccionSync(com.id, reacciones);
+
+        html += `
+            <div class="comentario-item" data-id="${com.id}" data-publicacion="${publicacionId}">
                 <img src="${avatar}" class="avatar-comentario" onerror="this.src='imganes/avatar-default.png'" alt="${nombre}">
                 <div class="comentario-contenido">
                     <div class="comentario-nombre">
@@ -4640,8 +6523,9 @@ function renderizarComentarios(publicacionId, comentarios) {
                         <span class="comentario-fecha">· ${fecha}</span>
                     </div>
                     <div class="comentario-texto">${com.comentario}</div>
+
+                    ${reaccionesHTML}
                     
-                    <!-- Botones de acción del comentario -->
                     <div style="display: flex; gap: 6px; margin-top: 6px; align-items: center; flex-wrap: wrap;">
                         <button class="btn-responder" data-publicacion="${publicacionId}" data-comentario="${com.id}" data-nombre="${nombre}">
                             <i class="fas fa-reply"></i> Responder
@@ -4653,19 +6537,22 @@ function renderizarComentarios(publicacionId, comentarios) {
                         ` : ''}
                     </div>
                     
-                    <!-- Contenedor de respuestas -->
                     <div class="respuestas-container" data-comentario="${com.id}">
                         ${respuestasDelComentario.length > 0 ? renderizarRespuestasHTML(publicacionId, com.id, respuestasDelComentario) : ''}
                     </div>
                 </div>
-                ${(esAutor || esAdmin) ? `
-                    <button class="btn-eliminar-comentario" data-id="${com.id}" data-publicacion="${publicacionId}" title="Eliminar comentario">
-                        <i class="fas fa-times"></i>
+                <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+                    ${(esAutor || esAdmin) ? `
+                        <button class="btn-eliminar-comentario" data-id="${com.id}" data-publicacion="${publicacionId}" title="Eliminar comentario">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    ` : ''}
+                    <button class="btn-acciones-comentario" data-comentario="${com.id}" data-autor="${esAutor}" data-admin="${esAdmin}" title="Más acciones">
+                        <i class="fas fa-ellipsis-v"></i>
                     </button>
-                ` : ''}
+                </div>
             </div>
             
-            <!-- Formulario de respuesta (oculto) -->
             <div class="respuesta-form" data-comentario="${com.id}" style="display: none;">
                 <input type="text" class="input-respuesta" placeholder="💬 Responder a ${nombre}..." maxlength="500">
                 <button class="btn-enviar-respuesta" data-publicacion="${publicacionId}" data-comentario="${com.id}" data-mencionado="${com.usuario_id}">
@@ -4673,16 +6560,38 @@ function renderizarComentarios(publicacionId, comentarios) {
                 </button>
             </div>
             
-            <!-- Mensaje "Respondiendo a..." -->
             <div class="respondiendo-a" data-comentario="${com.id}" style="display: none;">
                 <i class="fas fa-reply icono-respuesta"></i> Respondiendo a <strong>${nombre}</strong>
             </div>
         `;
-    }).join('');
+    });
 
-    // ===== EVENT LISTENERS (TODOS AQUÍ, SIN onclick) =====
+    list.innerHTML = html;
 
-    // 1. Botones de responder
+    // ===== EVENT LISTENERS =====
+
+    // 1. Botones de reacción
+    list.querySelectorAll('.btn-reaccion').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const comentarioId = this.dataset.comentario;
+            const emoji = this.dataset.emoji;
+            if (emoji) {
+                toggleReaccionComentario(comentarioId, emoji);
+            }
+        });
+    });
+
+    // 2. Botón agregar reacción (➕)
+    list.querySelectorAll('.btn-agregar-reaccion').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const comentarioId = this.dataset.comentario;
+            mostrarSelectorReacciones(comentarioId);
+        });
+    });
+
+    // 3. Botones de responder
     list.querySelectorAll('.btn-responder').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -4693,7 +6602,7 @@ function renderizarComentarios(publicacionId, comentarios) {
         });
     });
 
-    // 2. Botones de eliminar comentarios
+    // 4. Botones de eliminar comentarios
     list.querySelectorAll('.btn-eliminar-comentario').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -4716,6 +6625,11 @@ function renderizarComentarios(publicacionId, comentarios) {
                 if (exito) {
                     const comentariosNuevos = await obtenerComentarios(publicacionId);
                     comentariosCargados[publicacionId] = comentariosNuevos;
+                    
+                    for (const comentario of comentariosNuevos) {
+                        await obtenerReaccionesComentario(comentario.id);
+                    }
+                    
                     renderizarComentarios(publicacionId, comentariosNuevos);
                     
                     const comentarioCount = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);
@@ -4727,7 +6641,7 @@ function renderizarComentarios(publicacionId, comentarios) {
         });
     });
 
-    // 3. Botones de enviar respuesta
+    // 5. Botones de enviar respuesta
     list.querySelectorAll('.btn-enviar-respuesta').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -4738,7 +6652,7 @@ function renderizarComentarios(publicacionId, comentarios) {
         });
     });
 
-    // 4. Enviar respuesta con Enter
+    // 6. Enviar respuesta con Enter
     document.querySelectorAll('.input-respuesta').forEach(input => {
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -4747,6 +6661,17 @@ function renderizarComentarios(publicacionId, comentarios) {
                 const btn = form.querySelector('.btn-enviar-respuesta');
                 if (btn) btn.click();
             }
+        });
+    });
+
+    // 7. Botón de acciones (tres puntos)
+    list.querySelectorAll('.btn-acciones-comentario').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const comentarioId = this.dataset.comentario;
+            const esAutor = this.dataset.autor === 'true';
+            const esAdmin = this.dataset.admin === 'true';
+            mostrarAccionesComentario(comentarioId, esAutor, esAdmin);
         });
     });
 }
@@ -4800,7 +6725,6 @@ function renderizarRespuestasHTML(publicacionId, comentarioId, respuestas) {
 
 // ===== TOGGLE RESPONDER =====
 function toggleResponder(publicacionId, comentarioId, nombreUsuario) {
-    // Ocultar otros formularios de respuesta
     document.querySelectorAll('.respuesta-form').forEach(form => {
         if (form.dataset.comentario != comentarioId) {
             form.style.display = 'none';
@@ -4866,6 +6790,11 @@ async function toggleComentarios(publicacionId) {
         
         const comentarios = await obtenerComentarios(publicacionId);
         comentariosCargados[publicacionId] = comentarios;
+        
+        for (const comentario of comentarios) {
+            await obtenerReaccionesComentario(comentario.id);
+        }
+        
         renderizarComentarios(publicacionId, comentarios);
     }
 
@@ -4906,6 +6835,11 @@ async function enviarComentario(publicacionId) {
         
         const comentariosNuevos = await obtenerComentarios(publicacionId);
         comentariosCargados[publicacionId] = comentariosNuevos;
+        
+        for (const comentario of comentariosNuevos) {
+            await obtenerReaccionesComentario(comentario.id);
+        }
+        
         renderizarComentarios(publicacionId, comentariosNuevos);
         
         const countSpan = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);
@@ -5033,6 +6967,11 @@ async function enviarRespuesta(publicacionId, comentarioId, mencionadoId = null)
         
         const comentariosNuevos = await obtenerComentarios(publicacionId);
         comentariosCargados[publicacionId] = comentariosNuevos;
+        
+        for (const comentario of comentariosNuevos) {
+            await obtenerReaccionesComentario(comentario.id);
+        }
+        
         renderizarComentarios(publicacionId, comentariosNuevos);
         
         const countSpan = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);

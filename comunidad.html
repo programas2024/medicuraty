@@ -16,8 +16,693 @@
     <link rel="stylesheet" href="css/swafire.css">
     <link rel="stylesheet" href="css/comunidad.css">
     <style>
-        /* ===== ESTILOS PARA EL CONTENEDOR DE TABS ===== */
-        .comunidad-tabs-wrapper {
+       /* ============================================================
+   ESTILOS PARA COMENTARIOS Y RESPUESTAS (COMPLETO)
+   ============================================================ */
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.comentarios-container {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f0edf5;
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .comentarios-container {
+    border-top-color: #3d2a5c;
+}
+
+.comentarios-list {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* ===== ITEM DE COMENTARIO ===== */
+.comentario-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #f8f5fc;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    transition: 0.3s;
+    align-items: flex-start;
+}
+
+.comentario-item:hover {
+    background: #f0e6ff;
+}
+
+body.dark-mode .comentario-item {
+    background: #1f1630;
+}
+
+body.dark-mode .comentario-item:hover {
+    background: #2a1f3d;
+}
+
+/* ===== AVATAR DEL COMENTARIO ===== */
+.comentario-item .avatar-comentario {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+    border: 2px solid #e8e0f0;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body.dark-mode .comentario-item .avatar-comentario {
+    border-color: #3d2a5c;
+}
+
+/* ===== CONTENIDO DEL COMENTARIO ===== */
+.comentario-item .comentario-contenido {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.comentario-item .comentario-nombre {
+    font-weight: 700;
+    color: #2c1b4e;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .comentario-item .comentario-nombre {
+    color: #d4c4e8;
+}
+
+.comentario-item .comentario-nombre .comentario-fecha {
+    font-weight: 400;
+    color: #95a5a6;
+    font-size: 0.65rem;
+}
+
+.comentario-item .comentario-texto {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-top: 2px;
+    word-wrap: break-word;
+}
+
+body.dark-mode .comentario-item .comentario-texto {
+    color: #d4c4e8;
+}
+
+/* ===== BOTÓN ELIMINAR ===== */
+.comentario-item .btn-eliminar-comentario {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    opacity: 0.4;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 50%;
+    transition: 0.3s;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.comentario-item .btn-eliminar-comentario:hover {
+    opacity: 1;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* ===== BOTÓN RESPONDER ===== */
+.btn-responder {
+    background: none;
+    border: none;
+    color: #9b59b6;
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 12px;
+    transition: 0.3s;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-responder:hover {
+    background: rgba(155, 89, 182, 0.1);
+    transform: scale(1.05);
+}
+
+body.dark-mode .btn-responder {
+    color: #c084d8;
+}
+
+body.dark-mode .btn-responder:hover {
+    background: rgba(155, 89, 182, 0.2);
+}
+
+/* ===== CONTENEDOR DE RESPUESTAS ===== */
+.respuestas-container {
+    margin-left: 42px;
+    margin-top: 8px;
+    padding-left: 12px;
+    border-left: 3px solid #9b59b6;
+    border-radius: 0 0 0 8px;
+}
+
+body.dark-mode .respuestas-container {
+    border-left-color: #c084d8;
+}
+
+/* ===== BADGE DE RESPUESTA ===== */
+.badge-respuesta {
+    display: inline-block;
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white;
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== COMENTARIO QUE ES RESPUESTA ===== */
+.comentario-item.respuesta {
+    background: #f0e6ff;
+    border-left: 4px solid #9b59b6;
+    margin-bottom: 6px;
+}
+
+.comentario-item.respuesta:hover {
+    background: #e8d5f5;
+}
+
+body.dark-mode .comentario-item.respuesta {
+    background: #2a1f3d;
+    border-left-color: #c084d8;
+}
+
+body.dark-mode .comentario-item.respuesta:hover {
+    background: #1f1630;
+}
+
+/* ===== FORMULARIO DE RESPUESTA ===== */
+.respuesta-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    margin-left: 42px;
+    align-items: flex-end;
+}
+
+.respuesta-form .input-respuesta {
+    flex: 1;
+    padding: 8px 14px;
+    border: 2px solid #e0d6eb;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    background: #fdfaff;
+    transition: 0.3s;
+    font-family: inherit;
+    min-height: 36px;
+    max-height: 80px;
+}
+
+.respuesta-form .input-respuesta:focus {
+    border-color: #9b59b6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+}
+
+body.dark-mode .respuesta-form .input-respuesta {
+    background: #1f1630;
+    border-color: #3d2a5c;
+    color: #d4c4e8;
+}
+
+.respuesta-form .btn-enviar-respuesta {
+    background: linear-gradient(145deg, #9b59b6, #8e44ad);
+    border: none;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    height: 36px;
+}
+
+.respuesta-form .btn-enviar-respuesta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(155, 89, 182, 0.3);
+}
+
+.respuesta-form .btn-enviar-respuesta:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== MENCIONES ===== */
+.mencion {
+    color: #9b59b6;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mencion:hover {
+    text-decoration: underline;
+}
+
+body.dark-mode .mencion {
+    color: #c084d8;
+}
+
+/* ===== ÍCONO DE RESPUESTA ===== */
+.icono-respuesta {
+    color: #9b59b6;
+    font-size: 0.7rem;
+    margin-right: 2px;
+}
+
+body.dark-mode .icono-respuesta {
+    color: #c084d8;
+}
+
+/* ===== MENSAJE "RESPONDIENDO A..." ===== */
+.respondiendo-a {
+    font-size: 0.7rem;
+    color: #9b59b6;
+    font-weight: 600;
+    margin-left: 42px;
+    margin-top: 4px;
+    opacity: 0.8;
+}
+
+body.dark-mode .respondiendo-a {
+    color: #c084d8;
+}
+
+/* ===== BADGE "NUEVO" ===== */
+.badge-nuevo {
+    display: inline-block;
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    color: white;
+    font-size: 0.5rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    animation: pulse 1.5s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ===== FORMULARIO PRINCIPAL DE COMENTARIO ===== */
+.comentar-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: flex-end;
+}
+
+.comentar-form .input-comentario {
+    flex: 1;
+    padding: 10px 16px;
+    border: 2px solid #e0d6eb;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    background: #fdfaff;
+    transition: 0.3s;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 44px;
+    max-height: 100px;
+}
+
+.comentar-form .input-comentario:focus {
+    border-color: #9b59b6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+}
+
+body.dark-mode .comentar-form .input-comentario {
+    background: #1f1630;
+    border-color: #3d2a5c;
+    color: #d4c4e8;
+}
+
+body.dark-mode .comentar-form .input-comentario:focus {
+    border-color: #9b59b6;
+}
+
+.comentar-form .btn-enviar-comentario {
+    background: linear-gradient(145deg, #9b59b6, #8e44ad);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.comentar-form .btn-enviar-comentario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(155, 89, 182, 0.3);
+}
+
+.comentar-form .btn-enviar-comentario:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+body.dark-mode .comentar-form .btn-enviar-comentario {
+    background: linear-gradient(145deg, #9b59b6, #8e44ad);
+}
+
+/* ===== SIN COMENTARIOS ===== */
+.sin-comentarios {
+    text-align: center;
+    color: #95a5a6;
+    font-size: 0.85rem;
+    padding: 12px 0;
+}
+
+body.dark-mode .sin-comentarios {
+    color: #7a6a8e;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comentario-item.nuevo {
+    animation: fadeInUp 0.4s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.respuesta-item.nuevo {
+    animation: slideInLeft 0.4s ease;
+}
+
+/* ============================================================
+   RESPONSIVE PARA COMENTARIOS (MÓVIL)
+   ============================================================ */
+
+/* Tablets y móviles grandes */
+@media (max-width: 768px) {
+    .comentarios-container {
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+
+    .comentarios-list {
+        max-height: 250px;
+        padding-right: 3px;
+    }
+
+    .comentario-item {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+        border-radius: 12px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .comentario-item .avatar-comentario {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        max-width: 28px !important;
+        border-width: 2px !important;
+    }
+
+    .comentario-item .comentario-nombre {
+        font-size: 0.78rem !important;
+        gap: 4px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .comentario-item .comentario-texto {
+        font-size: 0.82rem !important;
+        line-height: 1.4 !important;
+        margin-top: 1px !important;
+    }
+
+    .comentario-item .comentario-nombre .comentario-fecha {
+        font-size: 0.6rem !important;
+    }
+
+    .badge-respuesta {
+        font-size: 0.45rem !important;
+        padding: 1px 6px !important;
+    }
+
+    .badge-nuevo {
+        font-size: 0.4rem !important;
+        padding: 0px 6px !important;
+    }
+
+    .comentario-item .btn-eliminar-comentario {
+        font-size: 0.7rem !important;
+        padding: 2px 4px !important;
+    }
+
+    .btn-responder {
+        font-size: 0.65rem !important;
+        padding: 2px 6px !important;
+    }
+
+    .respuestas-container {
+        margin-left: 28px !important;
+        margin-top: 6px !important;
+        padding-left: 8px !important;
+        border-left-width: 2px !important;
+    }
+
+    .comentario-item.respuesta {
+        padding: 6px 8px !important;
+        border-left-width: 3px !important;
+    }
+
+    .respuesta-form {
+        margin-left: 28px !important;
+        margin-top: 4px !important;
+        gap: 6px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .respuesta-form .input-respuesta {
+        padding: 6px 10px !important;
+        font-size: 0.78rem !important;
+        min-height: 30px !important;
+        border-radius: 12px !important;
+        flex: 1 1 100% !important;
+    }
+
+    .respuesta-form .btn-enviar-respuesta {
+        padding: 4px 12px !important;
+        font-size: 0.7rem !important;
+        height: 30px !important;
+        border-radius: 12px !important;
+        flex: 1 !important;
+        justify-content: center !important;
+    }
+
+    .respondiendo-a {
+        font-size: 0.6rem !important;
+        margin-left: 28px !important;
+        margin-top: 2px !important;
+    }
+
+    .sin-comentarios {
+        font-size: 0.78rem !important;
+        padding: 8px 0 !important;
+    }
+
+    .sin-comentarios i {
+        font-size: 1.2rem !important;
+    }
+
+    .comentar-form {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        margin-top: 8px !important;
+    }
+
+    .comentar-form .input-comentario {
+        padding: 8px 12px !important;
+        font-size: 0.82rem !important;
+        min-height: 36px !important;
+        border-radius: 14px !important;
+        flex: 1 1 100% !important;
+    }
+
+    .comentar-form .btn-enviar-comentario {
+        padding: 6px 16px !important;
+        font-size: 0.78rem !important;
+        height: 36px !important;
+        border-radius: 14px !important;
+        flex: 1 !important;
+        justify-content: center !important;
+    }
+
+    .comentario-count {
+        font-size: 0.75rem !important;
+    }
+
+    .btn-ver-comentarios {
+        font-size: 0.78rem !important;
+        padding: 4px 10px !important;
+    }
+
+    .icono-respuesta {
+        font-size: 0.6rem !important;
+    }
+
+    .mencion {
+        font-size: 0.82rem !important;
+    }
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 480px) {
+    .comentario-item {
+        padding: 6px 8px !important;
+        gap: 6px !important;
+        border-radius: 10px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .comentario-item .avatar-comentario {
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+        max-width: 24px !important;
+        border-width: 1.5px !important;
+    }
+
+    .comentario-item .comentario-nombre {
+        font-size: 0.7rem !important;
+    }
+
+    .comentario-item .comentario-texto {
+        font-size: 0.75rem !important;
+    }
+
+    .respuestas-container {
+        margin-left: 20px !important;
+        padding-left: 6px !important;
+    }
+
+    .respuesta-form {
+        margin-left: 20px !important;
+    }
+
+    .respuesta-form .input-respuesta {
+        font-size: 0.72rem !important;
+        padding: 5px 8px !important;
+        min-height: 28px !important;
+    }
+
+    .respuesta-form .btn-enviar-respuesta {
+        font-size: 0.65rem !important;
+        padding: 4px 10px !important;
+        height: 28px !important;
+    }
+
+    .comentar-form .input-comentario {
+        font-size: 0.75rem !important;
+        padding: 6px 10px !important;
+        min-height: 32px !important;
+    }
+
+    .comentar-form .btn-enviar-comentario {
+        font-size: 0.72rem !important;
+        padding: 5px 12px !important;
+        height: 32px !important;
+    }
+
+    .btn-responder {
+        font-size: 0.6rem !important;
+    }
+
+    .btn-ver-comentarios {
+        font-size: 0.72rem !important;
+        padding: 3px 8px !important;
+    }
+
+    .respondiendo-a {
+        font-size: 0.55rem !important;
+        margin-left: 20px !important;
+    }
+
+    .sin-comentarios {
+        font-size: 0.72rem !important;
+        padding: 6px 0 !important;
+    }
+
+    .sin-comentarios i {
+        font-size: 1rem !important;
+    }
+
+    .badge-respuesta {
+        font-size: 0.4rem !important;
+        padding: 0px 5px !important;
+    }
+
+    .badge-nuevo {
+        font-size: 0.35rem !important;
+        padding: 0px 4px !important;
+    }
+}
+  
+          .comunidad-tabs-wrapper {
             background: white;
             border-radius: 24px;
             padding: 20px 25px 25px;
@@ -1188,6 +1873,240 @@
             color: #a894b8;
         }
 
+        /* ===== ESTILOS PARA EL BOTÓN DE NOTIFICACIONES (BUZÓN) ===== */
+        .btn-notificacion {
+            position: relative;
+            background: rgba(155, 89, 182, 0.12) !important;
+            border: none;
+            font-size: 1.3rem;
+            color: #2c1b4e;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-notificacion:hover {
+            background: rgba(155, 89, 182, 0.25) !important;
+            color: #9b59b6;
+            transform: scale(1.05);
+        }
+
+        .btn-notificacion .badge-notificacion {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.6rem;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+            border: 2px solid white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-notificacion .badge-notificacion.oculto {
+            display: none;
+        }
+
+        body.dark-mode .btn-notificacion {
+            background: rgba(155, 89, 182, 0.15) !important;
+            color: #d4c4e8;
+        }
+
+        body.dark-mode .btn-notificacion:hover {
+            background: rgba(155, 89, 182, 0.3) !important;
+            color: #c084d8;
+        }
+
+        body.dark-mode .btn-notificacion .badge-notificacion {
+            border-color: #2a1f3d;
+        }
+
+        /* ===== ESTILOS PARA EL MODAL DE APROBACIÓN ===== */
+        .swal-aprobacion-modal .swal2-popup {
+            border-radius: 30px !important;
+            padding: 30px 35px 35px !important;
+            max-width: 720px !important;
+            width: 100% !important;
+        }
+
+        .swal-aprobacion-modal .swal2-title {
+            color: #2c1b4e !important;
+            font-size: 1.4rem !important;
+            font-weight: 700 !important;
+        }
+
+        .swal-aprobacion-modal .swal2-html-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+
+        .publicacion-pendiente {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border: 2px solid #f0edf5;
+            transition: 0.3s;
+            text-align: left;
+        }
+
+        .publicacion-pendiente:hover {
+            border-color: #9b59b6;
+            box-shadow: 0 4px 16px rgba(155, 89, 182, 0.08);
+        }
+
+        .publicacion-pendiente .pendiente-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .publicacion-pendiente .pendiente-header .avatar-pendiente {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e8e0f0;
+        }
+
+        .publicacion-pendiente .pendiente-header .nombre-pendiente {
+            font-weight: 700;
+            color: #2c1b4e;
+            font-size: 0.9rem;
+        }
+
+        .publicacion-pendiente .pendiente-header .fecha-pendiente {
+            font-size: 0.7rem;
+            color: #95a5a6;
+            margin-left: auto;
+        }
+
+        .publicacion-pendiente .pendiente-contenido {
+            color: #2c3e50;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 8px 0 12px;
+            white-space: pre-wrap;
+        }
+
+        .publicacion-pendiente .pendiente-imagen {
+            max-height: 200px;
+            border-radius: 12px;
+            margin: 8px 0 12px;
+            width: 100%;
+            object-fit: contain;
+            background: #f8f5fc;
+            cursor: pointer;
+        }
+
+        .publicacion-pendiente .pendiente-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f0edf5;
+        }
+
+        .publicacion-pendiente .btn-aprobar {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .publicacion-pendiente .btn-aprobar:hover {
+            background: #219a52;
+            transform: scale(1.02);
+        }
+
+        .publicacion-pendiente .btn-rechazar {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .publicacion-pendiente .btn-rechazar:hover {
+            background: #c0392b;
+            transform: scale(1.02);
+        }
+
+        body.dark-mode .publicacion-pendiente {
+            background: #2a1f3d;
+            border-color: #3d2a5c;
+        }
+
+        body.dark-mode .publicacion-pendiente .pendiente-header .nombre-pendiente {
+            color: #d4c4e8;
+        }
+
+        body.dark-mode .publicacion-pendiente .pendiente-contenido {
+            color: #ffffff;
+        }
+
+        body.dark-mode .publicacion-pendiente .pendiente-acciones {
+            border-top-color: #3d2a5c;
+        }
+
+        .sin-pendientes {
+            text-align: center;
+            padding: 30px 20px;
+            color: #7f8c8d;
+        }
+
+        .sin-pendientes i {
+            font-size: 2.5rem;
+            color: #9b59b6;
+            opacity: 0.4;
+            margin-bottom: 12px;
+        }
+
+        /* ===== BADGE DE ADMIN EN EL HEADER ===== */
+        .badge-admin {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
         /* ===== RESPONSIVE - EN MÓVIL ===== */
         @media (max-width: 768px) {
             .subir-busqueda-container {
@@ -1328,6 +2247,35 @@
 
             .reaction-selector {
                 gap: 6px;
+            }
+
+            .swal-aprobacion-modal .swal2-popup {
+                padding: 20px 14px 24px !important;
+                max-width: 98% !important;
+                border-radius: 20px !important;
+            }
+
+            .publicacion-pendiente {
+                padding: 14px 16px;
+                border-radius: 16px;
+            }
+
+            .publicacion-pendiente .pendiente-acciones {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .publicacion-pendiente .btn-aprobar,
+            .publicacion-pendiente .btn-rechazar {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .badge-admin {
+                font-size: 0.5rem;
+                padding: 1px 8px;
             }
         }
 
@@ -1501,6 +2449,25 @@
                 margin-right: 4px;
                 font-size: 0.75rem;
             }
+
+            .btn-notificacion {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1rem;
+            }
+
+            .btn-notificacion .badge-notificacion {
+                min-width: 16px;
+                height: 16px;
+                font-size: 0.5rem;
+                top: -2px;
+                right: -2px;
+            }
+
+            .badge-admin {
+                font-size: 0.45rem;
+                padding: 1px 6px;
+            }
         }
     </style>
 </head>
@@ -1527,6 +2494,16 @@
                     </a>
                     <span class="tooltip">Inicio</span>
                 </div>
+                
+                <!-- NUEVO: Botón de notificaciones (buzón) - Solo visible para "medicurativo" -->
+                <div class="btn-con-tooltip" id="wrapperNotificacion" style="display: none;">
+                    <button class="btn-notificacion" id="btnBuzonAprobacion" title="Publicaciones pendientes">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge-notificacion oculto" id="badgeNotificacion">0</span>
+                    </button>
+                    <span class="tooltip">Buzón de aprobación</span>
+                </div>
+
                 <div class="btn-con-tooltip">
                     <button class="btn-icon-only" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
@@ -1547,7 +2524,11 @@
             <div id="contenedorSaludo" style="width: 100%; margin-bottom: 20px; display: none; animation: fadeIn 0.8s ease; flex-wrap: wrap; gap: 15px; align-items: stretch;">
                 <div style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1; min-width: 280px; text-align: center;">
                     <i class="fas fa-sparkles" style="color: #f1c40f; font-size: 1.2rem;"></i>
-                    <h2 style="color: #2c1b4e; font-size: 1.2rem; margin: 0;">¡Hola, <span id="usuarioNombreLogueado" style="color: #9b59b6; font-weight: 800;">Amigo</span>!<span id="saludoDinamico"> Qué alegría verte de nuevo 🌿</span></h2>
+                    <h2 style="color: #2c1b4e; font-size: 1.2rem; margin: 0;">
+                        ¡Hola, <span id="usuarioNombreLogueado" style="color: #9b59b6; font-weight: 800;">Amigo</span>!
+                        <span id="badgeAdminSaludo" style="display: none;"><span class="badge-admin">👑 Admin</span></span>
+                        <span id="saludoDinamico"> Qué alegría verte de nuevo 🌿</span>
+                    </h2>
                 </div>
                 <div id="contenedorRelojVisual" style="background: white; padding: 15px 25px; border-radius: 40px; border: 2px solid #f3e9ff; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; flex: 1; min-width: 280px; transition: background-color 1s ease;">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -1666,12 +2647,24 @@
         // CÓDIGO DE COMUNIDAD
         // ============================================================
 
+        // ===== NOMBRE DEL ADMINISTRADOR (SOLO ESTA CUENTA PUEDE APROBAR) =====
+        const ADMIN_NOMBRE = 'medicurativo';
+
         // ===== VARIABLES GLOBALES =====
         let usuarioActual = null;
         let tabActual = 'recientes';
         let todasPublicaciones = [];
         let hashtagBusqueda = '';
         let reaccionesPublicacion = {};
+        let esAdmin = false;
+        let swalBuzonInstance = null;
+
+        // ===== VARIABLES PARA COMENTARIOS (AGREGAR ESTO) =====
+let comentariosCargados = {};
+let comentariosVisibles = {};
+// ===== VARIABLES =====
+let respondiendoA = {}; // Guarda a quién se está respondiendo
+let respuestasVisibles = {}; // Controla visibilidad de respuestas
 
         // ===== REACCIONES DISPONIBLES =====
         const REACCIONES = [
@@ -1784,7 +2777,7 @@
             '#sanación', '#amorpropio', '#felicidad', '#esperanza', '#fortaleza'
         ];
 
-        // ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO (CORREGIDA CON ASYNC) =====
+        // ===== FUNCIÓN PARA ACTUALIZAR BOTÓN INICIO =====
         async function actualizarBotonInicio() {
             const linkInicio = document.getElementById('btnInicioLink');
             if (!linkInicio) return;
@@ -1795,16 +2788,13 @@
                     return;
                 }
                 
-                // ✅ USAR await - es asíncrono
                 const { data: { session } } = await window.supabaseClient.auth.getSession();
                 const tieneSesion = session !== null;
                 
                 if (tieneSesion) {
                     linkInicio.href = 'principal.html';
-                    console.log('🔗 Botón inicio → principal.html (logueado)');
                 } else {
                     linkInicio.href = 'index.html';
-                    console.log('🔗 Botón inicio → index.html (no logueado)');
                 }
             } catch (error) {
                 console.warn('Error al actualizar botón inicio:', error);
@@ -1839,23 +2829,59 @@
                         .eq('id', session.user.id)
                         .maybeSingle();
 
+                    const nombreUsuario = userData?.nombre || session.user.user_metadata?.nombre || 'Usuario';
                     const generoId = userData?.genero_id || 0;
                     const avatar = userData?.avatar || obtenerAvatarPorGenero(generoId);
+
+                    // Verificar si es el admin por el nombre
+                    esAdmin = nombreUsuario.toLowerCase() === ADMIN_NOMBRE.toLowerCase();
 
                     usuarioActual = {
                         id: session.user.id,
                         email: session.user.email,
-                        nombre: userData?.nombre || session.user.user_metadata?.nombre || 'Usuario',
+                        nombre: nombreUsuario,
                         genero_id: generoId,
-                        avatar: avatar
+                        avatar: avatar,
+                        esAdmin: esAdmin
                     };
                     
                     const contenedor = document.getElementById('contenedorBotonSubir');
                     if (contenedor) contenedor.style.display = 'flex';
+                    
+                    // Mostrar el botón de notificaciones SOLO si es el admin
+                    const wrapperNotif = document.getElementById('wrapperNotificacion');
+                    if (wrapperNotif) {
+                        if (esAdmin) {
+                            wrapperNotif.style.display = 'flex';
+                            await actualizarContadorPendientes();
+                        } else {
+                            wrapperNotif.style.display = 'none';
+                        }
+                    }
+
+                    // Mostrar badge de admin en el saludo
+                    const badgeAdmin = document.getElementById('badgeAdminSaludo');
+                    if (badgeAdmin) {
+                        badgeAdmin.style.display = esAdmin ? 'inline' : 'none';
+                    }
+
+                    // Actualizar el nombre en el saludo
+                    const nombreSpan = document.getElementById('usuarioNombreLogueado');
+                    if (nombreSpan) {
+                        nombreSpan.textContent = nombreUsuario;
+                    }
+
                 } else {
                     usuarioActual = null;
+                    esAdmin = false;
                     const contenedor = document.getElementById('contenedorBotonSubir');
                     if (contenedor) contenedor.style.display = 'none';
+                    
+                    const wrapperNotif = document.getElementById('wrapperNotificacion');
+                    if (wrapperNotif) wrapperNotif.style.display = 'none';
+
+                    const badgeAdmin = document.getElementById('badgeAdminSaludo');
+                    if (badgeAdmin) badgeAdmin.style.display = 'none';
                 }
                 
                 await actualizarBotonInicio();
@@ -1863,43 +2889,474 @@
             } catch (error) {
                 console.error('Error al verificar sesión:', error);
                 usuarioActual = null;
+                esAdmin = false;
                 const contenedor = document.getElementById('contenedorBotonSubir');
                 if (contenedor) contenedor.style.display = 'none';
+                
+                const wrapperNotif = document.getElementById('wrapperNotificacion');
+                if (wrapperNotif) wrapperNotif.style.display = 'none';
+
+                const badgeAdmin = document.getElementById('badgeAdminSaludo');
+                if (badgeAdmin) badgeAdmin.style.display = 'none';
+                
                 await actualizarBotonInicio();
                 return null;
             }
         }
 
-        // ===== CARGAR PUBLICACIONES =====
-        async function cargarPublicaciones() {
-            try {
-                if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    return await cargarPublicaciones();
-                }
-                
-                const { data: publicaciones, error } = await window.supabaseClient
-                    .from('publicaciones')
-                    .select(`
-                        *,
-                        usuarios!publicaciones_usuario_id_fkey(
-                            nombre,
-                            genero_id,
-                            avatar
-                        )
-                    `);
-
-                if (error) {
-                    console.error('Error al cargar publicaciones:', error);
-                    return;
-                }
-
-                todasPublicaciones = publicaciones || [];
-                renderizarPublicaciones(tabActual);
-            } catch (error) {
-                console.error('Error en cargarPublicaciones:', error);
+        // ===== ACTUALIZAR CONTADOR DE PUBLICACIONES PENDIENTES =====
+        // ===== ACTUALIZAR CONTADOR DE PUBLICACIONES PENDIENTES =====
+async function actualizarContadorPendientes() {
+    try {
+        if (!esAdmin) {
+            const badge = document.getElementById('badgeNotificacion');
+            if (badge) badge.classList.add('oculto');
+            return;
+        }
+        
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            setTimeout(actualizarContadorPendientes, 500);
+            return;
+        }
+        
+        console.log('📊 Consultando publicaciones pendientes...');
+        
+        // Usar count directamente sin head para obtener el número exacto
+        const { data, error, count } = await window.supabaseClient
+            .from('publicaciones')
+            .select('id', { count: 'exact' })
+            .eq('estado', 'pendiente');
+        
+        if (error) {
+            console.error('❌ Error al contar pendientes:', error);
+            return;
+        }
+        
+        console.log('📊 Publicaciones pendientes:', count);
+        
+        const badge = document.getElementById('badgeNotificacion');
+        if (badge) {
+            const cantidad = count || 0;
+            if (cantidad > 0) {
+                badge.textContent = cantidad > 99 ? '99+' : cantidad;
+                badge.classList.remove('oculto');
+                console.log('🔔 Campanita actualizada con:', cantidad);
+            } else {
+                badge.classList.add('oculto');
+                console.log('🔔 Campanita oculta (0 pendientes)');
             }
         }
+    } catch (error) {
+        console.error('❌ Error en actualizarContadorPendientes:', error);
+    }
+}
+
+// ===== APROBAR PUBLICACIÓN =====
+async function aprobarPublicacion(id) {
+    try {
+        console.log('✅ Aprobando publicación ID:', id);
+        
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            console.error('❌ Supabase no disponible');
+            Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+            return false;
+        }
+
+        // PRIMERO: Verificar que la publicación existe y está pendiente
+        const { data: verificar, error: errorVerificar } = await window.supabaseClient
+            .from('publicaciones')
+            .select('id, estado')
+            .eq('id', id)
+            .single();
+
+        if (errorVerificar) {
+            console.error('❌ Error al verificar publicación:', errorVerificar);
+            Swal.fire('Error', 'No se encontró la publicación.', 'error');
+            return false;
+        }
+
+        console.log('📋 Publicación encontrada:', verificar);
+
+        if (verificar.estado === 'aprobado') {
+            console.log('⚠️ La publicación ya está aprobada');
+            Swal.fire('Info', 'Esta publicación ya está aprobada.', 'info');
+            return true;
+        }
+
+        // SEGUNDO: Actualizar el estado a 'aprobado'
+        const { data, error } = await window.supabaseClient
+            .from('publicaciones')
+            .update({ 
+                estado: 'aprobado',
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', id)
+            .select();
+
+        if (error) {
+            console.error('❌ Error al aprobar (SQL):', error);
+            Swal.fire('Error', 'No se pudo aprobar la publicación: ' + error.message, 'error');
+            return false;
+        }
+
+        console.log('✅ Publicación aprobada (respuesta):', data);
+
+        // TERCERO: Verificar que se actualizó correctamente
+        if (data && data.length > 0) {
+            console.log('✅ Estado actualizado a:', data[0].estado);
+        } else {
+            console.warn('⚠️ No se recibió confirmación de la actualización');
+            // Verificar manualmente
+            const { data: verificar2, error: errorVerificar2 } = await window.supabaseClient
+                .from('publicaciones')
+                .select('id, estado')
+                .eq('id', id)
+                .single();
+            
+            if (verificar2) {
+                console.log('📋 Estado después de actualizar:', verificar2.estado);
+                if (verificar2.estado !== 'aprobado') {
+                    console.error('❌ El estado no se actualizó correctamente');
+                    Swal.fire('Error', 'La publicación no se pudo aprobar. Intenta de nuevo.', 'error');
+                    return false;
+                }
+            }
+        }
+
+        // Mostrar confeti
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#27ae60', '#2ecc71', '#f1c40f', '#9b59b6']
+            });
+        }
+
+        await Swal.fire({
+            title: '✅ ¡Aprobada!',
+            text: 'La publicación ya está visible para toda la comunidad.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+
+        return true;
+    } catch (error) {
+        console.error('❌ Error en aprobarPublicacion:', error);
+        Swal.fire('Error', 'Ocurrió un error al aprobar: ' + error.message, 'error');
+        return false;
+    }
+}
+        // ===== RECHAZAR PUBLICACIÓN =====
+       // ===== RECHAZAR PUBLICACIÓN =====
+async function rechazarPublicacion(id) {
+    try {
+        console.log('🗑️ Rechazando publicación ID:', id);
+        
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            console.error('❌ Supabase no disponible');
+            Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+            return false;
+        }
+
+        const { data, error } = await window.supabaseClient
+            .from('publicaciones')
+            .delete()
+            .eq('id', id)
+            .select();
+
+        if (error) {
+            console.error('❌ Error al rechazar:', error);
+            Swal.fire('Error', 'No se pudo rechazar la publicación: ' + error.message, 'error');
+            return false;
+        }
+
+        console.log('🗑️ Publicación eliminada:', data);
+
+        await Swal.fire({
+            title: '🗑️ Rechazada',
+            text: 'La publicación ha sido eliminada.',
+            icon: 'info',
+            timer: 1500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+
+        return true;
+    } catch (error) {
+        console.error('❌ Error en rechazarPublicacion:', error);
+        Swal.fire('Error', 'Ocurrió un error al rechazar.', 'error');
+        return false;
+    }
+}
+// ===== ABRIR BUZÓN DE APROBACIÓN =====
+async function abrirBuzonAprobacion() {
+    if (!esAdmin) {
+        Swal.fire('Acceso restringido', 'Solo el administrador puede acceder a esta sección.', 'info');
+        return;
+    }
+
+    try {
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+            return;
+        }
+
+        // Cerrar el buzón actual si está abierto
+        if (swalBuzonInstance) {
+            try {
+                await swalBuzonInstance.close();
+            } catch (e) {
+                console.warn('⚠️ Error al cerrar modal anterior:', e);
+            }
+            swalBuzonInstance = null;
+            // Pequeña pausa para asegurar que el modal anterior se cerró
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        console.log('📬 Cargando publicaciones pendientes...');
+        
+        const { data: pendientes, error } = await window.supabaseClient
+            .from('publicaciones')
+            .select(`
+                *,
+                usuarios!publicaciones_usuario_id_fkey(
+                    nombre,
+                    genero_id,
+                    avatar
+                )
+            `)
+            .eq('estado', 'pendiente')
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error('❌ Error al cargar pendientes:', error);
+            Swal.fire('Error', 'No se pudieron cargar las publicaciones pendientes.', 'error');
+            return;
+        }
+
+        console.log('📬 Publicaciones pendientes encontradas:', pendientes?.length || 0);
+
+        if (!pendientes || pendientes.length === 0) {
+            // Actualizar el contador a 0 antes de mostrar el mensaje
+            const badge = document.getElementById('badgeNotificacion');
+            if (badge) badge.classList.add('oculto');
+            
+            await Swal.fire({
+                title: '📭 Buzón vacío',
+                html: `
+                    <div style="text-align:center; padding: 20px 0;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: #27ae60; margin-bottom: 15px;"></i>
+                        <p style="color: #2c1b4e; font-size: 1.1rem; font-weight: 600;">No hay publicaciones pendientes</p>
+                        <p style="color: #7f8c8d; font-size: 0.9rem;">Todas las publicaciones han sido revisadas.</p>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#9b59b6',
+                customClass: { popup: 'swal-popup-redondo' }
+            });
+            await actualizarContadorPendientes();
+            return;
+        }
+
+        // Renderizar las publicaciones pendientes
+        const pendientesHTML = pendientes.map(pub => {
+            const nombre = pub.usuarios?.nombre || 'Usuario';
+            const avatar = pub.usuarios?.avatar || obtenerAvatarPorGenero(pub.usuarios?.genero_id || 0);
+            const fecha = new Date(pub.created_at).toLocaleDateString('es-ES', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            const esImagen = pub.tipo === 'imagen';
+            const contenidoHTML = esImagen 
+                ? `<img src="${pub.contenido}" class="pendiente-imagen" alt="Imagen pendiente" onclick="abrirImagenZoom('${pub.contenido}', 'Imagen pendiente')">` 
+                : `<div class="pendiente-contenido">${pub.contenido}</div>`;
+
+            return `
+                <div class="publicacion-pendiente" data-id="${pub.id}">
+                    <div class="pendiente-header">
+                        <img src="${avatar}" class="avatar-pendiente" onerror="this.src='imganes/avatar-default.png'">
+                        <span class="nombre-pendiente">${nombre}</span>
+                        <span class="fecha-pendiente"><i class="far fa-clock"></i> ${fecha}</span>
+                    </div>
+                    ${contenidoHTML}
+                    <div class="pendiente-acciones">
+                        <button class="btn-aprobar" data-id="${pub.id}">
+                            <i class="fas fa-check"></i> Aprobar
+                        </button>
+                        <button class="btn-rechazar" data-id="${pub.id}">
+                            <i class="fas fa-times"></i> Rechazar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Crear una nueva instancia del modal
+        swalBuzonInstance = await Swal.fire({
+            title: '📬 Buzón de aprobación',
+            html: `
+                <div style="max-height: 500px; overflow-y: auto; padding: 5px 5px 10px; width: 100%;">
+                    <p style="color: #7f8c8d; font-size: 0.9rem; text-align: center; margin-bottom: 16px;">
+                        <i class="fas fa-info-circle" style="color: #9b59b6;"></i> 
+                        Revisa y aprueba las publicaciones de la comunidad
+                    </p>
+                    ${pendientesHTML}
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: { 
+                popup: 'swal-popup-redondo swal-aprobacion-modal'
+            },
+            didOpen: () => {
+                // Event listeners para aprobar
+                document.querySelectorAll('.btn-aprobar').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const id = btn.dataset.id;
+                        console.log('🔘 Clic en Aprobar para ID:', id);
+                        
+                        // Deshabilitar el botón temporalmente para evitar doble clic
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                        
+                        const exito = await aprobarPublicacion(id);
+                        if (exito) {
+                            console.log('✅ Publicación aprobada exitosamente');
+                            
+                            // Actualizar contador y recargar publicaciones
+                            await actualizarContadorPendientes();
+                            await cargarPublicaciones();
+                            
+                            // Cerrar el modal actual
+                            if (swalBuzonInstance) {
+                                try {
+                                    await swalBuzonInstance.close();
+                                } catch (e) {}
+                                swalBuzonInstance = null;
+                            }
+                            
+                            // Esperar un momento y abrir el modal nuevamente con datos frescos
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                            await abrirBuzonAprobacion();
+                        } else {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-check"></i> Aprobar';
+                        }
+                    });
+                });
+
+                // Event listeners para rechazar
+                document.querySelectorAll('.btn-rechazar').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const id = btn.dataset.id;
+                        console.log('🔘 Clic en Rechazar para ID:', id);
+                        
+                        const confirmar = await Swal.fire({
+                            title: '¿Rechazar publicación?',
+                            text: 'Esta acción eliminará la publicación permanentemente.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#e74c3c',
+                            cancelButtonColor: '#95a5a6',
+                            confirmButtonText: 'Sí, rechazar',
+                            cancelButtonText: 'Cancelar'
+                        });
+                        
+                        if (confirmar.isConfirmed) {
+                            // Deshabilitar el botón temporalmente
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                            
+                            const exito = await rechazarPublicacion(id);
+                            if (exito) {
+                                console.log('🗑️ Publicación rechazada exitosamente');
+                                
+                                // Actualizar contador y recargar publicaciones
+                                await actualizarContadorPendientes();
+                                await cargarPublicaciones();
+                                
+                                // Cerrar el modal actual
+                                if (swalBuzonInstance) {
+                                    try {
+                                        await swalBuzonInstance.close();
+                                    } catch (e) {}
+                                    swalBuzonInstance = null;
+                                }
+                                
+                                // Esperar un momento y abrir el modal nuevamente con datos frescos
+                                await new Promise(resolve => setTimeout(resolve, 300));
+                                await abrirBuzonAprobacion();
+                            } else {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-times"></i> Rechazar';
+                            }
+                        }
+                    });
+                });
+            },
+            willClose: () => {
+                swalBuzonInstance = null;
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Error en abrirBuzonAprobacion:', error);
+        swalBuzonInstance = null;
+        Swal.fire('Error', 'Ocurrió un error al cargar el buzón.', 'error');
+    }
+}
+        
+        // ===== CARGAR PUBLICACIONES (SOLO APROBADAS) =====
+      // ===== CARGAR PUBLICACIONES (SOLO APROBADAS) =====
+async function cargarPublicaciones() {
+    try {
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return await cargarPublicaciones();
+        }
+        
+        console.log('📰 Cargando publicaciones aprobadas...');
+        
+        const { data: publicaciones, error } = await window.supabaseClient
+            .from('publicaciones')
+            .select(`
+                *,
+                usuarios!publicaciones_usuario_id_fkey(
+                    nombre,
+                    genero_id,
+                    avatar
+                )
+            `)
+            .eq('estado', 'aprobado')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('❌ Error al cargar publicaciones:', error);
+            return;
+        }
+
+        console.log('📰 Publicaciones aprobadas cargadas:', publicaciones?.length || 0);
+        todasPublicaciones = publicaciones || [];
+        
+        // ===== LIMPIAR CACHÉ DE COMENTARIOS AL RECARGAR =====
+        comentariosCargados = {};
+        comentariosVisibles = {};
+        
+        renderizarPublicaciones(tabActual);
+    } catch (error) {
+        console.error('❌ Error en cargarPublicaciones:', error);
+    }
+}
 
         // ===== RESALTAR HASHTAGS EN TEXTO =====
         function resaltarHashtags(texto) {
@@ -1919,189 +3376,256 @@
             });
         }
 
-        // ===== RENDERIZAR PUBLICACIONES =====
-        function renderizarPublicaciones(tab) {
-            const muro = document.getElementById('muroComunidad');
-            if (!muro) return;
-            
-            let publicacionesFiltradas = [...todasPublicaciones];
-            
-            if (hashtagBusqueda && hashtagBusqueda.trim() !== '') {
-                publicacionesFiltradas = filtrarPorHashtag(publicacionesFiltradas, hashtagBusqueda);
-            }
-            
-            if (tab === 'recientes') {
-                publicacionesFiltradas.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            } else if (tab === 'valoradas') {
-                publicacionesFiltradas.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-            }
+       // ===== RENDERIZAR PUBLICACIONES (CON COMENTARIOS) =====
+function renderizarPublicaciones(tab) {
+    const muro = document.getElementById('muroComunidad');
+    if (!muro) return;
+    
+    let publicacionesFiltradas = [...todasPublicaciones];
+    
+    if (hashtagBusqueda && hashtagBusqueda.trim() !== '') {
+        publicacionesFiltradas = filtrarPorHashtag(publicacionesFiltradas, hashtagBusqueda);
+    }
+    
+    if (tab === 'recientes') {
+        publicacionesFiltradas.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    } else if (tab === 'valoradas') {
+        publicacionesFiltradas.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    }
 
-            if (publicacionesFiltradas.length === 0) {
-                muro.innerHTML = `
-                    <div style="text-align:center; padding: 40px 20px; background: #fdfaff; border-radius: 30px; border: 2px solid #f0edf5;">
-                        <i class="fas fa-leaf" style="font-size: 3rem; color: #9b59b6; opacity: 0.5;"></i>
-                        <p style="color: #7f8c8d; margin-top: 20px; font-size: 1.1rem;">
-                            ${hashtagBusqueda ? 'No hay publicaciones con ese hashtag.' : 'Todavía no hay publicaciones. ¡Sé el primero en compartir algo hermoso!'}
-                        </p>
+    if (publicacionesFiltradas.length === 0) {
+        muro.innerHTML = `
+            <div style="text-align:center; padding: 40px 20px; background: #fdfaff; border-radius: 30px; border: 2px solid #f0edf5;">
+                <i class="fas fa-leaf" style="font-size: 3rem; color: #9b59b6; opacity: 0.5;"></i>
+                <p style="color: #7f8c8d; margin-top: 20px; font-size: 1.1rem;">
+                    ${hashtagBusqueda ? 'No hay publicaciones con ese hashtag.' : 'Todavía no hay publicaciones aprobadas. ¡Sé el primero en compartir algo hermoso!'}
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    muro.innerHTML = publicacionesFiltradas.map(pub => {
+        const esImagen = pub.tipo === 'imagen';
+        const contenidoTexto = pub.contenido || '';
+        const contenidoConHashtags = resaltarHashtags(contenidoTexto);
+        
+        const contenidoHTML = esImagen 
+            ? `<img src="${pub.contenido}" alt="Publicación" loading="lazy" onclick="abrirImagenZoom('${pub.contenido}', 'Publicación')">` 
+            : `<p>${contenidoConHashtags}</p>`;
+        
+        const generoId = pub.usuarios?.genero_id || 0;
+        const avatar = pub.usuarios?.avatar || obtenerAvatarPorGenero(generoId);
+        const nombre = pub.usuarios?.nombre || 'Usuario';
+        const fecha = new Date(pub.created_at).toLocaleDateString('es-ES', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        const esAutor = usuarioActual && pub.usuario_id === usuarioActual.id;
+        const comentariosCount = pub.comentarios || 0;
+
+        let rankingBadge = '';
+        let rankingClass = '';
+        if (tab === 'valoradas') {
+            const index = publicacionesFiltradas.indexOf(pub);
+            if (index === 0) {
+                rankingBadge = `👑 #1`;
+                rankingClass = 'oro';
+            } else if (index === 1) {
+                rankingBadge = `🥈 #2`;
+                rankingClass = 'plata';
+            } else if (index === 2) {
+                rankingBadge = `🥉 #3`;
+                rankingClass = 'bronce';
+            }
+        }
+
+        const likeHTML = renderLikeIcon(pub.id, pub.likes || 0);
+
+        return `
+            <div class="publicacion-card" data-id="${pub.id}">
+                ${rankingBadge ? `<div class="ranking-badge ${rankingClass}">${rankingBadge}</div>` : ''}
+                
+                <!-- HEADER -->
+                <div class="publicacion-header">
+                    <div class="avatar-container">
+                        <img src="${avatar}" alt="${nombre}" onerror="this.src='imganes/avatar-default.png'">
                     </div>
-                `;
+                    <div class="info-usuario">
+                        <div class="nombre-usuario">${nombre}</div>
+                        <div class="fecha-publicacion">
+                            <i class="far fa-clock"></i> ${fecha}
+                            ${tab === 'valoradas' ? `<span class="badge-valorada"><i class="fas fa-heart" style="color: #e74c3c;"></i> ${pub.likes || 0}</span>` : ''}
+                        </div>
+                    </div>
+                    ${esAutor ? `
+                        <div class="btn-eliminar-container">
+                            <button class="btn-eliminar-publicacion" data-id="${pub.id}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <!-- CONTENIDO -->
+                ${contenidoHTML}
+                
+                <!-- ACCIONES: LIKES Y COMENTARIOS -->
+                <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #f0edf5; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <button class="btn-like" data-id="${pub.id}" style="background: none; border: none; font-size: 0.85rem; color: #7f8c8d; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;">
+                        ${likeHTML}
+                    </button>
+                    
+                    <button class="btn-ver-comentarios" data-id="${pub.id}" style="background: none; border: none; font-size: 0.85rem; color: #7f8c8d; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;">
+                        <i class="fas fa-comment"></i>
+                        <span class="comentario-count" data-id="${pub.id}">${comentariosCount}</span> comentarios
+                    </button>
+                </div>
+
+                <!-- ===== CONTENEDOR DE COMENTARIOS (DEBAJO DE TODO) ===== -->
+                <div class="comentarios-container" data-id="${pub.id}" style="display: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #f0edf5;">
+                    <div class="comentarios-list"></div>
+                    
+                    <div class="comentar-form">
+                        <input type="text" class="input-comentario" data-id="${pub.id}" placeholder="💬 Escribe tu opinión..." maxlength="500">
+                        <button class="btn-enviar-comentario" data-id="${pub.id}">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- ===== FIN COMENTARIOS ===== -->
+            </div>
+        `;
+    }).join('');
+
+    // ===== EVENT LISTENERS =====
+
+    // Likes (existentes)
+    document.querySelectorAll('.btn-like').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!usuarioActual) {
+                // Mostrar modal de login
+                return;
+            }
+            
+            const id = btn.dataset.id;
+            const reactionId = await mostrarSelectorReacciones(id);
+            
+            if (reactionId) {
+                guardarReaccionUsuario(id, reactionId);
+                await toggleLike(id, reactionId);
+                await cargarPublicaciones();
+            }
+        });
+    });
+
+    // Ver comentarios
+    document.querySelectorAll('.btn-ver-comentarios').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            toggleComentarios(id);
+        });
+    });
+
+    // Enviar comentario
+    document.querySelectorAll('.btn-enviar-comentario').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const publicacionId = btn.dataset.id;
+            const container = btn.closest('.comentarios-container');
+            const input = container.querySelector('.input-comentario');
+            const texto = input.value.trim();
+
+            if (!texto) {
+                input.style.borderColor = '#e74c3c';
+                setTimeout(() => input.style.borderColor = '', 2000);
                 return;
             }
 
-            muro.innerHTML = publicacionesFiltradas.map(pub => {
-                const esImagen = pub.tipo === 'imagen';
-                const contenidoTexto = pub.contenido || '';
-                const contenidoConHashtags = resaltarHashtags(contenidoTexto);
-                
-                const contenidoHTML = esImagen 
-                    ? `<img src="${pub.contenido}" alt="Publicación" loading="lazy" onclick="abrirImagenZoom('${pub.contenido}', 'Publicación')">` 
-                    : `<p>${contenidoConHashtags}</p>`;
-                
-                const generoId = pub.usuarios?.genero_id || 0;
-                const avatar = pub.usuarios?.avatar || obtenerAvatarPorGenero(generoId);
-                const nombre = pub.usuarios?.nombre || 'Usuario';
-                const fecha = new Date(pub.created_at).toLocaleDateString('es-ES', { 
-                    day: 'numeric', 
-                    month: 'long', 
-                    year: 'numeric', 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-                const esAutor = usuarioActual && pub.usuario_id === usuarioActual.id;
-
-                let rankingBadge = '';
-                let rankingClass = '';
-                if (tab === 'valoradas') {
-                    const index = publicacionesFiltradas.indexOf(pub);
-                    if (index === 0) {
-                        rankingBadge = `👑 #1`;
-                        rankingClass = 'oro';
-                    } else if (index === 1) {
-                        rankingBadge = `🥈 #2`;
-                        rankingClass = 'plata';
-                    } else if (index === 2) {
-                        rankingBadge = `🥉 #3`;
-                        rankingClass = 'bronce';
-                    }
+            const nuevoComentario = await crearComentario(publicacionId, texto);
+            
+            if (nuevoComentario) {
+                input.value = '';
+                
+                const comentariosNuevos = await obtenerComentarios(publicacionId);
+                comentariosCargados[publicacionId] = comentariosNuevos;
+                renderizarComentarios(publicacionId, comentariosNuevos);
+                
+                const countSpan = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);
+                if (countSpan) {
+                    countSpan.textContent = comentariosNuevos.length;
                 }
 
-                const likeHTML = renderLikeIcon(pub.id, pub.likes || 0);
-
-                return `
-                    <div class="publicacion-card" data-id="${pub.id}">
-                        ${rankingBadge ? `<div class="ranking-badge ${rankingClass}">${rankingBadge}</div>` : ''}
-                        
-                        <div class="publicacion-header">
-                            <div class="avatar-container">
-                                <img src="${avatar}" alt="${nombre}" onerror="this.src='imganes/avatar-default.png'">
-                            </div>
-                            <div class="info-usuario">
-                                <div class="nombre-usuario">${nombre}</div>
-                                <div class="fecha-publicacion">
-                                    <i class="far fa-clock"></i> ${fecha}
-                                    ${tab === 'valoradas' ? `<span class="badge-valorada"><i class="fas fa-heart" style="color: #e74c3c;"></i> ${pub.likes || 0}</span>` : ''}
-                                </div>
-                            </div>
-                            ${esAutor ? `
-                                <div class="btn-eliminar-container">
-                                    <button class="btn-eliminar-publicacion" data-id="${pub.id}">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        ${contenidoHTML}
-                        
-                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #f0edf5; display: flex; justify-content: space-between; align-items: center;">
-                            <button class="btn-like" data-id="${pub.id}" style="background: none; border: none; font-size: 0.85rem; color: #7f8c8d; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;">
-                                ${likeHTML}
-                            </button>
-                            <span style="font-size: 0.85rem; color: #95a5a6;"><i class="far fa-comment"></i> ${pub.comentarios || 0}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Event listeners para eliminar
-            document.querySelectorAll('.btn-eliminar-publicacion').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const id = btn.dataset.id;
-                    const confirmar = await Swal.fire({
-                        title: '¿Eliminar publicación?',
-                        text: 'Esta acción no se puede deshacer.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#e74c3c',
-                        cancelButtonColor: '#95a5a6',
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 30,
+                        spread: 40,
+                        origin: { y: 0.8 },
+                        colors: ['#9b59b6', '#f1c40f', '#27ae60']
                     });
-                    if (confirmar.isConfirmed) {
-                        await eliminarPublicacion(id);
-                        await cargarPublicaciones();
-                    }
-                });
-            });
+                }
+            }
 
-            // Event listeners para likes
-            document.querySelectorAll('.btn-like').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    if (!usuarioActual) {
-                        return Swal.fire({
-                            title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.3rem;">💜 Para reaccionar</span>',
-                            html: `
-                                <div style="text-align:center; padding: 10px 5px;">
-                                    <div style="background: linear-gradient(145deg, #f8f0ff, #f0e6ff); padding: 25px 20px; border-radius: 50px; margin: 10px 0;">
-                                        <div style="width:80px;height:80px;margin:0 auto 16px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px rgba(155,89,182,0.2);">
-                                            <i class="fas fa-heart" style="font-size:36px;color:#e84393;"></i>
-                                        </div>
-                                        <p style="margin:0 0 8px;color:#2c1b4e;font-size:1.05rem;font-weight:700;line-height:1.5;">
-                                            Necesitas una cuenta para<br>reaccionar a esta publicación.
-                                        </p>
-                                        <p style="margin:0;color:#7f5f9b;font-size:0.88rem;line-height:1.5;">
-                                            Al registrarte podrás elegir tu reacción<br>❤️ ⭐ 🌸 ✨ 🔥
-                                        </p>
-                                    </div>
-                                    <button onclick="window.location.href='login.html'" style="background:linear-gradient(135deg,#9b59b6,#8e44ad);color:white;border:none;padding:15px 28px;border-radius:50px;font-weight:700;cursor:pointer;width:100%;font-size:1rem;box-shadow:0 8px 20px rgba(155,89,182,0.3);margin-top:15px;transition:0.3s;">
-                                        ✨ Crear cuenta — ¡Es gratis!
-                                    </button>
-                                    <p style="margin-top:12px;font-size:0.78rem;color:#b0a4e3;">Ya con cuenta todo queda guardado 🌿</p>
-                                </div>
-                            `,
-                            showConfirmButton: false,
-                            showCloseButton: true,
-                            customClass: { popup: 'swal-popup-redondo', closeButton: 'swal-close-button' }
-                        });
-                    }
-                    
-                    const id = btn.dataset.id;
-                    const reactionId = await mostrarSelectorReacciones(id);
-                    
-                    if (reactionId) {
-                        guardarReaccionUsuario(id, reactionId);
-                        await toggleLike(id, reactionId);
-                        await cargarPublicaciones();
-                    }
-                });
-            });
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        });
+    });
 
-            // Event listeners para hashtags
-            document.querySelectorAll('.publicacion-card .hashtag-color').forEach(el => {
-                el.addEventListener('click', () => {
-                    const hashtag = el.dataset.hashtag;
-                    const busquedaInput = document.getElementById('busquedaHashtag');
-                    if (busquedaInput) {
-                        busquedaInput.value = hashtag;
-                        hashtagBusqueda = hashtag;
-                        renderizarPublicaciones(tabActual);
-                    }
-                });
+    // Enviar con Enter
+    document.querySelectorAll('.input-comentario').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const btn = input.closest('.comentar-form').querySelector('.btn-enviar-comentario');
+                if (btn) btn.click();
+            }
+        });
+    });
+
+    // Eliminar publicación (existente)
+    document.querySelectorAll('.btn-eliminar-publicacion').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            const confirmar = await Swal.fire({
+                title: '¿Eliminar publicación?',
+                text: 'Esta acción no se puede deshacer. Todos los comentarios también serán eliminados.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#95a5a6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
             });
-        }
+            if (confirmar.isConfirmed) {
+                await eliminarPublicacion(id);
+                await cargarPublicaciones();
+            }
+        });
+    });
+
+    // Hashtags (existente)
+    document.querySelectorAll('.publicacion-card .hashtag-color').forEach(el => {
+        el.addEventListener('click', () => {
+            const hashtag = el.dataset.hashtag;
+            const busquedaInput = document.getElementById('busquedaHashtag');
+            if (busquedaInput) {
+                busquedaInput.value = hashtag;
+                hashtagBusqueda = hashtag;
+                renderizarPublicaciones(tabActual);
+            }
+        });
+    });
+}
 
         // ===== DAR/QUITAR LIKE =====
         async function toggleLike(publicacionId, reactionId) {
@@ -2582,12 +4106,16 @@
                             tipoFinal = 'imagen';
                         }
 
+                        // SI EL USUARIO ES EL ADMIN ("medicurativo"), LA PUBLICACIÓN SE APRUEBA AUTOMÁTICAMENTE
+                        const estadoFinal = esAdmin ? 'aprobado' : 'pendiente';
+
                         const { error: insertError } = await window.supabaseClient
                             .from('publicaciones')
                             .insert({
                                 usuario_id: usuarioActual.id,
                                 tipo: tipoFinal,
                                 contenido: contenidoFinal,
+                                estado: estadoFinal,
                                 created_at: new Date().toISOString()
                             });
 
@@ -2597,44 +4125,67 @@
                             Swal.fire('Error', 'No se pudo crear la publicación.', 'error');
                             console.error(insertError);
                         } else {
-                            if (typeof confetti === 'function') {
-                                confetti({
-                                    particleCount: 120,
-                                    spread: 80,
-                                    origin: { y: 0.6 },
-                                    colors: ['#9b59b6', '#8e44ad', '#f1c40f', '#e74c3c', '#27ae60', '#3498db']
-                                });
-                                setTimeout(() => {
+                            if (estadoFinal === 'aprobado') {
+                                if (typeof confetti === 'function') {
                                     confetti({
-                                        particleCount: 70,
-                                        spread: 60,
-                                        origin: { y: 0.5 },
-                                        colors: ['#9b59b6', '#f39c12', '#e84393']
+                                        particleCount: 120,
+                                        spread: 80,
+                                        origin: { y: 0.6 },
+                                        colors: ['#9b59b6', '#8e44ad', '#f1c40f', '#e74c3c', '#27ae60', '#3498db']
                                     });
-                                }, 300);
-                            }
+                                    setTimeout(() => {
+                                        confetti({
+                                            particleCount: 70,
+                                            spread: 60,
+                                            origin: { y: 0.5 },
+                                            colors: ['#9b59b6', '#f39c12', '#e84393']
+                                        });
+                                    }, 300);
+                                }
 
-                            Swal.fire({
-                                title: '¡Publicado con éxito! ✨',
-                                html: `
-                                    <div style="display:flex;flex-direction:column;align-items:center;padding:5px 0;">
-                                        <div class="exito-imagen">
-                                            <img src="imganes/logosmedi.png" alt="Medicurativo">
+                                Swal.fire({
+                                    title: '¡Publicado con éxito! ✨',
+                                    html: `
+                                        <div style="display:flex;flex-direction:column;align-items:center;padding:5px 0;">
+                                            <div class="exito-imagen">
+                                                <img src="imganes/logosmedi.png" alt="Medicurativo">
+                                            </div>
+                                            <p class="exito-texto">¡Grandioso! Tu contenido está publicado</p>
+                                            <p class="exito-subtexto">Gracias por aportar a la comunidad 💜</p>
                                         </div>
-                                        <p class="exito-texto">¡Grandioso! Tu contenido está publicado</p>
-                                        <p class="exito-subtexto">Gracias por aportar a la comunidad 💜</p>
-                                    </div>
-                                `,
-                                showConfirmButton: true,
-                                confirmButtonText: 'Ver en el muro',
-                                confirmButtonColor: '#9b59b6',
-                                timer: 5000,
-                                timerProgressBar: true,
-                                customClass: { popup: 'swal-popup-redondo swal-publicacion-exito' }
-                            }).then(() => {
-                                Swal.close();
-                                cargarPublicaciones();
-                            });
+                                    `,
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'Ver en el muro',
+                                    confirmButtonColor: '#9b59b6',
+                                    timer: 5000,
+                                    timerProgressBar: true,
+                                    customClass: { popup: 'swal-popup-redondo swal-publicacion-exito' }
+                                }).then(() => {
+                                    Swal.close();
+                                    cargarPublicaciones();
+                                    actualizarContadorPendientes();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '📬 ¡Publicación enviada!',
+                                    html: `
+                                        <div style="display:flex;flex-direction:column;align-items:center;padding:5px 0;">
+                                            <div class="exito-imagen" style="background: linear-gradient(145deg, #fef9e7, #fdebd0);">
+                                                <img src="imganes/logosmedi.png" alt="Medicurativo">
+                                            </div>
+                                            <p class="exito-texto" style="color: #f39c12;">Tu contenido está en revisión</p>
+                                            <p class="exito-subtexto">Un administrador lo revisará y lo publicará pronto. ¡Gracias por compartir! 💜</p>
+                                        </div>
+                                    `,
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'Entendido',
+                                    confirmButtonColor: '#f39c12',
+                                    customClass: { popup: 'swal-popup-redondo swal-publicacion-exito' }
+                                }).then(() => {
+                                    Swal.close();
+                                    cargarPublicaciones();
+                                });
+                            }
                         }
                     });
                 }
@@ -2704,6 +4255,7 @@
                 }
             });
         }
+        window.abrirImagenZoom = abrirImagenZoom;
 
         // ===== FUNCIÓN DE AYUDA =====
         function mostrarAyudaComunidad() {
@@ -2830,7 +4382,7 @@
                 return;
             }
 
-            // ✅ Usar await para que espere a que termine
+            console.log('🚀 Iniciando comunidad...');
             await actualizarBotonInicio();
             await verificarSesion();
             await cargarPublicaciones();
@@ -2838,6 +4390,12 @@
             const btnSubir = document.getElementById('btnSubirPublicacion');
             if (btnSubir) {
                 btnSubir.addEventListener('click', abrirModalPublicacion);
+            }
+
+            // Event listener para el botón de notificaciones (buzón)
+            const btnBuzon = document.getElementById('btnBuzonAprobacion');
+            if (btnBuzon) {
+                btnBuzon.addEventListener('click', abrirBuzonAprobacion);
             }
 
             const busquedaInput = document.getElementById('busquedaHashtag');
@@ -2909,13 +4467,609 @@
             if (window.supabaseClient && window.supabaseClient.auth) {
                 window.supabaseClient.auth.onAuthStateChange((event, session) => {
                     if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                        console.log('🔄 Cambio de sesión:', event);
                         actualizarBotonInicio();
                         verificarSesion();
                         cargarPublicaciones();
+                        actualizarContadorPendientes();
                     }
                 });
             }
         });
+
+
+// ============================================================
+// CÓDIGO DE COMENTARIOS CON RESPUESTAS (CORREGIDO)
+// ============================================================
+
+// ===== FUNCIONES DE COMENTARIOS =====
+
+async function obtenerComentarios(publicacionId) {
+    try {
+        if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient) {
+            return [];
+        }
+
+        const { data, error } = await window.supabaseClient
+            .from('comentarios')
+            .select(`
+                *,
+                usuarios!comentarios_usuario_id_fkey(
+                    nombre,
+                    genero_id,
+                    avatar
+                ),
+                mencionado:usuarios!comentarios_mencionado_id_fkey(
+                    nombre
+                )
+            `)
+            .eq('publicacion_id', publicacionId)
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error('❌ Error al cargar comentarios:', error);
+            return [];
+        }
+
+        return data || [];
+    } catch (error) {
+        console.error('❌ Error en obtenerComentarios:', error);
+        return [];
+    }
+}
+
+async function crearComentario(publicacionId, texto) {
+    if (!usuarioActual) {
+        Swal.fire({
+            title: '💜 Para comentar',
+            text: 'Necesitas iniciar sesión para comentar en esta publicación.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#9b59b6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
+            }
+        });
+        return false;
+    }
+
+    if (!texto || texto.trim() === '') {
+        return false;
+    }
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('comentarios')
+            .insert({
+                publicacion_id: publicacionId,
+                usuario_id: usuarioActual.id,
+                comentario: texto.trim()
+            })
+            .select(`
+                *,
+                usuarios!comentarios_usuario_id_fkey(
+                    nombre,
+                    genero_id,
+                    avatar
+                )
+            `)
+            .single();
+
+        if (error) {
+            console.error('❌ Error al crear comentario:', error);
+            Swal.fire('Error', 'No se pudo publicar el comentario.', 'error');
+            return false;
+        }
+
+        console.log('✅ Comentario creado:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Error en crearComentario:', error);
+        Swal.fire('Error', 'Ocurrió un error al comentar.', 'error');
+        return false;
+    }
+}
+
+async function eliminarComentario(comentarioId) {
+    try {
+        const { error } = await window.supabaseClient
+            .from('comentarios')
+            .delete()
+            .eq('id', comentarioId);
+
+        if (error) {
+            console.error('❌ Error al eliminar comentario:', error);
+            Swal.fire('Error', 'No se pudo eliminar el comentario.', 'error');
+            return false;
+        }
+
+        console.log('✅ Comentario eliminado:', comentarioId);
+        return true;
+    } catch (error) {
+        console.error('❌ Error en eliminarComentario:', error);
+        return false;
+    }
+}
+
+// ===== RENDERIZAR COMENTARIOS (VERSIÓN CORREGIDA - SIN onclick) =====
+function renderizarComentarios(publicacionId, comentarios) {
+    const container = document.querySelector(`.comentarios-container[data-id="${publicacionId}"]`);
+    if (!container) return;
+
+    const list = container.querySelector('.comentarios-list');
+    if (!list) return;
+
+    // Separar comentarios principales de respuestas
+    const principales = comentarios.filter(c => !c.padre_id);
+    const respuestas = comentarios.filter(c => c.padre_id);
+
+    if (principales.length === 0) {
+        list.innerHTML = `
+            <div class="sin-comentarios">
+                <i class="fas fa-comment-dots" style="opacity: 0.4; display: block; font-size: 1.5rem; margin-bottom: 4px;"></i>
+                Sé el primero en comentar ✨
+            </div>
+        `;
+        return;
+    }
+
+    list.innerHTML = principales.map(com => {
+        const nombre = com.usuarios?.nombre || 'Usuario';
+        const avatar = com.usuarios?.avatar || obtenerAvatarPorGenero(com.usuarios?.genero_id || 0);
+        const fecha = new Date(com.created_at).toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const esAutor = usuarioActual && com.usuario_id === usuarioActual.id;
+        const esAdmin = usuarioActual && usuarioActual.nombre === ADMIN_NOMBRE;
+        const respuestasDelComentario = respuestas.filter(r => r.padre_id === com.id);
+
+        return `
+            <div class="comentario-item" data-id="${com.id}">
+                <img src="${avatar}" class="avatar-comentario" onerror="this.src='imganes/avatar-default.png'" alt="${nombre}">
+                <div class="comentario-contenido">
+                    <div class="comentario-nombre">
+                        ${nombre}
+                        <span class="comentario-fecha">· ${fecha}</span>
+                    </div>
+                    <div class="comentario-texto">${com.comentario}</div>
+                    
+                    <!-- Botones de acción del comentario -->
+                    <div style="display: flex; gap: 6px; margin-top: 6px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn-responder" data-publicacion="${publicacionId}" data-comentario="${com.id}" data-nombre="${nombre}">
+                            <i class="fas fa-reply"></i> Responder
+                        </button>
+                        ${respuestasDelComentario.length > 0 ? `
+                            <span style="font-size: 0.7rem; color: #95a5a6;">
+                                <i class="fas fa-comments"></i> ${respuestasDelComentario.length} respuestas
+                            </span>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Contenedor de respuestas -->
+                    <div class="respuestas-container" data-comentario="${com.id}">
+                        ${respuestasDelComentario.length > 0 ? renderizarRespuestasHTML(publicacionId, com.id, respuestasDelComentario) : ''}
+                    </div>
+                </div>
+                ${(esAutor || esAdmin) ? `
+                    <button class="btn-eliminar-comentario" data-id="${com.id}" data-publicacion="${publicacionId}" title="Eliminar comentario">
+                        <i class="fas fa-times"></i>
+                    </button>
+                ` : ''}
+            </div>
+            
+            <!-- Formulario de respuesta (oculto) -->
+            <div class="respuesta-form" data-comentario="${com.id}" style="display: none;">
+                <input type="text" class="input-respuesta" placeholder="💬 Responder a ${nombre}..." maxlength="500">
+                <button class="btn-enviar-respuesta" data-publicacion="${publicacionId}" data-comentario="${com.id}" data-mencionado="${com.usuario_id}">
+                    <i class="fas fa-reply"></i> Responder
+                </button>
+            </div>
+            
+            <!-- Mensaje "Respondiendo a..." -->
+            <div class="respondiendo-a" data-comentario="${com.id}" style="display: none;">
+                <i class="fas fa-reply icono-respuesta"></i> Respondiendo a <strong>${nombre}</strong>
+            </div>
+        `;
+    }).join('');
+
+    // ===== EVENT LISTENERS (TODOS AQUÍ, SIN onclick) =====
+
+    // 1. Botones de responder
+    list.querySelectorAll('.btn-responder').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const publicacionId = this.dataset.publicacion;
+            const comentarioId = this.dataset.comentario;
+            const nombre = this.dataset.nombre;
+            toggleResponder(publicacionId, comentarioId, nombre);
+        });
+    });
+
+    // 2. Botones de eliminar comentarios
+    list.querySelectorAll('.btn-eliminar-comentario').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const comentarioId = btn.dataset.id;
+            const publicacionId = btn.dataset.publicacion;
+            
+            const confirmar = await Swal.fire({
+                title: '¿Eliminar comentario?',
+                text: 'Esta acción no se puede deshacer. Las respuestas también se eliminarán.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#95a5a6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (confirmar.isConfirmed) {
+                const exito = await eliminarComentario(comentarioId);
+                if (exito) {
+                    const comentariosNuevos = await obtenerComentarios(publicacionId);
+                    comentariosCargados[publicacionId] = comentariosNuevos;
+                    renderizarComentarios(publicacionId, comentariosNuevos);
+                    
+                    const comentarioCount = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);
+                    if (comentarioCount) {
+                        comentarioCount.textContent = comentariosNuevos.length;
+                    }
+                }
+            }
+        });
+    });
+
+    // 3. Botones de enviar respuesta
+    list.querySelectorAll('.btn-enviar-respuesta').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const publicacionId = this.dataset.publicacion;
+            const comentarioId = this.dataset.comentario;
+            const mencionadoId = this.dataset.mencionado;
+            enviarRespuesta(publicacionId, comentarioId, mencionadoId);
+        });
+    });
+
+    // 4. Enviar respuesta con Enter
+    document.querySelectorAll('.input-respuesta').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const form = input.closest('.respuesta-form');
+                const btn = form.querySelector('.btn-enviar-respuesta');
+                if (btn) btn.click();
+            }
+        });
+    });
+}
+
+// ===== FUNCIÓN AUXILIAR PARA RENDERIZAR RESPUESTAS HTML =====
+function renderizarRespuestasHTML(publicacionId, comentarioId, respuestas) {
+    return respuestas.map(res => {
+        const nombre = res.usuarios?.nombre || 'Usuario';
+        const avatar = res.usuarios?.avatar || obtenerAvatarPorGenero(res.usuarios?.genero_id || 0);
+        const fecha = new Date(res.created_at).toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const esAutor = usuarioActual && res.usuario_id === usuarioActual.id;
+        const esAdmin = usuarioActual && usuarioActual.nombre === ADMIN_NOMBRE;
+        const esNuevo = (Date.now() - new Date(res.created_at).getTime()) < 60000;
+
+        let texto = res.comentario;
+        if (res.mencionado) {
+            texto = texto.replace(
+                `@${res.mencionado.nombre}`,
+                `<span class="mencion">@${res.mencionado.nombre}</span>`
+            );
+        }
+
+        return `
+            <div class="comentario-item respuesta ${esNuevo ? 'nuevo' : ''}" data-id="${res.id}">
+                <img src="${avatar}" class="avatar-comentario" onerror="this.src='imganes/avatar-default.png'" alt="${nombre}">
+                <div class="comentario-contenido">
+                    <div class="comentario-nombre">
+                        ${nombre}
+                        <span class="badge-respuesta">Respuesta</span>
+                        ${esNuevo ? '<span class="badge-nuevo">✨ Nuevo</span>' : ''}
+                        <span class="comentario-fecha">· ${fecha}</span>
+                    </div>
+                    <div class="comentario-texto">${texto}</div>
+                </div>
+                ${(esAutor || esAdmin) ? `
+                    <button class="btn-eliminar-comentario" data-id="${res.id}" data-publicacion="${publicacionId}" title="Eliminar respuesta">
+                        <i class="fas fa-times"></i>
+                    </button>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== TOGGLE RESPONDER =====
+function toggleResponder(publicacionId, comentarioId, nombreUsuario) {
+    // Ocultar otros formularios de respuesta
+    document.querySelectorAll('.respuesta-form').forEach(form => {
+        if (form.dataset.comentario != comentarioId) {
+            form.style.display = 'none';
+        }
+    });
+
+    const form = document.querySelector(`.respuesta-form[data-comentario="${comentarioId}"]`);
+    if (!form) return;
+
+    if (form.style.display === 'flex') {
+        form.style.display = 'none';
+        const mensaje = document.querySelector(`.respondiendo-a[data-comentario="${comentarioId}"]`);
+        if (mensaje) mensaje.style.display = 'none';
+        return;
+    }
+
+    form.style.display = 'flex';
+    const input = form.querySelector('.input-respuesta');
+    if (input) {
+        input.placeholder = `💬 Responder a ${nombreUsuario}...`;
+        input.focus();
+    }
+
+    const mensaje = document.querySelector(`.respondiendo-a[data-comentario="${comentarioId}"]`);
+    if (mensaje) {
+        mensaje.style.display = 'block';
+        setTimeout(() => {
+            mensaje.style.display = 'none';
+        }, 5000);
+    }
+}
+
+// ===== TOGGLE COMENTARIOS =====
+async function toggleComentarios(publicacionId) {
+    const container = document.querySelector(`.comentarios-container[data-id="${publicacionId}"]`);
+    if (!container) return;
+
+    const isVisible = comentariosVisibles[publicacionId];
+    const list = container.querySelector('.comentarios-list');
+
+    if (isVisible) {
+        container.style.display = 'none';
+        comentariosVisibles[publicacionId] = false;
+        
+        const btn = document.querySelector(`.btn-ver-comentarios[data-id="${publicacionId}"]`);
+        if (btn) {
+            const count = comentariosCargados[publicacionId]?.length || 0;
+            btn.innerHTML = `<i class="fas fa-comment"></i> ${count} comentarios`;
+        }
+        return;
+    }
+
+    container.style.display = 'block';
+    comentariosVisibles[publicacionId] = true;
+
+    if (!comentariosCargados[publicacionId]) {
+        list.innerHTML = `
+            <div style="text-align:center; padding: 10px;">
+                <i class="fas fa-spinner fa-spin" style="color: #9b59b6;"></i>
+                <span style="color: #7f8c8d; margin-left: 8px;">Cargando comentarios...</span>
+            </div>
+        `;
+        
+        const comentarios = await obtenerComentarios(publicacionId);
+        comentariosCargados[publicacionId] = comentarios;
+        renderizarComentarios(publicacionId, comentarios);
+    }
+
+    const btn = document.querySelector(`.btn-ver-comentarios[data-id="${publicacionId}"]`);
+    if (btn) {
+        const count = comentariosCargados[publicacionId]?.length || 0;
+        btn.innerHTML = `<i class="fas fa-comment"></i> ${count} comentarios <i class="fas fa-chevron-up" style="font-size: 0.7rem;"></i>`;
+    }
+
+    const input = container.querySelector('.input-comentario');
+    if (input) {
+        setTimeout(() => input.focus(), 300);
+    }
+}
+
+// ===== ENVIAR COMENTARIO =====
+async function enviarComentario(publicacionId) {
+    const container = document.querySelector(`.comentarios-container[data-id="${publicacionId}"]`);
+    if (!container) return;
+    
+    const input = container.querySelector('.input-comentario');
+    const texto = input.value.trim();
+
+    if (!texto) {
+        input.style.borderColor = '#e74c3c';
+        setTimeout(() => input.style.borderColor = '', 2000);
+        return;
+    }
+
+    const btn = container.querySelector('.btn-enviar-comentario');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    const nuevoComentario = await crearComentario(publicacionId, texto);
+    
+    if (nuevoComentario) {
+        input.value = '';
+        
+        const comentariosNuevos = await obtenerComentarios(publicacionId);
+        comentariosCargados[publicacionId] = comentariosNuevos;
+        renderizarComentarios(publicacionId, comentariosNuevos);
+        
+        const countSpan = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);
+        if (countSpan) {
+            countSpan.textContent = comentariosNuevos.length;
+        }
+
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 30,
+                spread: 40,
+                origin: { y: 0.8 },
+                colors: ['#9b59b6', '#f1c40f', '#27ae60']
+            });
+        }
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+}
+
+// ===== CREAR RESPUESTA =====
+async function crearRespuesta(publicacionId, padreId, texto, mencionadoId = null) {
+    if (!usuarioActual) {
+        Swal.fire({
+            title: '💜 Para responder',
+            text: 'Necesitas iniciar sesión para responder.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#9b59b6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
+            }
+        });
+        return false;
+    }
+
+    if (!texto || texto.trim() === '') {
+        return false;
+    }
+
+    try {
+        let mencionadoNombre = '';
+        if (mencionadoId) {
+            const { data: userData } = await window.supabaseClient
+                .from('usuarios')
+                .select('nombre')
+                .eq('id', mencionadoId)
+                .single();
+            if (userData) {
+                mencionadoNombre = userData.nombre;
+            }
+        }
+
+        let textoFinal = texto.trim();
+        if (mencionadoNombre) {
+            if (!textoFinal.startsWith(`@${mencionadoNombre}`)) {
+                textoFinal = `@${mencionadoNombre} ${textoFinal}`;
+            }
+        }
+
+        const { data, error } = await window.supabaseClient
+            .from('comentarios')
+            .insert({
+                publicacion_id: publicacionId,
+                usuario_id: usuarioActual.id,
+                comentario: textoFinal,
+                padre_id: padreId,
+                mencionado_id: mencionadoId || null
+            })
+            .select(`
+                *,
+                usuarios!comentarios_usuario_id_fkey(
+                    nombre,
+                    genero_id,
+                    avatar
+                ),
+                mencionado:usuarios!comentarios_mencionado_id_fkey(
+                    nombre
+                )
+            `)
+            .single();
+
+        if (error) {
+            console.error('❌ Error al crear respuesta:', error);
+            Swal.fire('Error', 'No se pudo publicar la respuesta.', 'error');
+            return false;
+        }
+
+        console.log('✅ Respuesta creada:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Error en crearRespuesta:', error);
+        Swal.fire('Error', 'Ocurrió un error al responder.', 'error');
+        return false;
+    }
+}
+
+// ===== ENVIAR RESPUESTA =====
+async function enviarRespuesta(publicacionId, comentarioId, mencionadoId = null) {
+    const form = document.querySelector(`.respuesta-form[data-comentario="${comentarioId}"]`);
+    if (!form) return;
+    
+    const input = form.querySelector('.input-respuesta');
+    const texto = input.value.trim();
+
+    if (!texto) {
+        input.style.borderColor = '#e74c3c';
+        setTimeout(() => input.style.borderColor = '', 2000);
+        return;
+    }
+
+    const btn = form.querySelector('.btn-enviar-respuesta');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    const nuevaRespuesta = await crearRespuesta(publicacionId, comentarioId, texto, mencionadoId);
+    
+    if (nuevaRespuesta) {
+        input.value = '';
+        form.style.display = 'none';
+        
+        const comentariosNuevos = await obtenerComentarios(publicacionId);
+        comentariosCargados[publicacionId] = comentariosNuevos;
+        renderizarComentarios(publicacionId, comentariosNuevos);
+        
+        const countSpan = document.querySelector(`.comentario-count[data-id="${publicacionId}"]`);
+        if (countSpan) {
+            countSpan.textContent = comentariosNuevos.length;
+        }
+
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 30,
+                spread: 40,
+                origin: { y: 0.7 },
+                colors: ['#9b59b6', '#f1c40f', '#27ae60', '#e74c3c']
+            });
+        }
+
+        const mensajesCarismaticos = [
+            '💜 ¡Respuesta enviada con amor!',
+            '✨ Tu respuesta ilumina la conversación',
+            '🌟 ¡Qué bonito es compartir!',
+            '💫 Tu voz es importante aquí',
+            '🌸 Gracias por aportar tu luz'
+        ];
+        const mensaje = mensajesCarismaticos[Math.floor(Math.random() * mensajesCarismaticos.length)];
+        
+        Swal.fire({
+            title: '💜 ' + mensaje,
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-popup-redondo' }
+        });
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-reply"></i> Responder';
+}
     </script>
 </body>
 </html>

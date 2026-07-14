@@ -210,6 +210,11 @@
             background: #2c1b4e;
             transform: translateY(-2px);
         }
+        .auth-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
         .auth-toggle {
             margin-top: 20px;
             color: #9b59b6;
@@ -379,7 +384,7 @@
                         <input type="password" class="auth-input" id="loginPass" placeholder="Contraseña" required>
                         <i class="fas fa-eye toggle-pass" onclick="toggleVisibility('loginPass', this)"></i>
                     </div>
-                    <button type="submit" class="auth-btn">Iniciar Sesión</button>
+                    <button type="submit" class="auth-btn" id="loginBtn">Iniciar Sesión</button>
                     <p class="auth-toggle" style="margin-top: 0; font-size: 14px;" onclick="recuperarPassword()">¿Olvidaste tu contraseña?</p>
                 </form>
                 <p class="auth-toggle" onclick="toggleAuth()">¿No tienes cuenta? Regístrate aquí</p>
@@ -929,10 +934,21 @@ document.getElementById('btnAyuda').addEventListener('click', function() {
 });
 
         // ============================================================
-        // 6. LOGIN DE USUARIO
+        // 6. LOGIN DE USUARIO CON CONTADOR DE INTENTOS
         // ============================================================
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 5;
+        let countdownInterval = null;
+
+        // Referencia al botón de login (se declara una sola vez)
+        const loginBtn = document.getElementById('loginBtn');
+
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Si el botón está deshabilitado, no hacer nada
+            if (loginBtn.disabled) return;
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPass').value;
 
@@ -952,8 +968,62 @@ document.getElementById('btnAyuda').addEventListener('click', function() {
 
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-            if (error) return Swal.fire('Error', error.message || 'Credenciales incorrectas', 'error');
-            
+            if (error) {
+                loginAttempts++;
+                
+                // Si alcanza el máximo de intentos, bloquear
+                if (loginAttempts >= MAX_ATTEMPTS) {
+                    loginBtn.disabled = true;
+                    loginBtn.textContent = 'Espera 1 minuto';
+                    
+                    let remaining = 60;
+                    if (countdownInterval) clearInterval(countdownInterval);
+                    countdownInterval = setInterval(() => {
+                        remaining--;
+                        loginBtn.textContent = `Espera ${remaining}s`;
+                        if (remaining <= 0) {
+                            clearInterval(countdownInterval);
+                            countdownInterval = null;
+                            loginBtn.disabled = false;
+                            loginBtn.textContent = 'Iniciar Sesión';
+                            loginAttempts = 0; // Reiniciar contador
+                        }
+                    }, 1000);
+                }
+                
+                Swal.fire({
+                    title: '',
+                    html: `
+                        <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #e74c3c; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);">
+                                <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <p style="color: #e74c3c; font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">⚠️ Verifica tus credenciales</p>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; margin: 0;">Por favor, verifica tus credenciales y vuelve a intentarlo.</p>
+                        ${loginAttempts < MAX_ATTEMPTS ? `<p style="color: #bdc3c7; font-size: 0.8rem; margin-top: 8px;">Intentos restantes: ${MAX_ATTEMPTS - loginAttempts}</p>` : ''}
+                    `,
+                    confirmButtonColor: '#9b59b6',
+                    confirmButtonText: 'Entendido 💜',
+                    showCloseButton: true,
+                    customClass: { 
+                        popup: 'swal-popup-redondo',
+                        closeButton: 'swal-close-button-styled'
+                    },
+                    background: '#fdfaff'
+                });
+                return;
+            }
+
+            // Si el login es exitoso, reiniciar contador
+            loginAttempts = 0;
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Iniciar Sesión';
+
             const usuarioNombre = data.user.user_metadata?.nombre || "Usuario";
             
             Swal.fire({

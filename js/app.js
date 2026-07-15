@@ -1374,7 +1374,7 @@ window.mostrarInstrucciones = mostrarInstrucciones;
         const valorText = document.getElementById('valorPromedioGlobal');
         const valorTextMovil = document.getElementById('valorPromedioGlobalMovil');
         
-        const { data: opiniones } = await supabaseClient.from('comentarios').select('estrellas');
+        const { data: opiniones } = await supabaseClient.from('opciones').select('estrellas');
 
         if (opiniones && opiniones.length > 0) {
             const suma = opiniones.reduce((acc, op) => acc + op.estrellas, 0);
@@ -2792,7 +2792,7 @@ document.getElementById('btnPerfil')?.addEventListener('click', async function()
                 // Cargar calificación
                 (async () => {
                     try {
-                        const { data } = await supabaseClient.from('comentarios').select('estrellas').eq('usuario_id', userId);
+                        const { data } = await supabaseClient.from('opciones').select('estrellas').eq('usuario_id', userId);
                         const container = document.getElementById('userRatingDisplay');
                         if (data && data.length > 0) {
                             const avg = (data.reduce((s, o) => s + o.estrellas, 0) / data.length).toFixed(1);
@@ -3952,7 +3952,7 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
-                await supabaseClient.from('comentarios').insert({ usuario_id: session.user.id, estrellas: result.value.rating, comentario: result.value.comment });
+                await supabaseClient.from('opciones').insert({ usuario_id: session.user.id, estrellas: result.value.rating, comentario: result.value.comment });
 
                 if (typeof confetti === 'function') {
                     confetti({
@@ -3977,9 +3977,8 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
  // --- Función global para Ver Opiniones ---
 window.verOpinionesSweetAlert = async function() {
     const { data: allOpinions, error } = await supabaseClient
-        .from('comentarios')
-        .select('estrellas, comentario, creado_en, usuarios(nombre)');
-
+        .from('opciones')
+        .select('estrellas, comentario, creado_en, usuarios(nombre)')
     if (error) return Swal.fire('Error', 'No pudimos cargar las opiniones.', 'error');
 
     // Detectar modo oscuro

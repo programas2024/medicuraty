@@ -766,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 // Guardar en Supabase
-                const { error } = await supabaseClient.from('comentarios').insert({
+                const { error } = await supabaseClient.from('opciones').insert({
                     usuario_id: session.user.id,
                     estrellas: result.value.rating,
                     comentario: result.value.comment
@@ -802,7 +802,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Lógica para Ver Opiniones ---
     document.getElementById('btnVerOpiniones')?.addEventListener('click', async () => {
         const { data: opiniones, error } = await supabaseClient
-            .from('comentarios')
+            .from('opciones')
             .select('estrellas, comentario, creado_en, usuarios(nombre)');
         
         if (error || !opiniones.length) {
@@ -900,7 +900,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (!session) return;
 
-        const { data: opiniones } = await supabaseClient.from('comentarios').select('estrellas');
+        const { data: opiniones } = await supabaseClient.from('opciones').select('estrellas');
 
         if (opiniones && opiniones.length > 0 && badge && valorText) {
             const suma = opiniones.reduce((acc, op) => acc + op.estrellas, 0);

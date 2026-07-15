@@ -16,6 +16,28 @@
     <link rel="stylesheet" href="css/swafire.css">
     <link rel="stylesheet" href="css/comunidad.css">
     <style>
+
+        /* ============================================================
+   REACCIONES DE COMENTARIOS - AL FRENTE
+   ============================================================ */
+.reacciones-selector {
+    z-index: 99999 !important;
+}
+
+.reacciones-container {
+    position: relative;
+    z-index: 10;
+}
+
+/* Para el selector de reacciones en comentarios */
+.swal2-container {
+    z-index: 99999 !important;
+}
+
+/* Asegurar que el popup de SweetAlert esté al frente */
+.swal2-popup {
+    z-index: 100000 !important;
+}
         /* ============================================================
            IMÁGENES DE PUBLICACIONES - GRANDES CON BORDES BONITOS
            ============================================================ */
@@ -2026,29 +2048,191 @@
 
             // ===== EVENT LISTENERS =====
 
-            document.querySelectorAll('.btn-like').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    if (!usuarioActual) {
-                        // Limpiar el input antes de mostrar la alerta
-                        const inputs = document.querySelectorAll('.input-comentario');
-                        inputs.forEach(input => input.value = '');
-                        
-                        mostrarAlertaInicioSesion('Para apoyar esta publicación, necesitas iniciar sesión.');
-                        return;
-                    }
-                    
-                    const id = btn.dataset.id;
-                    const reactionId = await mostrarSelectorReaccionesPublicacion(id);
-                    
-                    if (reactionId) {
-                        guardarReaccionUsuario(id, reactionId);
-                        await toggleLike(id, reactionId);
-                        await cargarPublicaciones();
+          
+
+            // ===== EVENT LISTENERS =====
+// ===== EVENT LISTENERS =====
+
+document.querySelectorAll('.btn-like').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        
+        if (!usuarioActual) {
+            // Limpiar inputs
+            const inputs = document.querySelectorAll('.input-comentario');
+            inputs.forEach(input => input.value = '');
+            
+            // Mostrar alerta de inicio de sesión con logo
+            await mostrarAlertaInicioSesion('Para apoyar esta publicación, necesitas iniciar sesión.');
+            return;
+        }
+        
+        const id = btn.dataset.id;
+        
+        // VERIFICAR SI EL USUARIO YA REACCIONÓ A ESTA PUBLICACIÓN
+        const { data: existingLike } = await window.supabaseClient
+            .from('comunidad_likes')
+            .select('id, reaction')
+            .eq('usuario_id', usuarioActual.id)
+            .eq('publicacion_id', id)
+            .maybeSingle();
+        
+        // Si YA REACCIONÓ → solo mostrar selector de reacciones (sin preguntar)
+        if (existingLike) {
+            const reactionId = await mostrarSelectorReaccionesPublicacion(id);
+            if (reactionId && reactionId !== existingLike.reaction) {
+                // Cambiar la reacción
+                await window.supabaseClient
+                    .from('comunidad_likes')
+                    .update({ reaction: reactionId })
+                    .eq('id', existingLike.id);
+                
+                // Actualizar contador
+                await cargarPublicaciones();
+                
+                // Mostrar agradecimiento
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                const bgColor = isDarkMode ? '#1a1a2e' : '#ffffff';
+                const textColor = isDarkMode ? '#d4c4e8' : '#2c1b4e';
+                
+                Swal.fire({
+                    title: '',
+                    html: `
+                        <div style="text-align: center; padding: 5px 0;">
+                            <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-medicurativo">
+                            <h2 class="swal-title-medicurativo" style="color: ${textColor};">💜 ¡Gracias por tu apoyo!</h2>
+                            <p class="swal-text-medicurativo" style="color: ${isDarkMode ? '#a894b8' : '#6a5a7e'};">
+                                Has cambiado tu reacción. Tu apoyo significa mucho para la comunidad.
+                            </p>
+                            <p style="color: ${isDarkMode ? '#8a7a9e' : '#95a5a6'}; font-size: 0.85rem; margin-top: 8px;">
+                                <i class="fas fa-spa" style="color: #9b59b6;"></i> Medicurativo · comunidad de luz
+                            </p>
+                        </div>
+                    `,
+                    background: bgColor,
+                    showConfirmButton: true,
+                    confirmButtonText: '💜 Gracias',
+                    confirmButtonColor: '#9b59b6',
+                    timer: 2500,
+                    timerProgressBar: true,
+                    customClass: { 
+                        popup: 'swal-popup-redondo',
+                        confirmButton: 'swal-confirm-medicurativo'
+                    },
+                    didOpen: () => {
+                        const confirmBtn = document.querySelector('.swal-confirm-medicurativo');
+                        if (confirmBtn) {
+                            confirmBtn.style.fontWeight = '600';
+                            confirmBtn.style.padding = '12px 30px';
+                            confirmBtn.style.borderRadius = '50px';
+                            confirmBtn.style.fontSize = '1rem';
+                        }
                     }
                 });
+            }
+            return;
+        }
+        
+        // PRIMERA VEZ QUE REACCIONA → mostrar SweetAlert de confirmación con LOGO
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const bgColor = isDarkMode ? '#1a1a2e' : '#ffffff';
+        const textColor = isDarkMode ? '#d4c4e8' : '#2c1b4e';
+        
+        const { isConfirmed } = await Swal.fire({
+            title: '',
+            html: `
+                <div style="text-align: center; padding: 5px 0;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-medicurativo">
+                    <h2 class="swal-title-medicurativo" style="color: ${textColor};">💜 Apoyar publicación</h2>
+                    <p class="swal-text-medicurativo" style="color: ${isDarkMode ? '#a894b8' : '#6a5a7e'};">
+                        ¿Quieres apoyar esta publicación con una reacción?
+                    </p>
+                    <p style="color: ${isDarkMode ? '#8a7a9e' : '#95a5a6'}; font-size: 0.85rem; margin-top: 8px;">
+                        <i class="fas fa-spa" style="color: #9b59b6;"></i> Elige cómo te hace sentir
+                    </p>
+                </div>
+            `,
+            background: bgColor,
+            showCancelButton: true,
+            confirmButtonText: '💜 Sí, apoyar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#9b59b6',
+            cancelButtonColor: '#95a5a6',
+            reverseButtons: true,
+            customClass: { 
+                popup: 'swal-popup-redondo',
+                confirmButton: 'swal-confirm-medicurativo',
+                cancelButton: 'swal-cancel-medicurativo'
+            },
+            didOpen: () => {
+                const confirmBtn = document.querySelector('.swal-confirm-medicurativo');
+                const cancelBtn = document.querySelector('.swal-cancel-medicurativo');
+                if (confirmBtn) {
+                    confirmBtn.style.fontWeight = '600';
+                    confirmBtn.style.padding = '12px 30px';
+                    confirmBtn.style.borderRadius = '50px';
+                    confirmBtn.style.fontSize = '1rem';
+                }
+                if (cancelBtn) {
+                    cancelBtn.style.fontWeight = '600';
+                    cancelBtn.style.padding = '12px 30px';
+                    cancelBtn.style.borderRadius = '50px';
+                    cancelBtn.style.fontSize = '1rem';
+                }
+            }
+        });
+        
+        if (!isConfirmed) return;
+        
+        const reactionId = await mostrarSelectorReaccionesPublicacion(id);
+        
+        if (reactionId) {
+            guardarReaccionUsuario(id, reactionId);
+            await toggleLike(id, reactionId);
+            await cargarPublicaciones();
+            
+            // Mostrar agradecimiento después de dar like
+            const isDarkMode2 = document.body.classList.contains('dark-mode');
+            const bgColor2 = isDarkMode2 ? '#1a1a2e' : '#ffffff';
+            const textColor2 = isDarkMode2 ? '#d4c4e8' : '#2c1b4e';
+            
+            Swal.fire({
+                title: '',
+                html: `
+                    <div style="text-align: center; padding: 5px 0;">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-medicurativo">
+                        <h2 class="swal-title-medicurativo" style="color: ${textColor2};">💜 ¡Gracias por tu apoyo!</h2>
+                        <p class="swal-text-medicurativo" style="color: ${isDarkMode2 ? '#a894b8' : '#6a5a7e'};">
+                            Tu reacción ilumina esta publicación y fortalece nuestra comunidad.
+                        </p>
+                        <p style="color: ${isDarkMode2 ? '#8a7a9e' : '#95a5a6'}; font-size: 0.85rem; margin-top: 8px;">
+                            <i class="fas fa-spa" style="color: #9b59b6;"></i> Medicurativo · comunidad de luz
+                        </p>
+                    </div>
+                `,
+                background: bgColor2,
+                showConfirmButton: true,
+                confirmButtonText: '💜 Gracias',
+                confirmButtonColor: '#9b59b6',
+                timer: 2500,
+                timerProgressBar: true,
+                customClass: { 
+                    popup: 'swal-popup-redondo',
+                    confirmButton: 'swal-confirm-medicurativo'
+                },
+                didOpen: () => {
+                    const confirmBtn = document.querySelector('.swal-confirm-medicurativo');
+                    if (confirmBtn) {
+                        confirmBtn.style.fontWeight = '600';
+                        confirmBtn.style.padding = '12px 30px';
+                        confirmBtn.style.borderRadius = '50px';
+                        confirmBtn.style.fontSize = '1rem';
+                    }
+                }
             });
-
+        }
+    });
+});
             document.querySelectorAll('.btn-ver-comentarios').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();

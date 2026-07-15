@@ -1,4 +1,4 @@
-// ===== MENÚ HAMBURGUESA PARA COMUNIDAD (SOLO 3 BOTONES) =====
+// ===== MENÚ HAMBURGUESA PARA COMUNIDAD (SOLO 3 BOTONES + RANKING) =====
 document.addEventListener('DOMContentLoaded', function() {
     // Esperar a que el DOM esté listo
     const hamburguesaBtn = document.getElementById('categoriasHamburguesa');
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(overlay);
     }
     
-    // ===== GENERAR SOLO LOS 3 BOTONES =====
+    // ===== GENERAR LOS BOTONES (3 + RANKING) =====
     function generarBotonesMenu() {
         contenedorBotones.innerHTML = `
             <!-- Botón Misión -->
@@ -40,6 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <i class="fas fa-heart" style="color: #9b59b6; width: 24px; text-align: center;"></i>
                 <span>Gracias</span>
             </button>
+            
+            <!-- Botón en el menú hamburguesa -->
+<button class="categoria-movil-btn no-cerrar-menu" onclick="window.abrirRanking()" style="border-left-color: #f1c40f;">
+    <i class="fas fa-trophy" style="color: #f1c40f;"></i>
+    <span>🏆 Ranking</span>
+</button>
             
             <!-- Separador decorativo -->
             <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(155, 89, 182, 0.1);">
@@ -108,5 +114,5 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ===== INICIALIZAR =====
     generarBotonesMenu();
-    console.log('✅ Menú de comunidad inicializado (solo 3 botones)');
+    console.log('✅ Menú de comunidad inicializado (3 botones + Ranking)');
 });

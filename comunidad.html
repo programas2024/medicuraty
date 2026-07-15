@@ -16,7 +16,55 @@
     <link rel="stylesheet" href="css/swafire.css">
     <link rel="stylesheet" href="css/comunidad.css">
     <style>
+/* ===== RANKING RESPONSIVE ===== */
+.swal-ranking .swal2-popup {
+    max-width: 600px !important;
+    width: 95% !important;
+    padding: 16px 12px 20px !important;
+}
 
+.swal-ranking .swal2-title {
+    font-size: 1.2rem !important;
+    padding: 0 0 10px 0 !important;
+}
+
+/* Ocultar en móviles muy pequeños */
+@media (max-width: 480px) {
+    .hide-mobile-480 {
+        display: none !important;
+    }
+    
+    .swal-ranking .swal2-popup {
+        padding: 12px 8px 16px !important;
+        width: 98% !important;
+        border-radius: 16px !important;
+    }
+    
+    .swal-ranking .swal2-title {
+        font-size: 1rem !important;
+    }
+}
+
+/* Ajuste para móviles */
+@media (max-width: 600px) {
+    .swal-ranking .swal2-popup {
+        max-width: 100% !important;
+        width: 98% !important;
+        margin: 0 4px !important;
+    }
+    
+    .swal-ranking .swal2-html-container {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* Ajuste para tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .swal-ranking .swal2-popup {
+        max-width: 90% !important;
+    }
+}
         /* ============================================================
    REACCIONES DE COMENTARIOS - AL FRENTE
    ============================================================ */
@@ -277,6 +325,15 @@
                     </a>
                     <span class="tooltip">Inicio</span>
                 </div>
+
+                <!-- NUEVO: Botón de Ranking (solo PC) -->
+    <div class="btn-con-tooltip hide-mobile-768" id="wrapperRanking">
+      <!-- Botón en el menú hamburguesa -->
+<button class="categoria-movil-btn no-cerrar-menu" onclick="window.abrirRanking()" style="border-left-color: #f1c40f;">
+    <i class="fas fa-trophy" style="color: #f1c40f;"></i>
+    <span>🏆 Ranking</span>
+</button>
+    </div>
                 
                 <!-- NUEVO: Botón de notificaciones (buzón) - Solo visible para "medicurativo" -->
                 <div class="btn-con-tooltip" id="wrapperNotificacion" style="display: none;">
@@ -333,6 +390,12 @@
         <button class="categoria-movil-btn no-cerrar-menu" onclick="window.mostrarAgradecimientos()" style="border-left-color: #9b59b6;">
             <i class="fas fa-heart" style="color: #9b59b6;"></i>
             <span>Gracias</span>
+        </button>
+
+         <!-- ===== NUEVO BOTÓN RANKING ===== -->
+        <button class="categoria-movil-btn no-cerrar-menu" id="btnRankingMovil" style="border-left-color: #f1c40f;">
+            <i class="fas fa-trophy" style="color: #f1c40f;"></i>
+            <span>🏆 Ranking</span>
         </button>
     </div>
 </div>
@@ -459,6 +522,7 @@
     <script src="js/performance.js"></script>
     <script src="js/compartir.js"></script>
     <script src="js/menu-comunidad.js"></script> <!-- NUEVO: SOLO 3 BOTONES -->
+    <script src="js/ranking.js"></script>
     <script>
 
         // ============================================================
@@ -3534,6 +3598,8 @@ document.querySelectorAll('.btn-like').forEach(btn => {
 
             console.log('✅ Comunidad inicializada correctamente');
         });
+
+
 
     </script>
 </body>

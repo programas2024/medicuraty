@@ -23,6 +23,91 @@
     <link rel="stylesheet" href="css/galeria.css">
     <link rel="stylesheet" href="css/swafire.css">
     
+    <style>
+        /* ========== OCULTAR BOTONES EN MÓVIL ========== */
+        .btn-info-desktop {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-info-desktop {
+                display: none !important;
+            }
+        }
+
+        /* ========== ESTILOS PARA MENÚ MÓVIL ========== */
+        .categoria-movil-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border: none;
+            border-left: 4px solid #9b59b6;
+            background: rgba(155, 89, 182, 0.06);
+            border-radius: 10px;
+            color: #2c1b4e;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .categoria-movil-btn:hover {
+            background: rgba(155, 89, 182, 0.12);
+            transform: translateX(5px);
+        }
+
+        .categoria-movil-btn i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .no-cerrar-menu {
+            cursor: pointer !important;
+        }
+
+        .menu-categorias-movil {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .menu-categorias-movil.mostrar {
+            left: 0;
+        }
+
+        .categorias-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .categorias-overlay.mostrar {
+            display: block;
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
     <div class="contenedor">
@@ -93,17 +178,17 @@
                     <p id="fraseInspiradora">Cargando un momento de paz...</p>
                 </div>
 
-                <!-- BOTONES DE INFO -->
+                <!-- BOTONES DE INFO - AGREGADA CLASE btn-info-desktop -->
                 <div class="botones-info">
-                    <div class="btn-con-tooltip">
+                    <div class="btn-con-tooltip btn-info-desktop">
                         <button class="btn-info" id="btnMision" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
                         <span class="tooltip">Nuestra Misión</span>
                     </div>
-                    <div class="btn-con-tooltip">
+                    <div class="btn-con-tooltip btn-info-desktop">
                         <button class="btn-info" id="btnSoporte" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-headset"></i> <span>Soporte</span></button>
                         <span class="tooltip">Soporte Técnico</span>
                     </div>
-                    <div class="btn-con-tooltip">
+                    <div class="btn-con-tooltip btn-info-desktop">
                         <button class="btn-info" id="btnAgradecimientos" style="padding: 10px 15px; font-size: 14px;"><i class="fas fa-heart"></i> <span>Gracias</span></button>
                         <span class="tooltip">Agradecimientos</span>
                     </div>
@@ -165,6 +250,33 @@
                     <i class="fas fa-fire" style="color: #e74c3c;"></i>
                     <span>Más Valorado</span>
                 </button>
+                
+                <!-- ========== ACCESOS RÁPIDOS EN MÓVIL ========== -->
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid rgba(155, 89, 182, 0.15);">
+                    <p style="font-size: 0.75rem; color: #9b59b6; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 12px; padding-left: 5px;">
+                        <i class="fas fa-bolt" style="margin-right: 8px;"></i>Accesos rápidos
+                    </p>
+                    
+                    <button class="categoria-movil-btn no-cerrar-menu" onclick="window.mostrarMision()" style="border-left-color: #9b59b6;">
+                        <i class="fas fa-bullseye" style="color: #9b59b6;"></i>
+                        <span>Misión</span>
+                    </button>
+                    
+                    <button class="categoria-movil-btn no-cerrar-menu" onclick="window.mostrarSoporte()" style="border-left-color: #9b59b6;">
+                        <i class="fas fa-headset" style="color: #9b59b6;"></i>
+                        <span>Soporte</span>
+                    </button>
+                    
+                    <button class="categoria-movil-btn no-cerrar-menu" onclick="window.mostrarAgradecimientos()" style="border-left-color: #9b59b6;">
+                        <i class="fas fa-heart" style="color: #9b59b6;"></i>
+                        <span>Gracias</span>
+                    </button>
+                    
+                    <button class="categoria-movil-btn no-cerrar-menu" onclick="window.location.href='principal.html'" style="border-left-color: #9b59b6;">
+                        <i class="fas fa-home" style="color: #9b59b6;"></i>
+                        <span>Inicio</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -252,170 +364,202 @@
     <script src="js/performance.js"></script>
     <script src="js/compartir.js"></script>
     <script src="js/categorias.js"></script>
-     <script src="js/galeswafire.js"></script>
+    <script src="js/galeswafire.js"></script>
+     
     <!-- Script de galería -->
     <script>
-
-        document.getElementById('btnAyudas')?.addEventListener('click', () => {
-    if (typeof mostrarAyudaGaleria === 'function') {
-        mostrarAyudaGaleria();
-    } else {
-        // Fallback si no está definida
-        Swal.fire({
-            title: 'Ayuda',
-            text: 'Bienvenido a la galería. Explora y encuentra inspiración.',
-            icon: 'info',
-             
-            confirmButtonColor: '#9b59b6'
-        });
-    }
-});
- // ===== FUNCIÓN DE AYUDA PARA GALERÍA =====
-function mostrarAyudaGaleria() {
-    // FORZAR DETECCIÓN (más seguro)
-    const isDarkMode = document.body.classList.contains('dark-mode') || 
-                       localStorage.getItem('theme') === 'dark' ||
-                       document.documentElement.getAttribute('data-theme') === 'dark';
-    
-    // Colores según modo
-    const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
-    const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
-    const cardBg = isDarkMode ? 'rgba(255,255,255,0.08)' : '#fdfaff';
-    const cardBg2 = isDarkMode ? 'rgba(255,255,255,0.05)' : '#f8f2ff';
-    const borderColor = isDarkMode ? 'rgba(255,255,255,0.15)' : '#f0e6ff';
-    
-    Swal.fire({
-        title: '',
-        background: isDarkMode ? '#1a1a2e' : '#fdfaff',
-        html: `
-            <div style="text-align: center; padding: 5px;">
-                <!-- Círculo con imagen arriba del título -->
-                <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
-                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
-                            <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                    </div>
-                </div>
-
-                <h2 style="color: ${textColor}; font-weight: 800; font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <i class="fas fa-images" style="color: #9b59b6;"></i>
-                    Galería Medicurativo
-                </h2>
-
-                <p style="text-align:center; color:${subTextColor}; font-size:0.95rem; margin-bottom:16px; font-weight:400; line-height:1.6;">
-                    <i class="fas fa-quote-left" style="color: #9b59b6; font-size: 1rem;"></i>
-                    Un espacio visual para inspirarte, reflexionar y conectar con tu interior.
-                    <br>Cada imagen tiene un mensaje esperando ser descubierto.
-                </p>
-
-                <div style="text-align: left;">
-                    <!-- Categorías -->
-                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                        <div style="background: #9b59b6; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-images" style="color: white; font-size: 16px;"></i>
-                        </div>
-                        <div>
-                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Galería Completa</strong>
-                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Todas las imágenes disponibles en un solo lugar.</span>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #f39c12; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                        <div style="background: #f39c12; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-star" style="color: white; font-size: 16px;"></i>
-                        </div>
-                        <div>
-                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Destacadas</strong>
-                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Las imágenes más especiales seleccionadas para ti.</span>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #27ae60; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                        <div style="background: #27ae60; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-clock" style="color: white; font-size: 16px;"></i>
-                        </div>
-                        <div>
-                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Recientes</strong>
-                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Las últimas imágenes añadidas a la galería.</span>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #e74c3c; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                        <div style="background: #e74c3c; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-fire" style="color: white; font-size: 16px;"></i>
-                        </div>
-                        <div>
-                            <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Más Valoradas (Top)</strong>
-                            <span style="color: ${subTextColor}; font-size: 0.85rem;">Las imágenes con más corazones ❤️ de la comunidad.</span>
-                        </div>
-                    </div>
-
-                    <!-- Funcionalidades extra -->
-                    <div style="margin-top: 16px; padding: 14px; background: ${isDarkMode ? 'rgba(39,174,96,0.15)' : '#f0faf0'}; border-radius: 16px; border: 1px solid ${isDarkMode ? 'rgba(39,174,96,0.3)' : '#c8e6c9'};">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <i class="fas fa-heart" style="color: #e84393; font-size: 18px;"></i>
-                            <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Apoya las imágenes</span>
-                        </div>
-                        <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
-                            Haz clic en el ❤️ para apoyar una imagen. 
-                            <strong style="color: #9b59b6;">¡Las más apoyadas suben al Top!</strong>
-                            <br>
-                            <span style="color: ${subTextColor}; font-size: 0.8rem;">(Necesitas tener cuenta para apoyar)</span>
-                        </p>
-                    </div>
-
-                    <div style="margin-top: 12px; padding: 14px; background: ${cardBg}; border-radius: 16px; border: 1px solid ${borderColor};">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <i class="fas fa-search-plus" style="color: #9b59b6; font-size: 18px;"></i>
-                            <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Ver imagen en grande</span>
-                        </div>
-                        <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
-                            Haz clic en cualquier imagen para verla en detalle, 
-                            <br>con su título y posición en el ranking.
-                        </p>
-                    </div>
-
-                    <div style="margin-top: 12px; padding: 14px; background: ${isDarkMode ? 'rgba(243,156,18,0.15)' : '#fff9e6'}; border-radius: 16px; border: 1px solid ${isDarkMode ? 'rgba(243,156,18,0.3)' : '#fdebd0'};">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <i class="fas fa-arrow-right" style="color: #f39c12; font-size: 18px;"></i>
-                            <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Navegación</span>
-                        </div>
-                        <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
-                            Usa el menú de categorías para cambiar entre secciones.
-                            <br>
-                            <span style="color: ${subTextColor}; font-size: 0.8rem;">En móvil, abre el menú con el botón ☰</span>
-                        </p>
-                    </div>
-
-                    <!-- Footer inspirador -->
-                    <div style="margin-top: 16px; padding: 14px; background: ${cardBg}; border-radius: 16px; text-align: center; border: 1px solid ${borderColor};">
-                        <i class="fas fa-feather" style="color: #9b59b6; font-size: 18px;"></i>
-                        <span style="color: ${textColor}; font-size: 0.9rem; font-weight: 500; display: block; margin-top: 4px;">
-                            "La belleza está en los ojos de quien sabe mirar con el corazón."
-                        </span>
-                    </div>
-                </div>
-            </div>
-        `,
-        showConfirmButton: true,
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#9b59b6',
-        showCloseButton: true,
-        closeButtonHtml: '✕',
-        customClass: {
-            popup: 'swal-popup-redondo',
-            confirmButton: 'swal-confirm-btn',
-            closeButton: 'custom-close-btn-left'
+        // ============================================================
+        // LOG DE INICIO - PARA DEPURAR
+        // ============================================================
+        console.log('=== INICIANDO GALERIA.HTML ===');
+        console.log('1. Verificando supabaseClient...');
+        console.log('supabaseClient:', typeof supabaseClient !== 'undefined' ? 'DEFINIDO ✅' : 'NO DEFINIDO ❌');
+        if (typeof supabaseClient !== 'undefined') {
+            console.log('supabaseClient URL:', supabaseClient.supabaseUrl);
         }
-    });
-}
+        console.log('=====================================');
 
+        // ============================================================
+        // VERIFICAR SESIÓN AL INICIO
+        // ============================================================
+        async function verificarSesion() {
+            console.log('2. Verificando sesión...');
+            try {
+                if (typeof supabaseClient === 'undefined' || !supabaseClient) {
+                    console.error('❌ supabaseClient NO ESTÁ DEFINIDO');
+                    return null;
+                }
+                const { data, error } = await supabaseClient.auth.getSession();
+                if (error) {
+                    console.error('❌ Error obteniendo sesión:', error);
+                    return null;
+                }
+                if (data.session) {
+                    console.log('✅ Sesión activa para:', data.session.user.email);
+                    console.log('✅ User ID:', data.session.user.id);
+                    return data.session;
+                } else {
+                    console.log('⚠️ No hay sesión activa');
+                    return null;
+                }
+            } catch (error) {
+                console.error('❌ Error en verificarSesion:', error);
+                return null;
+            }
+        }
 
+        // ============================================================
+        // FUNCIÓN DE AYUDA PARA GALERÍA
+        // ============================================================
+        function mostrarAyudaGaleria() {
+            const isDarkMode = document.body.classList.contains('dark-mode') || 
+                               localStorage.getItem('theme') === 'dark' ||
+                               document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+            const cardBg = isDarkMode ? 'rgba(255,255,255,0.08)' : '#fdfaff';
+            const borderColor = isDarkMode ? 'rgba(255,255,255,0.15)' : '#f0e6ff';
+            
+            Swal.fire({
+                title: '',
+                background: isDarkMode ? '#1a1a2e' : '#fdfaff',
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <div style="display: flex; justify-content: center; margin-top: 5px; margin-bottom: 15px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f0e6ff, #e6fffa); padding: 5px; box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);">
+                                <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                                    <img src="imganes/logosmedi.png" alt="Medicurativo" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
 
-// ⬇️ EXPONER FUNCIÓN GLOBALMENTE ⬇️
-window.mostrarAyudaGaleria = mostrarAyudaGaleria;
-        document.addEventListener('DOMContentLoaded', () => {
+                        <h2 style="color: ${textColor}; font-weight: 800; font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <i class="fas fa-images" style="color: #9b59b6;"></i>
+                            Galería Medicurativo
+                        </h2>
+
+                        <p style="text-align:center; color:${subTextColor}; font-size:0.95rem; margin-bottom:16px; font-weight:400; line-height:1.6;">
+                            <i class="fas fa-quote-left" style="color: #9b59b6; font-size: 1rem;"></i>
+                            Un espacio visual para inspirarte, reflexionar y conectar con tu interior.
+                            <br>Cada imagen tiene un mensaje esperando ser descubierto.
+                        </p>
+
+                        <div style="text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #9b59b6;">
+                                <div style="background: #9b59b6; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-images" style="color: white; font-size: 16px;"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Galería Completa</strong>
+                                    <span style="color: ${subTextColor}; font-size: 0.85rem;">Todas las imágenes disponibles en un solo lugar.</span>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #f39c12;">
+                                <div style="background: #f39c12; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-star" style="color: white; font-size: 16px;"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Destacadas</strong>
+                                    <span style="color: ${subTextColor}; font-size: 0.85rem;">Las imágenes más especiales seleccionadas para ti.</span>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #27ae60;">
+                                <div style="background: #27ae60; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-clock" style="color: white; font-size: 16px;"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Recientes</strong>
+                                    <span style="color: ${subTextColor}; font-size: 0.85rem;">Las últimas imágenes añadidas a la galería.</span>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 15px; margin-bottom: 10px; background: ${cardBg}; border-radius: 16px; border-left: 5px solid #e74c3c;">
+                                <div style="background: #e74c3c; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-fire" style="color: white; font-size: 16px;"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: ${textColor}; font-size: 0.9rem; display: block;">Más Valoradas (Top)</strong>
+                                    <span style="color: ${subTextColor}; font-size: 0.85rem;">Las imágenes con más corazones ❤️ de la comunidad.</span>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 16px; padding: 14px; background: ${isDarkMode ? 'rgba(39,174,96,0.15)' : '#f0faf0'}; border-radius: 16px; border: 1px solid ${isDarkMode ? 'rgba(39,174,96,0.3)' : '#c8e6c9'};">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                    <i class="fas fa-heart" style="color: #e84393; font-size: 18px;"></i>
+                                    <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Apoya las imágenes</span>
+                                </div>
+                                <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
+                                    Haz clic en el ❤️ para apoyar una imagen. 
+                                    <strong style="color: #9b59b6;">¡Las más apoyadas suben al Top!</strong>
+                                    <br>
+                                    <span style="color: ${subTextColor}; font-size: 0.8rem;">(Necesitas tener cuenta para apoyar)</span>
+                                </p>
+                            </div>
+
+                            <div style="margin-top: 12px; padding: 14px; background: ${cardBg}; border-radius: 16px; border: 1px solid ${borderColor};">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                    <i class="fas fa-search-plus" style="color: #9b59b6; font-size: 18px;"></i>
+                                    <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Ver imagen en grande</span>
+                                </div>
+                                <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
+                                    Haz clic en cualquier imagen para verla en detalle, 
+                                    <br>con su título y posición en el ranking.
+                                </p>
+                            </div>
+
+                            <div style="margin-top: 12px; padding: 14px; background: ${isDarkMode ? 'rgba(243,156,18,0.15)' : '#fff9e6'}; border-radius: 16px; border: 1px solid ${isDarkMode ? 'rgba(243,156,18,0.3)' : '#fdebd0'};">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                    <i class="fas fa-arrow-right" style="color: #f39c12; font-size: 18px;"></i>
+                                    <span style="color: ${textColor}; font-weight: 600; font-size: 0.95rem;">Navegación</span>
+                                </div>
+                                <p style="color: ${textColor}; font-size: 0.85rem; margin: 0; line-height: 1.6; padding-left: 34px;">
+                                    Usa el menú de categorías para cambiar entre secciones.
+                                    <br>
+                                    <span style="color: ${subTextColor}; font-size: 0.8rem;">En móvil, abre el menú con el botón ☰</span>
+                                </p>
+                            </div>
+
+                            <div style="margin-top: 16px; padding: 14px; background: ${cardBg}; border-radius: 16px; text-align: center; border: 1px solid ${borderColor};">
+                                <i class="fas fa-feather" style="color: #9b59b6; font-size: 18px;"></i>
+                                <span style="color: ${textColor}; font-size: 0.9rem; font-weight: 500; display: block; margin-top: 4px;">
+                                    "La belleza está en los ojos de quien sabe mirar con el corazón."
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                closeButtonHtml: '✕',
+                customClass: {
+                    popup: 'swal-popup-redondo',
+                    confirmButton: 'swal-confirm-btn',
+                    closeButton: 'custom-close-btn-left'
+                }
+            });
+        }
+
+        window.mostrarAyudaGaleria = mostrarAyudaGaleria;
+
+        // ============================================================
+        // DOCUMENT READY
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('3. DOM Content Loaded - Iniciando galería...');
+
+            // ===== VERIFICAR SESIÓN =====
+            const session = await verificarSesion();
+            console.log('4. Sesión verificada:', session ? 'ACTIVA ✅' : 'INACTIVA ⚠️');
+            if (session) {
+                console.log('   Usuario:', session.user.email);
+                console.log('   ID:', session.user.id);
+            }
+
             // ===== BASE DE DATOS DE IMÁGENES =====
             const imagenesGaleria = [
                 { id: 1, url: 'imganes/camalio.png', titulo: 'Crecimiento personal', categoria: 'destacados' },
@@ -441,233 +585,413 @@ window.mostrarAyudaGaleria = mostrarAyudaGaleria;
                 { id: 21, url: 'imganes/mono.jpeg', titulo: 'Esperanza', categoria: 'completa' },
             ];
 
-            // Crear o capturar el overlay (indispensable para el menú móvil)
+            // Crear o capturar el overlay
             let overlay = document.querySelector('.categorias-overlay');
             if (!overlay) {
                 overlay = document.createElement('div');
                 overlay.className = 'categorias-overlay';
                 document.body.appendChild(overlay);
+                console.log('5. Overlay creado');
             }
 
-            // ===== FUNCIÓN PARA CARGAR IMÁGENES CON LIKES =====
+            // ============================================================
+            // FUNCIÓN PARA CARGAR IMÁGENES CON LIKES
+            // ============================================================
             window.cargarImagenes = async () => {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                const userId = session?.user?.id;
-                
-                // Obtener todos los likes de la tabla
-                const { data: allLikes } = await supabaseClient.from('likes').select('imagen_id, usuario_id');
-
-                const renderGrid = (gridId, cat, isSorted = false) => {
-                    const grid = document.getElementById(gridId);
-                    if (!grid) return;
-                    
-                    let items = isSorted ? [...imagenesGaleria] : imagenesGaleria.filter(img => img.categoria === cat);
-                    
-                    if (isSorted) {
-                        items = items.map(img => {
-                            const likesCount = allLikes ? allLikes.filter(l => l.imagen_id === img.id).length : 0;
-                            return { ...img, likesCount };
-                        }).sort((a, b) => b.likesCount - a.likesCount);
+                console.log('6. Cargando imágenes...');
+                try {
+                    if (typeof supabaseClient === 'undefined' || !supabaseClient) {
+                        console.error('❌ supabaseClient NO DEFINIDO en cargarImagenes');
+                        return;
                     }
 
-                    grid.innerHTML = items
-                        .map((img, index) => {
-                            const likesImg = allLikes ? allLikes.filter(l => l.imagen_id === img.id) : [];
-                            const totalLikes = likesImg.length;
-                            const haDadoLike = userId && likesImg.some(l => l.usuario_id === userId);
-                            
-                            // Clases especiales para el Top 3 en la sección "Valorados"
-                            let topClass = "";
-                            let badgeHTML = "";
-                            let crownHTML = "";
-                            if (isSorted) {
-                                if (index === 0) {
-                                    topClass = "top-rank-1";
-                                    badgeHTML = `<div class="top-badge">#1</div>`;
-                                    crownHTML = `
-                                        <div class="pretty-crown">
-                                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                                <defs>
-                                                    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                                        <stop offset="0%" stop-color="#FFF5C3" />
-                                                        <stop offset="40%" stop-color="#F9D423" />
-                                                        <stop offset="100%" stop-color="#FF4E50" />
-                                                    </linearGradient>
-                                                    <filter id="crown-glow" x="-20%" y="-20%" width="140%" height="140%">
-                                                        <feGaussianBlur stdDeviation="3" result="blur" />
-                                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                                    </filter>
-                                                </defs>
-                                                <rect x="15" y="70" width="70" height="8" rx="4" fill="url(#gold-grad)" />
-                                                <circle cx="25" cy="74" r="2.5" fill="#fff" />
-                                                <circle cx="35" cy="74" r="2.5" fill="#FF4E50" />
-                                                <circle cx="50" cy="74" r="3" fill="#00E6FF" />
-                                                <circle cx="65" cy="74" r="2.5" fill="#FF4E50" />
-                                                <circle cx="75" cy="74" r="2.5" fill="#fff" />
-                                                <path d="M15 70 L10 35 L30 52 L50 20 L70 52 L90 35 L85 70 Z" fill="url(#gold-grad)" />
-                                                <circle cx="10" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow)" />
-                                                <circle cx="30" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow)" />
-                                                <circle cx="50" cy="20" r="5" fill="#FFD700" filter="url(#crown-glow)" />
-                                                <circle cx="70" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow)" />
-                                                <circle cx="90" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow)" />
-                                            </svg>
-                                        </div>
-                                    `;
-                                } else if (index === 1) {
-                                    topClass = "top-rank-2";
-                                    badgeHTML = `<div class="top-badge">#2</div>`;
-                                } else if (index === 2) {
-                                    topClass = "top-rank-3";
-                                    badgeHTML = `<div class="top-badge">#3</div>`;
-                                } else {
-                                    topClass = "top-rank-other";
-                                    badgeHTML = `<div class="top-badge">#${index + 1}</div>`;
-                                }
-                            }
+                    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                    if (sessionError) {
+                        console.error('❌ Error en cargarImagenes session:', sessionError);
+                    }
+                    const userId = session?.user?.id;
+                    console.log('   User ID para likes:', userId || 'No autenticado');
 
-                            return `
-                                <div class="galeria-item ${topClass}" onclick="abrirImagenZoom('${img.url}', '${img.titulo}', ${img.id})">
+                    const { data: allLikes, error: likesError } = await supabaseClient.from('likes').select('imagen_id, usuario_id');
+                    if (likesError) {
+                        console.error('❌ Error obteniendo likes:', likesError);
+                    } else {
+                        console.log('   Likes obtenidos:', allLikes ? allLikes.length : 0);
+                    }
+
+                    const renderGrid = (gridId, cat, isSorted = false) => {
+                        const grid = document.getElementById(gridId);
+                        if (!grid) {
+                            console.warn('   Grid no encontrado:', gridId);
+                            return;
+                        }
+                        
+                        let items = isSorted ? [...imagenesGaleria] : imagenesGaleria.filter(img => img.categoria === cat);
+                        
+                        if (isSorted) {
+                            items = items.map(img => {
+                                const likesCount = allLikes ? allLikes.filter(l => l.imagen_id === img.id).length : 0;
+                                return { ...img, likesCount };
+                            }).sort((a, b) => b.likesCount - a.likesCount);
+                        }
+
+                        grid.innerHTML = items
+                            .map((img, index) => {
+                                const likesImg = allLikes ? allLikes.filter(l => l.imagen_id === img.id) : [];
+                                const totalLikes = likesImg.length;
+                                const haDadoLike = userId && likesImg.some(l => l.usuario_id === userId);
+                                
+                                let topClass = "";
+                                let badgeHTML = "";
+                                let crownHTML = "";
+                                if (isSorted) {
+                                    if (index === 0) {
+                                        topClass = "top-rank-1";
+                                        badgeHTML = `<div class="top-badge">#1</div>`;
+                                        crownHTML = `
+                                            <div class="pretty-crown">
+                                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                                    <defs>
+                                                        <linearGradient id="gold-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                            <stop offset="0%" stop-color="#FFF5C3" />
+                                                            <stop offset="40%" stop-color="#F9D423" />
+                                                            <stop offset="100%" stop-color="#FF4E50" />
+                                                        </linearGradient>
+                                                        <filter id="crown-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                                            <feGaussianBlur stdDeviation="3" result="blur" />
+                                                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                                        </filter>
+                                                    </defs>
+                                                    <rect x="15" y="70" width="70" height="8" rx="4" fill="url(#gold-grad)" />
+                                                    <circle cx="25" cy="74" r="2.5" fill="#fff" />
+                                                    <circle cx="35" cy="74" r="2.5" fill="#FF4E50" />
+                                                    <circle cx="50" cy="74" r="3" fill="#00E6FF" />
+                                                    <circle cx="65" cy="74" r="2.5" fill="#FF4E50" />
+                                                    <circle cx="75" cy="74" r="2.5" fill="#fff" />
+                                                    <path d="M15 70 L10 35 L30 52 L50 20 L70 52 L90 35 L85 70 Z" fill="url(#gold-grad)" />
+                                                    <circle cx="10" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow)" />
+                                                    <circle cx="30" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow)" />
+                                                    <circle cx="50" cy="20" r="5" fill="#FFD700" filter="url(#crown-glow)" />
+                                                    <circle cx="70" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow)" />
+                                                    <circle cx="90" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow)" />
+                                                </svg>
+                                            </div>
+                                        `;
+                                    } else if (index === 1) {
+                                        topClass = "top-rank-2";
+                                        badgeHTML = `<div class="top-badge">#2</div>`;
+                                    } else if (index === 2) {
+                                        topClass = "top-rank-3";
+                                        badgeHTML = `<div class="top-badge">#3</div>`;
+                                    } else {
+                                        topClass = "top-rank-other";
+                                        badgeHTML = `<div class="top-badge">#${index + 1}</div>`;
+                                    }
+                                }
+
+                                return `
+                                    <div class="galeria-item ${topClass}" onclick="abrirImagenZoom('${img.url}', '${img.titulo}', ${img.id})">
+                                        ${crownHTML}
+                                        ${badgeHTML}
+                                        <div class="galeria-item-inner">
+                                            <img src="${img.url}" alt="${img.titulo}" loading="lazy" onerror="this.style.display='none'">
+                                            <div class="galeria-caption">
+                                                <span>${img.titulo}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+                        console.log(`   Renderizado ${gridId}: ${items.length} imágenes`);
+                    };
+                    renderGrid('gridCompleta', 'completa');
+                    renderGrid('gridDestacados', 'destacados');
+                    renderGrid('gridRecientes', 'recientes');
+                    renderGrid('gridValorados', null, true);
+                    console.log('7. Imágenes cargadas correctamente ✅');
+                } catch (error) {
+                    console.error('❌ Error en cargarImagenes:', error);
+                }
+            };
+
+            // ============================================================
+            // ZOOM GRANDE CON MARCO TOP RANK
+            // ============================================================
+            window.abrirImagenZoom = async (url, titulo, id) => {
+                console.log('8. Abriendo zoom para:', titulo, 'ID:', id);
+                try {
+                    if (typeof supabaseClient === 'undefined' || !supabaseClient) {
+                        console.error('❌ supabaseClient NO DEFINIDO en abrirImagenZoom');
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo conectar con la base de datos.',
+                            icon: 'error',
+                            confirmButtonColor: '#9b59b6'
+                        });
+                        return;
+                    }
+
+                    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                    if (sessionError) {
+                        console.error('❌ Error en abrirImagenZoom session:', sessionError);
+                    }
+                    const userId = session?.user?.id;
+
+                    const { data: likes, error: likesError } = await supabaseClient.from('likes').select('usuario_id').eq('imagen_id', id);
+                    if (likesError) {
+                        console.error('❌ Error obteniendo likes:', likesError);
+                    }
+                    const total = likes ? likes.length : 0;
+                    const haDado = userId && likes.some(l => l.usuario_id === userId);
+
+                    const { data: allLikes, error: allLikesError } = await supabaseClient.from('likes').select('imagen_id');
+                    if (allLikesError) {
+                        console.error('❌ Error obteniendo todos los likes:', allLikesError);
+                    }
+                    
+                    const likesCountMap = {};
+                    imagenesGaleria.forEach(img => { likesCountMap[img.id] = 0; });
+                    if (allLikes) {
+                        allLikes.forEach(l => {
+                            if (likesCountMap[l.imagen_id] !== undefined) likesCountMap[l.imagen_id]++;
+                        });
+                    }
+                    const sorted = [...imagenesGaleria].map(img => ({
+                        ...img,
+                        likesCount: likesCountMap[img.id] || 0
+                    })).sort((a, b) => b.likesCount - a.likesCount);
+                    const rank = sorted.findIndex(img => img.id === id) + 1;
+
+                    let topClass = "top-rank-other";
+                    let badgeHTML = `<div class="top-badge">#${rank}</div>`;
+                    let crownHTML = "";
+                    let rankEmoji = "";
+
+                    if (rank === 1) {
+                        topClass = "top-rank-1";
+                        badgeHTML = `<div class="top-badge">#1</div>`;
+                        rankEmoji = "👑";
+                        crownHTML = `
+                            <div class="pretty-crown">
+                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="gold-grad-zoom" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#FFF5C3" />
+                                            <stop offset="40%" stop-color="#F9D423" />
+                                            <stop offset="100%" stop-color="#FF4E50" />
+                                        </linearGradient>
+                                        <filter id="crown-glow-zoom" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feGaussianBlur stdDeviation="3" result="blur" />
+                                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                        </filter>
+                                    </defs>
+                                    <rect x="15" y="70" width="70" height="8" rx="4" fill="url(#gold-grad-zoom)" />
+                                    <circle cx="25" cy="74" r="2.5" fill="#fff" />
+                                    <circle cx="35" cy="74" r="2.5" fill="#FF4E50" />
+                                    <circle cx="50" cy="74" r="3" fill="#00E6FF" />
+                                    <circle cx="65" cy="74" r="2.5" fill="#FF4E50" />
+                                    <circle cx="75" cy="74" r="2.5" fill="#fff" />
+                                    <path d="M15 70 L10 35 L30 52 L50 20 L70 52 L90 35 L85 70 Z" fill="url(#gold-grad-zoom)" />
+                                    <circle cx="10" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow-zoom)" />
+                                    <circle cx="30" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow-zoom)" />
+                                    <circle cx="50" cy="20" r="5" fill="#FFD700" filter="url(#crown-glow-zoom)" />
+                                    <circle cx="70" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow-zoom)" />
+                                    <circle cx="90" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow-zoom)" />
+                                </svg>
+                            </div>
+                        `;
+                    } else if (rank === 2) {
+                        topClass = "top-rank-2";
+                        badgeHTML = `<div class="top-badge">#2</div>`;
+                        rankEmoji = "🥈";
+                    } else if (rank === 3) {
+                        topClass = "top-rank-3";
+                        badgeHTML = `<div class="top-badge">#3</div>`;
+                        rankEmoji = "🥉";
+                    }
+
+                    Swal.fire({
+                        title: `<span style="color:#2c1b4e;font-family:'Georgia',serif;font-style:italic;font-size:1.5rem;font-weight:700;">${titulo}</span>`,
+                        html: `
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                                <div class="galeria-item ${topClass} swal-zoom-card">
                                     ${crownHTML}
                                     ${badgeHTML}
                                     <div class="galeria-item-inner">
-                                        <img src="${img.url}" alt="${img.titulo}" loading="lazy">
-                                        <div class="galeria-caption">
-                                            <span>${img.titulo}</span>
-                                        </div>
+                                        <img src="${url}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='imganes/error.png'">
                                     </div>
                                 </div>
-                            `;
-                        }).join('');
-                };
-                renderGrid('gridCompleta', 'completa');
-                renderGrid('gridDestacados', 'destacados');
-                renderGrid('gridRecientes', 'recientes');
-                renderGrid('gridValorados', null, true);
-            };
-
-            // ===== ZOOM GRANDE CON MARCO TOP RANK =====
-            window.abrirImagenZoom = async (url, titulo, id) => {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                const userId = session?.user?.id;
-
-                const { data: likes } = await supabaseClient.from('likes').select('usuario_id').eq('imagen_id', id);
-                const total = likes ? likes.length : 0;
-                const haDado = userId && likes.some(l => l.usuario_id === userId);
-
-                // Calcular ranking global
-                const { data: allLikes } = await supabaseClient.from('likes').select('imagen_id');
-                const likesCountMap = {};
-                imagenesGaleria.forEach(img => { likesCountMap[img.id] = 0; });
-                if (allLikes) {
-                    allLikes.forEach(l => {
-                        if (likesCountMap[l.imagen_id] !== undefined) likesCountMap[l.imagen_id]++;
-                    });
-                }
-                const sorted = [...imagenesGaleria].map(img => ({
-                    ...img,
-                    likesCount: likesCountMap[img.id]
-                })).sort((a, b) => b.likesCount - a.likesCount);
-                const rank = sorted.findIndex(img => img.id === id) + 1;
-
-                let topClass = "top-rank-other";
-                let badgeHTML = `<div class="top-badge">#${rank}</div>`;
-                let crownHTML = "";
-                let rankEmoji = "";
-
-                if (rank === 1) {
-                    topClass = "top-rank-1";
-                    badgeHTML = `<div class="top-badge">#1</div>`;
-                    rankEmoji = "👑";
-                    crownHTML = `
-                        <div class="pretty-crown">
-                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="gold-grad-zoom" x1="0%" y1="0%" x2="0%" y2="100%">
-                                        <stop offset="0%" stop-color="#FFF5C3" />
-                                        <stop offset="40%" stop-color="#F9D423" />
-                                        <stop offset="100%" stop-color="#FF4E50" />
-                                    </linearGradient>
-                                    <filter id="crown-glow-zoom" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="3" result="blur" />
-                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                    </filter>
-                                </defs>
-                                <rect x="15" y="70" width="70" height="8" rx="4" fill="url(#gold-grad-zoom)" />
-                                <circle cx="25" cy="74" r="2.5" fill="#fff" />
-                                <circle cx="35" cy="74" r="2.5" fill="#FF4E50" />
-                                <circle cx="50" cy="74" r="3" fill="#00E6FF" />
-                                <circle cx="65" cy="74" r="2.5" fill="#FF4E50" />
-                                <circle cx="75" cy="74" r="2.5" fill="#fff" />
-                                <path d="M15 70 L10 35 L30 52 L50 20 L70 52 L90 35 L85 70 Z" fill="url(#gold-grad-zoom)" />
-                                <circle cx="10" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow-zoom)" />
-                                <circle cx="30" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow-zoom)" />
-                                <circle cx="50" cy="20" r="5" fill="#FFD700" filter="url(#crown-glow-zoom)" />
-                                <circle cx="70" cy="52" r="3.5" fill="#00E6FF" filter="url(#crown-glow-zoom)" />
-                                <circle cx="90" cy="35" r="3.5" fill="#FF4E50" filter="url(#crown-glow-zoom)" />
-                            </svg>
-                        </div>
-                    `;
-                } else if (rank === 2) {
-                    topClass = "top-rank-2";
-                    badgeHTML = `<div class="top-badge">#2</div>`;
-                    rankEmoji = "🥈";
-                } else if (rank === 3) {
-                    topClass = "top-rank-3";
-                    badgeHTML = `<div class="top-badge">#3</div>`;
-                    rankEmoji = "🥉";
-                }
-
-                Swal.fire({
-                    title: `<span style="color:#2c1b4e;font-family:'Georgia',serif;font-style:italic;font-size:1.5rem;font-weight:700;">${titulo}</span>`,
-                    html: `
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                            <div class="galeria-item ${topClass} swal-zoom-card">
-                                ${crownHTML}
-                                ${badgeHTML}
-                                <div class="galeria-item-inner">
-                                    <img src="${url}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;">
+                                <div class="swal-zoom-caption-wrapper" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                                    <div class="zoom-rank-badge">${rankEmoji} #${rank} en popularidad</div>
+                                    <button class="like-btn-premium ${haDado ? 'liked' : ''}" id="zoomLikeBtn">
+                                        <i class="${haDado ? 'fas' : 'far'} fa-heart" style="font-size:1.4rem;"></i>
+                                        <span>${haDado ? 'Te encanta' : 'Apoyar'} (${total || 0})</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="swal-zoom-caption-wrapper" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                                <div class="zoom-rank-badge">${rankEmoji} #${rank} en popularidad</div>
-                                <button class="like-btn-premium ${haDado ? 'liked' : ''}" id="zoomLikeBtn">
-                                    <i class="${haDado ? 'fas' : 'far'} fa-heart" style="font-size:1.4rem;"></i>
-                                    <span>${haDado ? 'Te encanta' : 'Apoyar'} (${total})</span>
-                                </button>
-                            </div>
-                        </div>
-                    `,
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                    customClass: { popup: 'swal-popup-redondo swal-zoom-lg' },
-                    didOpen: () => {
-                        document.getElementById('zoomLikeBtn')?.addEventListener('click', async () => {
-                            await window.toggleLike(id);
-                            Swal.close();
+                        `,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: { popup: 'swal-popup-redondo swal-zoom-lg' },
+                        didOpen: () => {
+                            document.getElementById('zoomLikeBtn')?.addEventListener('click', async () => {
+                                console.log('9. Click en like desde zoom');
+                                await window.toggleLike(id);
+                                Swal.close();
+                            });
+                        }
+                    });
+                } catch (error) {
+                    console.error('❌ Error en abrirImagenZoom:', error);
+                }
+            };
+
+            // ============================================================
+            // Lógica para dar/quitar Like (VERSIÓN CON LOGS)
+            // ============================================================
+            window.toggleLike = async (imagenId) => {
+                console.log('10. toggleLike llamado para imagen ID:', imagenId);
+                try {
+                    // Verificar que supabaseClient existe
+                    if (typeof supabaseClient === 'undefined' || !supabaseClient) {
+                        console.error('❌ supabaseClient NO DEFINIDO en toggleLike');
+                        Swal.fire({
+                            title: 'Error de conexión',
+                            text: 'No se pudo conectar con la base de datos.',
+                            icon: 'error',
+                            confirmButtonColor: '#9b59b6'
+                        });
+                        return;
+                    }
+
+                    // Obtener sesión actual
+                    console.log('   Obteniendo sesión...');
+                    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                    
+                    if (sessionError) {
+                        console.error('❌ Error obteniendo sesión:', sessionError);
+                        Swal.fire({
+                            title: 'Error de sesión',
+                            text: 'Hubo un problema al verificar tu sesión.',
+                            icon: 'error',
+                            confirmButtonColor: '#9b59b6'
+                        });
+                        return;
+                    }
+
+                    console.log('   Sesión obtenida:', session ? 'ACTIVA ✅' : 'INACTIVA ⚠️');
+
+                    // Si no hay sesión, mostrar mensaje
+                    if (!session) {
+                        console.log('   No hay sesión - Mostrando modal de login');
+                        const result = await Swal.fire({
+                            title: 'Inicia sesión',
+                            text: 'Necesitas iniciar sesión para apoyar imágenes.',
+                            icon: 'warning',
+                            confirmButtonColor: '#9b59b6',
+                            showCancelButton: true,
+                            confirmButtonText: 'Iniciar sesión',
+                            cancelButtonText: 'Cancelar'
+                        });
+                        
+                        if (result.isConfirmed) {
+                            localStorage.setItem('redirectAfterLogin', 'galeria.html');
+                            console.log('   Redirigiendo a login...');
+                            window.location.href = 'login.html';
+                        }
+                        return;
+                    }
+
+                    const userId = session.user.id;
+                    console.log('   User ID:', userId);
+                    
+                    // Verificar si ya dio like
+                    console.log('   Verificando like existente...');
+                    const { data: existing, error: existingError } = await supabaseClient
+                        .from('likes')
+                        .select('id')
+                        .eq('usuario_id', userId)
+                        .eq('imagen_id', imagenId)
+                        .maybeSingle();
+
+                    if (existingError) {
+                        console.error('❌ Error verificando like:', existingError);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo verificar tu like.',
+                            icon: 'error',
+                            confirmButtonColor: '#9b59b6'
+                        });
+                        return;
+                    }
+
+                    if (existing) {
+                        // Quitar like
+                        console.log('   Quitando like (ID:', existing.id, ')');
+                        const { error: deleteError } = await supabaseClient
+                            .from('likes')
+                            .delete()
+                            .eq('id', existing.id);
+                            
+                        if (deleteError) {
+                            console.error('❌ Error eliminando like:', deleteError);
+                            return;
+                        }
+                        console.log('   Like quitado ✅');
+                        if (window.clickSound) window.clickSound.play();
+                    } else {
+                        // Dar like
+                        console.log('   Dando like...');
+                        const { error: insertError } = await supabaseClient
+                            .from('likes')
+                            .insert({ usuario_id: userId, imagen_id: imagenId });
+                            
+                        if (insertError) {
+                            console.error('❌ Error insertando like:', insertError);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'No se pudo dar like.',
+                                icon: 'error',
+                                confirmButtonColor: '#9b59b6'
+                            });
+                            return;
+                        }
+                        console.log('   Like dado ✅');
+                        
+                        if (window.clickSound) window.clickSound.play();
+                        
+                        // Mostrar mensaje de éxito
+                        Swal.fire({
+                            title: '❤️ ¡Apoyaste esta imagen!',
+                            text: 'Tu ayuda hace que esta imagen suba en el ranking.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
                         });
                     }
-                });
-            };
-
-            // Lógica para dar/quitar Like
-            window.toggleLike = async (imagenId) => {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) return; // En galeria.html siempre debería haber sesión
-
-                const userId = session.user.id;
-                const { data: existing } = await supabaseClient.from('likes').select('id').eq('usuario_id', userId).eq('imagen_id', imagenId).maybeSingle();
-
-                if (existing) {
-                    await supabaseClient.from('likes').delete().eq('id', existing.id);
-                } else {
-                    await supabaseClient.from('likes').insert({ usuario_id: userId, imagen_id: imagenId });
-                    if(window.clickSound) window.clickSound.play();
+                    
+                    // Recargar imágenes
+                    console.log('   Recargando imágenes...');
+                    if (typeof window.cargarImagenes === 'function') {
+                        await window.cargarImagenes();
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error en toggleLike:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Ocurrió un error inesperado.',
+                        icon: 'error',
+                        confirmButtonColor: '#9b59b6'
+                    });
                 }
-                window.cargarImagenes(); // Recargar UI
             };
 
-            // ===== FUNCIÓN PARA MOSTRAR SECCIÓN =====
+            // ============================================================
+            // FUNCIÓN PARA MOSTRAR SECCIÓN
+            // ============================================================
             window.mostrarSeccion = (seccion) => {
+                console.log('11. Mostrando sección:', seccion);
                 const seccionCompleta = document.getElementById('seccionCompleta');
                 const seccionDestacados = document.getElementById('seccionDestacados');
                 const seccionRecientes = document.getElementById('seccionRecientes');
@@ -681,13 +1005,24 @@ window.mostrarAyudaGaleria = mostrarAyudaGaleria;
                 cerrarMenuMovil();
             };
 
-            // ===== CONTROL DEL MENÚ MÓVIL =====
+            // ============================================================
+            // CONTROL DEL MENÚ MÓVIL
+            // ============================================================
             const cerrarMenuMovil = () => {
                 const menuMovil = document.getElementById('menuCategoriasMovil');
                 if (menuMovil) menuMovil.classList.remove('mostrar');
                 if (overlay) overlay.classList.remove('mostrar');
                 document.body.style.overflow = '';
             };
+
+            // Prevenir que los botones del menú cierren el menú
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('.no-cerrar-menu');
+                if (target) {
+                    e.stopPropagation();
+                    return false;
+                }
+            });
 
             const menuHamburguesa = document.getElementById('categoriasHamburguesa');
             if (menuHamburguesa) {
@@ -703,11 +1038,17 @@ window.mostrarAyudaGaleria = mostrarAyudaGaleria;
             if (cerrarMenu) cerrarMenu.addEventListener('click', cerrarMenuMovil);
             if (overlay) overlay.addEventListener('click', cerrarMenuMovil);
 
-            // Inicializar
-            cargarImagenes();
+            // ============================================================
+            // INICIALIZAR
+            // ============================================================
+            console.log('12. Inicializando galería...');
+            await cargarImagenes();
             mostrarSeccion('completa');
+            console.log('13. Galería inicializada ✅');
 
-            // ===== FRASES DINÁMICAS Y LARGAS PARA LA GALERÍA =====
+            // ============================================================
+            // FRASES DINÁMICAS
+            // ============================================================
             const frasesGaleria = [
                 "Cada imagen es un pequeño refugio para tu alma; tómate un momento para respirar, observar y reconectar con lo que realmente importa en tu interior.",
                 "En el silencio de una imagen encontrarás las palabras que tu corazón necesita escuchar hoy. Permítete este instante de paz y vuelve a ti con calma.",
@@ -723,7 +1064,6 @@ window.mostrarAyudaGaleria = mostrarAyudaGaleria;
                 let index = Math.floor(Math.random() * frasesGaleria.length);
                 elFrase.textContent = frasesGaleria[index];
 
-                // Rotación automática de frases cada 10 segundos con efecto de desvanecimiento
                 setInterval(() => {
                     elFrase.style.opacity = '0';
                     setTimeout(() => {
@@ -733,11 +1073,29 @@ window.mostrarAyudaGaleria = mostrarAyudaGaleria;
                     }, 600);
                 }, 10000);
             }
+
+            // ============================================================
+            // BOTÓN DE AYUDA
+            // ============================================================
+            document.getElementById('btnAyudas')?.addEventListener('click', () => {
+                if (typeof mostrarAyudaGaleria === 'function') {
+                    mostrarAyudaGaleria();
+                } else {
+                    Swal.fire({
+                        title: 'Ayuda',
+                        text: 'Bienvenido a la galería. Explora y encuentra inspiración.',
+                        icon: 'info',
+                        confirmButtonColor: '#9b59b6'
+                    });
+                }
+            });
+
+            console.log('14. TODO LISTO ✅');
         });
 
-        // Zoom global fallback removido por duplicidad
-
-        // Listener para ayuda de galería (reemplaza lo que hacía app2.js)
+        // ============================================================
+        // LISTENER PARA AYUDA (fallback)
+        // ============================================================
         document.getElementById('btnAyuda')?.addEventListener('click', () => {
             if (typeof mostrarAyudaGaleria === 'function') mostrarAyudaGaleria();
         });

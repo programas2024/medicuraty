@@ -108,7 +108,7 @@
                     </button>
                     <span class="tooltip">Cambiar Modo</span>
                 </div>
-                <div class="btn-con-tooltip" id="wrapperOpiniones">
+                <div class="btn-con-tooltip hide-mobile-768" id="wrapperOpiniones">
                     <button class="btn-icon-only" id="btnVerOpiniones" style="color: #9b59b6;">
                         <i class="fas fa-comment-dots"></i>
                     </button>
@@ -157,23 +157,24 @@
                 <p id="fraseIndex">Estamos contigo: lee, respira y vuelve a intentarlo con calma.</p>
             </div>
 
-            <!-- BUSCADOR CON BOTONES A LA DERECHA (Sincronizado con Index) -->
+           <!-- BUSCADOR CON BOTONES A LA DERECHA -->
             <div style="display: flex; align-items: center; gap: 12px; width: 100%; flex-wrap: wrap;">
                 <div class="buscador-destacado" style="flex: 1; min-width: 250px;">
                     <i class="fas fa-search"></i>
                     <input type="text" id="inputBusqueda" placeholder="¿Qué necesitas leer hoy? (ej: Respeto, Éxito...)">
                     <div id="sugerenciasBusqueda" class="sugerencias-container"></div>
                 </div>
-                <div class="botones-info">
-                    <div class="btn-con-tooltip">
+                <div class="botones-info" id="botonesInfoDesktop">
+                    <!-- Estos botones SOLO se mostrarán en PC -->
+                    <div class="btn-con-tooltip btn-info-desktop">
                         <button class="btn-info" id="btnMision"><i class="fas fa-bullseye"></i> <span>Misión</span></button>
                         <span class="tooltip">Nuestra Misión</span>
                     </div>
-                    <div class="btn-con-tooltip">
+                    <div class="btn-con-tooltip btn-info-desktop">
                         <button class="btn-info" id="btnSoporte"><i class="fas fa-headset"></i> <span>Soporte</span></button>
                         <span class="tooltip">Soporte Técnico</span>
                     </div>
-                    <div class="btn-con-tooltip">
+                    <div class="btn-con-tooltip btn-info-desktop">
                         <button class="btn-info" id="btnAgradecimientos"><i class="fas fa-heart"></i> <span>Gracias</span></button>
                         <span class="tooltip">Agradecimientos</span>
                     </div>

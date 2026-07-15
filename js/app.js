@@ -160,7 +160,7 @@ const categorias = [
     { id: 'crecimiento', nombre: 'Crecimiento', icono: 'fa-seedling', color: '#8e44ad', colorFondo: '#4a2360' },
     { id: 'emociones', nombre: 'Emociones', icono: 'fa-heart', color: '#c44569', colorFondo: '#822b4a' },
     { id: 'liderazgo', nombre: 'Liderazgo', icono: 'fa-crown', color: '#0e7c5c', colorFondo: '#064e39' },
-    { id: 'especial', nombre: 'Especiales', icono: 'fa-calendar-star', color: '#e67e22', colorFondo: '#a55c17' },
+    { id: 'especial', nombre: 'Especiales', icono: 'fa-gem', color: '#e67e22', colorFondo: '#a55c17' },
     { id: 'galeria', nombre: 'Galería', icono: 'fa-images', color: '#9b59b6', colorFondo: '#4a2360' },
     { id: 'comunidad', nombre: 'Comunidad', icono: 'fa-users', color: '#27ae60', colorFondo: '#1a6a3e' }
 ];
@@ -3973,6 +3973,20 @@ window.obtenerEstrellasReclamadas = obtenerEstrellasReclamadas;
             }
         });
     };
+
+// Esperar a que el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Detectar si es móvil
+    const isMobile = window.innerWidth <= 768;
+    
+    // Si es móvil, los botones se ocultan pero los eventos siguen activos
+    // Si quieres que los eventos se ejecuten solo en PC, puedes hacer:
+    if (isMobile) {
+        // En móvil, desactivar los eventos (opcional)
+        // O mantenerlos activos pero ocultos
+        console.log('Modo móvil: botones info ocultos');
+    }
+});
 
  // --- Función global para Ver Opiniones ---
 window.verOpinionesSweetAlert = async function() {

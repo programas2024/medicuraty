@@ -150,7 +150,7 @@ async function cargarRanking() {
                     Los usuarios más activos de la comunidad
                 </p>
 
-                <!-- HEADER DE LA TABLA (RESPONSIVE) -->
+                <!-- HEADER DE LA TABLA -->
                 <div style="
                     display: grid;
                     grid-template-columns: 40px 1fr 80px 80px;
@@ -188,7 +188,13 @@ async function cargarRanking() {
             if (esTop3) {
                 bgColor = 'linear-gradient(135deg, #fef9e7, #fdebd0)';
             } else if (esUsuarioActual) {
-                bgColor = 'rgba(155, 89, 182, 0.12)';
+                bgColor = 'rgba(155, 89, 182, 0.15)';
+            }
+
+            // Borde especial para el usuario actual
+            let borderStyle = `border-left: 3px solid ${colorMedalla};`;
+            if (esUsuarioActual) {
+                borderStyle = `border-left: 3px solid #9b59b6; border-right: 3px solid #9b59b6;`;
             }
 
             rankingHTML += `
@@ -200,12 +206,12 @@ async function cargarRanking() {
                     margin-bottom: 5px;
                     background: ${bgColor};
                     border-radius: 10px;
-                    border-left: 3px solid ${colorMedalla};
+                    ${borderStyle}
                     font-size: 0.8rem;
                     color: #2c1b4e;
                     align-items: center;
                     transition: 0.2s;
-                    ${esUsuarioActual ? 'box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.2);' : ''}
+                    ${esUsuarioActual ? 'box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.25);' : ''}
                 ">
                     <!-- Posición -->
                     <div style="
@@ -230,7 +236,7 @@ async function cargarRanking() {
                         font-size: 0.8rem;
                     ">
                         <span style="overflow: hidden; text-overflow: ellipsis;">${usuario.nombre}</span>
-                        ${esUsuarioActual ? '<span style="font-size: 0.5rem; background: #9b59b6; color: white; padding: 1px 6px; border-radius: 8px; flex-shrink: 0;">Tú</span>' : ''}
+                        ${esUsuarioActual ? '<span style="font-size: 0.5rem; background: #9b59b6; color: white; padding: 2px 8px; border-radius: 8px; flex-shrink: 0; font-weight: 700;">Tú</span>' : ''}
                         ${posicion === 1 ? '<span style="font-size: 0.7rem; flex-shrink: 0;">👑</span>' : ''}
                     </div>
 
@@ -265,10 +271,40 @@ async function cargarRanking() {
             </div>
         </div>`;
 
-        // ===== MOSTRAR SWEETALERT =====
+        // ===== MOSTRAR SWEETALERT CON LOGO =====
         Swal.fire({
-            title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.2rem;">🏆 Ranking de la comunidad</span>',
-            html: rankingHTML,
+            title: '',
+            html: `
+                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                    <!-- Logo de Medicurativo -->
+                    <div style="
+                        width:70px;
+                        height:70px;
+                        border-radius:50%;
+                        background:linear-gradient(145deg, #f8f0ff, #f0e6ff);
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        padding:12px;
+                        box-shadow:0 4px 20px rgba(155,89,182,0.15);
+                        margin-bottom:4px;
+                    ">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">
+                    </div>
+                    <h2 style="
+                        color:#2c1b4e;
+                        font-weight:800;
+                        font-size:1.2rem;
+                        margin:0;
+                        display:flex;
+                        align-items:center;
+                        gap:8px;
+                    ">
+                        <span>🏆</span> Ranking de la comunidad
+                    </h2>
+                </div>
+                ${rankingHTML}
+            `,
             showConfirmButton: true,
             confirmButtonText: 'Cerrar',
             confirmButtonColor: '#9b59b6',

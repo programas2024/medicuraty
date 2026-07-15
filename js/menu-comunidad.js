@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- Botón en el menú hamburguesa -->
 <button class="categoria-movil-btn no-cerrar-menu" onclick="window.abrirRanking()" style="border-left-color: #f1c40f;">
     <i class="fas fa-trophy" style="color: #f1c40f;"></i>
-    <span>🏆 Ranking</span>
+    <span>Ranking</span>
 </button>
             
             <!-- Separador decorativo -->

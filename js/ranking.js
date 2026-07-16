@@ -1,5 +1,5 @@
 // ============================================================
-// RANKING.JS - Ranking de usuarios más activos (VERSIÓN ULTRA RÁPIDA)
+// RANKING.JS - Ranking con actualización automática de carisma
 // ============================================================
 
 let rankingSwalInstance = null;
@@ -12,26 +12,31 @@ const CACHE_TTL = 30000; // 30 segundos de cache
 
 // ===== CONFIGURACIÓN DE SUPABASE =====
 const SUPABASE_CONFIG = {
-    selectLimit: 1000, // Límite para consultas
-    timeout: 5000, // Timeout de 5 segundos
-    retryCount: 2 // Reintentos en caso de error
+    selectLimit: 1000,
+    timeout: 8000,
+    retryCount: 2
 };
 
-// ===== ABRIR RANKING =====
+// ===== DETECTAR DISPOSITIVO =====
+function esDispositivoMovil() {
+    return window.innerWidth <= 768;
+}
+
+// ===== ABRIR RANKING (CON ACTUALIZACIÓN AUTOMÁTICA) =====
 function abrirRanking() {
-    // Si hay cache y no ha expirado, mostrar directamente
-    if (rankingCache && (Date.now() - ultimaActualizacionRanking) < CACHE_TTL) {
+    // Siempre recargar para tener datos actualizados
+    // Solo usamos cache si es muy reciente (menos de 5 segundos)
+    if (rankingCache && (Date.now() - ultimaActualizacionRanking) < 5000) {
         mostrarRanking(rankingCache);
         return;
     }
 
-    // Mostrar loading optimizado
     Swal.fire({
-        title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.1rem;">🏆 Cargando ranking...</span>',
+        title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.1rem;">🏆 Actualizando ranking...</span>',
         html: `
             <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0;">
                 <div style="width:45px;height:45px;border:3px solid #f0e6ff;border-top-color:#9b59b6;border-radius:50%;animation:spin 0.6s linear infinite;margin-bottom:12px;"></div>
-                <p style="color:#7f5f9b;font-size:0.85rem;">Usuarios más activos...</p>
+                <p style="color:#7f5f9b;font-size:0.85rem;">Calculando carisma de todos los usuarios...</p>
             </div>
             <style>
                 @keyframes spin {
@@ -47,6 +52,10 @@ function abrirRanking() {
             if (popup) {
                 popup.style.borderRadius = '24px';
                 popup.style.padding = '20px 20px';
+                if (!esDispositivoMovil()) {
+                    popup.style.width = '500px';
+                    popup.style.maxWidth = '90vw';
+                }
             }
         }
     });
@@ -54,7 +63,94 @@ function abrirRanking() {
     cargarRanking();
 }
 
-// ===== CARGAR RANKING CON CONSULTA ULTRA RÁPIDA =====
+// ===== ACTUALIZAR CARISMA DE TODOS LOS USUARIOS =====
+async function actualizarCarismaTodosLosUsuarios() {
+    try {
+        console.log('🔄 Actualizando carisma de todos los usuarios...');
+        const startTime = performance.now();
+
+        // 1. Obtener TODOS los usuarios
+        const { data: usuarios, error: userError } = await supabaseClient
+            .from('usuarios')
+            .select('id, nombre');
+
+        if (userError) {
+            console.error('❌ Error al obtener usuarios:', userError);
+            return false;
+        }
+
+        if (!usuarios || usuarios.length === 0) {
+            console.log('⚠️ No hay usuarios para actualizar');
+            return true;
+        }
+
+        console.log(`📊 ${usuarios.length} usuarios encontrados`);
+
+        // 2. Obtener TODAS las publicaciones aprobadas
+        const { data: publicaciones, error: pubError } = await supabaseClient
+            .from('publicaciones')
+            .select('usuario_id, likes')
+            .eq('estado', 'aprobado');
+
+        if (pubError) {
+            console.error('❌ Error al obtener publicaciones:', pubError);
+            return false;
+        }
+
+        // 3. Calcular total de likes por usuario
+        const likesPorUsuario = {};
+        publicaciones.forEach(pub => {
+            const userId = pub.usuario_id;
+            likesPorUsuario[userId] = (likesPorUsuario[userId] || 0) + (pub.likes || 0);
+        });
+
+        console.log(`📊 ${Object.keys(likesPorUsuario).length} usuarios con likes`);
+
+        // 4. Actualizar carisma de cada usuario en BATCH
+        const updates = [];
+        usuarios.forEach(usuario => {
+            const nuevoCarisma = likesPorUsuario[usuario.id] || 0;
+            updates.push({
+                id: usuario.id,
+                carisma: nuevoCarisma
+            });
+        });
+
+        // 5. Ejecutar actualizaciones en paralelo (en lotes de 10)
+        const batchSize = 10;
+        let actualizados = 0;
+        
+        for (let i = 0; i < updates.length; i += batchSize) {
+            const batch = updates.slice(i, i + batchSize);
+            const promises = batch.map(update => 
+                supabaseClient
+                    .from('usuarios')
+                    .update({ carisma: update.carisma })
+                    .eq('id', update.id)
+            );
+            
+            const results = await Promise.all(promises);
+            const errores = results.filter(r => r.error);
+            
+            if (errores.length === 0) {
+                actualizados += batch.length;
+            } else {
+                console.error('❌ Errores en batch:', errores);
+            }
+        }
+
+        const endTime = performance.now();
+        console.log(`✅ ${actualizados} usuarios actualizados en ${(endTime - startTime).toFixed(0)}ms`);
+        
+        return true;
+
+    } catch (error) {
+        console.error('❌ Error en actualizarCarismaTodosLosUsuarios:', error);
+        return false;
+    }
+}
+
+// ===== CARGAR RANKING CON ACTUALIZACIÓN PREVIA =====
 async function cargarRanking() {
     try {
         if (typeof supabaseClient === 'undefined' || !supabaseClient) {
@@ -71,79 +167,58 @@ async function cargarRanking() {
 
         console.log('📊 Cargando ranking...');
 
-        // ===== OPTIMIZACIÓN 1: Consulta con límite y campos específicos =====
+        // ===== PASO 1: Actualizar carisma de TODOS los usuarios =====
+        await actualizarCarismaTodosLosUsuarios();
+
+        // ===== PASO 2: Obtener usuarios con su carisma actualizado =====
         const startTime = performance.now();
         
-        const { data, error } = await Promise.race([
-            supabaseClient
-                .from('publicaciones')
-                .select(`
-                    usuario_id,
-                    likes,
-                    usuarios (nombre)
-                `)
-                .eq('estado', 'aprobado')
-                .limit(SUPABASE_CONFIG.selectLimit),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout')), SUPABASE_CONFIG.timeout)
-            )
-        ]);
+        const { data: usuarios, error: userError } = await supabaseClient
+            .from('usuarios')
+            .select('id, nombre, carisma')
+            .order('carisma', { ascending: false })
+            .limit(100);
 
         const endTime = performance.now();
         console.log(`⏱️ Ranking cargado en ${(endTime - startTime).toFixed(0)}ms`);
 
-        if (error) {
-            console.error('❌ Error:', error);
-            throw error;
+        if (userError) {
+            console.error('❌ Error:', userError);
+            throw userError;
         }
 
-        if (!data || data.length === 0) {
+        if (!usuarios || usuarios.length === 0) {
             mostrarRankingVacio();
             return;
         }
 
-        // ===== OPTIMIZACIÓN 2: Procesamiento con Map y reduce =====
-        const usuariosMap = new Map();
-        
-        // Procesamiento optimizado con forEach
-        data.forEach(pub => {
-            const userId = pub.usuario_id;
-            if (!usuariosMap.has(userId)) {
-                usuariosMap.set(userId, {
-                    id: userId,
-                    nombre: pub.usuarios?.nombre || 'Usuario',
-                    totalPublicaciones: 0,
-                    totalLikes: 0
-                });
-            }
-            const user = usuariosMap.get(userId);
-            user.totalPublicaciones += 1;
-            user.totalLikes += (pub.likes || 0);
-        });
+        // ===== PASO 3: Obtener conteo de publicaciones =====
+        const { data: publicaciones, error: pubError } = await supabaseClient
+            .from('publicaciones')
+            .select('usuario_id')
+            .eq('estado', 'aprobado');
 
-        // ===== OPTIMIZACIÓN 3: Ordenamiento eficiente =====
-        const ranking = Array.from(usuariosMap.values())
-            .sort((a, b) => {
-                // Ordenar por likes primero, luego por publicaciones
-                const diffLikes = b.totalLikes - a.totalLikes;
-                if (diffLikes !== 0) return diffLikes;
-                return b.totalPublicaciones - a.totalPublicaciones;
-            })
-            .slice(0, 100); // Solo top 100 para mejor rendimiento
+        if (!pubError && publicaciones) {
+            const conteoPublicaciones = {};
+            publicaciones.forEach(pub => {
+                conteoPublicaciones[pub.usuario_id] = (conteoPublicaciones[pub.usuario_id] || 0) + 1;
+            });
+
+            usuarios.forEach(user => {
+                user.totalPublicaciones = conteoPublicaciones[user.id] || 0;
+            });
+        }
 
         // Guardar en cache
-        rankingCache = ranking;
+        rankingCache = usuarios;
         ultimaActualizacionRanking = Date.now();
 
-        if (ranking.length === 0) {
-            mostrarRankingVacio();
-            return;
-        }
-
-        mostrarRanking(ranking);
+        mostrarRanking(usuarios);
 
     } catch (error) {
         console.error('❌ Error:', error);
+        
+        Swal.close();
         
         if (error.message === 'Timeout') {
             Swal.fire({
@@ -172,6 +247,8 @@ async function cargarRanking() {
 
 // ===== MOSTRAR RANKING VACÍO =====
 function mostrarRankingVacio() {
+    const isMobile = esDispositivoMovil();
+    
     Swal.fire({
         title: '<span style="color:#2c1b4e;font-weight:800;font-size:1.1rem;">🏆 Sin datos aún</span>',
         html: `
@@ -181,10 +258,10 @@ function mostrarRankingVacio() {
                         <img src="imganes/logosmedi.png" alt="Medicurativo" style="width:60px;height:60px;object-fit:contain;border-radius:50%;">
                     </div>
                     <p style="margin:0 0 6px;color:#2c1b4e;font-size:0.95rem;font-weight:700;">
-                        Aún no hay publicaciones aprobadas
+                        Aún no hay usuarios registrados
                     </p>
                     <p style="margin:0;color:#7f5f9b;font-size:0.8rem;">
-                        ¡Sé el primero en compartir algo! ✨
+                        ¡Sé el primero en unirte a la comunidad! ✨
                     </p>
                 </div>
             </div>
@@ -192,55 +269,67 @@ function mostrarRankingVacio() {
         showConfirmButton: true,
         confirmButtonText: 'Entendido',
         confirmButtonColor: '#9b59b6',
-        customClass: { popup: 'swal-popup-redondo' }
+        customClass: { popup: 'swal-popup-redondo' },
+        width: isMobile ? 'auto' : '500px',
+        maxWidth: isMobile ? 'auto' : '90vw',
+        didOpen: () => {
+            const popup = document.querySelector('.swal2-popup');
+            if (popup) {
+                popup.style.borderRadius = '24px';
+                popup.style.padding = isMobile ? '20px 18px' : '30px 35px';
+                if (!isMobile) {
+                    popup.style.width = '500px';
+                }
+            }
+        }
     });
 }
 
 // ===== MOSTRAR RANKING =====
 function mostrarRanking(ranking) {
+    const isMobile = esDispositivoMovil();
     const medallas = ['🥇', '🥈', '🥉'];
     const coloresMedalla = ['#f1c40f', '#bdc3c7', '#e67e22'];
 
     let rankingHTML = `
         <div style="
-            max-height: 400px; 
+            max-height: ${isMobile ? '400px' : '500px'}; 
             overflow-y: auto; 
             padding: 2px 2px 8px; 
             width: 100%;
         ">
             <p style="
                 color: #7f8c8d; 
-                font-size: 0.75rem; 
+                font-size: ${isMobile ? '0.75rem' : '0.85rem'}; 
                 text-align: center; 
                 margin-bottom: 12px;
             ">
-                <i class="fas fa-fire" style="color: #e67e22;"></i> 
-                Top ${ranking.length} usuarios más activos
+                <i class="fas fa-sync" style="color: #9b59b6;"></i> 
+                Actualizado automáticamente
             </p>
 
             <div style="
                 display: grid;
-                grid-template-columns: 35px 1fr 70px 70px;
-                gap: 4px;
-                padding: 6px 8px;
+                grid-template-columns: ${isMobile ? '35px 1fr 70px 70px' : '45px 1fr 90px 90px'};
+                gap: ${isMobile ? '4px' : '8px'};
+                padding: ${isMobile ? '6px 8px' : '10px 15px'};
                 background: #f3e9ff;
-                border-radius: 10px;
+                border-radius: ${isMobile ? '10px' : '14px'};
                 margin-bottom: 8px;
                 font-weight: 700;
-                font-size: 0.6rem;
+                font-size: ${isMobile ? '0.6rem' : '0.7rem'};
                 color: #2c1b4e;
                 text-transform: uppercase;
                 letter-spacing: 0.3px;
             ">
                 <div style="text-align: center;">#</div>
-                <div style="padding-left: 2px;">Usuario</div>
-                <div style="text-align: center;">📝</div>
-                <div style="text-align: center;">❤️</div>
+                <div style="text-align: left; padding-left: 4px;">Usuario</div>
+                <div style="text-align: center;">Poster</div>
+                <div style="text-align: center;">Likes</div>
             </div>
     `;
 
-    // Mostrar solo top 50 para rendimiento visual
-    const displayRanking = ranking.slice(0, 50);
+    const displayRanking = ranking.slice(0, isMobile ? 50 : 100);
     const totalUsuarios = ranking.length;
 
     displayRanking.forEach((usuario, index) => {
@@ -251,36 +340,73 @@ function mostrarRanking(ranking) {
         const esUsuarioActual = window.usuarioActual && usuario.id === window.usuarioActual.id;
         const esMedicurativo = usuario.nombre.toLowerCase().includes('medicurativo');
 
+        // ===== FONDO ESPECIAL PARA OFICIALES =====
         let bgColor = 'rgba(155, 89, 182, 0.03)';
-        if (esTop3) bgColor = 'linear-gradient(135deg, #fef9e7, #fdebd0)';
-        else if (esUsuarioActual) bgColor = 'rgba(155, 89, 182, 0.12)';
+        if (esMedicurativo) {
+            bgColor = 'linear-gradient(135deg, #fef9e7, #fdebd0)'; // Fondo dorado para Oficiales
+        } else if (esTop3) {
+            bgColor = 'linear-gradient(135deg, #fef9e7, #fdebd0)';
+        } else if (esUsuarioActual) {
+            bgColor = 'rgba(155, 89, 182, 0.12)';
+        }
 
-        let borderStyle = `border-left: 2.5px solid ${colorMedalla};`;
-        if (esUsuarioActual) borderStyle = `border-left: 2.5px solid #9b59b6; border-right: 2.5px solid #9b59b6;`;
+        let borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid ${colorMedalla};`;
+        if (esUsuarioActual) borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid #9b59b6; border-right: ${isMobile ? '2.5px' : '4px'} solid #9b59b6;`;
+        if (esMedicurativo) borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid #f1c40f; border-right: ${isMobile ? '2.5px' : '4px'} solid #f1c40f;`;
 
         let nombreDisplay = usuario.nombre;
         if (esMedicurativo) {
             nombreDisplay = `
                 <img src="imganes/medicu.png" alt="Medicurativo" style="
-                    width: 18px; height: 18px; border-radius: 50%; object-fit: cover;
-                    margin-right: 3px; vertical-align: middle; border: 1.5px solid #9b59b6;
+                    width: ${isMobile ? '18px' : '24px'}; 
+                    height: ${isMobile ? '18px' : '24px'}; 
+                    border-radius: 50%; object-fit: cover;
+                    margin-right: 3px; vertical-align: middle; border: 1.5px solid #f1c40f;
                     flex-shrink: 0;
                 ">
-                <span style="vertical-align: middle;font-size:0.75rem;">${usuario.nombre}</span>
+                <span style="vertical-align: middle;font-size:${isMobile ? '0.75rem' : '0.9rem'};font-weight:700;color:#2c1b4e;">
+                    ${usuario.nombre}
+                    <span style="
+                        font-size:${isMobile ? '0.45rem' : '0.55rem'};
+                        background:linear-gradient(135deg,#f1c40f,#f39c12);
+                        color:#2c1b4e;
+                        padding:${isMobile ? '1px 6px' : '2px 10px'};
+                        border-radius:10px;
+                        font-weight:800;
+                        display:inline-flex;
+                        align-items:center;
+                        gap:3px;
+                        box-shadow:0 2px 8px rgba(241,196,15,0.3);
+                        margin-left:4px;
+                    ">
+                        <i class="fas fa-crown" style="font-size:${isMobile ? '0.4rem' : '0.6rem'};"></i>
+                        Oficial
+                    </span>
+                    <i class="fas fa-check-circle" style="color:#2ecc71;font-size:${isMobile ? '0.6rem' : '0.8rem'};margin-left:3px;text-shadow:0 0 10px rgba(46,204,113,0.3);"></i>
+                </span>
             `;
         }
+
+        // ===== ICONO DE CALIDAD POR PROMEDIO =====
+        let calidadIcon = '';
+        const promedio = usuario.totalPublicaciones > 0 ? (usuario.carisma / usuario.totalPublicaciones) : 0;
+        if (promedio >= 10) calidadIcon = '🏆';
+        else if (promedio >= 5) calidadIcon = '⭐';
+        else if (promedio >= 2) calidadIcon = '👍';
+        else if (promedio >= 1) calidadIcon = '📝';
+        else calidadIcon = '🆕';
 
         rankingHTML += `
             <div style="
                 display: grid;
-                grid-template-columns: 35px 1fr 70px 70px;
-                gap: 4px;
-                padding: 6px 8px;
-                margin-bottom: 3px;
+                grid-template-columns: ${isMobile ? '35px 1fr 70px 70px' : '45px 1fr 90px 90px'};
+                gap: ${isMobile ? '4px' : '8px'};
+                padding: ${isMobile ? '6px 8px' : '10px 15px'};
+                margin-bottom: ${isMobile ? '3px' : '5px'};
                 background: ${bgColor};
-                border-radius: 8px;
+                border-radius: ${isMobile ? '8px' : '12px'};
                 ${borderStyle}
-                font-size: 0.7rem;
+                font-size: ${isMobile ? '0.7rem' : '0.85rem'};
                 color: #2c1b4e;
                 align-items: center;
                 transition: all 0.15s ease;
@@ -291,34 +417,40 @@ function mostrarRanking(ranking) {
             onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 2px 10px rgba(155,89,182,0.12)'"
             onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='${esUsuarioActual ? '0 0 0 1.5px rgba(155, 89, 182, 0.2)' : 'none'}'"
             >
-                <div style="text-align:center;font-weight:800;font-size:${esTop3 ? '0.95rem' : '0.7rem'};color:${colorMedalla};">
+                <div style="text-align:center;font-weight:800;font-size:${esTop3 ? (isMobile ? '0.95rem' : '1.2rem') : (isMobile ? '0.7rem' : '0.85rem')};color:${colorMedalla};">
                     ${medalla}
                 </div>
-                <div style="font-weight:600;display:flex;align-items:center;gap:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:2px;font-size:0.75rem;">
-                    <span style="overflow:hidden;text-overflow:ellipsis;color:#2c1b4e;display:flex;align-items:center;font-size:0.75rem;">
+                <div style="font-weight:600;display:flex;align-items:center;gap:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:4px;font-size:${isMobile ? '0.75rem' : '0.9rem'};text-align:left;">
+                    <span style="overflow:hidden;text-overflow:ellipsis;color:#2c1b4e;display:flex;align-items:center;font-size:${isMobile ? '0.75rem' : '0.9rem'};">
                         ${nombreDisplay}
                     </span>
-                    ${esUsuarioActual ? '<span style="font-size:0.45rem;background:#9b59b6;color:white;padding:1px 6px;border-radius:6px;flex-shrink:0;font-weight:700;margin-left:2px;">Tú</span>' : ''}
-                    ${posicion === 1 ? '<span style="font-size:0.6rem;flex-shrink:0;margin-left:1px;">👑</span>' : ''}
+                    ${!esMedicurativo ? `<span style="font-size:${isMobile ? '0.6rem' : '0.8rem'};margin-left:2px;">${calidadIcon}</span>` : ''}
+                    ${esUsuarioActual ? `<span style="font-size:${isMobile ? '0.45rem' : '0.55rem'};background:#9b59b6;color:white;padding:${isMobile ? '1px 6px' : '2px 10px'};border-radius:6px;flex-shrink:0;font-weight:700;margin-left:2px;">Tú</span>` : ''}
+                    ${posicion === 1 ? `<span style="font-size:${isMobile ? '0.6rem' : '0.8rem'};flex-shrink:0;margin-left:1px;">👑</span>` : ''}
                 </div>
-                <div style="text-align:center;font-weight:600;color:#9b59b6;font-size:0.75rem;">${usuario.totalPublicaciones}</div>
-                <div style="text-align:center;font-weight:600;color:#e74c3c;font-size:0.75rem;">${usuario.totalLikes}</div>
+                <div style="text-align:center;font-weight:600;color:#9b59b6;font-size:${isMobile ? '0.75rem' : '0.9rem'};">${usuario.totalPublicaciones || 0}</div>
+                <div style="text-align:center;font-weight:600;color:#e74c3c;font-size:${isMobile ? '0.75rem' : '0.9rem'};">${usuario.carisma || 0}</div>
             </div>
         `;
     });
 
-    if (totalUsuarios > 50) {
+    if (totalUsuarios > (isMobile ? 50 : 100)) {
         rankingHTML += `
-            <div style="text-align:center;padding:8px 0;color:#b0a4c4;font-size:0.7rem;">
-                <i class="fas fa-ellipsis-h"></i> Y ${totalUsuarios - 50} usuarios más...
+            <div style="text-align:center;padding:8px 0;color:#b0a4c4;font-size:${isMobile ? '0.7rem' : '0.8rem'};">
+                <i class="fas fa-ellipsis-h"></i> Y ${totalUsuarios - (isMobile ? 50 : 100)} usuarios más...
             </div>
         `;
     }
 
     rankingHTML += `
         <div style="margin-top:12px;padding-top:8px;border-top:1.5px solid #f0edf5;text-align:center;">
-            <p style="font-size:0.6rem;color:#b0a4c4;margin:0;">
-                <i class="fas fa-feather"></i> Publica y recibe likes para subir
+            <p style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#b0a4c4;margin:0;">
+                <i class="fas fa-crown" style="color:#f1c40f;"></i> 
+                Usuarios con <strong>Oficial</strong> son verificados por Medicurativo
+            </p>
+            <p style="font-size:${isMobile ? '0.5rem' : '0.6rem'};color:#b0a4c4;margin:4px 0 0 0;">
+                <i class="fas fa-sync" style="color:#9b59b6;"></i> 
+                El carisma se actualiza automáticamente
             </p>
         </div>
     </div>`;
@@ -327,10 +459,10 @@ function mostrarRanking(ranking) {
         title: '',
         html: `
             <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(145deg,#f8f0ff,#f0e6ff);display:flex;align-items:center;justify-content:center;padding:10px;box-shadow:0 4px 15px rgba(155,89,182,0.12);margin-bottom:2px;">
+                <div style="width:${isMobile ? '60px' : '80px'};height:${isMobile ? '60px' : '80px'};border-radius:50%;background:linear-gradient(145deg,#f8f0ff,#f0e6ff);display:flex;align-items:center;justify-content:center;padding:${isMobile ? '10px' : '15px'};box-shadow:0 4px 15px rgba(155,89,182,0.12);margin-bottom:2px;">
                     <img src="imganes/logosmedi.png" alt="Medicurativo" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">
                 </div>
-                <h2 style="color:#2c1b4e;font-weight:800;font-size:1rem;margin:0;display:flex;align-items:center;gap:6px;">
+                <h2 style="color:#2c1b4e;font-weight:800;font-size:${isMobile ? '1rem' : '1.3rem'};margin:0;display:flex;align-items:center;gap:6px;">
                     <span>🏆</span> Ranking
                 </h2>
             </div>
@@ -344,13 +476,16 @@ function mostrarRanking(ranking) {
             popup: 'swal-popup-redondo swal-ranking',
             confirmButton: 'swal-confirm-btn'
         },
-        width: 'auto',
-        maxWidth: '520px',
+        width: isMobile ? 'auto' : '700px',
+        maxWidth: isMobile ? 'auto' : '90vw',
         didOpen: () => {
             const popup = document.querySelector('.swal2-popup');
             if (popup) {
-                popup.style.borderRadius = '20px';
-                popup.style.padding = '14px 14px 18px';
+                popup.style.borderRadius = '24px';
+                popup.style.padding = isMobile ? '14px 14px 18px' : '25px 30px 30px';
+                if (!isMobile) {
+                    popup.style.width = '700px';
+                }
             }
             rankingSwalInstance = Swal;
         },
@@ -361,13 +496,15 @@ function mostrarRanking(ranking) {
     });
 }
 
-// ===== VER PERFIL - ULTRA RÁPIDO =====
+// ===== VER PERFIL - CON ACTUALIZACIÓN AUTOMÁTICA =====
 async function verPerfilUsuario(userId) {
     if (perfilAbierto) return;
     perfilAbierto = true;
     
     try {
-        // Mostrar loading minimalista (SIN didOpen para evitar error)
+        const isMobile = esDispositivoMovil();
+
+        // Mostrar loading
         Swal.fire({
             title: 'Cargando perfil...',
             html: `
@@ -379,38 +516,20 @@ async function verPerfilUsuario(userId) {
             `,
             showConfirmButton: false,
             allowOutsideClick: false,
-            customClass: { popup: 'swal-popup-redondo' }
+            customClass: { popup: 'swal-popup-redondo' },
+            width: isMobile ? 'auto' : '400px',
+            maxWidth: isMobile ? 'auto' : '90vw'
         });
 
-        // ===== OPTIMIZACIÓN: Consultas en paralelo con timeout =====
-        const startTime = performance.now();
-        
-        const [usuarioResult, publicacionesResult] = await Promise.race([
-            Promise.all([
-                supabaseClient
-                    .from('usuarios')
-                    .select('id, nombre, carisma')
-                    .eq('id', userId)
-                    .single(),
-                supabaseClient
-                    .from('publicaciones')
-                    .select('likes')
-                    .eq('usuario_id', userId)
-                    .eq('estado', 'aprobado')
-                    .limit(500)
-            ]),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout')), 4000)
-            )
-        ]);
+        // ===== OBTENER DATOS DEL USUARIO =====
+        const { data: usuario, error: userError } = await supabaseClient
+            .from('usuarios')
+            .select('id, nombre, carisma')
+            .eq('id', userId)
+            .single();
 
-        const endTime = performance.now();
-        console.log(`⏱️ Perfil cargado en ${(endTime - startTime).toFixed(0)}ms`);
-
-        // Cerrar loading
-        Swal.close();
-
-        if (usuarioResult.error || !usuarioResult.data) {
+        if (userError || !usuario) {
+            Swal.close();
             Swal.fire({
                 title: 'Error',
                 text: 'No se pudo cargar el perfil del usuario.',
@@ -422,28 +541,83 @@ async function verPerfilUsuario(userId) {
             return;
         }
 
-        const usuario = usuarioResult.data;
-        const publicaciones = publicacionesResult.data || [];
-        const totalPublicaciones = publicaciones.length;
-        const totalLikes = publicaciones.reduce((sum, p) => sum + (p.likes || 0), 0);
+        // ===== OBTENER PUBLICACIONES =====
+        const { data: publicaciones, error: pubError } = await supabaseClient
+            .from('publicaciones')
+            .select('likes')
+            .eq('usuario_id', userId)
+            .eq('estado', 'aprobado');
+
+        const totalPublicaciones = publicaciones?.length || 0;
+        const totalLikes = publicaciones?.reduce((sum, pub) => sum + (pub.likes || 0), 0) || 0;
+
+        // ===== CALCULAR PROMEDIO =====
+        const promedioLikes = totalPublicaciones > 0 ? (totalLikes / totalPublicaciones).toFixed(1) : 0;
+
+        // ===== CALIDAD DEL CONTENIDO =====
+        let calidadTexto = '';
+        let calidadColor = '';
+        let calidadEmoji = '';
+
+        if (promedioLikes >= 10) {
+            calidadTexto = 'Excelente';
+            calidadColor = '#8e44ad';
+            calidadEmoji = '🏆';
+        } else if (promedioLikes >= 5) {
+            calidadTexto = 'Muy Bueno';
+            calidadColor = '#2ecc71';
+            calidadEmoji = '🌟';
+        } else if (promedioLikes >= 2) {
+            calidadTexto = 'Bueno';
+            calidadColor = '#3498db';
+            calidadEmoji = '👍';
+        } else if (promedioLikes >= 1) {
+            calidadTexto = 'Regular';
+            calidadColor = '#f39c12';
+            calidadEmoji = '📝';
+        } else {
+            calidadTexto = 'Sin likes';
+            calidadColor = '#b0a4c4';
+            calidadEmoji = '🆕';
+        }
+
+        // ===== ACTUALIZAR CARISMA =====
+        if (totalLikes !== usuario.carisma) {
+            const { error: updateError } = await supabaseClient
+                .from('usuarios')
+                .update({ carisma: totalLikes })
+                .eq('id', userId);
+
+            if (!updateError) {
+                usuario.carisma = totalLikes;
+                rankingCache = null;
+                ultimaActualizacionRanking = 0;
+            }
+        }
+
+        Swal.close();
+
         const carisma = usuario.carisma || 0;
         const esMedicurativo = usuario.nombre.toLowerCase().includes('medicurativo');
 
-        // ===== CALCULAR BORDERCOLOR ANTES DE USARLO =====
-        let borderColor = '#d1c4e9'; // Default (gris claro)
-        if (esMedicurativo) borderColor = '#9b59b6'; // Morado especial
-        else if (carisma >= 60) borderColor = '#8e44ad'; // Morado oscuro
-        else if (carisma >= 50) borderColor = '#e74c3c'; // Rojo
-        else if (carisma >= 40) borderColor = '#3498db'; // Azul
-        else if (carisma >= 30) borderColor = '#2ecc71'; // Verde
-        else if (carisma >= 20) borderColor = '#f1c40f'; // Amarillo
-        else if (carisma >= 10) borderColor = '#f39c12'; // Naranja
+        // ===== CALCULAR BORDERCOLOR =====
+        let borderColor = '#d1c4e9';
+        if (esMedicurativo) borderColor = '#f1c40f';
+        else if (carisma >= 60) borderColor = '#8e44ad';
+        else if (carisma >= 50) borderColor = '#e74c3c';
+        else if (carisma >= 40) borderColor = '#3498db';
+        else if (carisma >= 30) borderColor = '#2ecc71';
+        else if (carisma >= 20) borderColor = '#f1c40f';
+        else if (carisma >= 10) borderColor = '#f39c12';
 
         // Avatar
         let avatarHTML;
+        const avatarSize = isMobile ? '80px' : '100px';
+        const fontSize = isMobile ? '2rem' : '2.5rem';
+        
         if (esMedicurativo) {
             avatarHTML = `
-                <div style="width:80px;height:80px;border-radius:50%;border:3.5px solid #9b59b6;overflow:hidden;box-shadow:0 4px 15px rgba(155,89,182,0.25);background:#f8f0ff;display:flex;align-items:center;justify-content:center;">
+                <div style="width:${avatarSize};height:${avatarSize};border-radius:50%;border:${isMobile ? '3.5px' : '4px'} solid #f1c40f;overflow:hidden;box-shadow:0 4px 20px rgba(241,196,15,0.4);background:#f8f0ff;display:flex;align-items:center;justify-content:center;">
                     <img src="imganes/medicu.png" style="width:100%;height:100%;object-fit:cover;">
                 </div>
             `;
@@ -452,46 +626,125 @@ async function verPerfilUsuario(userId) {
             const colores = ['#9b59b6','#3498db','#2ecc71','#e74c3c','#f39c12','#1abc9c','#e67e22','#8e44ad'];
             const color = colores[Math.floor(Math.random() * colores.length)];
             avatarHTML = `
-                <div style="width:80px;height:80px;border-radius:50%;border:3.5px solid ${borderColor};overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08);background:${color};display:flex;align-items:center;justify-content:center;">
-                    <span style="font-size:2rem;font-weight:800;color:white;text-shadow:0 2px 4px rgba(0,0,0,0.1);">${inicial}</span>
+                <div style="width:${avatarSize};height:${avatarSize};border-radius:50%;border:${isMobile ? '3.5px' : '4px'} solid ${borderColor};overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08);background:${color};display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:${fontSize};font-weight:800;color:white;text-shadow:0 2px 4px rgba(0,0,0,0.1);">${inicial}</span>
                 </div>
             `;
         }
 
-        const puedeDarLike = window.usuarioActual && window.usuarioActual.id !== userId;
-
-        // ===== MOSTRAR PERFIL CON BORDE DE COLOR =====
+        // ===== MOSTRAR PERFIL CON PROMEDIO =====
         await Swal.fire({
             title: '',
             html: `
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:2px 0;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:${isMobile ? '8px' : '12px'};padding:2px 0;">
                     ${avatarHTML}
-                    <h2 style="margin:0;color:#2c1b4e;font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;">
+                    <h2 style="margin:0;color:#2c1b4e;font-size:${isMobile ? '1.1rem' : '1.4rem'};font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;">
                         ${usuario.nombre}
-                        ${esMedicurativo ? '<span style="font-size:0.5rem;background:#9b59b6;color:white;padding:1px 8px;border-radius:10px;font-weight:600;"><i class="fas fa-gamepad"></i> Carisma</span>' : ''}
+                        ${esMedicurativo ? `
+                            <span style="
+                                font-size:${isMobile ? '0.45rem' : '0.55rem'};
+                                background:linear-gradient(135deg,#f1c40f,#f39c12);
+                                color:#2c1b4e;
+                                padding:${isMobile ? '2px 10px' : '3px 14px'};
+                                border-radius:12px;
+                                font-weight:800;
+                                display:inline-flex;
+                                align-items:center;
+                                gap:4px;
+                                box-shadow:0 2px 8px rgba(241,196,15,0.4);
+                            ">
+                            <i class="fas fa-crown" style="font-size:${isMobile ? '0.5rem' : '0.7rem'};"></i>
+                            Oficial
+                            </span>
+                            <i class="fas fa-check-circle" style="color:#2ecc71;font-size:${isMobile ? '0.8rem' : '1rem'};margin-left:2px;text-shadow:0 0 10px rgba(46,204,113,0.3);"></i>
+                        ` : ''}
                     </h2>
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;max-width:300px;margin-top:2px;">
-                        <div style="background:linear-gradient(145deg,#f8f0ff,#f0e6ff);padding:8px;border-radius:8px;text-align:center;">
-                            <div style="font-size:0.55rem;color:#7f5f9b;text-transform:uppercase;letter-spacing:0.3px;">Public.</div>
-                            <div style="font-size:1.2rem;font-weight:800;color:#9b59b6;">${totalPublicaciones}</div>
+
+                    ${esMedicurativo ? `
+                        <p style="margin:0;color:#f39c12;font-size:${isMobile ? '0.65rem' : '0.8rem'};font-weight:600;display:flex;align-items:center;gap:6px;">
+                            <i class="fas fa-badge-check" style="color:#2ecc71;"></i>
+                            Cuenta Oficial Verificada
+                        </p>
+                    ` : ''}
+                    
+                    <!-- TARJETAS PRINCIPALES -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:${isMobile ? '8px' : '12px'};width:100%;max-width:${isMobile ? '300px' : '400px'};margin-top:2px;">
+                        <div style="background:linear-gradient(145deg,#f8f0ff,#f0e6ff);padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;">
+                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#7f5f9b;text-transform:uppercase;letter-spacing:0.3px;">Public.</div>
+                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:#9b59b6;">${totalPublicaciones}</div>
                         </div>
-                        <div style="background:linear-gradient(145deg,#fff5f5,#ffe8e8);padding:8px;border-radius:8px;text-align:center;">
-                            <div style="font-size:0.55rem;color:#c0392b;text-transform:uppercase;letter-spacing:0.3px;">Likes</div>
-                            <div style="font-size:1.2rem;font-weight:800;color:#e74c3c;">${totalLikes}</div>
+                        <div style="background:linear-gradient(145deg,#fff5f5,#ffe8e8);padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;">
+                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#c0392b;text-transform:uppercase;letter-spacing:0.3px;">Likes</div>
+                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:#e74c3c;">${totalLikes}</div>
                         </div>
-                        <div style="background:linear-gradient(145deg,#fef9e7,#fdebd0);padding:8px;border-radius:8px;text-align:center;border:2px solid ${borderColor};">
-                            <div style="font-size:0.55rem;color:#7f5f9b;text-transform:uppercase;letter-spacing:0.3px;">✨ Carisma</div>
-                            <div style="font-size:1.2rem;font-weight:800;color:${borderColor};">${carisma}</div>
+                        <div style="background:linear-gradient(145deg,#fef9e7,#fdebd0);padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;border:${isMobile ? '2px' : '3px'} solid ${borderColor};">
+                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#7f5f9b;text-transform:uppercase;letter-spacing:0.3px;">✨ ${esMedicurativo ? 'Oficial' : 'Carisma'}</div>
+                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:${borderColor};">${carisma}</div>
                         </div>
                     </div>
-                    ${puedeDarLike ? `
-                        <button onclick="darLikeCarisma('${userId}')" style="margin-top:6px;background:linear-gradient(135deg,#9b59b6,#8e44ad);color:white;border:none;padding:8px 25px;border-radius:20px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;box-shadow:0 3px 12px rgba(155,89,182,0.25);display:flex;align-items:center;gap:6px;margin:0 auto;">
-                            <i class="fas fa-heart"></i> Dar Like (+10)
-                        </button>
-                    ` : `
-                        ${!window.usuarioActual ? '<p style="color:#b0a4c4;font-size:0.7rem;margin-top:6px;">Inicia sesión para dar likes</p>' : ''}
-                        ${window.usuarioActual && window.usuarioActual.id === userId ? '<p style="color:#b0a4c4;font-size:0.7rem;margin-top:6px;">No puedes darte like a ti mismo</p>' : ''}
-                    `}
+
+                    <!-- TARJETA DE PROMEDIO -->
+                    <div style="
+                        background:linear-gradient(145deg, #f0f0ff, #e8e8ff);
+                        padding:${isMobile ? '8px' : '12px'};
+                        border-radius:${isMobile ? '8px' : '12px'};
+                        text-align:center;
+                        width:100%;
+                        max-width:${isMobile ? '300px' : '400px'};
+                        margin-top:${isMobile ? '4px' : '8px'};
+                        border: 1.5px solid ${calidadColor}33;
+                    ">
+                        <div style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            gap:${isMobile ? '8px' : '16px'};
+                            flex-wrap:wrap;
+                        ">
+                            <div>
+                                <div style="
+                                    font-size:${isMobile ? '0.45rem' : '0.55rem'};
+                                    color:#7f5f9b;
+                                    text-transform:uppercase;
+                                    letter-spacing:0.3px;
+                                ">
+                                    <i class="fas fa-chart-line" style="color:#9b59b6;"></i> 
+                                    Promedio por publicación
+                                </div>
+                                <div style="
+                                    font-size:${isMobile ? '1.3rem' : '1.7rem'};
+                                    font-weight:800;
+                                    color:#2c1b4e;
+                                ">
+                                    ❤️ ${promedioLikes}
+                                </div>
+                            </div>
+                            <div style="
+                                padding:${isMobile ? '4px 12px' : '6px 16px'};
+                                background:${calidadColor}22;
+                                border-radius:20px;
+                                border: 1.5px solid ${calidadColor};
+                            ">
+                                <span style="font-size:${isMobile ? '1rem' : '1.2rem'};">
+                                    ${calidadEmoji}
+                                </span>
+                                <span style="
+                                    font-size:${isMobile ? '0.65rem' : '0.8rem'};
+                                    font-weight:700;
+                                    color:${calidadColor};
+                                ">
+                                    ${calidadTexto}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MENSAJE FINAL -->
+                    <p style="color:#b0a4c4;font-size:${isMobile ? '0.55rem' : '0.65rem'};margin-top:4px;text-align:center;border-top:1px solid #f0edf5;padding-top:8px;width:100%;">
+                        <i class="fas fa-sync" style="color:#9b59b6;"></i> 
+                        El carisma se actualiza automáticamente
+                        ${esMedicurativo ? '<br><i class="fas fa-crown" style="color:#f1c40f;"></i> Usuario Oficial verificado por Medicurativo' : ''}
+                    </p>
                 </div>
             `,
             showConfirmButton: true,
@@ -499,16 +752,18 @@ async function verPerfilUsuario(userId) {
             confirmButtonColor: '#9b59b6',
             showCloseButton: true,
             customClass: { popup: 'swal-popup-redondo' },
-            width: 'auto',
-            maxWidth: '360px',
+            width: isMobile ? 'auto' : '450px',
+            maxWidth: isMobile ? 'auto' : '90vw',
             didOpen: () => {
                 const popup = document.querySelector('.swal2-popup');
                 if (popup) {
-                    popup.style.borderRadius = '18px';
-                    popup.style.padding = '16px 14px 18px';
-                    // BORDE DEL SWAL COMPLETO CON COLOR DE CARISMA
-                    popup.style.border = `3px solid ${borderColor}`;
+                    popup.style.borderRadius = '20px';
+                    popup.style.padding = isMobile ? '16px 14px 18px' : '25px 30px 30px';
+                    popup.style.border = `${isMobile ? '3px' : '4px'} solid ${borderColor}`;
                     popup.style.boxShadow = `0 8px 32px ${borderColor}33`;
+                    if (!isMobile) {
+                        popup.style.width = '450px';
+                    }
                 }
             },
             willClose: () => { perfilAbierto = false; }
@@ -517,7 +772,7 @@ async function verPerfilUsuario(userId) {
         perfilAbierto = false;
 
     } catch (error) {
-        console.error('Error en perfil:', error);
+        console.error('❌ Error en perfil:', error);
         Swal.close();
         
         if (error.message === 'Timeout') {
@@ -546,147 +801,10 @@ async function verPerfilUsuario(userId) {
     }
 }
 
-// ===== DAR LIKE CARISMA - OPTIMIZADO =====
-async function darLikeCarisma(userId) {
-    try {
-        if (!window.usuarioActual) {
-            Swal.fire({
-                title: 'Inicia sesión',
-                text: 'Debes iniciar sesión para dar likes.',
-                icon: 'info',
-                confirmButtonColor: '#9b59b6',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return;
-        }
-        if (window.usuarioActual.id === userId) {
-            Swal.fire({
-                title: 'No puedes',
-                text: 'No puedes darte like a ti mismo.',
-                icon: 'warning',
-                confirmButtonColor: '#f39c12',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return;
-        }
-
-        // Mostrar loading rápido
-        Swal.fire({
-            title: 'Dando like...',
-            html: `
-                <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0;">
-                    <div style="width:35px;height:35px;border:3px solid #f0e6ff;border-top-color:#9b59b6;border-radius:50%;animation:spin 0.5s linear infinite;margin-bottom:8px;"></div>
-                    <p style="color:#7f5f9b;font-size:0.8rem;">Sumando carisma...</p>
-                </div>
-                <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-            `,
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-
-        // Consulta optimizada
-        const startTime = performance.now();
-        
-        const { data: usuario, error: getError } = await Promise.race([
-            supabaseClient
-                .from('usuarios')
-                .select('carisma, nombre')
-                .eq('id', userId)
-                .single(),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout')), 3000)
-            )
-        ]);
-
-        if (getError) {
-            Swal.close();
-            Swal.fire({
-                title: 'Error',
-                text: 'No se pudo obtener el carisma.',
-                icon: 'error',
-                confirmButtonColor: '#e74c3c',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return;
-        }
-
-        const nuevoCarisma = (usuario.carisma || 0) + 10;
-
-        const { error: updateError } = await supabaseClient
-            .from('usuarios')
-            .update({ carisma: nuevoCarisma })
-            .eq('id', userId);
-
-        if (updateError) {
-            Swal.close();
-            Swal.fire({
-                title: 'Error',
-                text: 'No se pudo actualizar el carisma.',
-                icon: 'error',
-                confirmButtonColor: '#e74c3c',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-            return;
-        }
-
-        const endTime = performance.now();
-        console.log(`⏱️ Like dado en ${(endTime - startTime).toFixed(0)}ms`);
-
-        Swal.close();
-
-        await Swal.fire({
-            title: '🎉 +10 Carisma',
-            text: `¡${usuario.nombre} ahora tiene ${nuevoCarisma} carisma!`,
-            icon: 'success',
-            confirmButtonColor: '#9b59b6',
-            timer: 1200,
-            timerProgressBar: true,
-            customClass: { popup: 'swal-popup-redondo' }
-        });
-
-        // Limpiar cache y recargar ranking
-        rankingCache = null;
-        ultimaActualizacionRanking = 0;
-        
-        if (rankingSwalInstance) {
-            rankingSwalInstance.close();
-            setTimeout(() => abrirRanking(), 200);
-        }
-
-    } catch (error) {
-        console.error('Error al dar like:', error);
-        Swal.close();
-        
-        if (error.message === 'Timeout') {
-            Swal.fire({
-                title: '⏰ Tiempo de espera',
-                text: 'El servidor está tardando. ¿Reintentar?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Reintentar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#9b59b6',
-                customClass: { popup: 'swal-popup-redondo' }
-            }).then((result) => {
-                if (result.isConfirmed) darLikeCarisma(userId);
-            });
-        } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Ocurrió un error al dar like.',
-                icon: 'error',
-                confirmButtonColor: '#e74c3c',
-                customClass: { popup: 'swal-popup-redondo' }
-            });
-        }
-    }
-}
-
 // ===== EXPONER FUNCIONES =====
 window.abrirRanking = abrirRanking;
 window.cargarRanking = cargarRanking;
 window.verPerfilUsuario = verPerfilUsuario;
-window.darLikeCarisma = darLikeCarisma;
+window.actualizarCarismaTodosLosUsuarios = actualizarCarismaTodosLosUsuarios;
 
-console.log('✅ Ranking.js cargado correctamente (Versión Ultra Rápida)');
+console.log('✅ Ranking.js cargado correctamente (Actualización Automática)');

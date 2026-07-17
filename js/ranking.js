@@ -17,6 +17,56 @@ const SUPABASE_CONFIG = {
     retryCount: 2
 };
 
+// ===== OBTENER USUARIO ACTUAL (CON RESPALDO) =====
+function obtenerUsuarioActual() {
+    // 1. Primero intentar con window.usuarioActual
+    if (window.usuarioActual && window.usuarioActual.id) {
+        console.log('✅ Usuario obtenido de window.usuarioActual:', window.usuarioActual);
+        return window.usuarioActual;
+    }
+    
+    // 2. Buscar en el ámbito global (usuarioActual sin window)
+    if (typeof usuarioActual !== 'undefined' && usuarioActual && usuarioActual.id) {
+        console.log('✅ Usuario obtenido de variable global usuarioActual:', usuarioActual);
+        // Sincronizar con window
+        window.usuarioActual = usuarioActual;
+        return usuarioActual;
+    }
+    
+    // 3. Buscar en localStorage
+    try {
+        const usuarioGuardado = localStorage.getItem('usuarioActual');
+        if (usuarioGuardado) {
+            const usuario = JSON.parse(usuarioGuardado);
+            if (usuario && usuario.id) {
+                console.log('✅ Usuario obtenido de localStorage:', usuario);
+                window.usuarioActual = usuario;
+                return usuario;
+            }
+        }
+    } catch (e) {
+        console.warn('⚠️ Error al leer localStorage:', e);
+    }
+    
+    // 4. Buscar en sessionStorage
+    try {
+        const usuarioSesion = sessionStorage.getItem('usuarioActual');
+        if (usuarioSesion) {
+            const usuario = JSON.parse(usuarioSesion);
+            if (usuario && usuario.id) {
+                console.log('✅ Usuario obtenido de sessionStorage:', usuario);
+                window.usuarioActual = usuario;
+                return usuario;
+            }
+        }
+    } catch (e) {
+        console.warn('⚠️ Error al leer sessionStorage:', e);
+    }
+    
+    console.warn('⚠️ No se encontró usuario actual en ninguna parte');
+    return null;
+}
+
 // ===== DETECTAR DISPOSITIVO =====
 function esDispositivoMovil() {
     return window.innerWidth <= 768;
@@ -31,7 +81,12 @@ function esModoOscuro() {
 
 // ===== ABRIR RANKING (CON ACTUALIZACIÓN AUTOMÁTICA) =====
 function abrirRanking() {
+    const usuarioActual = obtenerUsuarioActual();
+    console.log('🔍 abrirRanking() llamado');
+    console.log('🔍 usuarioActual obtenido:', usuarioActual);
+    
     if (rankingCache && (Date.now() - ultimaActualizacionRanking) < 5000) {
+        console.log('📦 Usando cache del ranking');
         mostrarRanking(rankingCache);
         return;
     }
@@ -153,6 +208,10 @@ async function actualizarCarismaTodosLosUsuarios() {
 // ===== CARGAR RANKING CON ACTUALIZACIÓN PREVIA =====
 async function cargarRanking() {
     try {
+        console.log('📊 Cargando ranking...');
+        const usuarioActual = obtenerUsuarioActual();
+        console.log('🔍 usuarioActual en cargarRanking:', usuarioActual);
+
         if (typeof supabaseClient === 'undefined' || !supabaseClient) {
             console.error('❌ Supabase no disponible');
             Swal.fire({
@@ -164,8 +223,6 @@ async function cargarRanking() {
             });
             return;
         }
-
-        console.log('📊 Cargando ranking...');
 
         await actualizarCarismaTodosLosUsuarios();
 
@@ -189,6 +246,8 @@ async function cargarRanking() {
             mostrarRankingVacio();
             return;
         }
+
+        console.log('📋 Usuarios del ranking:', usuarios);
 
         const { data: publicaciones, error: pubError } = await supabaseClient
             .from('publicaciones')
@@ -283,6 +342,10 @@ function mostrarRankingVacio() {
 
 // ===== MOSTRAR RANKING =====
 function mostrarRanking(ranking) {
+    console.log('📊 mostrarRanking() llamado');
+    const usuarioActual = obtenerUsuarioActual();
+    console.log('🔍 usuarioActual en mostrarRanking:', usuarioActual);
+    
     const isMobile = esDispositivoMovil();
     const medallas = ['🥇', '🥈', '🥉'];
     const coloresMedalla = ['#f1c40f', '#bdc3c7', '#e67e22'];
@@ -333,32 +396,36 @@ function mostrarRanking(ranking) {
         const medalla = posicion <= 3 ? medallas[index] : `#${posicion}`;
         const colorMedalla = posicion <= 3 ? coloresMedalla[index] : '#9b59b6';
         const esTop3 = posicion <= 3;
-        const esUsuarioActual = window.usuarioActual && usuario.id === window.usuarioActual.id;
+        
+        // ===== COMPARAR CON usuarioActual =====
+        const esUsuarioActual = usuarioActual && usuario.id === usuarioActual.id;
         const esMedicurativo = usuario.nombre.toLowerCase().includes('medicurativo');
+
+        console.log(`🔍 ${usuario.nombre} (${usuario.id}) - esUsuarioActual: ${esUsuarioActual}, usuarioActual.id: ${usuarioActual?.id}`);
 
         // ===== COLOR DE FONDO - COLOR PIEL =====
         let bgColor = '#f5ebe0'; // Color piel claro
         
-        // 🔵 El usuario actual tiene un color más oscuro para destacar
+        // El usuario actual tiene un color más oscuro para destacar
         if (esUsuarioActual) {
             bgColor = '#d4b8a8'; // Color piel más oscuro
+            console.log(`✅ ${usuario.nombre} ES el usuario actual! Mostrando "Tú"`);
         }
 
         // ===== BORDE =====
         let borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid ${colorMedalla};`;
-        // Si es el usuario actual, borde morado
         if (esUsuarioActual) {
             borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid #9b59b6; border-right: ${isMobile ? '2.5px' : '4px'} solid #9b59b6;`;
         }
 
-        // ===== NOMBRE DEL USUARIO =====
-        let nombreDisplay = usuario.nombre;
+        // ===== NOMBRE DEL USUARIO - MOSTRAR "Tú" =====
+        let nombreDisplay = '';
         
-        // Si es usuario actual, agregar indicador "Tú" y color morado
+        // Si es usuario actual, mostrar "Tú"
         if (esUsuarioActual) {
             nombreDisplay = `
-                <span style="color:#9b59b6;font-weight:800;display:flex;align-items:center;gap:3px;font-size:${isMobile ? '0.75rem' : '0.9rem'};">
-                    ${usuario.nombre}
+                <span style="color:#9b59b6;font-weight:800;display:flex;align-items:center;gap:4px;font-size:${isMobile ? '0.75rem' : '0.9rem'};">
+                    <span>${usuario.nombre}</span>
                     <span style="
                         font-size:${isMobile ? '0.45rem' : '0.55rem'};
                         background:#9b59b6;
@@ -370,8 +437,9 @@ function mostrarRanking(ranking) {
                     ">Tú</span>
                 </span>
             `;
-        // Si es oficial, mostrar badge completo
-        } else if (esMedicurativo) {
+        } 
+        // Si es oficial, mostrar badge
+        else if (esMedicurativo) {
             const badgeText = isMobile ? 'Of' : 'Oficial';
             nombreDisplay = `
                 <img src="imganes/medicu.png" alt="Medicurativo" style="
@@ -403,9 +471,17 @@ function mostrarRanking(ranking) {
                     <i class="fas fa-check-circle" style="color:#2ecc71;font-size:${isMobile ? '0.5rem' : '0.8rem'};margin-left:2px;text-shadow:0 0 10px rgba(46,204,113,0.3);"></i>
                 </span>
             `;
+        } 
+        // Usuario normal
+        else {
+            nombreDisplay = `
+                <span style="font-size:${isMobile ? '0.75rem' : '0.9rem'};font-weight:600;color:#2c1b4e;">
+                    ${usuario.nombre}
+                </span>
+            `;
         }
 
-        // ===== ICONO DE CALIDAD POR PROMEDIO (solo para usuarios normales) =====
+        // ===== ICONO DE CALIDAD POR PROMEDIO =====
         let calidadIcon = '';
         if (!esMedicurativo && !esUsuarioActual) {
             const promedio = usuario.totalPublicaciones > 0 ? (usuario.carisma / usuario.totalPublicaciones) : 0;
@@ -474,7 +550,6 @@ function mostrarRanking(ranking) {
         </div>
     </div>`;
 
-    // Guardamos la instancia del ranking antes de mostrarlo
     Swal.fire({
         title: '',
         html: `
@@ -507,7 +582,6 @@ function mostrarRanking(ranking) {
                     popup.style.width = '700px';
                 }
             }
-            // Guardamos la instancia del ranking
             rankingSwalInstance = Swal;
         },
         willClose: () => {
@@ -517,10 +591,32 @@ function mostrarRanking(ranking) {
     });
 }
 
-// ===== VER PERFIL - CON ACTUALIZACIÓN AUTOMÁTICA =====
-// MODIFICADO: Ahora abre el perfil como un SweetAlert independiente
-// que se superpone al ranking sin cerrarlo
-// Y al cerrar el perfil, reabre el ranking automáticamente
+// ===== FUNCIÓN PARA OBTENER LA POSICIÓN EN EL RANKING =====
+async function obtenerPosicionRanking(userId) {
+    try {
+        if (rankingCache) {
+            const index = rankingCache.findIndex(u => u.id === userId);
+            if (index !== -1) {
+                return index + 1;
+            }
+        }
+
+        const { data: usuarios, error } = await supabaseClient
+            .from('usuarios')
+            .select('id')
+            .order('carisma', { ascending: false });
+
+        if (error || !usuarios) return null;
+
+        const posicion = usuarios.findIndex(u => u.id === userId);
+        return posicion !== -1 ? posicion + 1 : null;
+    } catch (error) {
+        console.error('Error al obtener posición:', error);
+        return null;
+    }
+}
+
+// ===== VER PERFIL - CON POSICIÓN A LA IZQUIERDA DEL NOMBRE =====
 async function verPerfilUsuario(userId) {
     if (perfilAbierto) return;
     perfilAbierto = true;
@@ -529,7 +625,6 @@ async function verPerfilUsuario(userId) {
         const isMobile = esDispositivoMovil();
         const isDarkMode = esModoOscuro();
 
-        // Mostrar loading como SweetAlert independiente
         const loadingSwal = Swal.fire({
             title: 'Cargando perfil...',
             html: `
@@ -544,7 +639,6 @@ async function verPerfilUsuario(userId) {
             customClass: { popup: 'swal-popup-redondo' },
             width: isMobile ? 'auto' : '400px',
             maxWidth: isMobile ? 'auto' : '90vw',
-            // Esto hace que se abra encima del ranking
             target: document.body
         });
 
@@ -566,6 +660,8 @@ async function verPerfilUsuario(userId) {
             perfilAbierto = false;
             return;
         }
+
+        const posicionRanking = await obtenerPosicionRanking(userId);
 
         const { data: publicaciones, error: pubError } = await supabaseClient
             .from('publicaciones')
@@ -617,7 +713,6 @@ async function verPerfilUsuario(userId) {
             }
         }
 
-        // Cerramos el loading
         loadingSwal.close();
 
         const carisma = usuario.carisma || 0;
@@ -632,7 +727,6 @@ async function verPerfilUsuario(userId) {
         else if (carisma >= 20) borderColor = '#f1c40f';
         else if (carisma >= 10) borderColor = '#f39c12';
 
-        // ===== COLOR ROSADO PARA EL NOMBRE =====
         const nombreColor = '#ff6b9d';
         const nombreTextShadow = '0 2px 8px rgba(0,0,0,0.3)';
         
@@ -661,7 +755,30 @@ async function verPerfilUsuario(userId) {
             `;
         }
 
-        // ABRIR EL PERFIL COMO UN SweetAlert INDEPENDIENTE (NO CIERRA EL RANKING)
+        // ===== CONSTRUIR EL NOMBRE CON COPA Y POSICIÓN A LA IZQUIERDA =====
+        let posicionHTML = '';
+        if (posicionRanking) {
+            const posicionTexto = posicionRanking <= 3 ? ['🥇', '🥈', '🥉'][posicionRanking - 1] : `#${posicionRanking}`;
+            const colorPosicion = posicionRanking <= 3 ? ['#f1c40f', '#bdc3c7', '#e67e22'][posicionRanking - 1] : '#9b59b6';
+            
+            posicionHTML = `
+                <span style="
+                    display:inline-flex;
+                    align-items:center;
+                    gap:4px;
+                    background:${colorPosicion}22;
+                    padding:${isMobile ? '2px 8px' : '4px 12px'};
+                    border-radius:12px;
+                    border:1.5px solid ${colorPosicion};
+                    font-size:${isMobile ? '0.65rem' : '0.8rem'};
+                    font-weight:700;
+                    color:${colorPosicion};
+                ">
+                    🏆 ${posicionTexto}
+                </span>
+            `;
+        }
+
         await Swal.fire({
             title: '',
             html: `
@@ -675,11 +792,12 @@ async function verPerfilUsuario(userId) {
                         font-weight:700;
                         display:flex;
                         align-items:center;
-                        gap:6px;
+                        gap:8px;
                         flex-wrap:wrap;
                         justify-content:center;
                     ">
-                        ${usuario.nombre}
+                        ${posicionHTML}
+                        <span>${usuario.nombre}</span>
                         ${esMedicurativo ? `
                             <span style="
                                 font-size:${isMobile ? '0.45rem' : '0.55rem'};
@@ -793,7 +911,6 @@ async function verPerfilUsuario(userId) {
             },
             width: isMobile ? 'auto' : '450px',
             maxWidth: isMobile ? 'auto' : '90vw',
-            // Esto permite que el perfil se abra encima del ranking
             target: document.body,
             didOpen: () => {
                 const popup = document.querySelector('.swal2-popup');
@@ -812,7 +929,6 @@ async function verPerfilUsuario(userId) {
                     }
                 }
 
-                // Forzar el nombre a ROSADO
                 setTimeout(() => {
                     const nombreElement = document.getElementById('perfil-nombre-usuario');
                     if (nombreElement) {
@@ -832,10 +948,8 @@ async function verPerfilUsuario(userId) {
                     }
                 }, 50);
             },
-            // ===== MODIFICACIÓN PRINCIPAL: Al cerrar el perfil, reabrir el ranking =====
             willClose: () => { 
                 perfilAbierto = false;
-                // Reabrir el ranking automáticamente después de cerrar el perfil
                 setTimeout(() => {
                     if (!perfilAbierto) {
                         abrirRanking();

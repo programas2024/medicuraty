@@ -22,6 +22,13 @@ function esDispositivoMovil() {
     return window.innerWidth <= 768;
 }
 
+// ===== DETECTAR MODO OSCURO =====
+function esModoOscuro() {
+    return document.documentElement.classList.contains('dark') || 
+           document.body.classList.contains('dark') ||
+           (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
 // ===== ABRIR RANKING (CON ACTUALIZACIÓN AUTOMÁTICA) =====
 function abrirRanking() {
     if (rankingCache && (Date.now() - ultimaActualizacionRanking) < 5000) {
@@ -313,8 +320,8 @@ function mostrarRanking(ranking) {
             ">
                 <div style="text-align: center;">#</div>
                 <div style="text-align: left; padding-left: 4px;">Usuario</div>
-                <div style="text-align: center;">📝</div>
-                <div style="text-align: center;">❤️</div>
+                <div style="text-align: center;">📝 Post</div>
+                <div style="text-align: center;">❤️ Likes</div>
             </div>
     `;
 
@@ -329,18 +336,12 @@ function mostrarRanking(ranking) {
         const esUsuarioActual = window.usuarioActual && usuario.id === window.usuarioActual.id;
         const esMedicurativo = usuario.nombre.toLowerCase().includes('medicurativo');
 
-        // ===== COLOR DE FONDO =====
-        let bgColor = 'rgba(155, 89, 182, 0.03)';
+        // ===== COLOR DE FONDO - COLOR PIEL =====
+        let bgColor = '#f5ebe0'; // Color piel claro
         
-        // 🔵 PRIORIDAD 1: Usuario actual - Color morado claro destacado
+        // 🔵 El usuario actual tiene un color más oscuro para destacar
         if (esUsuarioActual) {
-            bgColor = 'rgba(155, 89, 182, 0.2)';
-        // 🟡 PRIORIDAD 2: Oficial - Fondo dorado
-        } else if (esMedicurativo) {
-            bgColor = 'linear-gradient(135deg, #fef9e7, #fdebd0)';
-        // 🟢 PRIORIDAD 3: Top 3 - Fondo dorado también
-        } else if (esTop3) {
-            bgColor = 'linear-gradient(135deg, #fef9e7, #fdebd0)';
+            bgColor = '#d4b8a8'; // Color piel más oscuro
         }
 
         // ===== BORDE =====
@@ -348,9 +349,6 @@ function mostrarRanking(ranking) {
         // Si es el usuario actual, borde morado
         if (esUsuarioActual) {
             borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid #9b59b6; border-right: ${isMobile ? '2.5px' : '4px'} solid #9b59b6;`;
-        // Si es oficial, borde dorado
-        } else if (esMedicurativo) {
-            borderStyle = `border-left: ${isMobile ? '2.5px' : '4px'} solid #f1c40f; border-right: ${isMobile ? '2.5px' : '4px'} solid #f1c40f;`;
         }
 
         // ===== NOMBRE DEL USUARIO =====
@@ -476,6 +474,7 @@ function mostrarRanking(ranking) {
         </div>
     </div>`;
 
+    // Guardamos la instancia del ranking antes de mostrarlo
     Swal.fire({
         title: '',
         html: `
@@ -508,6 +507,7 @@ function mostrarRanking(ranking) {
                     popup.style.width = '700px';
                 }
             }
+            // Guardamos la instancia del ranking
             rankingSwalInstance = Swal;
         },
         willClose: () => {
@@ -518,14 +518,19 @@ function mostrarRanking(ranking) {
 }
 
 // ===== VER PERFIL - CON ACTUALIZACIÓN AUTOMÁTICA =====
+// MODIFICADO: Ahora abre el perfil como un SweetAlert independiente
+// que se superpone al ranking sin cerrarlo
+// Y al cerrar el perfil, reabre el ranking automáticamente
 async function verPerfilUsuario(userId) {
     if (perfilAbierto) return;
     perfilAbierto = true;
     
     try {
         const isMobile = esDispositivoMovil();
+        const isDarkMode = esModoOscuro();
 
-        Swal.fire({
+        // Mostrar loading como SweetAlert independiente
+        const loadingSwal = Swal.fire({
             title: 'Cargando perfil...',
             html: `
                 <div style="display:flex;flex-direction:column;align-items:center;padding:15px 0;">
@@ -538,7 +543,9 @@ async function verPerfilUsuario(userId) {
             allowOutsideClick: false,
             customClass: { popup: 'swal-popup-redondo' },
             width: isMobile ? 'auto' : '400px',
-            maxWidth: isMobile ? 'auto' : '90vw'
+            maxWidth: isMobile ? 'auto' : '90vw',
+            // Esto hace que se abra encima del ranking
+            target: document.body
         });
 
         const { data: usuario, error: userError } = await supabaseClient
@@ -548,7 +555,7 @@ async function verPerfilUsuario(userId) {
             .single();
 
         if (userError || !usuario) {
-            Swal.close();
+            loadingSwal.close();
             Swal.fire({
                 title: 'Error',
                 text: 'No se pudo cargar el perfil del usuario.',
@@ -610,7 +617,8 @@ async function verPerfilUsuario(userId) {
             }
         }
 
-        Swal.close();
+        // Cerramos el loading
+        loadingSwal.close();
 
         const carisma = usuario.carisma || 0;
         const esMedicurativo = usuario.nombre.toLowerCase().includes('medicurativo');
@@ -623,6 +631,14 @@ async function verPerfilUsuario(userId) {
         else if (carisma >= 30) borderColor = '#2ecc71';
         else if (carisma >= 20) borderColor = '#f1c40f';
         else if (carisma >= 10) borderColor = '#f39c12';
+
+        // ===== COLOR ROSADO PARA EL NOMBRE =====
+        const nombreColor = '#ff6b9d';
+        const nombreTextShadow = '0 2px 8px rgba(0,0,0,0.3)';
+        
+        const carismaColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+        const textoColor = isDarkMode ? '#d0c0e0' : '#7f5f9b';
+        const bgCardColor = isDarkMode ? 'rgba(255,255,255,0.08)' : '#f8f0ff';
 
         let avatarHTML;
         const avatarSize = isMobile ? '80px' : '100px';
@@ -645,12 +661,24 @@ async function verPerfilUsuario(userId) {
             `;
         }
 
+        // ABRIR EL PERFIL COMO UN SweetAlert INDEPENDIENTE (NO CIERRA EL RANKING)
         await Swal.fire({
             title: '',
             html: `
                 <div style="display:flex;flex-direction:column;align-items:center;gap:${isMobile ? '8px' : '12px'};padding:2px 0;">
                     ${avatarHTML}
-                    <h2 style="margin:0;color:#2c1b4e;font-size:${isMobile ? '1.1rem' : '1.4rem'};font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;">
+                    <h2 id="perfil-nombre-usuario" style="
+                        margin:0;
+                        color:${nombreColor};
+                        text-shadow: ${nombreTextShadow};
+                        font-size:${isMobile ? '1.1rem' : '1.4rem'};
+                        font-weight:700;
+                        display:flex;
+                        align-items:center;
+                        gap:6px;
+                        flex-wrap:wrap;
+                        justify-content:center;
+                    ">
                         ${usuario.nombre}
                         ${esMedicurativo ? `
                             <span style="
@@ -680,22 +708,22 @@ async function verPerfilUsuario(userId) {
                     ` : ''}
                     
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:${isMobile ? '8px' : '12px'};width:100%;max-width:${isMobile ? '300px' : '400px'};margin-top:2px;">
-                        <div style="background:linear-gradient(145deg,#f8f0ff,#f0e6ff);padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;">
-                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#7f5f9b;text-transform:uppercase;letter-spacing:0.3px;">Public.</div>
-                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:#9b59b6;">${totalPublicaciones}</div>
+                        <div style="background:${bgCardColor};padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;">
+                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:${textoColor};text-transform:uppercase;letter-spacing:0.3px;">Public.</div>
+                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:${isDarkMode ? '#c8a0e0' : '#9b59b6'};">${totalPublicaciones}</div>
                         </div>
-                        <div style="background:linear-gradient(145deg,#fff5f5,#ffe8e8);padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;">
-                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#c0392b;text-transform:uppercase;letter-spacing:0.3px;">Likes</div>
+                        <div style="background:${isDarkMode ? 'rgba(255,255,255,0.08)' : '#fff5f5'};padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;">
+                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:${textoColor};text-transform:uppercase;letter-spacing:0.3px;">Likes</div>
                             <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:#e74c3c;">${totalLikes}</div>
                         </div>
-                        <div style="background:linear-gradient(145deg,#fef9e7,#fdebd0);padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;border:${isMobile ? '2px' : '3px'} solid ${borderColor};">
-                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:#7f5f9b;text-transform:uppercase;letter-spacing:0.3px;">✨ ${esMedicurativo ? 'Oficial' : 'Carisma'}</div>
-                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:${borderColor};">${carisma}</div>
+                        <div style="background:${isDarkMode ? 'rgba(255,255,255,0.08)' : '#fef9e7'};padding:${isMobile ? '8px' : '12px'};border-radius:${isMobile ? '8px' : '12px'};text-align:center;border:${isMobile ? '2px' : '3px'} solid ${borderColor};">
+                            <div style="font-size:${isMobile ? '0.55rem' : '0.65rem'};color:${textoColor};text-transform:uppercase;letter-spacing:0.3px;">✨ ${esMedicurativo ? 'Oficial' : 'Carisma'}</div>
+                            <div style="font-size:${isMobile ? '1.2rem' : '1.6rem'};font-weight:800;color:${carismaColor};">${carisma}</div>
                         </div>
                     </div>
 
                     <div style="
-                        background:linear-gradient(145deg, #f0f0ff, #e8e8ff);
+                        background:${isDarkMode ? 'rgba(255,255,255,0.06)' : '#f0f0ff'};
                         padding:${isMobile ? '8px' : '12px'};
                         border-radius:${isMobile ? '8px' : '12px'};
                         text-align:center;
@@ -714,7 +742,7 @@ async function verPerfilUsuario(userId) {
                             <div>
                                 <div style="
                                     font-size:${isMobile ? '0.45rem' : '0.55rem'};
-                                    color:#7f5f9b;
+                                    color:${textoColor};
                                     text-transform:uppercase;
                                     letter-spacing:0.3px;
                                 ">
@@ -724,7 +752,7 @@ async function verPerfilUsuario(userId) {
                                 <div style="
                                     font-size:${isMobile ? '1.3rem' : '1.7rem'};
                                     font-weight:800;
-                                    color:#2c1b4e;
+                                    color:${carismaColor};
                                 ">
                                     ❤️ ${promedioLikes}
                                 </div>
@@ -749,7 +777,7 @@ async function verPerfilUsuario(userId) {
                         </div>
                     </div>
 
-                    <p style="color:#b0a4c4;font-size:${isMobile ? '0.55rem' : '0.65rem'};margin-top:4px;text-align:center;border-top:1px solid #f0edf5;padding-top:8px;width:100%;">
+                    <p style="color:${textoColor};font-size:${isMobile ? '0.55rem' : '0.65rem'};margin-top:4px;text-align:center;border-top:1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0edf5'};padding-top:8px;width:100%;">
                         <i class="fas fa-sync" style="color:#9b59b6;"></i> 
                         El carisma se actualiza automáticamente
                         ${esMedicurativo ? '<br><i class="fas fa-crown" style="color:#f1c40f;"></i> Usuario Oficial verificado por Medicurativo' : ''}
@@ -760,9 +788,13 @@ async function verPerfilUsuario(userId) {
             confirmButtonText: 'Cerrar',
             confirmButtonColor: '#9b59b6',
             showCloseButton: true,
-            customClass: { popup: 'swal-popup-redondo' },
+            customClass: { 
+                popup: 'swal-popup-redondo'
+            },
             width: isMobile ? 'auto' : '450px',
             maxWidth: isMobile ? 'auto' : '90vw',
+            // Esto permite que el perfil se abra encima del ranking
+            target: document.body,
             didOpen: () => {
                 const popup = document.querySelector('.swal2-popup');
                 if (popup) {
@@ -773,9 +805,43 @@ async function verPerfilUsuario(userId) {
                     if (!isMobile) {
                         popup.style.width = '450px';
                     }
+                    if (isDarkMode) {
+                        popup.style.background = '#1a1a2e';
+                    } else {
+                        popup.style.background = '#ffffff';
+                    }
                 }
+
+                // Forzar el nombre a ROSADO
+                setTimeout(() => {
+                    const nombreElement = document.getElementById('perfil-nombre-usuario');
+                    if (nombreElement) {
+                        nombreElement.style.color = '#ff6b9d';
+                        nombreElement.style.setProperty('color', '#ff6b9d', 'important');
+                        nombreElement.style.textShadow = '0 2px 8px rgba(0,0,0,0.3)';
+                    }
+                    
+                    const htmlContainer = document.querySelector('.swal2-html-container');
+                    if (htmlContainer) {
+                        const h2Elements = htmlContainer.querySelectorAll('h2');
+                        h2Elements.forEach(el => {
+                            el.style.color = '#ff6b9d';
+                            el.style.setProperty('color', '#ff6b9d', 'important');
+                            el.style.textShadow = '0 2px 8px rgba(0,0,0,0.3)';
+                        });
+                    }
+                }, 50);
             },
-            willClose: () => { perfilAbierto = false; }
+            // ===== MODIFICACIÓN PRINCIPAL: Al cerrar el perfil, reabrir el ranking =====
+            willClose: () => { 
+                perfilAbierto = false;
+                // Reabrir el ranking automáticamente después de cerrar el perfil
+                setTimeout(() => {
+                    if (!perfilAbierto) {
+                        abrirRanking();
+                    }
+                }, 100);
+            }
         });
 
         perfilAbierto = false;

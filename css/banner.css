@@ -146,3 +146,15 @@ body.dark-mode .loader-bar-container {
         width: 140px !important;
     }
 }
+
+
+/* Ocultar botón Play en móviles */
+.hide-mobile-play {
+    display: flex !important;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile-play {
+        display: none !important;
+    }
+}

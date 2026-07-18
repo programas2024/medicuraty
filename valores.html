@@ -1,0 +1,1020 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer-policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+    <title>Sopa de Valores · Medicurativo</title>
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body.dark-mode .sopa-container { background: #1a1a2e; border-color: #3d2a5c; }
+        body.dark-mode .sopa-titulo { color: #e0d0f0; }
+        body.dark-mode .sopa-subtitulo { color: #b0a0c8; }
+        body.dark-mode .sopa-stats { background: #151525; border-color: #3d2a5c; }
+        body.dark-mode .sopa-stats .stat-item { color: #b0a0c8; }
+        body.dark-mode .sopa-stats .stat-item span { color: #e0d0f0; }
+        body.dark-mode .palabras-container { background: #151525; border-color: #3d2a5c; }
+        body.dark-mode .palabras-container h3 { color: #e0d0f0; }
+        body.dark-mode .palabra-item { background: #1e1e2f; color: #b0a0c8; border-color: #3d2a5c; }
+        body.dark-mode .palabra-item.encontrada { background: #2d4a3a; color: #4caf50; border-color: #4caf50; }
+        body.dark-mode .btn-copa-header { background: rgba(155, 89, 182, 0.15); color: #c084d8; }
+        body.dark-mode .btn-copa-header:hover { background: rgba(155, 89, 182, 0.3); }
+        body.dark-mode .btn-pista { background: rgba(155, 89, 182, 0.15); color: #c084d8; border-color: #7c3a9e; }
+        body.dark-mode .btn-pista:hover { background: rgba(155, 89, 182, 0.3); }
+
+        .header-utils .btn-copa-header {
+            background: rgba(155, 89, 182, 0.08);
+            border: none;
+            color: #9b59b6;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .header-utils .btn-copa-header:hover { background: rgba(155, 89, 182, 0.2); transform: scale(1.1); }
+
+        .sopa-wrapper { max-width: 1200px; margin: 0 auto; padding: 20px 30px 50px; }
+
+        .sopa-titulo { text-align: center; font-size: 2.2rem; font-weight: 800; color: #2c1b4e; margin-bottom: 5px; }
+        .sopa-subtitulo { text-align: center; font-size: 1rem; color: #7f8c8d; margin-bottom: 25px; font-weight: 400; }
+
+        .sopa-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 15px 30px;
+            background: #f8f4ff;
+            border-radius: 20px;
+            border: 2px solid #f3e9ff;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .sopa-stats .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #6a5a8a;
+        }
+        .sopa-stats .stat-item i { font-size: 1.3rem; color: #9b59b6; }
+        .sopa-stats .stat-item .tiempo { color: #2c1b4e; font-weight: 800; font-size: 1.3rem; min-width: 60px; }
+        .sopa-stats .stat-item .vidas { color: #e74c3c; font-weight: 800; font-size: 1.3rem; min-width: 40px; }
+        .stat-item .fa-heart { color: #e74c3c; }
+
+        .btn-pista {
+            background: rgba(155, 89, 182, 0.08);
+            border: 2px solid #9b59b6;
+            color: #9b59b6;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-pista:hover { background: #9b59b6; color: white; transform: scale(1.05); }
+        .btn-pista:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .sopa-grid { display: grid; grid-template-columns: 1fr 250px; gap: 30px; align-items: start; }
+        .sopa-container {
+            background: #f8f4ff;
+            border-radius: 30px;
+            padding: 25px;
+            border: 2px solid #f3e9ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            position: relative;
+        }
+
+        #sopaTablero {
+            display: grid;
+            gap: 3px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .celda {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c1b4e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #e8d9f5;
+            user-select: none;
+            text-transform: uppercase;
+            min-width: 30px;
+            min-height: 30px;
+        }
+        .celda:hover { background: #f0e8ff; transform: scale(1.05); z-index: 2; }
+        .celda.seleccionada { background: #9b59b6; color: white; border-color: #8e44ad; transform: scale(1.05); z-index: 2; }
+        .celda.encontrada { background: #4CAF50; color: white; border-color: #388E3C; cursor: default; transform: none; }
+        .celda.encontrada:hover { transform: none; background: #4CAF50; }
+        .celda.error { background: #e74c3c; color: white; border-color: #c0392b; animation: shake 0.4s ease; }
+        .celda.pista { background: #FFD700; border-color: #F4A460; animation: pulse 1s ease; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); background: #FFA500; }
+            100% { transform: scale(1); }
+        }
+
+        .palabras-container {
+            background: #f8f4ff;
+            border-radius: 30px;
+            padding: 20px 22px;
+            border: 2px solid #f3e9ff;
+            min-height: 400px;
+        }
+        .palabras-container h3 {
+            color: #2c1b4e;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3e9ff;
+        }
+        .palabras-container h3 i { color: #9b59b6; margin-right: 8px; }
+
+        .palabra-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #e8d9f5;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c1b4e;
+            transition: all 0.3s ease;
+            text-transform: capitalize;
+            font-size: 0.95rem;
+        }
+        .palabra-item .check-icon { color: #9b59b6; font-size: 1rem; opacity: 0; transition: all 0.3s ease; }
+        .palabra-item.encontrada { background: #e8f5e9; border-color: #4CAF50; color: #2e7d32; }
+        .palabra-item.encontrada .check-icon { opacity: 1; color: #4CAF50; }
+        .palabra-item .palabra-texto { flex: 1; }
+
+        @media (max-width: 1024px) { .sopa-grid { grid-template-columns: 1fr 220px; gap: 20px; } }
+        @media (max-width: 768px) {
+            .sopa-wrapper { padding: 15px 16px 30px; }
+            .sopa-titulo { font-size: 1.6rem; }
+            .sopa-grid { grid-template-columns: 1fr; gap: 20px; }
+            .sopa-container { padding: 15px; min-height: 300px; }
+            .palabras-container { min-height: auto; padding: 16px 18px; }
+            .celda { font-size: 0.9rem; min-width: 25px; min-height: 25px; border-width: 1.5px; }
+            .sopa-stats { gap: 15px; padding: 12px 20px; }
+            .sopa-stats .stat-item { font-size: 0.9rem; }
+            .btn-pista { padding: 6px 14px; font-size: 0.8rem; }
+        }
+        @media (max-width: 480px) {
+            .sopa-titulo { font-size: 1.2rem; }
+            .sopa-container { padding: 8px; min-height: 220px; border-radius: 16px; }
+            .celda { font-size: 0.7rem; border-radius: 3px; border-width: 1px; min-width: 18px; min-height: 18px; }
+            .sopa-stats { gap: 8px; padding: 8px 10px; border-radius: 12px; flex-wrap: wrap; }
+            .sopa-stats .stat-item { font-size: 0.7rem; gap: 3px; }
+            .sopa-stats .stat-item i { font-size: 0.8rem; }
+            .sopa-stats .stat-item .tiempo { font-size: 0.8rem; min-width: 30px; }
+            .sopa-stats .stat-item .vidas { font-size: 0.8rem; min-width: 18px; }
+            .btn-pista { padding: 4px 8px; font-size: 0.65rem; }
+            .btn-pista i { font-size: 0.65rem; }
+            .palabra-item { padding: 6px 10px; font-size: 0.75rem; border-radius: 8px; }
+        }
+
+        .swal-info-popup {
+            border-radius: 50px !important;
+            padding: 25px 30px !important;
+            max-width: 460px !important;
+            width: 95% !important;
+            border: 3px solid #9b59b6 !important;
+            box-shadow: 0 20px 50px rgba(155, 89, 182, 0.25) !important;
+        }
+        .swal-info-popup .swal2-close {
+            border-radius: 50% !important;
+            background: rgba(155, 89, 182, 0.1) !important;
+            color: #9b59b6 !important;
+            width: 38px !important;
+            height: 38px !important;
+            font-size: 1.5rem !important;
+            transition: 0.3s !important;
+        }
+        .swal-info-popup .swal2-close:hover { background: rgba(155, 89, 182, 0.2) !important; transform: scale(1.1) !important; }
+        .swal-info-popup .swal2-title { display: none !important; }
+        body.dark-mode .swal-info-popup { background: #1a1a2e !important; border-color: #7c3a9e !important; }
+
+        .swal-logo-mini {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #9b59b6;
+            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.15);
+            margin-bottom: 8px;
+        }
+        @media (max-width: 480px) {
+            .swal-info-popup { border-radius: 35px !important; padding: 18px 16px !important; max-width: 92% !important; }
+            .swal-logo-mini { width: 55px; height: 55px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="header">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                </a>
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+            <div class="header-utils" id="headerUtilsGaleria">
+                <div class="btn-con-tooltip" id="wrapperInicio">
+                    <a href="principal.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Inicio</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="tooltip">Modo Oscuro</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-copa-header" onclick="mostrarCopa()">
+                        <i class="fas fa-trophy"></i>
+                    </button>
+                    <span class="tooltip">Trofeo</span>
+                </div>
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnAyudas" style="color: #2c1b4e;">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sopa-wrapper">
+            <h1 class="sopa-titulo">🌱 Los valores · el éxito de ti mismo</h1>
+            <p class="sopa-subtitulo"><i class="fas fa-heart" style="color: #e74c3c;"></i> Encuentra todas las palabras de valores <i class="fas fa-heart" style="color: #e74c3c;"></i></p>
+
+            <div class="sopa-stats">
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Tiempo:</span>
+                    <span class="tiempo" id="timerDisplay">2:00</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Vidas:</span>
+                    <span class="vidas" id="vidasDisplay">❤️❤️❤️</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                    <span>Encontradas:</span>
+                    <span class="tiempo" id="encontradasDisplay" style="color: #4CAF50; min-width: 30px;">0/7</span>
+                </div>
+                <button class="btn-pista" id="btnPista" onclick="darPista()">
+                    <i class="fas fa-lightbulb"></i> Pista
+                </button>
+            </div>
+
+            <div class="sopa-grid">
+                <div class="sopa-container">
+                    <div id="sopaTablero"></div>
+                </div>
+                <div class="palabras-container">
+                    <h3><i class="fas fa-list"></i> Tus palabras</h3>
+                    <div id="listaPalabras"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · medicina que cultiva <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social"><i class="fab fa-facebook"></i><span class="tooltip">Facebook</span></div>
+                <div class="red-social"><i class="fab fa-tiktok"></i><span class="tooltip">TikTok</span></div>
+                <div class="red-social"><i class="fab fa-youtube"></i><span class="tooltip">YouTube</span></div>
+                <div class="red-social"><i class="fab fa-whatsapp"></i><span class="tooltip">WhatsApp</span></div>
+                <div class="red-social"><i class="fab fa-instagram"></i><span class="tooltip">Instagram</span></div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2026 · sembrando bienestar <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================================
+        // MODO OSCURO
+        // ============================================================
+        (function cargarTema() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('#darkModeToggle i');
+                if (icon) icon.className = 'fas fa-sun';
+            }
+        })();
+
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            const icon = this.querySelector('i');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        });
+
+        // ============================================================
+        // AYUDA
+        // ============================================================
+        document.getElementById('btnAyudas').addEventListener('click', function() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
+                        <h2 style="color: #9b59b6; font-weight: 800; margin: 8px 0 4px 0; font-size: 1.3rem;">🌱 Sopa de Valores</h2>
+                        <p style="color: ${textColor}; font-size: 0.95rem; line-height: 1.7; max-width: 380px; margin: 0 auto;">
+                            Encuentra las 7 palabras de valores ocultas en la sopa de letras.
+                            <br><br>
+                            <i class="fas fa-clock" style="color: #9b59b6;"></i> Tienes <strong>2 minutos</strong>
+                            <br>
+                            <i class="fas fa-heart" style="color: #e74c3c;"></i> Tienes <strong>3 vidas</strong> · cada error resta una
+                            <br><br>
+                            <i class="fas fa-lightbulb" style="color: #FFD700;"></i> La pista muestra la <strong>primera letra</strong> de una palabra
+                        </p>
+                        <div style="margin-top: 12px; background: rgba(155,89,182,0.06); border-radius: 12px; padding: 10px;">
+                            <p style="color: #7f8c8d; font-size: 0.8rem; margin: 0;">
+                                <i class="fas fa-mouse-pointer" style="color: #9b59b6;"></i>
+                                Haz clic en la primera letra y arrastra hasta la última
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: '¡Entendido! 💜',
+                confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                customClass: {
+                    popup: 'swal-info-popup',
+                    confirmButton: 'swal2-confirm-custom'
+                },
+                buttonsStyling: false
+            });
+        });
+
+        // ============================================================
+        // COPA
+        // ============================================================
+        function mostrarCopa() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 10px 0;">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
+                        <div style="font-size: 4rem; margin: 5px 0;">🏆</div>
+                        <h2 style="color: #f1c40f; font-weight: 800; margin: 0 0 6px 0; font-size: 1.4rem;">Trofeo</h2>
+                        <p style="color: ${textColor}; font-size: 1rem; line-height: 1.7; max-width: 360px; margin: 0 auto;">
+                            ¡Aquí se mostrarán tus logros!
+                        </p>
+                        <div style="margin-top: 15px; background: rgba(241,196,15,0.08); border-radius: 16px; padding: 12px; border: 1px solid rgba(241,196,15,0.15);">
+                            <p style="color: #7f8c8d; font-size: 0.85rem; margin: 0;">
+                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                                <br>Completa niveles para ganar estrellas
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido 💜',
+                confirmButtonColor: '#f1c40f',
+                showCloseButton: true,
+                customClass: {
+                    popup: 'swal-info-popup',
+                    confirmButton: 'swal2-confirm-custom'
+                },
+                buttonsStyling: false
+            });
+        }
+
+        // ============================================================
+        // LÓGICA DE LA SOPA - VERSIÓN DEFINITIVA CON ESPACIOS VACÍOS
+        // ============================================================
+        const palabrasList = ['RESPETO', 'EMPATIA', 'HONESTIDAD', 'LEALTAD', 'RESPONSABILIDAD', 'PERSEVERANCIA', 'SOLIDARIDAD'];
+        const palabrasDisplay = ['respeto', 'empatia', 'honestidad', 'lealtad', 'responsabilidad', 'perseverancia', 'solidaridad'];
+        const tamaño = 18; // Aumentado a 18x18
+        let sopa = [];
+        let posicionesPalabras = {};
+        let palabrasEncontradas = new Set();
+        let vidas = 3;
+        let tiempoRestante = 120;
+        let timerInterval = null;
+        let juegoTerminado = false;
+
+        let seleccionando = false;
+        let seleccionInicio = null;
+        let celdasSeleccionadas = new Set();
+
+        // ============================================================
+        // GENERAR SOPA - CON ESPACIOS VACÍOS PRIMERO
+        // ============================================================
+        function generarSopa() {
+            // 1. Crear tablero vacío (con espacios)
+            sopa = Array.from({ length: tamaño }, () =>
+                Array.from({ length: tamaño }, () => ' ')
+            );
+
+            posicionesPalabras = {};
+
+            const direcciones = [
+                [0, 1], [1, 0], [1, 1], [1, -1]
+            ];
+
+            // Ordenar por longitud (más largas primero)
+            const palabrasOrdenadas = [...palabrasList].sort((a, b) => b.length - a.length);
+
+            let palabrasColocadas = 0;
+
+            for (const palabra of palabrasOrdenadas) {
+                let colocada = false;
+                let intentos = 0;
+
+                // Intentar colocar en posiciones aleatorias
+                while (!colocada && intentos < 3000) {
+                    intentos++;
+                    const fila = Math.floor(Math.random() * (tamaño - 1));
+                    const col = Math.floor(Math.random() * (tamaño - 1));
+                    const dir = direcciones[Math.floor(Math.random() * direcciones.length)];
+
+                    if (puedeColocar(palabra, fila, col, dir)) {
+                        colocarPalabra(palabra, fila, col, dir);
+                        colocada = true;
+                        posicionesPalabras[palabra] = [];
+                        for (let i = 0; i < palabra.length; i++) {
+                            posicionesPalabras[palabra].push([fila + i * dir[0], col + i * dir[1]]);
+                        }
+                        palabrasColocadas++;
+                        console.log(`✅ Colocada: ${palabra} (${palabra.length} letras) en intento ${intentos}`);
+                        break;
+                    }
+                }
+
+                // Si falla, intentar en horizontal forzado
+                if (!colocada) {
+                    for (let intento = 0; intento < 300 && !colocada; intento++) {
+                        const fila = Math.floor(Math.random() * tamaño);
+                        const col = Math.floor(Math.random() * (tamaño - palabra.length + 1));
+                        let ok = true;
+                        for (let i = 0; i < palabra.length; i++) {
+                            if (sopa[fila][col + i] !== ' ' && sopa[fila][col + i] !== palabra[i]) {
+                                ok = false;
+                                break;
+                            }
+                        }
+                        if (ok) {
+                            for (let i = 0; i < palabra.length; i++) {
+                                sopa[fila][col + i] = palabra[i];
+                            }
+                            colocada = true;
+                            posicionesPalabras[palabra] = [];
+                            for (let i = 0; i < palabra.length; i++) {
+                                posicionesPalabras[palabra].push([fila, col + i]);
+                            }
+                            palabrasColocadas++;
+                            console.log(`✅ Colocada (horizontal forzada): ${palabra}`);
+                            break;
+                        }
+                    }
+                }
+
+                // Último recurso: colocar en vertical
+                if (!colocada) {
+                    for (let intento = 0; intento < 300 && !colocada; intento++) {
+                        const fila = Math.floor(Math.random() * (tamaño - palabra.length + 1));
+                        const col = Math.floor(Math.random() * tamaño);
+                        let ok = true;
+                        for (let i = 0; i < palabra.length; i++) {
+                            if (sopa[fila + i][col] !== ' ' && sopa[fila + i][col] !== palabra[i]) {
+                                ok = false;
+                                break;
+                            }
+                        }
+                        if (ok) {
+                            for (let i = 0; i < palabra.length; i++) {
+                                sopa[fila + i][col] = palabra[i];
+                            }
+                            colocada = true;
+                            posicionesPalabras[palabra] = [];
+                            for (let i = 0; i < palabra.length; i++) {
+                                posicionesPalabras[palabra].push([fila + i, col]);
+                            }
+                            palabrasColocadas++;
+                            console.log(`✅ Colocada (vertical forzada): ${palabra}`);
+                            break;
+                        }
+                    }
+                }
+
+                if (!colocada) {
+                    console.error(`❌ NO se pudo colocar: ${palabra}`);
+                }
+            }
+
+            // 2. Rellenar espacios vacíos con letras aleatorias
+            const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let i = 0; i < tamaño; i++) {
+                for (let j = 0; j < tamaño; j++) {
+                    if (sopa[i][j] === ' ') {
+                        sopa[i][j] = letras[Math.floor(Math.random() * letras.length)];
+                    }
+                }
+            }
+
+            console.log(`✅ Total palabras colocadas: ${palabrasColocadas}/${palabrasList.length}`);
+        }
+
+        function puedeColocar(palabra, fila, col, dir) {
+            for (let i = 0; i < palabra.length; i++) {
+                const nf = fila + i * dir[0];
+                const nc = col + i * dir[1];
+                if (nf < 0 || nf >= tamaño || nc < 0 || nc >= tamaño) return false;
+                const letraActual = sopa[nf][nc];
+                if (letraActual !== ' ' && letraActual !== palabra[i]) return false;
+            }
+            return true;
+        }
+
+        function colocarPalabra(palabra, fila, col, dir) {
+            for (let i = 0; i < palabra.length; i++) {
+                const nf = fila + i * dir[0];
+                const nc = col + i * dir[1];
+                sopa[nf][nc] = palabra[i];
+            }
+        }
+
+        // ============================================================
+        // RENDERIZAR SOPA
+        // ============================================================
+        function renderizarSopa() {
+            const tablero = document.getElementById('sopaTablero');
+            const cellSize = Math.min(600 / tamaño, 38);
+            tablero.style.gridTemplateColumns = `repeat(${tamaño}, 1fr)`;
+            tablero.style.maxWidth = `${Math.min(tamaño * (cellSize + 6) + 6, 600)}px`;
+            tablero.innerHTML = '';
+
+            for (let i = 0; i < tamaño; i++) {
+                for (let j = 0; j < tamaño; j++) {
+                    const celda = document.createElement('div');
+                    celda.className = 'celda';
+                    celda.dataset.fila = i;
+                    celda.dataset.col = j;
+                    celda.textContent = sopa[i][j];
+
+                    let esEncontrada = false;
+                    for (const [palabra, posiciones] of Object.entries(posicionesPalabras)) {
+                        if (palabrasEncontradas.has(palabra)) {
+                            if (posiciones.some(([f, c]) => f === i && c === j)) {
+                                esEncontrada = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (esEncontrada) {
+                        celda.classList.add('encontrada');
+                    }
+
+                    celda.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        if (juegoTerminado) return;
+                        iniciarSeleccion(i, j);
+                    });
+
+                    celda.addEventListener('mouseenter', () => {
+                        if (seleccionando && !juegoTerminado) {
+                            agregarSeleccion(i, j);
+                        }
+                    });
+
+                    celda.addEventListener('mouseup', () => {
+                        if (seleccionando && !juegoTerminado) {
+                            finalizarSeleccion();
+                        }
+                    });
+
+                    celda.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        if (juegoTerminado) return;
+                        iniciarSeleccion(i, j);
+                    });
+
+                    celda.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        if (!seleccionando || juegoTerminado) return;
+                        const touch = e.touches[0];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (element && element.classList.contains('celda')) {
+                            const fila = parseInt(element.dataset.fila);
+                            const col = parseInt(element.dataset.col);
+                            agregarSeleccion(fila, col);
+                        }
+                    });
+
+                    celda.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        if (seleccionando && !juegoTerminado) {
+                            finalizarSeleccion();
+                        }
+                    });
+
+                    tablero.appendChild(celda);
+                }
+            }
+        }
+
+        // ============================================================
+        // SELECCIÓN
+        // ============================================================
+        function iniciarSeleccion(fila, col) {
+            const celda = document.querySelector(`.celda[data-fila="${fila}"][data-col="${col}"]`);
+            if (celda.classList.contains('encontrada')) return;
+
+            seleccionando = true;
+            seleccionInicio = [fila, col];
+            celdasSeleccionadas = new Set();
+            celdasSeleccionadas.add(`${fila},${col}`);
+            celda.classList.add('seleccionada');
+        }
+
+        function agregarSeleccion(fila, col) {
+            const celda = document.querySelector(`.celda[data-fila="${fila}"][data-col="${col}"]`);
+            if (celda.classList.contains('encontrada')) return;
+
+            const key = `${fila},${col}`;
+            if (celdasSeleccionadas.has(key)) return;
+
+            const [f0, c0] = seleccionInicio;
+
+            if (celdasSeleccionadas.size > 0) {
+                const dfPrimera = fila - f0;
+                const dcPrimera = col - c0;
+
+                if (dfPrimera !== 0 && dcPrimera !== 0 && Math.abs(dfPrimera) !== Math.abs(dcPrimera)) {
+                    return;
+                }
+
+                const direccion = obtenerDireccion(seleccionInicio, [fila, col]);
+                if (!direccion) return;
+
+                const [f1, c1] = seleccionInicio;
+                const paso = direccion;
+                let fActual = f1 + paso[0];
+                let cActual = c1 + paso[1];
+                let ok = true;
+                while (fActual !== fila || cActual !== col) {
+                    if (!celdasSeleccionadas.has(`${fActual},${cActual}`)) {
+                        ok = false;
+                        break;
+                    }
+                    fActual += paso[0];
+                    cActual += paso[1];
+                }
+                if (!ok) return;
+            }
+
+            celdasSeleccionadas.add(key);
+            celda.classList.add('seleccionada');
+        }
+
+        function obtenerDireccion(inicio, fin) {
+            const [f0, c0] = inicio;
+            const [f1, c1] = fin;
+            const df = f1 - f0;
+            const dc = c1 - c0;
+
+            if (df === 0 && dc === 0) return null;
+
+            const len = Math.max(Math.abs(df), Math.abs(dc));
+            return [df / len, dc / len];
+        }
+
+        function finalizarSeleccion() {
+            if (!seleccionando) return;
+            seleccionando = false;
+
+            const posiciones = Array.from(celdasSeleccionadas).map(p => {
+                const [f, c] = p.split(',').map(Number);
+                return [f, c];
+            });
+
+            posiciones.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+            let palabraFormada = '';
+            for (const [f, c] of posiciones) {
+                palabraFormada += sopa[f][c];
+            }
+
+            let palabraEncontrada = null;
+            for (const palabra of palabrasList) {
+                if (palabrasEncontradas.has(palabra)) continue;
+                if (palabraFormada === palabra || palabraFormada === palabra.split('').reverse().join('')) {
+                    palabraEncontrada = palabra;
+                    break;
+                }
+            }
+
+            document.querySelectorAll('.celda.seleccionada').forEach(el => {
+                el.classList.remove('seleccionada');
+            });
+
+            if (palabraEncontrada) {
+                palabrasEncontradas.add(palabraEncontrada);
+                const index = palabrasList.indexOf(palabraEncontrada);
+                actualizarPalabraEncontrada(palabrasDisplay[index]);
+                actualizarContador();
+
+                if (posicionesPalabras[palabraEncontrada]) {
+                    for (const [f, c] of posicionesPalabras[palabraEncontrada]) {
+                        const celda = document.querySelector(`.celda[data-fila="${f}"][data-col="${c}"]`);
+                        if (celda) {
+                            celda.classList.add('encontrada');
+                            celda.classList.remove('seleccionada');
+                        }
+                    }
+                }
+
+                if (palabrasEncontradas.size === palabrasList.length) {
+                    juegoTerminado = true;
+                    clearInterval(timerInterval);
+                    Swal.fire({
+                        icon: 'success',
+                        title: '🎉 ¡Ganaste!',
+                        text: '¡Encontraste todas las palabras de valores!',
+                        confirmButtonColor: '#9b59b6',
+                        confirmButtonText: '¡Excelente! 💜'
+                    });
+                }
+            } else if (posiciones.length > 1) {
+                vidas--;
+                actualizarVidas();
+
+                for (const [f, c] of posiciones) {
+                    const celda = document.querySelector(`.celda[data-fila="${f}"][data-col="${c}"]`);
+                    if (celda) {
+                        celda.classList.add('error');
+                        setTimeout(() => {
+                            celda.classList.remove('error');
+                        }, 400);
+                    }
+                }
+
+                if (vidas === 0) {
+                    juegoTerminado = true;
+                    clearInterval(timerInterval);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '💔 Sin vidas',
+                        text: 'Se te acabaron las vidas. ¡Inténtalo de nuevo!',
+                        confirmButtonColor: '#e74c3c',
+                        confirmButtonText: 'Reintentar'
+                    }).then(() => {
+                        reiniciarJuego();
+                    });
+                }
+            }
+
+            celdasSeleccionadas = new Set();
+            seleccionInicio = null;
+        }
+
+        // ============================================================
+        // PISTA
+        // ============================================================
+        function darPista() {
+            if (juegoTerminado) return;
+
+            const btnPista = document.getElementById('btnPista');
+            if (btnPista.disabled) return;
+
+            let palabraNoEncontrada = null;
+            for (const palabra of palabrasList) {
+                if (!palabrasEncontradas.has(palabra)) {
+                    palabraNoEncontrada = palabra;
+                    break;
+                }
+            }
+
+            if (!palabraNoEncontrada) return;
+
+            const posiciones = posicionesPalabras[palabraNoEncontrada];
+            if (!posiciones) return;
+
+            // Mostrar la primera letra
+            const primeraPos = posiciones[0];
+            const celda = document.querySelector(`.celda[data-fila="${primeraPos[0]}"][data-col="${primeraPos[1]}"]`);
+            if (celda && !celda.classList.contains('encontrada')) {
+                celda.classList.add('pista');
+                setTimeout(() => {
+                    celda.classList.remove('pista');
+                }, 2500);
+            }
+
+            const palabraDisplay = palabrasDisplay[palabrasList.indexOf(palabraNoEncontrada)];
+            Swal.fire({
+                icon: 'info',
+                title: '💡 Pista',
+                text: `Busca la palabra: "${palabraDisplay}"`,
+                timer: 2000,
+                showConfirmButton: false,
+                background: document.body.classList.contains('dark-mode') ? '#1a1a2e' : '#fdfaff',
+                customClass: {
+                    popup: 'swal-info-popup'
+                }
+            });
+
+            btnPista.disabled = true;
+            setTimeout(() => {
+                btnPista.disabled = false;
+            }, 3000);
+        }
+
+        // ============================================================
+        // ACTUALIZAR UI
+        // ============================================================
+        function actualizarPalabraEncontrada(palabra) {
+            const items = document.querySelectorAll('.palabra-item');
+            for (const item of items) {
+                if (item.dataset.palabra === palabra) {
+                    item.classList.add('encontrada');
+                    const icon = item.querySelector('.check-icon');
+                    if (icon) icon.style.opacity = '1';
+                    break;
+                }
+            }
+        }
+
+        function actualizarContador() {
+            document.getElementById('encontradasDisplay').textContent = `${palabrasEncontradas.size}/${palabrasList.length}`;
+        }
+
+        function actualizarVidas() {
+            const vidasDisplay = document.getElementById('vidasDisplay');
+            vidasDisplay.textContent = '❤️'.repeat(vidas) + '🖤'.repeat(3 - vidas);
+        }
+
+        function actualizarTiempo() {
+            const minutos = Math.floor(tiempoRestante / 60);
+            const segundos = tiempoRestante % 60;
+            document.getElementById('timerDisplay').textContent =
+                `${minutos}:${segundos.toString().padStart(2, '0')}`;
+        }
+
+        function renderizarPalabras() {
+            const container = document.getElementById('listaPalabras');
+            container.innerHTML = '';
+            palabrasDisplay.forEach(palabra => {
+                const item = document.createElement('div');
+                item.className = 'palabra-item';
+                item.dataset.palabra = palabra;
+                item.innerHTML = `
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span class="palabra-texto">${palabra}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // ============================================================
+        // TIMER
+        // ============================================================
+        function iniciarTimer() {
+            timerInterval = setInterval(() => {
+                tiempoRestante--;
+                actualizarTiempo();
+
+                if (tiempoRestante <= 0) {
+                    clearInterval(timerInterval);
+                    juegoTerminado = true;
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '⏰ Tiempo agotado',
+                        text: 'Se acabó el tiempo. ¡Inténtalo de nuevo!',
+                        confirmButtonColor: '#f39c12',
+                        confirmButtonText: 'Reintentar'
+                    }).then(() => {
+                        reiniciarJuego();
+                    });
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        // REINICIAR
+        // ============================================================
+        function reiniciarJuego() {
+            clearInterval(timerInterval);
+            juegoTerminado = false;
+            palabrasEncontradas = new Set();
+            vidas = 3;
+            tiempoRestante = 120;
+            seleccionando = false;
+            seleccionInicio = null;
+            celdasSeleccionadas = new Set();
+
+            actualizarVidas();
+            actualizarTiempo();
+            actualizarContador();
+
+            generarSopa();
+            renderizarSopa();
+            renderizarPalabras();
+
+            document.getElementById('btnPista').disabled = false;
+            iniciarTimer();
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        function init() {
+            generarSopa();
+            renderizarSopa();
+            renderizarPalabras();
+            actualizarVidas();
+            actualizarTiempo();
+            actualizarContador();
+            iniciarTimer();
+
+            document.addEventListener('selectstart', (e) => e.preventDefault());
+        }
+
+        document.addEventListener('mouseup', () => {
+            if (seleccionando) {
+                finalizarSeleccion();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

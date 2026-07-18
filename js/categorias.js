@@ -113,6 +113,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fas fa-users" style="color: #9b59b6;"></i>
                     <span>Quiénes Somos</span>
                 </button>
+                
+                <!-- Botón Play (NUEVO) -->
+                <button class="categoria-movil-btn no-cerrar-menu" onclick="window.location.href='play.html'" 
+                        style="border-left-color: #9b59b6;">
+                    <i class="fas fa-play" style="color: #9b59b6;"></i>
+                    <span>Play</span>
+                </button>
             </div>
         `;
 

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer-policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+    <title>Play · Medicurativo</title>
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/folter.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ===== ESTILOS MODO OSCURO PARA TARJETAS ===== */
+        body.dark-mode .game-card {
+            background: #1e1e2f;
+            border-color: #3d2a5c;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .game-card:hover {
+            border-color: #9b59b6;
+            box-shadow: 0 20px 50px rgba(155, 89, 182, 0.2);
+        }
+
+        body.dark-mode .game-card .game-header h3 {
+            color: #e0d0f0;
+        }
+
+        body.dark-mode .game-card .game-preview {
+            background: #151525;
+            border-color: #3d2a5c;
+        }
+
+        body.dark-mode .game-card .game-desc {
+            color: #b0a0c8;
+        }
+
+        body.dark-mode .game-card .game-btn {
+            background: linear-gradient(135deg, #7c3a9e, #6c3483);
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.25);
+        }
+
+        body.dark-mode .game-card .game-btn:hover {
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.4);
+        }
+
+        body.dark-mode .game-card .game-info-btn {
+            background: rgba(155, 89, 182, 0.15);
+            color: #c084d8;
+        }
+
+        body.dark-mode .game-card .game-info-btn:hover {
+            background: rgba(155, 89, 182, 0.3);
+        }
+
+        /* ===== GRID DE JUEGOS ===== */
+        .juegos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px 50px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 35px;
+            padding: 30px 28px 32px;
+            border: 2px solid #f3e9ff;
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.06);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 420px;
+        }
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(155, 89, 182, 0.15);
+            border-color: #dcc8f0;
+        }
+        .game-card .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .game-card .game-header h3 {
+            color: #2c1b4e;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .game-card .game-info-btn {
+            background: rgba(155, 89, 182, 0.08);
+            border: none;
+            color: #9b59b6;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .game-card .game-info-btn:hover {
+            background: rgba(155, 89, 182, 0.2);
+            transform: scale(1.1);
+        }
+        .game-card .game-preview {
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            background: #f8f4ff;
+            border: 2px dashed #e8d9f5;
+            overflow: hidden;
+        }
+        .game-card .game-preview img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .game-card .game-desc {
+            color: #6a5a8a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex: 1;
+            min-height: 48px;
+        }
+        .game-card .game-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.15);
+            margin-top: auto;
+        }
+        .game-card .game-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.25);
+        }
+        .game-card .game-btn i {
+            font-size: 0.95rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .juegos-grid {
+                gap: 25px;
+                padding: 0 20px 40px;
+            }
+            .game-card {
+                padding: 28px 24px 30px;
+                min-height: 400px;
+            }
+            .game-card .game-preview {
+                min-height: 190px;
+            }
+            .game-card .game-preview img {
+                max-height: 190px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .juegos-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+                padding: 0 20px 35px;
+            }
+            .game-card {
+                padding: 26px 22px 28px;
+                min-height: 380px;
+                border-radius: 30px;
+            }
+            .game-card .game-preview {
+                min-height: 180px;
+            }
+            .game-card .game-preview img {
+                max-height: 180px;
+            }
+            .game-card .game-header h3 {
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .play-hero {
+                padding: 35px 15px 25px;
+                border-radius: 0 0 35px 35px;
+                margin-top: -50px;
+            }
+            .play-hero h1 {
+                font-size: 2rem;
+            }
+            .play-hero .hero-sub {
+                font-size: 0.95rem;
+            }
+            .play-hero .hero-frase {
+                font-size: 0.85rem;
+                padding: 8px 18px;
+            }
+            .juegos-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 0 16px 30px;
+            }
+            .game-card {
+                padding: 24px 22px 28px;
+                border-radius: 30px;
+                min-height: auto;
+            }
+            .game-card .game-header h3 {
+                font-size: 1.2rem;
+            }
+            .game-card .game-preview {
+                min-height: 200px;
+                padding: 18px;
+            }
+            .game-card .game-preview img {
+                max-height: 200px;
+            }
+            .game-card .game-desc {
+                font-size: 0.95rem;
+                min-height: 44px;
+            }
+            .game-card .game-btn {
+                padding: 14px 22px;
+                font-size: 1rem;
+            }
+            .header-utils {
+                gap: 5px !important;
+            }
+            .btn-icon-only {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .play-hero h1 {
+                font-size: 1.6rem;
+            }
+            .play-hero .hero-frase {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+            }
+            .juegos-grid {
+                gap: 20px;
+                padding: 0 12px 25px;
+            }
+            .game-card {
+                padding: 20px 18px 24px;
+                border-radius: 26px;
+            }
+            .game-card .game-header h3 {
+                font-size: 1.1rem;
+            }
+            .game-card .game-preview {
+                min-height: 170px;
+                padding: 14px;
+            }
+            .game-card .game-preview img {
+                max-height: 170px;
+            }
+            .game-card .game-desc {
+                font-size: 0.9rem;
+                min-height: 40px;
+            }
+            .game-card .game-btn {
+                padding: 12px 18px;
+                font-size: 0.92rem;
+            }
+            .game-card .game-info-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+            .btn-icon-only {
+                width: 34px !important;
+                height: 34px !important;
+                font-size: 0.9rem !important;
+            }
+        }
+
+        /* ===== SWEETALERT PERSONALIZADO ===== */
+        .swal-info-popup {
+            border-radius: 50px !important;
+            padding: 25px 30px !important;
+            max-width: 460px !important;
+            width: 95% !important;
+            border: 3px solid #9b59b6 !important;
+            box-shadow: 0 20px 50px rgba(155, 89, 182, 0.25) !important;
+        }
+        .swal-info-popup .swal2-close {
+            border-radius: 50% !important;
+            background: rgba(155, 89, 182, 0.1) !important;
+            color: #9b59b6 !important;
+            width: 38px !important;
+            height: 38px !important;
+            font-size: 1.5rem !important;
+            transition: 0.3s !important;
+        }
+        .swal-info-popup .swal2-close:hover {
+            background: rgba(155, 89, 182, 0.2) !important;
+            transform: scale(1.1) !important;
+        }
+        .swal-info-popup .swal2-title {
+            display: none !important;
+        }
+
+        body.dark-mode .swal-info-popup {
+            background: #1a1a2e !important;
+            border-color: #7c3a9e !important;
+        }
+
+        .swal-logo-mini {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #9b59b6;
+            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.15);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .swal-info-popup {
+                border-radius: 35px !important;
+                padding: 18px 16px !important;
+                max-width: 92% !important;
+            }
+            .swal-info-popup .swal2-close {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 1.2rem !important;
+            }
+            .swal-logo-mini {
+                width: 55px;
+                height: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+
+       <!-- HEADER CON BOTONES -->
+        <div class="header">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                </a>
+            </div>
+            <div class="titulo">
+                <h1>Medicurativo</h1>
+                <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
+            </div>
+
+            <!-- Utilidades de la App -->
+            <div class="header-utils" id="headerUtilsGaleria">
+                <!-- Botón Inicio -->
+                <div class="btn-con-tooltip" id="wrapperInicio">
+                    <a href="principal.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <span class="tooltip">Inicio</span>
+                </div>
+
+                <!-- Botón Modo Oscuro -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="tooltip">Modo Oscuro</span>
+                </div>
+
+                <!-- Botón Ayuda -->
+                <div class="btn-con-tooltip">
+                    <button class="btn-icon-only" id="btnAyudas" style="color: #2c1b4e;">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <span class="tooltip">Ayuda</span>
+                </div>
+            </div>
+        </div>
+        <!-- ===== GRID DE JUEGOS ===== -->
+        <div class="juegos-grid">
+
+            <!-- Juego 1: SOPA DE LETRAS -->
+            <div class="game-card" id="juego-sopa">
+                <div class="game-header">
+                    <h3>🔍 Sopa de Letras</h3>
+                    <button class="game-info-btn" onclick="mostrarInfo('sopa')">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+                <div class="game-preview">
+                    <img src="imganes/sopa.png" alt="Sopa de Letras" loading="lazy">
+                </div>
+                <p class="game-desc">Encuentra palabras de bienestar emocional</p>
+                <button class="game-btn" onclick="abrirSopa()">
+                    <i class="fas fa-play"></i> Jugar ahora
+                </button>
+            </div>
+
+            <!-- Juego 2: ORDENAR LETRAS -->
+            <div class="game-card" id="juego-ordenar">
+                <div class="game-header">
+                    <h3>🔤 Ordenar Letras</h3>
+                    <button class="game-info-btn" onclick="mostrarInfo('ordenar')">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+                <div class="game-preview">
+                    <img src="imganes/ordenar.png" alt="Ordenar Letras" loading="lazy">
+                </div>
+                <p class="game-desc">Acomoda las letras para formar palabras</p>
+                <button class="game-btn" onclick="abrirJuego('ordenar')">
+                    <i class="fas fa-play"></i> Jugar ahora
+                </button>
+            </div>
+
+            <!-- Juego 3: COMPLETAR PALABRAS -->
+            <div class="game-card" id="juego-completar">
+                <div class="game-header">
+                    <h3>✏️ Completar Palabras</h3>
+                    <button class="game-info-btn" onclick="mostrarInfo('completar')">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+                <div class="game-preview">
+                    <img src="imganes/completar.png" alt="Completar Palabras" loading="lazy">
+                </div>
+                <p class="game-desc">Encuentra la letra que falta</p>
+                <button class="game-btn" onclick="abrirJuego('completar')">
+                    <i class="fas fa-play"></i> Jugar ahora
+                </button>
+            </div>
+
+            <!-- Juego 4: MEDICURATIVO HASTA HORAS -->
+            <div class="game-card" id="juego-medicurativo">
+                <div class="game-header">
+                    <h3>⏰ Medicurativo hasta horas</h3>
+                    <button class="game-info-btn" onclick="mostrarInfo('medicurativo')">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+                <div class="game-preview">
+                    <img src="imganes/logosmedicu.png" alt="Medicurativo" loading="lazy">
+                </div>
+                <p class="game-desc">Responde preguntas antes del tiempo</p>
+                <button class="game-btn" onclick="abrirJuego('medicurativo')">
+                    <i class="fas fa-play"></i> Jugar ahora
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-heart"></i> Medicurativo · medicina que cultiva <i class="fas fa-heart"></i>
+            </div>
+            <div class="footer-redes">
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
+            </div>
+            <div class="copyright">
+                <i class="fas fa-feather"></i> 2026 · sembrando bienestar <i class="fas fa-feather"></i>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================================
+        // MODO OSCURO
+        // ============================================================
+        (function cargarTema() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('#darkModeToggle i');
+                if (icon) icon.className = 'fas fa-sun';
+            }
+        })();
+
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            const icon = this.querySelector('i');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        });
+
+        // ============================================================
+        // AYUDA
+        // ============================================================
+        document.getElementById('btnAyudas').addEventListener('click', function() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
+                        <h2 style="color: #9b59b6; font-weight: 800; margin: 8px 0 4px 0; font-size: 1.4rem;">🎮 ¡Bienvenido a Play!</h2>
+                        <p style="color: ${textColor}; font-size: 1rem; line-height: 1.7; max-width: 400px; margin: 0 auto;">
+                            Aquí encontrarás 4 juegos diseñados para ejercitar tu mente mientras aprendes sobre bienestar emocional.
+                        </p>
+                        <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left;">
+                            <div style="background: rgba(155,89,182,0.06); padding: 10px 14px; border-radius: 12px;">
+                                <span style="font-weight:700;color:#9b59b6;">🔍</span>
+                                <span style="color:${textColor};font-size:0.85rem;">Sopa de Letras</span>
+                            </div>
+                            <div style="background: rgba(155,89,182,0.06); padding: 10px 14px; border-radius: 12px;">
+                                <span style="font-weight:700;color:#9b59b6;">🔤</span>
+                                <span style="color:${textColor};font-size:0.85rem;">Ordenar Letras</span>
+                            </div>
+                            <div style="background: rgba(155,89,182,0.06); padding: 10px 14px; border-radius: 12px;">
+                                <span style="font-weight:700;color:#9b59b6;">✏️</span>
+                                <span style="color:${textColor};font-size:0.85rem;">Completar Palabras</span>
+                            </div>
+                            <div style="background: rgba(155,89,182,0.06); padding: 10px 14px; border-radius: 12px;">
+                                <span style="font-weight:700;color:#9b59b6;">⏰</span>
+                                <span style="color:${textColor};font-size:0.85rem;">Medicurativo hasta horas</span>
+                            </div>
+                        </div>
+                        <p style="color: ${subTextColor}; font-size: 0.8rem; margin-top: 15px; opacity: 0.7;">
+                            <i class="fas fa-heart" style="color: #9b59b6;"></i> Aprende jugando
+                        </p>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: '¡Entendido! 💜',
+                confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                customClass: {
+                    popup: 'swal-info-popup',
+                    confirmButton: 'swal2-confirm-custom'
+                },
+                buttonsStyling: false
+            });
+        });
+
+        // ============================================================
+        // FUNCIONES DE INFORMACIÓN POR JUEGO
+        // ============================================================
+        const infoJuegos = {
+            sopa: {
+                titulo: '🔍 Sopa de Letras',
+                descripcion: 'Encuentra palabras ocultas relacionadas con el bienestar emocional y la salud mental. ¡Pon a prueba tu atención y vocabulario!',
+                icono: '🔍'
+            },
+            ordenar: {
+                titulo: '🔤 Ordenar Letras',
+                descripcion: 'Las letras están desordenadas. Acomódalas correctamente para formar la palabra. ¡Ejercita tu agilidad mental y ortografía!',
+                icono: '🔤'
+            },
+            completar: {
+                titulo: '✏️ Completar Palabras',
+                descripcion: 'A las palabras les falta una letra. Encuentra la letra correcta para completar cada palabra. ¡Desafía tu conocimiento!',
+                icono: '✏️'
+            },
+            medicurativo: {
+                titulo: '⏰ Medicurativo hasta horas',
+                descripcion: 'Responde preguntas sobre Medicurativo y su misión antes de que el tiempo se acabe. ¡Demuestra cuánto sabes!',
+                icono: '⏰'
+            }
+        };
+
+        function mostrarInfo(juegoId) {
+            const info = infoJuegos[juegoId];
+            if (!info) return;
+
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+            const subTextColor = isDarkMode ? '#d0c0e0' : '#7f8c8d';
+
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 5px;">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
+                        <h2 style="color: #9b59b6; font-weight: 800; margin: 8px 0 4px 0; font-size: 1.4rem;">${info.titulo}</h2>
+                        <p style="color: ${textColor}; font-size: 1rem; line-height: 1.8; max-width: 400px; margin: 8px auto 0 auto;">
+                            ${info.descripcion}
+                        </p>
+                        <div style="margin-top: 15px; background: rgba(155,89,182,0.06); border-radius: 16px; padding: 12px; border: 1px solid rgba(155,89,182,0.1);">
+                            <p style="color: ${subTextColor}; font-size: 0.85rem; margin: 0;">
+                                <i class="fas fa-lightbulb" style="color: #9b59b6;"></i>
+                                ¿Listo para jugar? Presiona "Jugar ahora" en la tarjeta.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido 💜',
+                confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                customClass: {
+                    popup: 'swal-info-popup',
+                    confirmButton: 'swal2-confirm-custom'
+                },
+                buttonsStyling: false
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN ESPECIAL PARA SOPA DE LETRAS (REDIRECCIÓN DIRECTA)
+        // ============================================================
+        function abrirSopa() {
+            window.location.href = 'sopas.html';
+        }
+
+        // ============================================================
+        // FUNCIONES PARA ABRIR LOS DEMÁS JUEGOS (EN CONSTRUCCIÓN)
+        // ============================================================
+        function abrirJuego(juegoId) {
+            const nombres = {
+                ordenar: 'Ordenar Letras',
+                completar: 'Completar Palabras',
+                medicurativo: 'Medicurativo hasta horas'
+            };
+
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
+            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+
+            Swal.fire({
+                title: '',
+                background: bgColor,
+                html: `
+                    <div style="text-align: center; padding: 10px 0;">
+                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
+                        <div style="font-size: 3.5rem; margin: 5px 0;">🛠️</div>
+                        <h2 style="color: #9b59b6; font-weight: 800; margin: 0 0 6px 0; font-size: 1.3rem;">🚧 En construcción</h2>
+                        <h3 style="color: ${textColor}; font-weight: 700; margin-bottom: 8px;">${nombres[juegoId]}</h3>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; line-height: 1.6; max-width: 360px; margin: 0 auto;">
+                            Este juego está en desarrollo.
+                            <br>¡Pronto podrás disfrutarlo!
+                        </p>
+                        <div style="margin-top: 15px; background: rgba(155,89,182,0.06); border-radius: 12px; padding: 10px; border: 1px solid rgba(155,89,182,0.08);">
+                            <p style="color: #9b59b6; font-size: 0.85rem; margin: 0; font-weight: 600;">
+                                <i class="fas fa-heart" style="margin-right: 6px;"></i>
+                                Medicurativo · siempre mejorando
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido 💜',
+                confirmButtonColor: '#9b59b6',
+                showCloseButton: true,
+                customClass: {
+                    popup: 'swal-info-popup',
+                    confirmButton: 'swal2-confirm-custom'
+                },
+                buttonsStyling: false
+            });
+        }
+    </script>
+</body>
+</html>

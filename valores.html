@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'none'; upgrade-insecure-requests;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta name="referrer-policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-    <title>Sopa de Valores · Medicurativo</title>
+    <title>Sopas de Letras · Medicurativo</title>
     <link rel="icon" type="image/png" href="imganes/logosmedi.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/estilo.css">
@@ -19,246 +18,608 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        body.dark-mode .sopa-container { background: #1a1a2e; border-color: #3d2a5c; }
-        body.dark-mode .sopa-titulo { color: #e0d0f0; }
-        body.dark-mode .sopa-subtitulo { color: #b0a0c8; }
-        body.dark-mode .sopa-stats { background: #151525; border-color: #3d2a5c; }
-        body.dark-mode .sopa-stats .stat-item { color: #b0a0c8; }
-        body.dark-mode .sopa-stats .stat-item span { color: #e0d0f0; }
-        body.dark-mode .palabras-container { background: #151525; border-color: #3d2a5c; }
-        body.dark-mode .palabras-container h3 { color: #e0d0f0; }
-        body.dark-mode .palabra-item { background: #1e1e2f; color: #b0a0c8; border-color: #3d2a5c; }
-        body.dark-mode .palabra-item.encontrada { background: #2d4a3a; color: #4caf50; border-color: #4caf50; }
-        body.dark-mode .btn-copa-header { background: rgba(155, 89, 182, 0.15); color: #c084d8; }
-        body.dark-mode .btn-copa-header:hover { background: rgba(155, 89, 182, 0.3); }
-        body.dark-mode .btn-pista { background: rgba(155, 89, 182, 0.15); color: #c084d8; border-color: #7c3a9e; }
-        body.dark-mode .btn-pista:hover { background: rgba(155, 89, 182, 0.3); }
-
-        .header-utils .btn-copa-header {
-            background: rgba(155, 89, 182, 0.08);
-            border: none;
-            color: #9b59b6;
-            width: 36px;
-            height: 36px;
+        /* ===== ESTILOS GLOBALES ===== */
+        .btn-ranking-header {
+            background: transparent;
+            border: 1.5px solid #d4b8e8;
             border-radius: 50%;
+            padding: 12px;
+            width: 48px;
+            height: 48px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #f1c40f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            transition: all 0.2s;
+            background: rgba(241, 196, 15, 0.05);
         }
-        .header-utils .btn-copa-header:hover { background: rgba(155, 89, 182, 0.2); transform: scale(1.1); }
+        .btn-ranking-header i {
+            color: #f1c40f;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        .btn-ranking-header:hover {
+            background: rgba(241, 196, 15, 0.15);
+            border-color: #f1c40f;
+            transform: scale(1.08);
+        }
+        body.dark-mode .btn-ranking-header {
+            border-color: #5d3e77;
+            color: #f1c40f;
+        }
+        body.dark-mode .btn-ranking-header i {
+            color: #f1c40f;
+        }
+        body.dark-mode .btn-ranking-header:hover {
+            background: rgba(241, 196, 15, 0.15);
+        }
 
-        .sopa-wrapper { max-width: 1200px; margin: 0 auto; padding: 20px 30px 50px; }
+        /* ===== CONTENEDOR SOPA ===== */
+        .sopa-wrapper {
+            max-width: 750px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 48px;
+            padding: 28px 28px 36px;
+            box-shadow: 0 20px 60px rgba(155, 89, 182, 0.10);
+            border: 1px solid #f0e6ff;
+            transition: background 0.3s, border 0.3s;
+        }
+        body.dark-mode .sopa-wrapper {
+            background: #1e1e30;
+            border-color: #3a2a50;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .sopa-titulo {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2c1b4e;
+            margin-bottom: 5px;
+        }
+        body.dark-mode .sopa-titulo {
+            color: #e4d5f5;
+        }
+        .sopa-subtitulo {
+            text-align: center;
+            color: #6a5a8a;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        body.dark-mode .sopa-subtitulo {
+            color: #b09ac8;
+        }
 
-        .sopa-titulo { text-align: center; font-size: 2.2rem; font-weight: 800; color: #2c1b4e; margin-bottom: 5px; }
-        .sopa-subtitulo { text-align: center; font-size: 1rem; color: #7f8c8d; margin-bottom: 25px; font-weight: 400; }
+        /* Barra de progreso */
+        .progreso-wrapper {
+            width: 100%;
+            height: 6px;
+            background: #e8d9f5;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        body.dark-mode .progreso-wrapper {
+            background: #3a2a50;
+        }
+        .progreso-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #9b59b6, #d4b8e8);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
 
-        .sopa-stats {
+        /* estado: vidas, tiempo, pistas */
+        .estado-juego {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 40px;
-            padding: 15px 30px;
-            background: #f8f4ff;
-            border-radius: 20px;
-            border: 2px solid #f3e9ff;
+            background: #f7f1ff;
+            padding: 12px 20px;
+            border-radius: 60px;
             margin-bottom: 25px;
             flex-wrap: wrap;
+            gap: 8px 16px;
+            border: 1px solid #ece0f8;
         }
-        .sopa-stats .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #6a5a8a;
+        body.dark-mode .estado-juego {
+            background: #28223a;
+            border-color: #3f2f55;
         }
-        .sopa-stats .stat-item i { font-size: 1.3rem; color: #9b59b6; }
-        .sopa-stats .stat-item .tiempo { color: #2c1b4e; font-weight: 800; font-size: 1.3rem; min-width: 60px; }
-        .sopa-stats .stat-item .vidas { color: #e74c3c; font-weight: 800; font-size: 1.3rem; min-width: 40px; }
-        .stat-item .fa-heart { color: #e74c3c; }
-
-        .btn-pista {
-            background: rgba(155, 89, 182, 0.08);
-            border: 2px solid #9b59b6;
-            color: #9b59b6;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .estado-item {
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
+            color: #2c1b4e;
+            font-size: 0.95rem;
         }
-        .btn-pista:hover { background: #9b59b6; color: white; transform: scale(1.05); }
-        .btn-pista:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .sopa-grid { display: grid; grid-template-columns: 1fr 250px; gap: 30px; align-items: start; }
-        .sopa-container {
-            background: #f8f4ff;
-            border-radius: 30px;
-            padding: 25px;
-            border: 2px solid #f3e9ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 500px;
+        body.dark-mode .estado-item {
+            color: #daccec;
+        }
+        .estado-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            color: #9b59b6;
+        }
+        .estado-item .valor {
+            min-width: 28px;
+            text-align: center;
+        }
+        .corazones {
+            color: #e74c5e;
+            letter-spacing: 2px;
+        }
+        .pistas-restantes i {
+            color: #f39c12;
+        }
+        .btn-pista {
+            background: #9b59b6;
+            border: none;
+            color: white;
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(155,89,182,0.25);
+            border: 1px solid #b97fd0;
             position: relative;
         }
-
-        #sopaTablero {
-            display: grid;
-            gap: 3px;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
+        .btn-pista:hover {
+            background: #8e44ad;
+            transform: scale(1.04);
         }
-
-        .celda {
-            aspect-ratio: 1;
+        .btn-pista:active {
+            transform: scale(0.95);
+        }
+        .btn-pista:disabled {
+            opacity: 0.4;
+            transform: scale(0.97);
+            pointer-events: none;
+        }
+        /* Burbujita de pistas en móvil */
+        .badge-pistas {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: white;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #2c1b4e;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid #e8d9f5;
-            user-select: none;
-            text-transform: uppercase;
-            min-width: 30px;
-            min-height: 30px;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+            border: 2px solid white;
         }
-        .celda:hover { background: #f0e8ff; transform: scale(1.05); z-index: 2; }
-        .celda.seleccionada { background: #9b59b6; color: white; border-color: #8e44ad; transform: scale(1.05); z-index: 2; }
-        .celda.encontrada { background: #4CAF50; color: white; border-color: #388E3C; cursor: default; transform: none; }
-        .celda.encontrada:hover { transform: none; background: #4CAF50; }
-        .celda.error { background: #e74c3c; color: white; border-color: #c0392b; animation: shake 0.4s ease; }
-        .celda.pista { background: #FFD700; border-color: #F4A460; animation: pulse 1s ease; }
+        body.dark-mode .badge-pistas {
+            border-color: #1e1e30;
+        }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-8px); }
-            40% { transform: translateX(8px); }
-            60% { transform: translateX(-5px); }
-            80% { transform: translateX(5px); }
+        /* ===== RESPONSIVE - MÓVIL ===== */
+        @media (max-width: 768px) {
+            .estado-juego {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                padding: 10px 14px;
+                gap: 4px;
+                border-radius: 40px;
+                font-size: 0.8rem;
+            }
+            .estado-item {
+                font-size: 0.75rem;
+                gap: 4px;
+                justify-content: center;
+            }
+            .estado-item .valor {
+                min-width: 20px;
+            }
+            .estado-item.pistas-restantes {
+                order: 0;
+                justify-content: flex-start;
+            }
+            .estado-item.tiempo-item {
+                order: 1;
+                justify-content: center;
+            }
+            .estado-item.vidas-item {
+                order: 2;
+                justify-content: flex-end;
+            }
+            .estado-item.pistas-restantes .valor {
+                display: none;
+            }
+            .btn-pista .badge-pistas {
+                display: flex !important;
+            }
+            .btn-ranking-header {
+                width: 38px;
+                height: 38px;
+                padding: 8px;
+                font-size: 1rem;
+            }
+            .btn-ranking-header i {
+                font-size: 1.1rem;
+            }
+            .sopa-wrapper {
+                padding: 16px;
+                border-radius: 32px;
+            }
+            .sopa-titulo {
+                font-size: 1.4rem;
+            }
+            .grilla-sopa {
+                gap: 4px;
+                padding: 10px;
+            }
+            .celda {
+                font-size: 1rem;
+                border-radius: 8px;
+            }
+            .palabras-encontradas {
+                padding: 10px 12px;
+                gap: 6px;
+            }
+            .palabra-tag {
+                font-size: 0.7rem;
+                padding: 4px 12px;
+            }
         }
-        @keyframes pulse {
+
+        @media (min-width: 769px) {
+            .btn-pista .badge-pistas {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .celda {
+                font-size: 0.8rem;
+            }
+            .grilla-sopa {
+                gap: 3px;
+                padding: 6px;
+            }
+        }
+
+        /* grilla */
+        .grilla-sopa {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+            background: #f3ebfc;
+            padding: 16px;
+            border-radius: 32px;
+            border: 1px solid #e8d9f5;
+            margin-bottom: 24px;
+            aspect-ratio: 1 / 1;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        body.dark-mode .grilla-sopa {
+            background: #1f1a2f;
+            border-color: #3a2a50;
+        }
+        .celda {
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1f1430;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid #e8ddf5;
+            aspect-ratio: 1 / 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        body.dark-mode .celda {
+            background: #2d2440;
+            border-color: #4d3a66;
+            color: #ece0f8;
+        }
+        
+        .celda.seleccionada {
+            background: #d4b8e8;
+            border-color: #9b59b6;
+            transform: scale(0.94);
+            color: #1f1430;
+        }
+        
+        body.dark-mode .celda.seleccionada {
+            background: #7d5ba6;
+            border-color: #c084e8;
+            transform: scale(0.94);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(192, 132, 232, 0.4);
+        }
+        
+        /* Las celdas encontradas SIEMPRE mantienen su color, pero son seleccionables */
+        .celda.encontrada {
+            pointer-events: auto !important; /* Permitir selección */
+            opacity: 0.85;
+        }
+        
+        .celda.encontrada-color-0 {
+            background: #7dcea0;
+            border-color: #27ae60;
+            color: #0f3b24;
+        }
+        .celda.encontrada-color-1 {
+            background: #85c1e9;
+            border-color: #2e86c1;
+            color: #0a2a4a;
+        }
+        .celda.encontrada-color-2 {
+            background: #f8c471;
+            border-color: #d4ac0d;
+            color: #5a3e0a;
+        }
+        .celda.encontrada-color-3 {
+            background: #f1948a;
+            border-color: #c0392b;
+            color: #4a0a0a;
+        }
+        .celda.encontrada-color-4 {
+            background: #bb8fce;
+            border-color: #8e44ad;
+            color: #2a0a3a;
+        }
+        .celda.encontrada-color-5 {
+            background: #82e0aa;
+            border-color: #1e8449;
+            color: #0a2a1a;
+        }
+        .celda.encontrada-color-6 {
+            background: #f5b7b1;
+            border-color: #e74c3c;
+            color: #4a0a0a;
+        }
+
+        body.dark-mode .celda.encontrada-color-0 {
+            background: #1a5a3a;
+            border-color: #55b87a;
+            color: #d4f0de;
+        }
+        body.dark-mode .celda.encontrada-color-1 {
+            background: #1a3a5a;
+            border-color: #5b9bd5;
+            color: #d4e8f0;
+        }
+        body.dark-mode .celda.encontrada-color-2 {
+            background: #5a4a1a;
+            border-color: #d4ac0d;
+            color: #f0e8d4;
+        }
+        body.dark-mode .celda.encontrada-color-3 {
+            background: #5a1a1a;
+            border-color: #c0392b;
+            color: #f0d4d4;
+        }
+        body.dark-mode .celda.encontrada-color-4 {
+            background: #3a1a5a;
+            border-color: #8e44ad;
+            color: #e8d4f0;
+        }
+        body.dark-mode .celda.encontrada-color-5 {
+            background: #1a4a2a;
+            border-color: #1e8449;
+            color: #d4f0d4;
+        }
+        body.dark-mode .celda.encontrada-color-6 {
+            background: #5a2a2a;
+            border-color: #e74c3c;
+            color: #f0d4d4;
+        }
+
+        /* Animación al encontrar palabra */
+        .celda.encontrada-anim {
+            animation: pop-encontrada 0.5s ease;
+        }
+        @keyframes pop-encontrada {
             0% { transform: scale(1); }
-            50% { transform: scale(1.2); background: #FFA500; }
+            30% { transform: scale(1.3); }
+            70% { transform: scale(0.9); }
             100% { transform: scale(1); }
         }
 
-        .palabras-container {
-            background: #f8f4ff;
-            border-radius: 30px;
-            padding: 20px 22px;
-            border: 2px solid #f3e9ff;
-            min-height: 400px;
+        .celda.pista-destacada {
+            background: #f9e79f !important;
+            border-color: #f1c40f !important;
+            animation: pulse-pista 0.9s ease 2;
         }
-        .palabras-container h3 {
-            color: #2c1b4e;
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f3e9ff;
+        @keyframes pulse-pista {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background: #f7dc6f; }
+            100% { transform: scale(1); }
         }
-        .palabras-container h3 i { color: #9b59b6; margin-right: 8px; }
 
-        .palabra-item {
+        /* lista de palabras */
+        .palabras-encontradas {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            justify-content: center;
+            background: #f7f1ff;
+            border-radius: 60px;
+            padding: 14px 22px;
+            margin-bottom: 18px;
+            border: 1px solid #e8d9f5;
+        }
+        body.dark-mode .palabras-encontradas {
+            background: #232039;
+            border-color: #3b2b50;
+        }
+        .palabra-tag {
             background: white;
-            border-radius: 12px;
-            border: 2px solid #e8d9f5;
-            margin-bottom: 8px;
+            padding: 6px 18px;
+            border-radius: 40px;
             font-weight: 600;
+            font-size: 0.9rem;
             color: #2c1b4e;
+            border: 1px solid #dcc8f0;
             transition: all 0.3s ease;
-            text-transform: capitalize;
-            font-size: 0.95rem;
         }
-        .palabra-item .check-icon { color: #9b59b6; font-size: 1rem; opacity: 0; transition: all 0.3s ease; }
-        .palabra-item.encontrada { background: #e8f5e9; border-color: #4CAF50; color: #2e7d32; }
-        .palabra-item.encontrada .check-icon { opacity: 1; color: #4CAF50; }
-        .palabra-item .palabra-texto { flex: 1; }
-
-        @media (max-width: 1024px) { .sopa-grid { grid-template-columns: 1fr 220px; gap: 20px; } }
-        @media (max-width: 768px) {
-            .sopa-wrapper { padding: 15px 16px 30px; }
-            .sopa-titulo { font-size: 1.6rem; }
-            .sopa-grid { grid-template-columns: 1fr; gap: 20px; }
-            .sopa-container { padding: 15px; min-height: 300px; }
-            .palabras-container { min-height: auto; padding: 16px 18px; }
-            .celda { font-size: 0.9rem; min-width: 25px; min-height: 25px; border-width: 1.5px; }
-            .sopa-stats { gap: 15px; padding: 12px 20px; }
-            .sopa-stats .stat-item { font-size: 0.9rem; }
-            .btn-pista { padding: 6px 14px; font-size: 0.8rem; }
+        body.dark-mode .palabra-tag {
+            background: #2c2340;
+            color: #dcc8f0;
+            border-color: #4d3a66;
         }
-        @media (max-width: 480px) {
-            .sopa-titulo { font-size: 1.2rem; }
-            .sopa-container { padding: 8px; min-height: 220px; border-radius: 16px; }
-            .celda { font-size: 0.7rem; border-radius: 3px; border-width: 1px; min-width: 18px; min-height: 18px; }
-            .sopa-stats { gap: 8px; padding: 8px 10px; border-radius: 12px; flex-wrap: wrap; }
-            .sopa-stats .stat-item { font-size: 0.7rem; gap: 3px; }
-            .sopa-stats .stat-item i { font-size: 0.8rem; }
-            .sopa-stats .stat-item .tiempo { font-size: 0.8rem; min-width: 30px; }
-            .sopa-stats .stat-item .vidas { font-size: 0.8rem; min-width: 18px; }
-            .btn-pista { padding: 4px 8px; font-size: 0.65rem; }
-            .btn-pista i { font-size: 0.65rem; }
-            .palabra-item { padding: 6px 10px; font-size: 0.75rem; border-radius: 8px; }
+        .palabra-tag.encontrada {
+            background: #7dcea0;
+            border-color: #27ae60;
+            color: #0b311c;
+            text-decoration: line-through 2px #1e6b3a;
+            transform: scale(1.05);
+        }
+        body.dark-mode .palabra-tag.encontrada {
+            background: #2d7a4a;
+            border-color: #55b87a;
+            color: #c8f0d8;
         }
 
-        .swal-info-popup {
-            border-radius: 50px !important;
-            padding: 25px 30px !important;
-            max-width: 460px !important;
-            width: 95% !important;
-            border: 3px solid #9b59b6 !important;
-            box-shadow: 0 20px 50px rgba(155, 89, 182, 0.25) !important;
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 25px 20px 15px;
+            color: #6a5a8a;
+            border-top: 2px solid #f3e9ff;
+            margin-top: 20px;
         }
-        .swal-info-popup .swal2-close {
-            border-radius: 50% !important;
-            background: rgba(155, 89, 182, 0.1) !important;
+        body.dark-mode .footer {
+            border-top-color: #3a2a50;
+            color: #b09ac8;
+        }
+        .footer-redes {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .red-social {
+            position: relative;
+            display: inline-block;
+            font-size: 1.4rem;
+            color: #9b59b6;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .red-social:hover {
+            transform: scale(1.15);
+            color: #8e44ad;
+        }
+        .red-social .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c1b4e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            z-index: 10;
+            pointer-events: none;
+        }
+        body.dark-mode .red-social .tooltip {
+            background: #3d2a5c;
+            color: #e0d0f0;
+        }
+        .red-social:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+            bottom: -34px;
+        }
+        .copyright {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+
+        /* ===== PERSONALIZACIÓN DE SWAL ===== */
+        .swal2-popup {
+            border-radius: 32px !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
+        }
+        .swal2-popup .swal2-title {
+            font-size: 1.6rem !important;
             color: #9b59b6 !important;
-            width: 38px !important;
-            height: 38px !important;
-            font-size: 1.5rem !important;
-            transition: 0.3s !important;
         }
-        .swal-info-popup .swal2-close:hover { background: rgba(155, 89, 182, 0.2) !important; transform: scale(1.1) !important; }
-        .swal-info-popup .swal2-title { display: none !important; }
-        body.dark-mode .swal-info-popup { background: #1a1a2e !important; border-color: #7c3a9e !important; }
-
-        .swal-logo-mini {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #9b59b6;
-            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.15);
-            margin-bottom: 8px;
+        .swal2-popup .swal2-confirm {
+            border-radius: 60px !important;
+            padding: 12px 36px !important;
+            font-weight: 700 !important;
+            background-color: #9b59b6 !important;
+            border-color: #9b59b6 !important;
+            color: white !important;
         }
-        @media (max-width: 480px) {
-            .swal-info-popup { border-radius: 35px !important; padding: 18px 16px !important; max-width: 92% !important; }
-            .swal-logo-mini { width: 55px; height: 55px; }
+        .swal2-popup .swal2-confirm:hover {
+            background-color: #8e44ad !important;
+            border-color: #8e44ad !important;
+            transform: scale(1.05);
+        }
+        .swal2-popup .swal2-cancel {
+            border-radius: 60px !important;
+            padding: 12px 36px !important;
+            font-weight: 700 !important;
+        }
+        body.dark-mode .swal2-popup {
+            background: #1e1e30 !important;
+            color: #e0d0f0 !important;
+        }
+        body.dark-mode .swal2-popup .swal2-title {
+            color: #c084e8 !important;
+        }
+        body.dark-mode .swal2-popup .swal2-html-container {
+            color: #d0c0e0 !important;
+        }
+        body.dark-mode .swal2-popup .swal2-close {
+            color: #d0c0e0 !important;
+        }
+        body.dark-mode .swal2-popup .swal2-confirm {
+            background-color: #9b59b6 !important;
+            border-color: #9b59b6 !important;
+        }
+        body.dark-mode .swal2-popup .swal2-confirm:hover {
+            background-color: #c084e8 !important;
+            border-color: #c084e8 !important;
+        }
+        .swal2-popup .swal2-image {
+            border-radius: 50% !important;
+            border: 3px solid #9b59b6 !important;
+            box-shadow: 0 8px 20px rgba(155,89,182,0.2) !important;
+        }
+        body.dark-mode .swal2-popup .swal2-image {
+            border-color: #c084e8 !important;
+            box-shadow: 0 8px 20px rgba(192,132,232,0.2) !important;
         }
     </style>
 </head>
 <body>
     <div class="contenedor">
+
+        <!-- ===== HEADER ===== -->
         <div class="header">
             <div class="logo">
                 <a href="index.html" style="text-decoration: none;">
@@ -269,13 +630,30 @@
                 <h1>Medicurativo</h1>
                 <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
             </div>
-            <div class="header-utils" id="headerUtilsGaleria">
+
+            <div class="header-utils" id="headerUtilsComunidad">
                 <div class="btn-con-tooltip" id="wrapperInicio">
-                    <a href="principal.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                    <a href="principal.html" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
                         <i class="fas fa-home"></i>
                     </a>
                     <span class="tooltip">Inicio</span>
                 </div>
+
+                <div class="btn-con-tooltip" id="wrapperRanking">
+                    <button class="btn-ranking-header" id="btnRankingHeader">
+                        <i class="fas fa-trophy"></i>
+                    </button>
+                    <span class="tooltip">Ranking</span>
+                </div>
+
+                <div class="btn-con-tooltip" id="wrapperNotificacion" style="display: none;">
+                    <button class="btn-notificacion" id="btnBuzonAprobacion" title="Publicaciones pendientes">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge-notificacion oculto" id="badgeNotificacion">0</span>
+                    </button>
+                    <span class="tooltip">Buzón de aprobación</span>
+                </div>
+
                 <div class="btn-con-tooltip">
                     <button class="btn-icon-only" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
@@ -283,13 +661,7 @@
                     <span class="tooltip">Modo Oscuro</span>
                 </div>
                 <div class="btn-con-tooltip">
-                    <button class="btn-copa-header" onclick="mostrarCopa()">
-                        <i class="fas fa-trophy"></i>
-                    </button>
-                    <span class="tooltip">Trofeo</span>
-                </div>
-                <div class="btn-con-tooltip">
-                    <button class="btn-icon-only" id="btnAyudas" style="color: #2c1b4e;">
+                    <button class="btn-icon-only" id="btnAyuda" style="color: #2c1b4e;">
                         <i class="fas fa-question-circle"></i>
                     </button>
                     <span class="tooltip">Ayuda</span>
@@ -297,52 +669,70 @@
             </div>
         </div>
 
+        <!-- ===== SOPA DE LETRAS ===== -->
         <div class="sopa-wrapper">
-            <h1 class="sopa-titulo">🌱 Los valores · el éxito de ti mismo</h1>
-            <p class="sopa-subtitulo"><i class="fas fa-heart" style="color: #e74c3c;"></i> Encuentra todas las palabras de valores <i class="fas fa-heart" style="color: #e74c3c;"></i></p>
+            <h2 class="sopa-titulo">🔍 Sopa de Letras · Valores</h2>
+            <p class="sopa-subtitulo"><i class="fas fa-heart" style="color:#9b59b6;"></i> Encuentra las 7 palabras ocultas <i class="fas fa-heart" style="color:#9b59b6;"></i></p>
 
-            <div class="sopa-stats">
-                <div class="stat-item">
+            <!-- Barra de progreso -->
+            <div class="progreso-wrapper">
+                <div class="progreso-bar" id="progresoBar"></div>
+            </div>
+
+            <!-- estado: vidas, tiempo, pistas -->
+            <div class="estado-juego">
+                <div class="estado-item pistas-restantes">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="valor" id="pistasDisplay">3</span>
+                    <button class="btn-pista" id="btnPista">
+                        💡 Pista
+                        <span class="badge-pistas" id="badgePistas">3</span>
+                    </button>
+                </div>
+                <div class="estado-item tiempo-item">
                     <i class="fas fa-clock"></i>
-                    <span>Tiempo:</span>
-                    <span class="tiempo" id="timerDisplay">2:00</span>
+                    <span class="valor" id="tiempoDisplay">5:00</span>
                 </div>
-                <div class="stat-item">
-                    <i class="fas fa-heart"></i>
-                    <span>Vidas:</span>
-                    <span class="vidas" id="vidasDisplay">❤️❤️❤️</span>
+                <div class="estado-item vidas-item">
+                    <i class="fas fa-heart corazones"></i>
+                    <span class="valor" id="vidasDisplay">❤️❤️❤️</span>
                 </div>
-                <div class="stat-item">
-                    <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
-                    <span>Encontradas:</span>
-                    <span class="tiempo" id="encontradasDisplay" style="color: #4CAF50; min-width: 30px;">0/7</span>
-                </div>
-                <button class="btn-pista" id="btnPista" onclick="darPista()">
-                    <i class="fas fa-lightbulb"></i> Pista
-                </button>
             </div>
 
-            <div class="sopa-grid">
-                <div class="sopa-container">
-                    <div id="sopaTablero"></div>
-                </div>
-                <div class="palabras-container">
-                    <h3><i class="fas fa-list"></i> Tus palabras</h3>
-                    <div id="listaPalabras"></div>
-                </div>
-            </div>
+            <!-- grilla 10x10 -->
+            <div class="grilla-sopa" id="grillaSopa"></div>
+
+            <!-- palabras a encontrar -->
+            <div class="palabras-encontradas" id="listaPalabras"></div>
+            <div class="mensaje-victoria" id="mensajeVictoria" style="text-align:center; font-weight:600; color:#9b59b6; margin-top:5px;"></div>
         </div>
 
+        <!-- ===== FOOTER ===== -->
         <footer class="footer">
             <div>
                 <i class="fas fa-heart"></i> Medicurativo · medicina que cultiva <i class="fas fa-heart"></i>
             </div>
             <div class="footer-redes">
-                <div class="red-social"><i class="fab fa-facebook"></i><span class="tooltip">Facebook</span></div>
-                <div class="red-social"><i class="fab fa-tiktok"></i><span class="tooltip">TikTok</span></div>
-                <div class="red-social"><i class="fab fa-youtube"></i><span class="tooltip">YouTube</span></div>
-                <div class="red-social"><i class="fab fa-whatsapp"></i><span class="tooltip">WhatsApp</span></div>
-                <div class="red-social"><i class="fab fa-instagram"></i><span class="tooltip">Instagram</span></div>
+                <div class="red-social">
+                    <i class="fab fa-facebook"></i>
+                    <span class="tooltip">Facebook</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="tooltip">TikTok</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-youtube"></i>
+                    <span class="tooltip">YouTube</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="tooltip">WhatsApp</span>
+                </div>
+                <div class="red-social">
+                    <i class="fab fa-instagram"></i>
+                    <span class="tooltip">Instagram</span>
+                </div>
             </div>
             <div class="copyright">
                 <i class="fas fa-feather"></i> 2026 · sembrando bienestar <i class="fas fa-feather"></i>
@@ -371,650 +761,621 @@
         });
 
         // ============================================================
-        // AYUDA
+        // SWAL CON TÍTULOS ROSADOS Y LOGO
         // ============================================================
-        document.getElementById('btnAyudas').addEventListener('click', function() {
+        document.getElementById('btnAyuda').addEventListener('click', function() {
             const isDarkMode = document.body.classList.contains('dark-mode');
-            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
-            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
-
             Swal.fire({
-                title: '',
-                background: bgColor,
+                title: '🔍 Sopa de Valores',
+                imageUrl: 'imganes/logosmedi.png',
+                imageWidth: 80,
+                imageHeight: 80,
+                imageAlt: 'Medicurativo',
                 html: `
-                    <div style="text-align: center; padding: 5px;">
-                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
-                        <h2 style="color: #9b59b6; font-weight: 800; margin: 8px 0 4px 0; font-size: 1.3rem;">🌱 Sopa de Valores</h2>
-                        <p style="color: ${textColor}; font-size: 0.95rem; line-height: 1.7; max-width: 380px; margin: 0 auto;">
-                            Encuentra las 7 palabras de valores ocultas en la sopa de letras.
-                            <br><br>
-                            <i class="fas fa-clock" style="color: #9b59b6;"></i> Tienes <strong>2 minutos</strong>
-                            <br>
-                            <i class="fas fa-heart" style="color: #e74c3c;"></i> Tienes <strong>3 vidas</strong> · cada error resta una
-                            <br><br>
-                            <i class="fas fa-lightbulb" style="color: #FFD700;"></i> La pista muestra la <strong>primera letra</strong> de una palabra
-                        </p>
-                        <div style="margin-top: 12px; background: rgba(155,89,182,0.06); border-radius: 12px; padding: 10px;">
-                            <p style="color: #7f8c8d; font-size: 0.8rem; margin: 0;">
-                                <i class="fas fa-mouse-pointer" style="color: #9b59b6;"></i>
-                                Haz clic en la primera letra y arrastra hasta la última
-                            </p>
-                        </div>
+                    <div style="text-align:left; line-height:1.9; max-width:400px; margin:12px auto; background:${isDarkMode ? 'rgba(155,89,182,0.08)' : 'rgba(155,89,182,0.05)'}; padding:16px 20px; border-radius:24px; border:1px solid ${isDarkMode ? '#4d3a66' : '#e8d9f5'};">
+                        <p><b>🎯 Objetivo:</b> Encuentra las 7 palabras relacionadas con VALORES.</p>
+                        <p><b>🖱️ Cómo jugar:</b> Haz clic y arrastra sobre las letras para formar la palabra.</p>
+                        <p><b>❤️ Vidas:</b> Tienes 3 intentos fallidos.</p>
+                        <p><b>💡 Pistas:</b> 3 pistas que resaltan una palabra.</p>
+                        <p><b>⏱️ Tiempo:</b> 5 minutos para completar.</p>
+                        <p style="margin-top:8px; color:#9b59b6;"><b>✨ ¡Las palabras pueden cruzarse! Puedes seleccionar sobre letras ya encontradas.</b></p>
                     </div>
                 `,
-                showConfirmButton: true,
                 confirmButtonText: '¡Entendido! 💜',
                 confirmButtonColor: '#9b59b6',
+                background: isDarkMode ? '#1e1e30' : '#fff',
+                color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
                 showCloseButton: true,
                 customClass: {
                     popup: 'swal-info-popup',
-                    confirmButton: 'swal2-confirm-custom'
-                },
-                buttonsStyling: false
+                    confirmButton: 'btn-confirm'
+                }
             });
         });
 
-        // ============================================================
-        // COPA
-        // ============================================================
-        function mostrarCopa() {
+        document.getElementById('btnRankingHeader').addEventListener('click', function() {
             const isDarkMode = document.body.classList.contains('dark-mode');
-            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
-            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
-
             Swal.fire({
-                title: '',
-                background: bgColor,
+                title: '🏆 Ranking',
+                imageUrl: 'imganes/logosmedi.png',
+                imageWidth: 80,
+                imageHeight: 80,
+                imageAlt: 'Medicurativo',
                 html: `
-                    <div style="text-align: center; padding: 10px 0;">
-                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
-                        <div style="font-size: 4rem; margin: 5px 0;">🏆</div>
-                        <h2 style="color: #f1c40f; font-weight: 800; margin: 0 0 6px 0; font-size: 1.4rem;">Trofeo</h2>
-                        <p style="color: ${textColor}; font-size: 1rem; line-height: 1.7; max-width: 360px; margin: 0 auto;">
-                            ¡Aquí se mostrarán tus logros!
+                    <div style="text-align:center; padding:5px 0;">
+                        <p style="color:${isDarkMode ? '#d0c0e0' : '#6a5a8a'}; font-size:1rem; max-width:360px; margin:0 auto;">
+                            Aquí verás los mejores puntajes. ¡Próximamente!
                         </p>
-                        <div style="margin-top: 15px; background: rgba(241,196,15,0.08); border-radius: 16px; padding: 12px; border: 1px solid rgba(241,196,15,0.15);">
-                            <p style="color: #7f8c8d; font-size: 0.85rem; margin: 0;">
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
+                        <div style="margin-top:15px; background:rgba(241,196,15,0.08); border-radius:24px; padding:14px; border:1px solid rgba(241,196,15,0.15);">
+                            <p style="color:#7f8c8d; font-size:0.85rem; margin:0;">
+                                <i class="fas fa-star" style="color:#f1c40f;"></i>
+                                <i class="fas fa-star" style="color:#f1c40f;"></i>
+                                <i class="fas fa-star" style="color:#f1c40f;"></i>
+                                <i class="fas fa-star" style="color:#f1c40f;"></i>
+                                <i class="fas fa-star" style="color:#f1c40f;"></i>
                                 <br>Completa niveles para ganar estrellas
                             </p>
                         </div>
                     </div>
                 `,
-                showConfirmButton: true,
                 confirmButtonText: 'Entendido 💜',
-                confirmButtonColor: '#f1c40f',
+                confirmButtonColor: '#9b59b6',
+                background: isDarkMode ? '#1e1e30' : '#fff',
+                color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
                 showCloseButton: true,
                 customClass: {
                     popup: 'swal-info-popup',
-                    confirmButton: 'swal2-confirm-custom'
-                },
-                buttonsStyling: false
+                    confirmButton: 'btn-confirm'
+                }
             });
-        }
+        });
 
         // ============================================================
-        // LÓGICA DE LA SOPA - VERSIÓN DEFINITIVA CON ESPACIOS VACÍOS
+        // SOPA DE LETRAS - SELECCIÓN LIBRE CON CRUCE DE PALABRAS
         // ============================================================
-        const palabrasList = ['RESPETO', 'EMPATIA', 'HONESTIDAD', 'LEALTAD', 'RESPONSABILIDAD', 'PERSEVERANCIA', 'SOLIDARIDAD'];
-        const palabrasDisplay = ['respeto', 'empatia', 'honestidad', 'lealtad', 'responsabilidad', 'perseverancia', 'solidaridad'];
-        const tamaño = 18; // Aumentado a 18x18
-        let sopa = [];
-        let posicionesPalabras = {};
-        let palabrasEncontradas = new Set();
-        let vidas = 3;
-        let tiempoRestante = 120;
-        let timerInterval = null;
-        let juegoTerminado = false;
-
-        let seleccionando = false;
-        let seleccionInicio = null;
-        let celdasSeleccionadas = new Set();
-
-        // ============================================================
-        // GENERAR SOPA - CON ESPACIOS VACÍOS PRIMERO
-        // ============================================================
-        function generarSopa() {
-            // 1. Crear tablero vacío (con espacios)
-            sopa = Array.from({ length: tamaño }, () =>
-                Array.from({ length: tamaño }, () => ' ')
-            );
-
-            posicionesPalabras = {};
-
-            const direcciones = [
-                [0, 1], [1, 0], [1, 1], [1, -1]
+        (function() {
+            const PALABRAS = [
+                'HONESTIDAD', 'RESPETO', 'SERVIDOR', 'EMPATIA',
+                'TOLERANCIA', 'PAZ', 'AMISTAD'
             ];
 
-            // Ordenar por longitud (más largas primero)
-            const palabrasOrdenadas = [...palabrasList].sort((a, b) => b.length - a.length);
+            const COLORES = [
+                'encontrada-color-0',
+                'encontrada-color-1',
+                'encontrada-color-2',
+                'encontrada-color-3',
+                'encontrada-color-4',
+                'encontrada-color-5',
+                'encontrada-color-6'
+            ];
 
-            let palabrasColocadas = 0;
+            let palabraColorMap = new Map();
+            const FILAS = 10;
+            const COLUMNAS = 10;
 
-            for (const palabra of palabrasOrdenadas) {
-                let colocada = false;
-                let intentos = 0;
+            let grilla = [];
+            let palabrasEncontradas = new Set();
+            let celdasEncontradasMap = new Map(); // Para saber qué celdas ya están marcadas
+            let vidas = 3;
+            let pistasDisponibles = 3;
+            let tiempoSegundos = 300;
+            let temporizador = null;
+            let juegoTerminado = false;
+            let celdasSeleccionadas = [];
+            let palabraActual = '';
 
-                // Intentar colocar en posiciones aleatorias
-                while (!colocada && intentos < 3000) {
-                    intentos++;
-                    const fila = Math.floor(Math.random() * (tamaño - 1));
-                    const col = Math.floor(Math.random() * (tamaño - 1));
-                    const dir = direcciones[Math.floor(Math.random() * direcciones.length)];
+            const grillaEl = document.getElementById('grillaSopa');
+            const vidasDisplay = document.getElementById('vidasDisplay');
+            const tiempoDisplay = document.getElementById('tiempoDisplay');
+            const pistasDisplay = document.getElementById('pistasDisplay');
+            const badgePistas = document.getElementById('badgePistas');
+            const listaPalabrasEl = document.getElementById('listaPalabras');
+            const progresoBar = document.getElementById('progresoBar');
+            const btnPista = document.getElementById('btnPista');
 
-                    if (puedeColocar(palabra, fila, col, dir)) {
-                        colocarPalabra(palabra, fila, col, dir);
-                        colocada = true;
-                        posicionesPalabras[palabra] = [];
-                        for (let i = 0; i < palabra.length; i++) {
-                            posicionesPalabras[palabra].push([fila + i * dir[0], col + i * dir[1]]);
-                        }
-                        palabrasColocadas++;
-                        console.log(`✅ Colocada: ${palabra} (${palabra.length} letras) en intento ${intentos}`);
-                        break;
-                    }
-                }
+            function init() {
+                palabraColorMap = new Map();
+                PALABRAS.forEach((p, index) => {
+                    palabraColorMap.set(p, COLORES[index % COLORES.length]);
+                });
 
-                // Si falla, intentar en horizontal forzado
-                if (!colocada) {
-                    for (let intento = 0; intento < 300 && !colocada; intento++) {
-                        const fila = Math.floor(Math.random() * tamaño);
-                        const col = Math.floor(Math.random() * (tamaño - palabra.length + 1));
+                grilla = crearGrilla(PALABRAS, FILAS, COLUMNAS);
+                palabrasEncontradas = new Set();
+                celdasEncontradasMap = new Map();
+                vidas = 3;
+                pistasDisponibles = 3;
+                tiempoSegundos = 300;
+                juegoTerminado = false;
+                celdasSeleccionadas = [];
+                palabraActual = '';
+
+                if (temporizador) clearInterval(temporizador);
+
+                renderGrilla();
+                actualizarEstado();
+                renderListaPalabras();
+                actualizarProgreso();
+                iniciarTemporizador();
+
+                document.querySelectorAll('.celda').forEach(c => {
+                    c.classList.remove('seleccionada', 'encontrada', 'pista-destacada', 'encontrada-anim');
+                    COLORES.forEach(color => c.classList.remove(color));
+                });
+            }
+
+            function crearGrilla(palabras, filas, columnas) {
+                const grid = Array.from({ length: filas }, () => Array(columnas).fill(''));
+                const direcciones = [
+                    [0, 1], [1, 0], [1, 1], [1, -1],
+                    [0, -1], [-1, 0], [-1, -1], [-1, 1]
+                ];
+
+                function colocarPalabra(palabra) {
+                    const maxIntentos = 300;
+                    for (let intento = 0; intento < maxIntentos; intento++) {
+                        const dir = direcciones[Math.floor(Math.random() * direcciones.length)];
+                        const row = Math.floor(Math.random() * filas);
+                        const col = Math.floor(Math.random() * columnas);
+                        let r = row, c = col;
                         let ok = true;
                         for (let i = 0; i < palabra.length; i++) {
-                            if (sopa[fila][col + i] !== ' ' && sopa[fila][col + i] !== palabra[i]) {
-                                ok = false;
-                                break;
-                            }
+                            if (r < 0 || r >= filas || c < 0 || c >= columnas) { ok = false; break; }
+                            if (grid[r][c] !== '' && grid[r][c] !== palabra[i]) { ok = false; break; }
+                            r += dir[0];
+                            c += dir[1];
                         }
                         if (ok) {
+                            r = row; c = col;
                             for (let i = 0; i < palabra.length; i++) {
-                                sopa[fila][col + i] = palabra[i];
+                                grid[r][c] = palabra[i];
+                                r += dir[0];
+                                c += dir[1];
                             }
-                            colocada = true;
-                            posicionesPalabras[palabra] = [];
-                            for (let i = 0; i < palabra.length; i++) {
-                                posicionesPalabras[palabra].push([fila, col + i]);
-                            }
-                            palabrasColocadas++;
-                            console.log(`✅ Colocada (horizontal forzada): ${palabra}`);
-                            break;
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                const sorted = [...palabras].sort((a, b) => b.length - a.length);
+                for (const p of sorted) {
+                    colocarPalabra(p);
+                }
+
+                const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                for (let i = 0; i < filas; i++) {
+                    for (let j = 0; j < columnas; j++) {
+                        if (grid[i][j] === '') {
+                            grid[i][j] = letras[Math.floor(Math.random() * letras.length)];
                         }
                     }
                 }
+                return grid;
+            }
 
-                // Último recurso: colocar en vertical
-                if (!colocada) {
-                    for (let intento = 0; intento < 300 && !colocada; intento++) {
-                        const fila = Math.floor(Math.random() * (tamaño - palabra.length + 1));
-                        const col = Math.floor(Math.random() * tamaño);
-                        let ok = true;
-                        for (let i = 0; i < palabra.length; i++) {
-                            if (sopa[fila + i][col] !== ' ' && sopa[fila + i][col] !== palabra[i]) {
-                                ok = false;
-                                break;
+            function renderGrilla() {
+                grillaEl.innerHTML = '';
+                for (let i = 0; i < FILAS; i++) {
+                    for (let j = 0; j < COLUMNAS; j++) {
+                        const celda = document.createElement('div');
+                        celda.className = 'celda';
+                        celda.textContent = grilla[i][j];
+                        celda.dataset.fila = i;
+                        celda.dataset.col = j;
+                        
+                        celda.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            if (juegoTerminado) return;
+                            iniciarSeleccion(i, j);
+                        });
+                        
+                        celda.addEventListener('mouseover', (e) => {
+                            if (e.buttons === 1 && !juegoTerminado && seleccionActiva) {
+                                agregarCeldaSeleccion(i, j);
                             }
-                        }
-                        if (ok) {
-                            for (let i = 0; i < palabra.length; i++) {
-                                sopa[fila + i][col] = palabra[i];
+                        });
+
+                        celda.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            if (juegoTerminado) return;
+                            const touch = e.touches[0];
+                            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (el && el.classList.contains('celda')) {
+                                const f = parseInt(el.dataset.fila);
+                                const c = parseInt(el.dataset.col);
+                                if (!isNaN(f) && !isNaN(c)) {
+                                    if (!seleccionActiva) {
+                                        iniciarSeleccion(f, c);
+                                    } else {
+                                        agregarCeldaSeleccion(f, c);
+                                    }
+                                }
                             }
-                            colocada = true;
-                            posicionesPalabras[palabra] = [];
-                            for (let i = 0; i < palabra.length; i++) {
-                                posicionesPalabras[palabra].push([fila + i, col]);
+                        }, { passive: false });
+
+                        celda.addEventListener('touchmove', (e) => {
+                            e.preventDefault();
+                            if (juegoTerminado) return;
+                            const touch = e.touches[0];
+                            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (el && el.classList.contains('celda') && seleccionActiva) {
+                                const f = parseInt(el.dataset.fila);
+                                const c = parseInt(el.dataset.col);
+                                if (!isNaN(f) && !isNaN(c)) {
+                                    agregarCeldaSeleccion(f, c);
+                                }
                             }
-                            palabrasColocadas++;
-                            console.log(`✅ Colocada (vertical forzada): ${palabra}`);
-                            break;
-                        }
+                        }, { passive: false });
+
+                        celda.addEventListener('touchend', (e) => {
+                            e.preventDefault();
+                            if (seleccionActiva && !juegoTerminado) {
+                                finalizarSeleccion();
+                            }
+                        }, { passive: false });
+
+                        grillaEl.appendChild(celda);
                     }
                 }
+            }
 
-                if (!colocada) {
-                    console.error(`❌ NO se pudo colocar: ${palabra}`);
+            let seleccionActiva = false;
+            let seleccionSet = new Set();
+
+            function iniciarSeleccion(fila, col) {
+                if (juegoTerminado) return;
+                const celda = obtenerCelda(fila, col);
+                if (!celda) return;
+                // Permitir seleccionar incluso si está encontrada
+                
+                limpiarSeleccion();
+                seleccionActiva = true;
+                seleccionSet = new Set();
+                agregarCeldaSeleccion(fila, col);
+            }
+
+            function agregarCeldaSeleccion(fila, col) {
+                if (!seleccionActiva || juegoTerminado) return;
+                const celda = obtenerCelda(fila, col);
+                if (!celda) return;
+                
+                const key = `${fila},${col}`;
+                if (seleccionSet.has(key)) return;
+                
+                seleccionSet.add(key);
+                celdasSeleccionadas.push({ fila, col });
+                celda.classList.add('seleccionada');
+                
+                palabraActual = '';
+                for (const pos of celdasSeleccionadas) {
+                    palabraActual += grilla[pos.fila][pos.col];
                 }
             }
 
-            // 2. Rellenar espacios vacíos con letras aleatorias
-            const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            for (let i = 0; i < tamaño; i++) {
-                for (let j = 0; j < tamaño; j++) {
-                    if (sopa[i][j] === ' ') {
-                        sopa[i][j] = letras[Math.floor(Math.random() * letras.length)];
-                    }
+            function finalizarSeleccion() {
+                if (!seleccionActiva || juegoTerminado) {
+                    limpiarSeleccion();
+                    return;
                 }
-            }
+                seleccionActiva = false;
 
-            console.log(`✅ Total palabras colocadas: ${palabrasColocadas}/${palabrasList.length}`);
-        }
-
-        function puedeColocar(palabra, fila, col, dir) {
-            for (let i = 0; i < palabra.length; i++) {
-                const nf = fila + i * dir[0];
-                const nc = col + i * dir[1];
-                if (nf < 0 || nf >= tamaño || nc < 0 || nc >= tamaño) return false;
-                const letraActual = sopa[nf][nc];
-                if (letraActual !== ' ' && letraActual !== palabra[i]) return false;
-            }
-            return true;
-        }
-
-        function colocarPalabra(palabra, fila, col, dir) {
-            for (let i = 0; i < palabra.length; i++) {
-                const nf = fila + i * dir[0];
-                const nc = col + i * dir[1];
-                sopa[nf][nc] = palabra[i];
-            }
-        }
-
-        // ============================================================
-        // RENDERIZAR SOPA
-        // ============================================================
-        function renderizarSopa() {
-            const tablero = document.getElementById('sopaTablero');
-            const cellSize = Math.min(600 / tamaño, 38);
-            tablero.style.gridTemplateColumns = `repeat(${tamaño}, 1fr)`;
-            tablero.style.maxWidth = `${Math.min(tamaño * (cellSize + 6) + 6, 600)}px`;
-            tablero.innerHTML = '';
-
-            for (let i = 0; i < tamaño; i++) {
-                for (let j = 0; j < tamaño; j++) {
-                    const celda = document.createElement('div');
-                    celda.className = 'celda';
-                    celda.dataset.fila = i;
-                    celda.dataset.col = j;
-                    celda.textContent = sopa[i][j];
-
-                    let esEncontrada = false;
-                    for (const [palabra, posiciones] of Object.entries(posicionesPalabras)) {
-                        if (palabrasEncontradas.has(palabra)) {
-                            if (posiciones.some(([f, c]) => f === i && c === j)) {
-                                esEncontrada = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (esEncontrada) {
-                        celda.classList.add('encontrada');
-                    }
-
-                    celda.addEventListener('mousedown', (e) => {
-                        e.preventDefault();
-                        if (juegoTerminado) return;
-                        iniciarSeleccion(i, j);
-                    });
-
-                    celda.addEventListener('mouseenter', () => {
-                        if (seleccionando && !juegoTerminado) {
-                            agregarSeleccion(i, j);
-                        }
-                    });
-
-                    celda.addEventListener('mouseup', () => {
-                        if (seleccionando && !juegoTerminado) {
-                            finalizarSeleccion();
-                        }
-                    });
-
-                    celda.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        if (juegoTerminado) return;
-                        iniciarSeleccion(i, j);
-                    });
-
-                    celda.addEventListener('touchmove', (e) => {
-                        e.preventDefault();
-                        if (!seleccionando || juegoTerminado) return;
-                        const touch = e.touches[0];
-                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                        if (element && element.classList.contains('celda')) {
-                            const fila = parseInt(element.dataset.fila);
-                            const col = parseInt(element.dataset.col);
-                            agregarSeleccion(fila, col);
-                        }
-                    });
-
-                    celda.addEventListener('touchend', (e) => {
-                        e.preventDefault();
-                        if (seleccionando && !juegoTerminado) {
-                            finalizarSeleccion();
-                        }
-                    });
-
-                    tablero.appendChild(celda);
-                }
-            }
-        }
-
-        // ============================================================
-        // SELECCIÓN
-        // ============================================================
-        function iniciarSeleccion(fila, col) {
-            const celda = document.querySelector(`.celda[data-fila="${fila}"][data-col="${col}"]`);
-            if (celda.classList.contains('encontrada')) return;
-
-            seleccionando = true;
-            seleccionInicio = [fila, col];
-            celdasSeleccionadas = new Set();
-            celdasSeleccionadas.add(`${fila},${col}`);
-            celda.classList.add('seleccionada');
-        }
-
-        function agregarSeleccion(fila, col) {
-            const celda = document.querySelector(`.celda[data-fila="${fila}"][data-col="${col}"]`);
-            if (celda.classList.contains('encontrada')) return;
-
-            const key = `${fila},${col}`;
-            if (celdasSeleccionadas.has(key)) return;
-
-            const [f0, c0] = seleccionInicio;
-
-            if (celdasSeleccionadas.size > 0) {
-                const dfPrimera = fila - f0;
-                const dcPrimera = col - c0;
-
-                if (dfPrimera !== 0 && dcPrimera !== 0 && Math.abs(dfPrimera) !== Math.abs(dcPrimera)) {
+                if (palabraActual.length < 2) {
+                    limpiarSeleccion();
                     return;
                 }
 
-                const direccion = obtenerDireccion(seleccionInicio, [fila, col]);
-                if (!direccion) return;
-
-                const [f1, c1] = seleccionInicio;
-                const paso = direccion;
-                let fActual = f1 + paso[0];
-                let cActual = c1 + paso[1];
-                let ok = true;
-                while (fActual !== fila || cActual !== col) {
-                    if (!celdasSeleccionadas.has(`${fActual},${cActual}`)) {
-                        ok = false;
-                        break;
+                const palabraUpper = palabraActual.toUpperCase();
+                const encontrada = PALABRAS.find(p => p === palabraUpper);
+                
+                if (encontrada && !palabrasEncontradas.has(encontrada)) {
+                    palabrasEncontradas.add(encontrada);
+                    const colorClass = palabraColorMap.get(encontrada) || COLORES[0];
+                    marcarEncontradas(celdasSeleccionadas, colorClass);
+                    renderListaPalabras();
+                    actualizarProgreso();
+                    limpiarSeleccion();
+                    if (palabrasEncontradas.size === PALABRAS.length) {
+                        victoria();
                     }
-                    fActual += paso[0];
-                    cActual += paso[1];
+                } else {
+                    // Solo perder vida si la palabra NO está en la lista Y tiene más de 2 letras
+                    // Y no es una palabra ya encontrada
+                    if (!palabrasEncontradas.has(palabraUpper) && palabraUpper.length >= 2) {
+                        perderVida();
+                    }
+                    limpiarSeleccion();
                 }
-                if (!ok) return;
+                palabraActual = '';
             }
 
-            celdasSeleccionadas.add(key);
-            celda.classList.add('seleccionada');
-        }
-
-        function obtenerDireccion(inicio, fin) {
-            const [f0, c0] = inicio;
-            const [f1, c1] = fin;
-            const df = f1 - f0;
-            const dc = c1 - c0;
-
-            if (df === 0 && dc === 0) return null;
-
-            const len = Math.max(Math.abs(df), Math.abs(dc));
-            return [df / len, dc / len];
-        }
-
-        function finalizarSeleccion() {
-            if (!seleccionando) return;
-            seleccionando = false;
-
-            const posiciones = Array.from(celdasSeleccionadas).map(p => {
-                const [f, c] = p.split(',').map(Number);
-                return [f, c];
-            });
-
-            posiciones.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-
-            let palabraFormada = '';
-            for (const [f, c] of posiciones) {
-                palabraFormada += sopa[f][c];
+            function limpiarSeleccion() {
+                document.querySelectorAll('.celda.seleccionada').forEach(el => el.classList.remove('seleccionada'));
+                celdasSeleccionadas = [];
+                palabraActual = '';
+                seleccionActiva = false;
+                seleccionSet = new Set();
             }
 
-            let palabraEncontrada = null;
-            for (const palabra of palabrasList) {
-                if (palabrasEncontradas.has(palabra)) continue;
-                if (palabraFormada === palabra || palabraFormada === palabra.split('').reverse().join('')) {
-                    palabraEncontrada = palabra;
-                    break;
-                }
+            function obtenerCelda(fila, col) {
+                return document.querySelector(`.celda[data-fila="${fila}"][data-col="${col}"]`);
             }
 
-            document.querySelectorAll('.celda.seleccionada').forEach(el => {
-                el.classList.remove('seleccionada');
-            });
-
-            if (palabraEncontrada) {
-                palabrasEncontradas.add(palabraEncontrada);
-                const index = palabrasList.indexOf(palabraEncontrada);
-                actualizarPalabraEncontrada(palabrasDisplay[index]);
-                actualizarContador();
-
-                if (posicionesPalabras[palabraEncontrada]) {
-                    for (const [f, c] of posicionesPalabras[palabraEncontrada]) {
-                        const celda = document.querySelector(`.celda[data-fila="${f}"][data-col="${c}"]`);
-                        if (celda) {
-                            celda.classList.add('encontrada');
-                            celda.classList.remove('seleccionada');
-                        }
+            function marcarEncontradas(posiciones, colorClass) {
+                for (const pos of posiciones) {
+                    const key = `${pos.fila},${pos.col}`;
+                    // Si ya está marcada, no la volvemos a marcar
+                    if (celdasEncontradasMap.has(key)) continue;
+                    
+                    const cel = obtenerCelda(pos.fila, pos.col);
+                    if (cel) {
+                        celdasEncontradasMap.set(key, true);
+                        cel.classList.remove('seleccionada');
+                        cel.classList.add('encontrada', colorClass, 'encontrada-anim');
+                        setTimeout(() => cel.classList.remove('encontrada-anim'), 500);
                     }
                 }
+            }
 
-                if (palabrasEncontradas.size === palabrasList.length) {
-                    juegoTerminado = true;
-                    clearInterval(timerInterval);
-                    Swal.fire({
-                        icon: 'success',
-                        title: '🎉 ¡Ganaste!',
-                        text: '¡Encontraste todas las palabras de valores!',
-                        confirmButtonColor: '#9b59b6',
-                        confirmButtonText: '¡Excelente! 💜'
-                    });
-                }
-            } else if (posiciones.length > 1) {
+            function actualizarProgreso() {
+                const total = PALABRAS.length;
+                const encontradas = palabrasEncontradas.size;
+                const porcentaje = (encontradas / total) * 100;
+                progresoBar.style.width = porcentaje + '%';
+            }
+
+            function perderVida() {
+                if (juegoTerminado) return;
                 vidas--;
-                actualizarVidas();
-
-                for (const [f, c] of posiciones) {
-                    const celda = document.querySelector(`.celda[data-fila="${f}"][data-col="${c}"]`);
-                    if (celda) {
-                        celda.classList.add('error');
-                        setTimeout(() => {
-                            celda.classList.remove('error');
-                        }, 400);
-                    }
-                }
-
-                if (vidas === 0) {
-                    juegoTerminado = true;
-                    clearInterval(timerInterval);
+                actualizarEstado();
+                if (vidas <= 0) {
+                    gameOver('perdiste');
+                } else {
+                    const isDarkMode = document.body.classList.contains('dark-mode');
                     Swal.fire({
                         icon: 'error',
-                        title: '💔 Sin vidas',
-                        text: 'Se te acabaron las vidas. ¡Inténtalo de nuevo!',
-                        confirmButtonColor: '#e74c3c',
-                        confirmButtonText: 'Reintentar'
-                    }).then(() => {
-                        reiniciarJuego();
+                        title: '¡Ups!',
+                        text: `Palabra incorrecta. Te quedan ${vidas} vidas.`,
+                        timer: 1200,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
                     });
                 }
             }
 
-            celdasSeleccionadas = new Set();
-            seleccionInicio = null;
-        }
-
-        // ============================================================
-        // PISTA
-        // ============================================================
-        function darPista() {
-            if (juegoTerminado) return;
-
-            const btnPista = document.getElementById('btnPista');
-            if (btnPista.disabled) return;
-
-            let palabraNoEncontrada = null;
-            for (const palabra of palabrasList) {
-                if (!palabrasEncontradas.has(palabra)) {
-                    palabraNoEncontrada = palabra;
-                    break;
-                }
-            }
-
-            if (!palabraNoEncontrada) return;
-
-            const posiciones = posicionesPalabras[palabraNoEncontrada];
-            if (!posiciones) return;
-
-            // Mostrar la primera letra
-            const primeraPos = posiciones[0];
-            const celda = document.querySelector(`.celda[data-fila="${primeraPos[0]}"][data-col="${primeraPos[1]}"]`);
-            if (celda && !celda.classList.contains('encontrada')) {
-                celda.classList.add('pista');
-                setTimeout(() => {
-                    celda.classList.remove('pista');
-                }, 2500);
-            }
-
-            const palabraDisplay = palabrasDisplay[palabrasList.indexOf(palabraNoEncontrada)];
-            Swal.fire({
-                icon: 'info',
-                title: '💡 Pista',
-                text: `Busca la palabra: "${palabraDisplay}"`,
-                timer: 2000,
-                showConfirmButton: false,
-                background: document.body.classList.contains('dark-mode') ? '#1a1a2e' : '#fdfaff',
-                customClass: {
-                    popup: 'swal-info-popup'
-                }
-            });
-
-            btnPista.disabled = true;
-            setTimeout(() => {
-                btnPista.disabled = false;
-            }, 3000);
-        }
-
-        // ============================================================
-        // ACTUALIZAR UI
-        // ============================================================
-        function actualizarPalabraEncontrada(palabra) {
-            const items = document.querySelectorAll('.palabra-item');
-            for (const item of items) {
-                if (item.dataset.palabra === palabra) {
-                    item.classList.add('encontrada');
-                    const icon = item.querySelector('.check-icon');
-                    if (icon) icon.style.opacity = '1';
-                    break;
-                }
-            }
-        }
-
-        function actualizarContador() {
-            document.getElementById('encontradasDisplay').textContent = `${palabrasEncontradas.size}/${palabrasList.length}`;
-        }
-
-        function actualizarVidas() {
-            const vidasDisplay = document.getElementById('vidasDisplay');
-            vidasDisplay.textContent = '❤️'.repeat(vidas) + '🖤'.repeat(3 - vidas);
-        }
-
-        function actualizarTiempo() {
-            const minutos = Math.floor(tiempoRestante / 60);
-            const segundos = tiempoRestante % 60;
-            document.getElementById('timerDisplay').textContent =
-                `${minutos}:${segundos.toString().padStart(2, '0')}`;
-        }
-
-        function renderizarPalabras() {
-            const container = document.getElementById('listaPalabras');
-            container.innerHTML = '';
-            palabrasDisplay.forEach(palabra => {
-                const item = document.createElement('div');
-                item.className = 'palabra-item';
-                item.dataset.palabra = palabra;
-                item.innerHTML = `
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span class="palabra-texto">${palabra}</span>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        // ============================================================
-        // TIMER
-        // ============================================================
-        function iniciarTimer() {
-            timerInterval = setInterval(() => {
-                tiempoRestante--;
-                actualizarTiempo();
-
-                if (tiempoRestante <= 0) {
-                    clearInterval(timerInterval);
-                    juegoTerminado = true;
+            function usarPista() {
+                if (juegoTerminado) return;
+                if (pistasDisponibles <= 0) {
+                    const isDarkMode = document.body.classList.contains('dark-mode');
                     Swal.fire({
-                        icon: 'warning',
-                        title: '⏰ Tiempo agotado',
-                        text: 'Se acabó el tiempo. ¡Inténtalo de nuevo!',
-                        confirmButtonColor: '#f39c12',
-                        confirmButtonText: 'Reintentar'
-                    }).then(() => {
-                        reiniciarJuego();
+                        title: 'Sin pistas',
+                        imageUrl: 'imganes/logosmedi.png',
+                        imageWidth: 80,
+                        imageHeight: 80,
+                        imageAlt: 'Medicurativo',
+                        text: 'Ya no tienes más pistas.',
+                        confirmButtonText: 'Entendido 💜',
+                        confirmButtonColor: '#9b59b6',
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
+                    });
+                    return;
+                }
+                const pendientes = PALABRAS.filter(p => !palabrasEncontradas.has(p));
+                if (pendientes.length === 0) return;
+
+                const palabraPista = pendientes[Math.floor(Math.random() * pendientes.length)];
+                let encontradaPos = null;
+                for (let i = 0; i < FILAS; i++) {
+                    for (let j = 0; j < COLUMNAS; j++) {
+                        if (grilla[i][j] === palabraPista[0]) {
+                            const dirs = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+                            for (const d of dirs) {
+                                let r = i, c = j, ok = true;
+                                for (let k = 0; k < palabraPista.length; k++) {
+                                    if (r < 0 || r >= FILAS || c < 0 || c >= COLUMNAS || grilla[r][c] !== palabraPista[k]) {
+                                        ok = false; break;
+                                    }
+                                    r += d[0]; c += d[1];
+                                }
+                                if (ok) {
+                                    encontradaPos = { fila: i, col: j, dir: d };
+                                    break;
+                                }
+                            }
+                        }
+                        if (encontradaPos) break;
+                    }
+                    if (encontradaPos) break;
+                }
+
+                if (encontradaPos) {
+                    pistasDisponibles--;
+                    actualizarEstado();
+                    const { fila, col, dir } = encontradaPos;
+                    const celdas = [];
+                    for (let k = 0; k < palabraPista.length; k++) {
+                        const nf = fila + k * dir[0];
+                        const nc = col + k * dir[1];
+                        const cel = obtenerCelda(nf, nc);
+                        if (cel) {
+                            cel.classList.add('pista-destacada');
+                            celdas.push(cel);
+                        }
+                    }
+                    setTimeout(() => {
+                        celdas.forEach(c => c.classList.remove('pista-destacada'));
+                    }, 2000);
+
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: '🔍 Pista',
+                        imageUrl: 'imganes/logosmedi.png',
+                        imageWidth: 80,
+                        imageHeight: 80,
+                        imageAlt: 'Medicurativo',
+                        text: `Busca: "${palabraPista}"`,
+                        timer: 1800,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
+                    });
+                } else {
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: 'Error',
+                        imageUrl: 'imganes/logosmedi.png',
+                        imageWidth: 80,
+                        imageHeight: 80,
+                        imageAlt: 'Medicurativo',
+                        text: 'No se pudo generar pista.',
+                        confirmButtonText: 'Entendido 💜',
+                        confirmButtonColor: '#9b59b6',
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
                     });
                 }
-            }, 1000);
-        }
-
-        // ============================================================
-        // REINICIAR
-        // ============================================================
-        function reiniciarJuego() {
-            clearInterval(timerInterval);
-            juegoTerminado = false;
-            palabrasEncontradas = new Set();
-            vidas = 3;
-            tiempoRestante = 120;
-            seleccionando = false;
-            seleccionInicio = null;
-            celdasSeleccionadas = new Set();
-
-            actualizarVidas();
-            actualizarTiempo();
-            actualizarContador();
-
-            generarSopa();
-            renderizarSopa();
-            renderizarPalabras();
-
-            document.getElementById('btnPista').disabled = false;
-            iniciarTimer();
-        }
-
-        // ============================================================
-        // INICIALIZAR
-        // ============================================================
-        function init() {
-            generarSopa();
-            renderizarSopa();
-            renderizarPalabras();
-            actualizarVidas();
-            actualizarTiempo();
-            actualizarContador();
-            iniciarTimer();
-
-            document.addEventListener('selectstart', (e) => e.preventDefault());
-        }
-
-        document.addEventListener('mouseup', () => {
-            if (seleccionando) {
-                finalizarSeleccion();
             }
-        });
 
-        init();
+            function iniciarTemporizador() {
+                if (temporizador) clearInterval(temporizador);
+                temporizador = setInterval(() => {
+                    if (juegoTerminado) return;
+                    tiempoSegundos--;
+                    actualizarTiempo();
+                    if (tiempoSegundos <= 0) {
+                        gameOver('tiempo');
+                    }
+                }, 1000);
+            }
+
+            function actualizarTiempo() {
+                const mins = Math.floor(tiempoSegundos / 60);
+                const segs = tiempoSegundos % 60;
+                tiempoDisplay.textContent = `${mins}:${segs.toString().padStart(2, '0')}`;
+                if (tiempoSegundos <= 30) {
+                    tiempoDisplay.style.color = '#e74c3c';
+                } else {
+                    tiempoDisplay.style.color = '';
+                }
+            }
+
+            function actualizarEstado() {
+                let corazones = '';
+                for (let i = 0; i < vidas; i++) corazones += '❤️';
+                if (vidas === 0) corazones = '💔';
+                vidasDisplay.textContent = corazones || '💔';
+                pistasDisplay.textContent = pistasDisponibles;
+                badgePistas.textContent = pistasDisponibles;
+                btnPista.disabled = pistasDisponibles <= 0 || juegoTerminado;
+                actualizarTiempo();
+            }
+
+            function renderListaPalabras() {
+                listaPalabrasEl.innerHTML = '';
+                for (const p of PALABRAS) {
+                    const span = document.createElement('span');
+                    span.className = 'palabra-tag';
+                    if (palabrasEncontradas.has(p)) {
+                        span.classList.add('encontrada');
+                    }
+                    span.textContent = p;
+                    listaPalabrasEl.appendChild(span);
+                }
+            }
+
+            function gameOver(tipo) {
+                if (juegoTerminado) return;
+                juegoTerminado = true;
+                if (temporizador) clearInterval(temporizador);
+                let titulo = '', texto = '';
+                if (tipo === 'perdiste') {
+                    titulo = '💔 Sin vidas';
+                    texto = '¡Has perdido! Vuelve a intentarlo.';
+                } else if (tipo === 'tiempo') {
+                    titulo = '⏰ Tiempo agotado';
+                    texto = 'Se acabó el tiempo. ¡Más suerte la próxima!';
+                }
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                Swal.fire({
+                    title: titulo,
+                    imageUrl: 'imganes/logosmedi.png',
+                    imageWidth: 80,
+                    imageHeight: 80,
+                    imageAlt: 'Medicurativo',
+                    html: `
+                        <div style="text-align:center; padding:5px 0;">
+                            <p style="color:${isDarkMode ? '#d0c0e0' : '#6a5a8a'}; font-size:1.1rem;">${texto}</p>
+                        </div>
+                    `,
+                    confirmButtonText: 'Reiniciar 💜',
+                    confirmButtonColor: '#9b59b6',
+                    background: isDarkMode ? '#1e1e30' : '#fff',
+                    color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                    showCloseButton: true,
+                    customClass: {
+                        popup: 'swal-info-popup',
+                        confirmButton: 'btn-confirm'
+                    }
+                }).then(() => {
+                    init();
+                });
+            }
+
+            function victoria() {
+                if (juegoTerminado) return;
+                juegoTerminado = true;
+                if (temporizador) clearInterval(temporizador);
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                Swal.fire({
+                    title: '🎉 ¡Ganaste!',
+                    imageUrl: 'imganes/logosmedi.png',
+                    imageWidth: 80,
+                    imageHeight: 80,
+                    imageAlt: 'Medicurativo',
+                    html: `
+                        <div style="text-align:center; padding:5px 0;">
+                            <p style="color:${isDarkMode ? '#d0c0e0' : '#6a5a8a'}; font-size:1.1rem;">¡Encontraste todas las palabras de VALORES!</p>
+                            <div style="margin-top:12px; background:rgba(46,204,113,0.08); border-radius:24px; padding:12px; border:1px solid rgba(46,204,113,0.15);">
+                                <p style="color:#7f8c8d; font-size:0.85rem; margin:0;">
+                                    <i class="fas fa-check-circle" style="color:#2ecc71;"></i>
+                                    ¡Excelente trabajo!
+                                </p>
+                                <p style="color:#9b59b6; font-size:0.8rem; margin:5px 0 0;">
+                                    ⭐ Palabras encontradas: ${PALABRAS.length}/${PALABRAS.length}
+                                </p>
+                            </div>
+                        </div>
+                    `,
+                    confirmButtonText: 'Jugar de nuevo 💜',
+                    confirmButtonColor: '#9b59b6',
+                    background: isDarkMode ? '#1e1e30' : '#fff',
+                    color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                    showCloseButton: true,
+                    customClass: {
+                        popup: 'swal-info-popup',
+                        confirmButton: 'btn-confirm'
+                    }
+                }).then(() => {
+                    init();
+                });
+            }
+
+            document.addEventListener('mouseup', () => {
+                if (seleccionActiva && !juegoTerminado) {
+                    finalizarSeleccion();
+                }
+            });
+
+            btnPista.addEventListener('click', usarPista);
+
+            init();
+
+        })();
     </script>
 </body>
 </html>

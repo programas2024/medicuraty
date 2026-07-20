@@ -1,84 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'none'; upgrade-insecure-requests;">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta name="referrer-policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'none'; upgrade-insecure-requests;" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta name="referrer-policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
     <title>Sopas de Letras · Medicurativo</title>
-    <link rel="icon" type="image/png" href="imganes/logosmedi.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="stylesheet" href="css/tooltip.css">
-    <link rel="stylesheet" href="css/folter.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="icon" type="image/png" href="imganes/logosmedi.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="stylesheet" href="css/tooltip.css" />
+    <link rel="stylesheet" href="css/folter.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
 
     <style>
+        /* ===== ESTILOS GLOBALES ===== */
+        .btn-ranking-header {
+            background: transparent;
+            border: 1.5px solid #d4b8e8;
+            border-radius: 50%;
+            padding: 12px;
+            width: 48px;
+            height: 48px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #f1c40f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(241, 196, 15, 0.05);
+        }
+        .btn-ranking-header i {
+            color: #f1c40f;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        .btn-ranking-header:hover {
+            background: rgba(241, 196, 15, 0.15);
+            border-color: #f1c40f;
+            transform: scale(1.08);
+        }
+        body.dark-mode .btn-ranking-header {
+            border-color: #5d3e77;
+            color: #f1c40f;
+        }
+        body.dark-mode .btn-ranking-header i {
+            color: #f1c40f;
+        }
+        body.dark-mode .btn-ranking-header:hover {
+            background: rgba(241, 196, 15, 0.15);
+        }
+
         /* ===== ESTILOS MODO OSCURO ===== */
         body.dark-mode .subtitulo-container {
             background: #1a1a2e;
             border-color: #3d2a5c;
         }
-
         body.dark-mode .subtitulo-container p {
             color: #b0a0c8;
         }
-
         body.dark-mode .nivel-card {
             background: #1e1e2f;
             border-color: #3d2a5c;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
-
         body.dark-mode .nivel-card:hover {
             border-color: #9b59b6;
             box-shadow: 0 20px 50px rgba(155, 89, 182, 0.2);
         }
-
         body.dark-mode .nivel-card .nivel-header h3 {
             color: #e0d0f0;
         }
-
         body.dark-mode .nivel-card .nivel-icono {
-            background: #151525;
-            border-color: #3d2a5c;
+            background: #1a1a2e;
         }
-
         body.dark-mode .nivel-card .nivel-desc {
             color: #b0a0c8;
         }
-
         body.dark-mode .nivel-card .nivel-btn {
             background: linear-gradient(135deg, #7c3a9e, #6c3483);
             box-shadow: 0 5px 20px rgba(155, 89, 182, 0.25);
         }
-
         body.dark-mode .nivel-card .nivel-btn:hover {
             box-shadow: 0 8px 30px rgba(155, 89, 182, 0.4);
         }
-
         body.dark-mode .nivel-card .nivel-info-btn {
             background: rgba(155, 89, 182, 0.15);
             color: #c084d8;
         }
-
         body.dark-mode .nivel-card .nivel-info-btn:hover {
             background: rgba(155, 89, 182, 0.3);
         }
-
         body.dark-mode .btn-copa-header {
             background: rgba(155, 89, 182, 0.15);
             color: #c084d8;
         }
-
         body.dark-mode .btn-copa-header:hover {
             background: rgba(155, 89, 182, 0.3);
         }
-
         body.dark-mode .titulo-sopas {
             color: #e0d0f0;
         }
@@ -99,7 +126,6 @@
             justify-content: center;
             flex-shrink: 0;
         }
-
         .header-utils .btn-copa-header:hover {
             background: rgba(155, 89, 182, 0.2);
             transform: scale(1.1);
@@ -107,7 +133,7 @@
 
         /* ===== CONTENEDOR PRINCIPAL ===== */
         .sopas-container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px 30px 50px;
         }
@@ -131,14 +157,12 @@
             margin-bottom: 30px;
             transition: all 0.3s ease;
         }
-
         .subtitulo-container p {
             color: #6a5a8a;
             font-size: 1rem;
             font-weight: 500;
             margin: 0;
         }
-
         .subtitulo-container i {
             color: #9b59b6;
         }
@@ -146,7 +170,7 @@
         /* ===== GRID DE NIVELES (CARDS) ===== */
         .niveles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 25px;
             padding: 0;
         }
@@ -162,7 +186,6 @@
             flex-direction: column;
             position: relative;
         }
-
         .nivel-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 20px 50px rgba(155, 89, 182, 0.12);
@@ -175,14 +198,12 @@
             align-items: center;
             margin-bottom: 12px;
         }
-
         .nivel-card .nivel-header h3 {
             color: #2c1b4e;
             font-size: 1.2rem;
             font-weight: 700;
             margin: 0;
         }
-
         .nivel-card .nivel-info-btn {
             background: rgba(155, 89, 182, 0.08);
             border: none;
@@ -198,26 +219,42 @@
             justify-content: center;
             flex-shrink: 0;
         }
-
         .nivel-card .nivel-info-btn:hover {
             background: rgba(155, 89, 182, 0.2);
             transform: scale(1.1);
         }
 
+        /* ===== Icono con IMAGEN - SIN BORDE VERDE ===== */
         .nivel-card .nivel-icono {
             border-radius: 18px;
-            padding: 18px;
+            padding: 15px;
             text-align: center;
-            min-height: 80px;
+            min-height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 12px;
             background: #f8f4ff;
-            border: 2px dashed #e8d9f5;
-            font-size: 3rem;
+            overflow: hidden;
+        }
+        .nivel-card .nivel-icono img {
+            max-width: 100%;
+            max-height: 180px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            border-radius: 16px;
+            border: 3px solid #9b59b6;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.2);
+        }
+        .nivel-card:hover .nivel-icono img {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(155, 89, 182, 0.35);
         }
 
+        /* ===== ESTRELLAS ===== */
         .nivel-card .nivel-estrellas {
             text-align: center;
             margin-bottom: 8px;
@@ -226,7 +263,6 @@
             letter-spacing: 3px;
             position: relative;
         }
-
         .nivel-card .nivel-estrellas .tooltip-estrellas {
             visibility: hidden;
             opacity: 0;
@@ -246,13 +282,11 @@
             pointer-events: none;
             letter-spacing: 0.5px;
         }
-
         .nivel-card .nivel-estrellas:hover .tooltip-estrellas {
             visibility: visible;
             opacity: 1;
             bottom: -32px;
         }
-
         body.dark-mode .nivel-card .nivel-estrellas .tooltip-estrellas {
             background: #3d2a5c;
             color: #e0d0f0;
@@ -286,147 +320,154 @@
             box-shadow: 0 5px 20px rgba(155, 89, 182, 0.15);
             margin-top: auto;
         }
-
         .nivel-card .nivel-btn:hover {
             transform: scale(1.02);
             box-shadow: 0 8px 30px rgba(155, 89, 182, 0.25);
         }
-
         .nivel-card .nivel-btn i {
             font-size: 0.9rem;
         }
 
-        /* Colores por nivel */
-        .nivel-card.nivel-1 .nivel-icono {
+        /* Colores por nivel - solo el color del borde de la imagen */
+        .nivel-card.nivel-1 .nivel-icono img {
             border-color: #4CAF50;
-            background: #e8f5e9;
         }
         .nivel-card.nivel-1 .nivel-header h3 {
             color: #2e7d32;
         }
 
-        .nivel-card.nivel-2 .nivel-icono {
+        .nivel-card.nivel-2 .nivel-icono img {
             border-color: #8BC34A;
-            background: #f1f8e9;
         }
         .nivel-card.nivel-2 .nivel-header h3 {
             color: #558b2f;
         }
 
-        .nivel-card.nivel-3 .nivel-icono {
+        .nivel-card.nivel-3 .nivel-icono img {
             border-color: #FFC107;
-            background: #fff8e1;
         }
         .nivel-card.nivel-3 .nivel-header h3 {
             color: #f57f17;
         }
 
-        .nivel-card.nivel-4 .nivel-icono {
+        .nivel-card.nivel-4 .nivel-icono img {
             border-color: #FF9800;
-            background: #fff3e0;
         }
         .nivel-card.nivel-4 .nivel-header h3 {
             color: #e65100;
         }
 
-        .nivel-card.nivel-5 .nivel-icono {
+        .nivel-card.nivel-5 .nivel-icono img {
             border-color: #f44336;
-            background: #ffebee;
         }
         .nivel-card.nivel-5 .nivel-header h3 {
             color: #b71c1c;
         }
 
+        .nivel-card.nivel-6 .nivel-icono img {
+            border-color: #9C27B0;
+        }
+        .nivel-card.nivel-6 .nivel-header h3 {
+            color: #6a1b9a;
+        }
+
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .niveles-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .nivel-card .nivel-icono img {
+                max-height: 100px;
+            }
+        }
+
         @media (max-width: 768px) {
             .sopas-container {
                 padding: 15px 16px 30px;
             }
-
             .titulo-sopas {
                 font-size: 1.8rem;
             }
-
             .subtitulo-container {
                 padding: 12px 20px;
                 border-radius: 16px;
             }
-
             .subtitulo-container p {
                 font-size: 0.9rem;
             }
-
             .niveles-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .nivel-card {
-                padding: 22px 20px 24px;
-                border-radius: 25px;
-            }
-
-            .nivel-card .nivel-icono {
-                min-height: 70px;
-                font-size: 2.5rem;
-                padding: 15px;
-            }
-
-            .nivel-card .nivel-header h3 {
-                font-size: 1.1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .titulo-sopas {
-                font-size: 1.5rem;
-            }
-
-            .subtitulo-container {
-                padding: 10px 16px;
-                border-radius: 14px;
-            }
-
-            .subtitulo-container p {
-                font-size: 0.8rem;
-            }
-
-            .niveles-grid {
+                grid-template-columns: 1fr 1fr;
                 gap: 16px;
             }
-
             .nivel-card {
-                padding: 18px 16px 20px;
+                padding: 20px 16px 22px;
                 border-radius: 22px;
             }
-
             .nivel-card .nivel-icono {
-                min-height: 60px;
-                font-size: 2rem;
+                min-height: 80px;
                 padding: 12px;
-                border-radius: 14px;
             }
-
+            .nivel-card .nivel-icono img {
+                max-height: 85px;
+                border-width: 3px;
+            }
             .nivel-card .nivel-header h3 {
                 font-size: 1rem;
             }
+            .nivel-card .nivel-desc {
+                font-size: 0.82rem;
+                min-height: 34px;
+            }
+            .nivel-card .nivel-btn {
+                padding: 10px 14px;
+                font-size: 0.82rem;
+            }
+            .nivel-card .nivel-info-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+            .nivel-card .nivel-estrellas {
+                font-size: 0.9rem;
+            }
+        }
 
+        @media (max-width: 500px) {
+            .niveles-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .nivel-card .nivel-icono {
+                min-height: 120px;
+                padding: 18px;
+            }
+            .nivel-card .nivel-icono img {
+                max-height: 130px;
+                border-width: 4px;
+                border-radius: 20px;
+            }
+            .titulo-sopas {
+                font-size: 1.5rem;
+            }
+            .subtitulo-container p {
+                font-size: 0.8rem;
+            }
+            .nivel-card {
+                padding: 22px 18px 24px;
+                border-radius: 25px;
+            }
+            .nivel-card .nivel-header h3 {
+                font-size: 1.1rem;
+            }
             .nivel-card .nivel-desc {
                 font-size: 0.85rem;
                 min-height: 34px;
             }
-
             .nivel-card .nivel-btn {
-                padding: 10px 16px;
+                padding: 12px 16px;
                 font-size: 0.88rem;
             }
-
-            .nivel-card .nivel-info-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-
             .header-utils .btn-copa-header {
                 width: 30px !important;
                 height: 30px !important;
@@ -443,7 +484,6 @@
             border: 3px solid #9b59b6 !important;
             box-shadow: 0 20px 50px rgba(155, 89, 182, 0.25) !important;
         }
-
         .swal-info-popup .swal2-close {
             border-radius: 50% !important;
             background: rgba(155, 89, 182, 0.1) !important;
@@ -453,16 +493,13 @@
             font-size: 1.5rem !important;
             transition: 0.3s !important;
         }
-
         .swal-info-popup .swal2-close:hover {
             background: rgba(155, 89, 182, 0.2) !important;
             transform: scale(1.1) !important;
         }
-
         .swal-info-popup .swal2-title {
             display: none !important;
         }
-
         body.dark-mode .swal-info-popup {
             background: #1a1a2e !important;
             border-color: #7c3a9e !important;
@@ -494,11 +531,11 @@
 <body>
     <div class="contenedor">
 
-        <!-- HEADER CON BOTONES -->
+        <!-- ===== HEADER ===== -->
         <div class="header">
             <div class="logo">
                 <a href="index.html" style="text-decoration: none;">
-                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo" />
                 </a>
             </div>
             <div class="titulo">
@@ -506,35 +543,37 @@
                 <p><i class="fas fa-spa"></i> tu espacio de crecimiento</p>
             </div>
 
-            <!-- Utilidades de la App -->
-            <div class="header-utils" id="headerUtilsGaleria">
-                <!-- Botón Inicio -->
+            <div class="header-utils" id="headerUtilsComunidad">
                 <div class="btn-con-tooltip" id="wrapperInicio">
-                    <a href="principal.html" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                    <a href="principal.html" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
                         <i class="fas fa-home"></i>
                     </a>
                     <span class="tooltip">Inicio</span>
                 </div>
 
-                <!-- Botón Modo Oscuro -->
+                <div class="btn-con-tooltip" id="wrapperRanking">
+                    <button class="btn-ranking-header" id="btnRankingHeader">
+                        <i class="fas fa-trophy"></i>
+                    </button>
+                    <span class="tooltip">Ranking</span>
+                </div>
+
+                <div class="btn-con-tooltip" id="wrapperNotificacion" style="display: none;">
+                    <button class="btn-notificacion" id="btnBuzonAprobacion" title="Publicaciones pendientes">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge-notificacion oculto" id="badgeNotificacion">0</span>
+                    </button>
+                    <span class="tooltip">Buzón de aprobación</span>
+                </div>
+
                 <div class="btn-con-tooltip">
                     <button class="btn-icon-only" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
                     </button>
                     <span class="tooltip">Modo Oscuro</span>
                 </div>
-
-                <!-- Botón Trofeo -->
                 <div class="btn-con-tooltip">
-                    <button class="btn-copa-header" onclick="mostrarCopa()">
-                        <i class="fas fa-trophy"></i>
-                    </button>
-                    <span class="tooltip">Trofeo</span>
-                </div>
-
-                <!-- Botón Ayuda -->
-                <div class="btn-con-tooltip">
-                    <button class="btn-icon-only" id="btnAyudas" style="color: #2c1b4e;">
+                    <button class="btn-icon-only" id="btnAyuda" style="color: #2c1b4e;">
                         <i class="fas fa-question-circle"></i>
                     </button>
                     <span class="tooltip">Ayuda</span>
@@ -545,16 +584,15 @@
         <!-- ===== CONTENEDOR SOPAS ===== -->
         <div class="sopas-container">
 
-            <!-- Título -->
             <h1 class="titulo-sopas">🔍 Sopas de Letras</h1>
 
-            <!-- Subtítulo en contenedor -->
             <div class="subtitulo-container">
-                <p><i class="fas fa-feather"></i> Encuentra palabras ocultas · 5 niveles de dificultad <i class="fas fa-feather"></i></p>
+                <p><i class="fas fa-feather"></i> Encuentra palabras ocultas · 6 niveles de dificultad <i class="fas fa-feather"></i></p>
             </div>
 
-            <!-- Grid de niveles como cards -->
+            <!-- Grid de niveles -->
             <div class="niveles-grid">
+
                 <!-- Nivel 1: Valores -->
                 <div class="nivel-card nivel-1">
                     <div class="nivel-header">
@@ -563,7 +601,9 @@
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
-                    <div class="nivel-icono">❤️</div>
+                    <div class="nivel-icono">
+                        <img src="imganes/valores.png" alt="Valores" />
+                    </div>
                     <div class="nivel-estrellas">
                         ★
                         <span class="tooltip-estrellas">Dificultad: Fácil</span>
@@ -582,7 +622,9 @@
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
-                    <div class="nivel-icono">💼</div>
+                    <div class="nivel-icono">
+                        <img src="imganes/profecionales.png" alt="Profesiones" />
+                    </div>
                     <div class="nivel-estrellas">
                         ★★
                         <span class="tooltip-estrellas">Dificultad: Media</span>
@@ -601,7 +643,9 @@
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
-                    <div class="nivel-icono">👑</div>
+                    <div class="nivel-icono">
+                        <img src="imganes/lideres.png" alt="Líder" />
+                    </div>
                     <div class="nivel-estrellas">
                         ★★★
                         <span class="tooltip-estrellas">Dificultad: Intermedia</span>
@@ -620,7 +664,9 @@
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
-                    <div class="nivel-icono">👨‍👩‍👧‍👦</div>
+                    <div class="nivel-icono">
+                        <img src="imganes/delfin.png" alt="Familia" />
+                    </div>
                     <div class="nivel-estrellas">
                         ★★★★
                         <span class="tooltip-estrellas">Dificultad: Difícil</span>
@@ -639,7 +685,9 @@
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
-                    <div class="nivel-icono">💕</div>
+                    <div class="nivel-icono">
+                        <img src="imganes/amor.png" alt="Amor" />
+                    </div>
                     <div class="nivel-estrellas">
                         ★★★★★
                         <span class="tooltip-estrellas">Dificultad: Experto</span>
@@ -649,8 +697,29 @@
                         <i class="fas fa-play"></i> Jugar nivel
                     </button>
                 </div>
-            </div>
 
+                <!-- Nivel 6: Colores (NUEVO) -->
+                <div class="nivel-card nivel-6">
+                    <div class="nivel-header">
+                        <h3>🎨 Colores</h3>
+                        <button class="nivel-info-btn" onclick="mostrarInfoNivel(6)">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                    <div class="nivel-icono">
+                        <img src="imganes/colores.png" alt="Colores" />
+                    </div>
+                    <div class="nivel-estrellas">
+                        ★★★★★★
+                        <span class="tooltip-estrellas">Dificultad: Maestro</span>
+                    </div>
+                    <p class="nivel-desc">Palabras de colores y matices</p>
+                    <button class="nivel-btn" onclick="jugarNivel(6)">
+                        <i class="fas fa-play"></i> Jugar nivel
+                    </button>
+                </div>
+
+            </div>
         </div>
 
         <!-- ===== FOOTER ===== -->
@@ -709,7 +778,7 @@
         // ============================================================
         // AYUDA GENERAL (Header)
         // ============================================================
-        document.getElementById('btnAyudas').addEventListener('click', function() {
+        document.getElementById('btnAyuda').addEventListener('click', function() {
             const isDarkMode = document.body.classList.contains('dark-mode');
             const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
             const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
@@ -728,7 +797,7 @@
                         <div style="margin-top: 15px; background: rgba(155,89,182,0.06); border-radius: 16px; padding: 12px;">
                             <p style="color: #7f8c8d; font-size: 0.85rem; margin: 0;">
                                 <i class="fas fa-heart" style="color: #9b59b6;"></i>
-                                Valores · Profesiones · Líder · Familia · Amor
+                                Valores · Profesiones · Líder · Familia · Amor · Colores
                                 <br>¡Descubre todas las palabras!
                             </p>
                         </div>
@@ -747,7 +816,7 @@
         });
 
         // ============================================================
-        // INFORMACIÓN POR NIVEL (Botón info en cada card)
+        // INFORMACIÓN POR NIVEL (Botón info)
         // ============================================================
         function mostrarInfoNivel(nivel) {
             const infoNiveles = {
@@ -775,6 +844,11 @@
                     titulo: '💕 Nivel 5: Amor',
                     desc: 'Palabras del corazón, sentimientos y emociones. El nivel más especial.',
                     dificultad: 'Experto'
+                },
+                6: {
+                    titulo: '🎨 Nivel 6: Colores',
+                    desc: 'Descubre palabras relacionadas con colores, matices y tonalidades. ¡Un arcoíris de vocabulario!',
+                    dificultad: 'Maestro'
                 }
             };
 
@@ -817,7 +891,7 @@
         }
 
         // ============================================================
-        // JUGAR NIVEL (Redirección)
+        // JUGAR NIVEL
         // ============================================================
         function jugarNivel(nivel) {
             // Nivel 1: Valores -> valores.html
@@ -831,14 +905,16 @@
                 2: 'Profesiones',
                 3: 'Líder',
                 4: 'Familia',
-                5: 'Amor'
+                5: 'Amor',
+                6: 'Colores'
             };
 
             const iconosNivel = {
                 2: '💼',
                 3: '👑',
                 4: '👨‍👩‍👧‍👦',
-                5: '💕'
+                5: '💕',
+                6: '🎨'
             };
 
             const isDarkMode = document.body.classList.contains('dark-mode');
@@ -851,9 +927,9 @@
                 html: `
                     <div style="text-align: center; padding: 10px 0;">
                         <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
-                        <div style="font-size: 3.5rem; margin: 5px 0;">${iconosNivel[nivel]}</div>
+                        <div style="font-size: 3.5rem; margin: 5px 0;">${iconosNivel[nivel] || '📚'}</div>
                         <h2 style="color: #9b59b6; font-weight: 800; margin: 0 0 6px 0; font-size: 1.3rem;">Nivel ${nivel}</h2>
-                        <h3 style="color: ${textColor}; font-weight: 700; margin-bottom: 8px;">${nombresNivel[nivel]}</h3>
+                        <h3 style="color: ${textColor}; font-weight: 700; margin-bottom: 8px;">${nombresNivel[nivel] || 'Nuevo nivel'}</h3>
                         <p style="color: #7f8c8d; font-size: 0.95rem; line-height: 1.6; max-width: 360px; margin: 0 auto;">
                             Este nivel está en desarrollo. 
                             <br>¡Pronto podrás disfrutarlo!
@@ -881,7 +957,7 @@
         // ============================================================
         // BOTÓN COPA (TROFEO)
         // ============================================================
-        function mostrarCopa() {
+        document.getElementById('btnRankingHeader').addEventListener('click', function() {
             const isDarkMode = document.body.classList.contains('dark-mode');
             const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
             const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
@@ -919,7 +995,7 @@
                 },
                 buttonsStyling: false
             });
-        }
+        });
     </script>
 </body>
 </html>

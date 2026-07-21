@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/estilo.css" />
     <link rel="stylesheet" href="css/tooltip.css" />
     <link rel="stylesheet" href="css/folter.css" />
+    <link rel="stylesheet" href="css/valores.css"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
@@ -224,7 +225,7 @@
             transform: scale(1.1);
         }
 
-        /* ===== Icono con IMAGEN - SIN BORDE VERDE ===== */
+        /* ===== Icono con IMAGEN ===== */
         .nivel-card .nivel-icono {
             border-radius: 18px;
             padding: 15px;
@@ -328,7 +329,7 @@
             font-size: 0.9rem;
         }
 
-        /* Colores por nivel - solo el color del borde de la imagen */
+        /* Colores por nivel */
         .nivel-card.nivel-1 .nivel-icono img {
             border-color: #4CAF50;
         }
@@ -371,17 +372,286 @@
             color: #6a1b9a;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .niveles-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
+        /* ===== ESTILOS RANKING ===== */
+        .ranking-modal-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .ranking-modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .ranking-modal-content::-webkit-scrollbar-track {
+            background: rgba(155, 89, 182, 0.05);
+            border-radius: 10px;
+        }
+        .ranking-modal-content::-webkit-scrollbar-thumb {
+            background: rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+        }
+        .ranking-modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(155, 89, 182, 0.5);
+        }
+
+        .ranking-header {
+            display: grid;
+            grid-template-columns: 50px 1fr 80px 80px;
+            padding: 10px 15px;
+            background: rgba(155, 89, 182, 0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #9b59b6;
+            font-size: 0.85rem;
+            border-bottom: 2px solid rgba(155, 89, 182, 0.2);
+        }
+        .dark-mode .ranking-header {
+            background: rgba(155, 89, 182, 0.15);
+            color: #c9a8e0;
+        }
+
+        .ranking-item {
+            display: grid;
+            grid-template-columns: 50px 1fr 80px 80px;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            background: rgba(155, 89, 182, 0.06);
+            transition: all 0.3s;
+            animation: fadeInUp 0.3s ease forwards;
+            opacity: 0;
+        }
+        .ranking-item:nth-child(1) { animation-delay: 0.05s; }
+        .ranking-item:nth-child(2) { animation-delay: 0.10s; }
+        .ranking-item:nth-child(3) { animation-delay: 0.15s; }
+        .ranking-item:nth-child(4) { animation-delay: 0.20s; }
+        .ranking-item:nth-child(5) { animation-delay: 0.25s; }
+        .ranking-item:nth-child(6) { animation-delay: 0.30s; }
+        .ranking-item:nth-child(7) { animation-delay: 0.35s; }
+        .ranking-item:nth-child(8) { animation-delay: 0.40s; }
+        .ranking-item:nth-child(9) { animation-delay: 0.45s; }
+        .ranking-item:nth-child(10) { animation-delay: 0.50s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
             }
-            .nivel-card .nivel-icono img {
-                max-height: 100px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
+        .ranking-item:hover {
+            background: rgba(155, 89, 182, 0.12);
+        }
+        .ranking-item .posicion {
+            font-weight: 700;
+            color: #9b59b6;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .ranking-item .nombre-rank {
+            font-weight: 500;
+            color: #2c1b4e;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .dark-mode .ranking-item .nombre-rank {
+            color: #e0d0f0;
+        }
+        .ranking-item .puntos-rank {
+            font-weight: 700;
+            color: #f1c40f;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        .ranking-item .tiempo-rank {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-align: center;
+            font-weight: 600;
+        }
+        .dark-mode .ranking-item .tiempo-rank {
+            color: #a0a0b0;
+        }
+        .ranking-item.top-1 {
+            background: rgba(241, 196, 15, 0.15);
+            border: 1px solid rgba(241, 196, 15, 0.3);
+        }
+        .ranking-item.top-2 {
+            background: rgba(192, 192, 192, 0.12);
+            border: 1px solid rgba(192, 192, 192, 0.2);
+        }
+        .ranking-item.top-3 {
+            background: rgba(205, 127, 50, 0.12);
+            border: 1px solid rgba(205, 127, 50, 0.2);
+        }
+        .dark-mode .ranking-item {
+            background: rgba(155, 89, 182, 0.08);
+        }
+        .dark-mode .ranking-item:hover {
+            background: rgba(155, 89, 182, 0.15);
+        }
+        .dark-mode .ranking-item.top-1 {
+            background: rgba(241, 196, 15, 0.2);
+        }
+        .dark-mode .ranking-item.top-2 {
+            background: rgba(192, 192, 192, 0.15);
+        }
+        .dark-mode .ranking-item.top-3 {
+            background: rgba(205, 127, 50, 0.15);
+        }
+
+        /* ===== LOGO CIRCULAR - MISMO ESTILO QUE EN OTROS SWAL ===== */
+        .swal-logo-mini,
+        .logo-ranking-circular {
+            width: 80px;
+            height: 80px;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            border: 4px solid #9b59b6 !important;
+            box-shadow: 0 8px 30px rgba(155, 89, 182, 0.25) !important;
+            margin-bottom: 10px;
+        }
+
+        /* ===== SWEETALERT ===== */
+        .swal-info-popup .swal2-close {
+            border-radius: 0 !important;
+            background: transparent !important;
+            color: #999999 !important;
+            width: 44px !important;
+            height: 44px !important;
+            font-size: 2rem !important;
+            transition: 0.3s !important;
+            box-shadow: none !important;
+            border: none !important;
+            opacity: 0.7 !important;
+        }
+        .swal-info-popup .swal2-close:hover {
+            background: transparent !important;
+            transform: scale(1.1) !important;
+            color: #9b59b6 !important;
+            opacity: 1 !important;
+        }
+        .swal-info-popup {
+            border-radius: 60px !important;
+            padding: 30px 35px !important;
+            max-width: 560px !important;
+            width: 95% !important;
+            border: none !important;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15) !important;
+        }
+        body.dark-mode .swal-info-popup {
+            background: #1a1a2e !important;
+            border: none !important;
+        }
+        body.dark-mode .swal-info-popup .swal2-close {
+            color: #aaaaaa !important;
+        }
+        body.dark-mode .swal-info-popup .swal2-close:hover {
+            color: #b388d4 !important;
+        }
+
+        /* ============================================================
+           RESPONSIVE - SOLO PARA MÓVIL AJUSTAMOS EL RANKING
+           ============================================================ */
+        @media (max-width: 480px) {
+            /* Ranking más compacto en móvil */
+            .ranking-header {
+                grid-template-columns: 35px 1fr 50px 55px;
+                padding: 8px 10px;
+                font-size: 0.7rem;
+                gap: 4px;
+            }
+            .ranking-item {
+                grid-template-columns: 35px 1fr 50px 55px;
+                padding: 8px 10px;
+                gap: 4px;
+                font-size: 0.75rem;
+            }
+            .ranking-item .posicion {
+                font-size: 0.8rem;
+            }
+            .ranking-item .nombre-rank {
+                font-size: 0.8rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .ranking-item .puntos-rank {
+                font-size: 0.85rem;
+            }
+            .ranking-item .tiempo-rank {
+                font-size: 0.65rem;
+            }
+
+            /* Ajuste del popup en móvil */
+            .swal-info-popup {
+                border-radius: 30px !important;
+                padding: 18px 14px !important;
+                max-width: 96% !important;
+                width: 96% !important;
+            }
+            .swal-info-popup .swal2-close {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 1.6rem !important;
+            }
+            .swal-logo-mini,
+            .logo-ranking-circular {
+                width: 60px;
+                height: 60px;
+            }
+
+            /* Grid de niveles en móvil */
+            .niveles-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .nivel-card .nivel-icono {
+                min-height: 120px;
+                padding: 18px;
+            }
+            .nivel-card .nivel-icono img {
+                max-height: 130px;
+                border-width: 4px;
+                border-radius: 16px;
+            }
+            .titulo-sopas {
+                font-size: 1.5rem;
+            }
+            .subtitulo-container p {
+                font-size: 0.8rem;
+            }
+            .nivel-card {
+                padding: 22px 18px 24px;
+                border-radius: 25px;
+            }
+            .nivel-card .nivel-header h3 {
+                font-size: 1.1rem;
+            }
+            .nivel-card .nivel-desc {
+                font-size: 0.85rem;
+                min-height: 34px;
+            }
+            .nivel-card .nivel-btn {
+                padding: 12px 16px;
+                font-size: 0.88rem;
+            }
+            .header-utils .btn-copa-header {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 0.85rem !important;
+            }
+        }
+
+        /* Tablets y móviles grandes */
         @media (max-width: 768px) {
             .sopas-container {
                 padding: 15px 16px 30px;
@@ -430,100 +700,6 @@
             }
             .nivel-card .nivel-estrellas {
                 font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 500px) {
-            .niveles-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-            .nivel-card .nivel-icono {
-                min-height: 120px;
-                padding: 18px;
-            }
-            .nivel-card .nivel-icono img {
-                max-height: 130px;
-                border-width: 4px;
-                border-radius: 20px;
-            }
-            .titulo-sopas {
-                font-size: 1.5rem;
-            }
-            .subtitulo-container p {
-                font-size: 0.8rem;
-            }
-            .nivel-card {
-                padding: 22px 18px 24px;
-                border-radius: 25px;
-            }
-            .nivel-card .nivel-header h3 {
-                font-size: 1.1rem;
-            }
-            .nivel-card .nivel-desc {
-                font-size: 0.85rem;
-                min-height: 34px;
-            }
-            .nivel-card .nivel-btn {
-                padding: 12px 16px;
-                font-size: 0.88rem;
-            }
-            .header-utils .btn-copa-header {
-                width: 30px !important;
-                height: 30px !important;
-                font-size: 0.85rem !important;
-            }
-        }
-
-        /* ===== SWEETALERT PERSONALIZADO ===== */
-        .swal-info-popup {
-            border-radius: 50px !important;
-            padding: 25px 30px !important;
-            max-width: 460px !important;
-            width: 95% !important;
-            border: 3px solid #9b59b6 !important;
-            box-shadow: 0 20px 50px rgba(155, 89, 182, 0.25) !important;
-        }
-        .swal-info-popup .swal2-close {
-            border-radius: 50% !important;
-            background: rgba(155, 89, 182, 0.1) !important;
-            color: #9b59b6 !important;
-            width: 38px !important;
-            height: 38px !important;
-            font-size: 1.5rem !important;
-            transition: 0.3s !important;
-        }
-        .swal-info-popup .swal2-close:hover {
-            background: rgba(155, 89, 182, 0.2) !important;
-            transform: scale(1.1) !important;
-        }
-        .swal-info-popup .swal2-title {
-            display: none !important;
-        }
-        body.dark-mode .swal-info-popup {
-            background: #1a1a2e !important;
-            border-color: #7c3a9e !important;
-        }
-
-        .swal-logo-mini {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #9b59b6;
-            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.15);
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 480px) {
-            .swal-info-popup {
-                border-radius: 35px !important;
-                padding: 18px 16px !important;
-                max-width: 92% !important;
-            }
-            .swal-logo-mini {
-                width: 55px;
-                height: 55px;
             }
         }
     </style>
@@ -698,7 +874,7 @@
                     </button>
                 </div>
 
-                <!-- Nivel 6: Colores (NUEVO) -->
+                <!-- Nivel 6: Colores -->
                 <div class="nivel-card nivel-6">
                     <div class="nivel-header">
                         <h3>🎨 Colores</h3>
@@ -757,6 +933,294 @@
 
     <script>
         // ============================================================
+        // CONFIGURACIÓN
+        // ============================================================
+        const SOPA_ID = 1;
+        const ADMIN_NOMBRE = 'admin';
+
+        // ============================================================
+        // INICIALIZAR SUPABASE
+        // ============================================================
+        const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
+        const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        window.supabaseClient = supabaseClient;
+
+        console.log('✅ Supabase inicializado correctamente');
+
+        let usuarioActual = null;
+        let esAdmin = false;
+
+        // ============================================================
+        // FUNCIONES DE PUNTOS
+        // ============================================================
+        async function obtenerPuntosUsuario(usuarioId) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('puntos')
+                    .select('puntos, tiempo')
+                    .eq('usuario_id', usuarioId)
+                    .eq('sopa_id', SOPA_ID)
+                    .maybeSingle();
+
+                if (error) {
+                    console.error('Error en SELECT puntos:', error);
+                    throw error;
+                }
+                return data || null;
+            } catch (error) {
+                console.error('Error al obtener puntos:', error);
+                return null;
+            }
+        }
+
+        // ============================================================
+        // OBTENER RANKING
+        // ============================================================
+        async function obtenerRanking() {
+            try {
+                console.log('📊 Obteniendo ranking...');
+                const { data, error } = await supabaseClient
+                    .from('total_puntos')
+                    .select(`
+                        usuario_id,
+                        total_puntos,
+                        tiempo_total,
+                        usuarios!inner (
+                            nombre
+                        )
+                    `)
+                    .order('total_puntos', { ascending: false })
+                    .order('tiempo_total', { ascending: true, nullsLast: true })
+                    .limit(10);
+
+                if (error) {
+                    console.error('Error en SELECT ranking:', error);
+                    throw error;
+                }
+
+                console.log('📊 Ranking obtenido:', data?.length || 0, 'registros');
+                return data || [];
+            } catch (error) {
+                console.error('Error al obtener ranking:', error);
+                return [];
+            }
+        }
+
+        // ============================================================
+        // MOSTRAR RANKING
+        // ============================================================
+        async function mostrarRanking() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+
+            Swal.fire({
+                title: '',
+                imageUrl: 'imganes/logosmedi.png',
+                imageWidth: 80,
+                imageHeight: 80,
+                imageAlt: 'Medicurativo',
+                imageClass: 'logo-ranking-circular',
+                html: `
+                    <div style="text-align:center; padding:20px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:2.5rem; color:#9b59b6;"></i>
+                        <p style="margin-top:12px; color:#7f8c8d; font-size:1.1rem;">Cargando ranking...</p>
+                    </div>
+                `,
+                showConfirmButton: false,
+                background: isDarkMode ? '#1e1e30' : '#fff',
+                color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                customClass: {
+                    popup: 'swal-info-popup'
+                },
+                width: '560px'
+            });
+
+            try {
+                const rankingData = await obtenerRanking();
+
+                Swal.close();
+
+                if (!rankingData || rankingData.length === 0) {
+                    Swal.fire({
+                        title: '🏆 Ranking de Puntos',
+                        titleColor: '#9b59b6',
+                        imageUrl: 'imganes/logosmedi.png',
+                        imageWidth: 80,
+                        imageHeight: 80,
+                        imageAlt: 'Medicurativo',
+                        imageClass: 'logo-ranking-circular',
+                        html: `
+                            <div style="text-align:center; padding:15px 0;">
+                                <p style="color:#7f8c8d; font-size:1.2rem;">
+                                    <i class="fas fa-star" style="color:#f1c40f;"></i>
+                                    Aún no hay puntos ganados.
+                                </p>
+                                <p style="color:#9b59b6; font-size:1rem;">¡Completa las sopas para ganar puntos!</p>
+                            </div>
+                        `,
+                        confirmButtonText: 'Entendido 💜',
+                        confirmButtonColor: '#9b59b6',
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        showCloseButton: true,
+                        customClass: {
+                            popup: 'swal-info-popup',
+                            confirmButton: 'btn-confirm'
+                        },
+                        width: '500px'
+                    });
+                    return;
+                }
+
+                let rankingHtml = `
+                    <div class="ranking-modal-content">
+                        <div class="ranking-header">
+                            <span>#</span>
+                            <span>Jugador</span>
+                            <span>⭐ total</span>
+                            <span>⏱️ total</span>
+                        </div>
+                `;
+
+                rankingData.forEach((item, index) => {
+                    const pos = index + 1;
+                    const nombre = item.usuarios?.nombre || 'Usuario';
+                    const totalPuntos = item.total_puntos || 0;
+                    const tiempoTotal = item.tiempo_total || 0;
+
+                    let tiempoStr = '--';
+                    if (tiempoTotal > 0) {
+                        const minutos = Math.floor(tiempoTotal / 60);
+                        const segundos = tiempoTotal % 60;
+                        tiempoStr = `${minutos}m ${segundos}s`;
+                    }
+
+                    const topClass = pos === 1 ? 'top-1' : pos === 2 ? 'top-2' : pos === 3 ? 'top-3' : '';
+                    const medalla = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `#${pos}`;
+
+                    rankingHtml += `
+                        <div class="ranking-item ${topClass}">
+                            <span class="posicion">${medalla}</span>
+                            <span class="nombre-rank">${nombre}</span>
+                            <span class="puntos-rank">${totalPuntos}</span>
+                            <span class="tiempo-rank">${tiempoStr}</span>
+                        </div>
+                    `;
+                });
+                rankingHtml += `</div>`;
+
+                Swal.fire({
+                    title: '🏆 Ranking de Puntos',
+                    titleColor: '#9b59b6',
+                    imageUrl: 'imganes/logosmedi.png',
+                    imageWidth: 80,
+                    imageHeight: 80,
+                    imageAlt: 'Medicurativo',
+                    imageClass: 'logo-ranking-circular',
+                    html: rankingHtml,
+                    confirmButtonText: 'Cerrar 💜',
+                    confirmButtonColor: '#9b59b6',
+                    background: isDarkMode ? '#1e1e30' : '#fff',
+                    color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                    showCloseButton: true,
+                    width: '560px',
+                    customClass: {
+                        popup: 'swal-info-popup',
+                        confirmButton: 'btn-confirm'
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error al mostrar ranking:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo cargar el ranking. Inténtalo de nuevo.',
+                    icon: 'error',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#9b59b6'
+                });
+            }
+        }
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        async function verificarSesion() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                if (session) {
+                    const { data: userData } = await supabaseClient
+                        .from('usuarios')
+                        .select('nombre')
+                        .eq('id', session.user.id)
+                        .maybeSingle();
+
+                    const nombreUsuario = userData?.nombre || session.user.user_metadata?.nombre || 'Usuario';
+                    esAdmin = nombreUsuario.toLowerCase() === ADMIN_NOMBRE.toLowerCase();
+
+                    usuarioActual = {
+                        id: session.user.id,
+                        email: session.user.email,
+                        nombre: nombreUsuario,
+                        esAdmin: esAdmin
+                    };
+
+                    const wrapperNotif = document.getElementById('wrapperNotificacion');
+                    if (wrapperNotif) {
+                        if (esAdmin) {
+                            wrapperNotif.style.display = 'flex';
+                            await actualizarContadorPendientes();
+                        } else {
+                            wrapperNotif.style.display = 'none';
+                        }
+                    }
+                } else {
+                    usuarioActual = null;
+                    esAdmin = false;
+                    const wrapperNotif = document.getElementById('wrapperNotificacion');
+                    if (wrapperNotif) wrapperNotif.style.display = 'none';
+                }
+
+                return usuarioActual;
+            } catch (error) {
+                console.error('Error al verificar sesión:', error);
+                usuarioActual = null;
+                esAdmin = false;
+                return null;
+            }
+        }
+
+        // ============================================================
+        // ACTUALIZAR CONTADOR DE PENDIENTES
+        // ============================================================
+        async function actualizarContadorPendientes() {
+            try {
+                const { count, error } = await supabaseClient
+                    .from('publicaciones')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('estado', 'pendiente');
+
+                if (error) throw error;
+
+                const badge = document.getElementById('badgeNotificacion');
+                const wrapper = document.getElementById('wrapperNotificacion');
+
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove('oculto');
+                        wrapper.style.display = 'flex';
+                    } else {
+                        badge.classList.add('oculto');
+                    }
+                }
+            } catch (error) {
+                console.error('Error al obtener publicaciones pendientes:', error);
+            }
+        }
+
+        // ============================================================
         // MODO OSCURO
         // ============================================================
         (function cargarTema() {
@@ -776,7 +1240,7 @@
         });
 
         // ============================================================
-        // AYUDA GENERAL (Header)
+        // AYUDA GENERAL
         // ============================================================
         document.getElementById('btnAyuda').addEventListener('click', function() {
             const isDarkMode = document.body.classList.contains('dark-mode');
@@ -816,7 +1280,7 @@
         });
 
         // ============================================================
-        // INFORMACIÓN POR NIVEL (Botón info)
+        // INFORMACIÓN POR NIVEL
         // ============================================================
         function mostrarInfoNivel(nivel) {
             const infoNiveles = {
@@ -894,7 +1358,6 @@
         // JUGAR NIVEL
         // ============================================================
         function jugarNivel(nivel) {
-            // Nivel 1: Valores -> valores.html
             if (nivel === 1) {
                 window.location.href = 'valores.html';
                 return;
@@ -904,7 +1367,24 @@
                 return;
             }
 
-            // Los demás niveles: mensaje de "en desarrollo"
+            if (nivel === 3) {
+                window.location.href = 'lider.html';
+                return;
+            }
+            if (nivel === 4) {
+                window.location.href = 'familia.html';
+                return;
+            }
+
+            if (nivel === 5) {
+                window.location.href = 'amor.html';
+                return;
+            }
+            if (nivel === 6) {
+                window.location.href = 'colores.html';
+                return;
+            }
+
             const nombresNivel = {
                 2: 'Profesiones',
                 3: 'Líder',
@@ -959,46 +1439,15 @@
         }
 
         // ============================================================
-        // BOTÓN COPA (TROFEO)
+        // BOTÓN RANKING
         // ============================================================
-        document.getElementById('btnRankingHeader').addEventListener('click', function() {
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            const bgColor = isDarkMode ? '#1a1a2e' : '#fdfaff';
-            const textColor = isDarkMode ? '#ffffff' : '#2c1b4e';
+        document.getElementById('btnRankingHeader').addEventListener('click', mostrarRanking);
 
-            Swal.fire({
-                title: '',
-                background: bgColor,
-                html: `
-                    <div style="text-align: center; padding: 10px 0;">
-                        <img src="imganes/logosmedi.png" alt="Medicurativo" class="swal-logo-mini">
-                        <div style="font-size: 4rem; margin: 5px 0;">🏆</div>
-                        <h2 style="color: #f1c40f; font-weight: 800; margin: 0 0 6px 0; font-size: 1.4rem;">Trofeo</h2>
-                        <p style="color: ${textColor}; font-size: 1rem; line-height: 1.7; max-width: 360px; margin: 0 auto;">
-                            ¡Aquí se mostrarán tus logros!
-                        </p>
-                        <div style="margin-top: 15px; background: rgba(241,196,15,0.08); border-radius: 16px; padding: 12px; border: 1px solid rgba(241,196,15,0.15);">
-                            <p style="color: #7f8c8d; font-size: 0.85rem; margin: 0;">
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <i class="fas fa-star" style="color: #f1c40f;"></i>
-                                <br>Completa niveles para ganar estrellas
-                            </p>
-                        </div>
-                    </div>
-                `,
-                showConfirmButton: true,
-                confirmButtonText: 'Entendido 💜',
-                confirmButtonColor: '#f1c40f',
-                showCloseButton: true,
-                customClass: {
-                    popup: 'swal-info-popup',
-                    confirmButton: 'swal2-confirm-custom'
-                },
-                buttonsStyling: false
-            });
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarSesion();
         });
     </script>
 </body>

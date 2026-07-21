@@ -19,16 +19,55 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+        /* BURBUJITA ROJA ENCIMA DEL BOTÓN - PARA TODOS LOS TAMAÑOS */
+        .btn-pista {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding-right: 28px;
+        }
+
+        .badge-pistas {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+            pointer-events: none;
+            z-index: 5;
+            transition: transform 0.2s;
+        }
+
+        .btn-pista:hover .badge-pistas {
+            transform: scale(1.15);
+        }
+
+        /* Para pantallas muy grandes, un poco más pequeña pero igual es burbuja */
+        @media (min-width: 1400px) {
+            .badge-pistas {
+                width: 22px;
+                height: 22px;
+                font-size: 11px;
+                top: -8px;
+                right: -8px;
+            }
+        }
+
+        /* Resto de estilos igual */
         .pista-destacada {
             background-color: #fce4ec !important;
             color: #6a1b4d !important;
-            transform: scale(1.1);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(235, 142, 190, 0.5);
-            border-radius: 8px;
-            z-index: 10;
-            position: relative;
-            animation: pistaPulso 0.8s ease-in-out 3;
         }
 
         @keyframes pistaPulso {
@@ -132,160 +171,21 @@
         .dark-mode .ranking-item.top-3 {
             background: rgba(205, 127, 50, 0.15);
         }
-
-        .header-utils {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        
-        .btn-con-tooltip {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-con-tooltip .tooltip {
-            visibility: hidden;
-            background: #2c1b4e;
-            color: white;
-            text-align: center;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-        .dark-mode .btn-con-tooltip .tooltip {
-            background: #4d3a66;
-        }
-        .btn-con-tooltip:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-            bottom: -28px;
-        }
-        .btn-icon-only {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #2c1b4e;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-        .dark-mode .btn-icon-only {
-            color: #e0d0f0;
-        }
-        .btn-icon-only:hover {
-            background: rgba(155, 89, 182, 0.1);
-            transform: scale(1.1);
-        }
-        .btn-ranking-header {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #f1c40f;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-        .btn-ranking-header:hover {
-            background: rgba(241, 196, 15, 0.15);
-            transform: scale(1.1);
-        }
-        .badge-notificacion {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #e74c3c;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            min-width: 18px;
-            text-align: center;
-        }
-        .badge-notificacion.oculto {
-            display: none;
-        }
-        .btn-notificacion {
-            position: relative;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #9b59b6;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-        .btn-notificacion:hover {
-            background: rgba(155, 89, 182, 0.1);
-            transform: scale(1.1);
-        }
         
         #usuarioContainer {
             display: flex !important;
             align-items: center;
-        }
-        .btn-logout {
-            background: none;
-            border: none;
-            color: #e74c3c;
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 4px 8px;
-            border-radius: 20px;
-            transition: all 0.3s;
-        }
-        .btn-logout:hover {
-            background: rgba(231, 76, 60, 0.15);
-            transform: scale(1.05);
-        }
-        .btn-login {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
-            background: #9b59b6;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-        .btn-login:hover {
-            background: #8e44ad;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
-        }
-        .dark-mode .btn-login {
-            background: #8e44ad;
-        }
-        .dark-mode .btn-login:hover {
-            background: #7d3c98;
         }
     </style>
 </head>
 <body>
     <div class="contenedor">
 
+        <!-- ===== HEADER ===== -->
         <div class="header">
             <div class="logo">
                 <a href="index.html" style="text-decoration: none;">
-                    <img src="imganes/logosmedi.png" alt="Medicurativo">
+                    <img src="imganes/logosmedi.png" alt="Medicurativo" />
                 </a>
             </div>
             <div class="titulo">
@@ -294,8 +194,6 @@
             </div>
 
             <div class="header-utils" id="headerUtilsComunidad">
-                <div id="usuarioContainer"></div>
-
                 <div class="btn-con-tooltip" id="wrapperInicio">
                     <a href="sopas.html" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
                         <i class="fas fa-home"></i>
@@ -621,7 +519,6 @@
                 const wrapperNotif = document.getElementById('wrapperNotificacion');
                 if (wrapperNotif) wrapperNotif.style.display = 'none';
                 
-                // Mostrar mensaje de éxito (no de expiración)
                 Swal.fire({
                     title: '👋 Sesión cerrada',
                     text: 'Has cerrado sesión correctamente.',
@@ -1530,7 +1427,6 @@
         document.addEventListener('DOMContentLoaded', async function() {
             await verificarSesion();
             
-            // Listener de autenticación - Mejorado
             supabaseClient.auth.onAuthStateChange(async (event, session) => {
                 console.log('🔐 Evento de autenticación:', event);
                 
@@ -1538,7 +1434,6 @@
                     esCierreManual = false;
                     await verificarSesion();
                 } else if (event === 'SIGNED_OUT') {
-                    // Solo mostrar mensaje de expiración si NO fue cierre manual
                     if (!esCierreManual) {
                         usuarioActual = null;
                         esAdmin = false;
@@ -1562,7 +1457,6 @@
                             window.location.href = 'login.html';
                         });
                     } else {
-                        // Resetear flag
                         esCierreManual = false;
                     }
                 } else if (event === 'TOKEN_REFRESHED') {
@@ -1572,9 +1466,6 @@
             });
         });
 
-        // ============================================================
-        // BOTÓN NOTIFICACION - ADMIN
-        // ============================================================
         document.getElementById('btnBuzonAprobacion')?.addEventListener('click', function() {
             if (!esAdmin) {
                 Swal.fire({
@@ -1591,9 +1482,6 @@
         console.log('✅ Sopa de Profesiones cargada');
         console.log('📊 SOPA_ID:', SOPA_ID);
         console.log('⭐ Puntos a ganar:', PUNTOS_A_GANAR);
-        console.log('🔐 Sistema de sesión mejorado:');
-        console.log('   - Cierre manual: mensaje de éxito');
-        console.log('   - Expiración de token: mensaje de expiración');
     </script>
 </body>
 </html>

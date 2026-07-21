@@ -19,12 +19,24 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* Opción 1: Rosado bebé */
-.pista-destacada {
-    background-color: #fce4ec !important;  /* Rosado bebé */
-    color: #6a1b4d !important;
-}
-        /* Estilos para el ranking con columnas */
+        .pista-destacada {
+            background-color: #fce4ec !important;
+            color: #6a1b4d !important;
+            transform: scale(1.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(235, 142, 190, 0.5);
+            border-radius: 8px;
+            z-index: 10;
+            position: relative;
+            animation: pistaPulso 0.8s ease-in-out 3;
+        }
+
+        @keyframes pistaPulso {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(235, 142, 190, 0.3); }
+            50% { transform: scale(1.15); box-shadow: 0 0 30px rgba(235, 142, 190, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(235, 142, 190, 0.3); }
+        }
+
         .ranking-modal-content {
             max-height: 400px;
             overflow-y: auto;
@@ -121,7 +133,6 @@
             background: rgba(205, 127, 50, 0.15);
         }
 
-        /* Estilos para el header - SOLO BOTONES */
         .header-utils {
             display: flex;
             align-items: center;
@@ -222,16 +233,55 @@
             transform: scale(1.1);
         }
         
-        /* Ocultar el contenedor de usuario */
         #usuarioContainer {
-            display: none !important;
+            display: flex !important;
+            align-items: center;
+        }
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .btn-logout:hover {
+            background: rgba(231, 76, 60, 0.15);
+            transform: scale(1.05);
+        }
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-login:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        }
+        .dark-mode .btn-login {
+            background: #8e44ad;
+        }
+        .dark-mode .btn-login:hover {
+            background: #7d3c98;
         }
     </style>
 </head>
 <body>
     <div class="contenedor">
 
-        <!-- ===== HEADER SOLO BOTONES ===== -->
         <div class="header">
             <div class="logo">
                 <a href="index.html" style="text-decoration: none;">
@@ -244,7 +294,7 @@
             </div>
 
             <div class="header-utils" id="headerUtilsComunidad">
-                <div id="usuarioContainer" style="display: none;"></div>
+                <div id="usuarioContainer"></div>
 
                 <div class="btn-con-tooltip" id="wrapperInicio">
                     <a href="sopas.html" id="btnInicioLink" class="btn-icon-only" style="text-decoration: none; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
@@ -283,10 +333,9 @@
             </div>
         </div>
 
-        <!-- ===== SOPA DE LETRAS ===== -->
         <div class="sopa-wrapper">
-            <h2 class="sopa-titulo">🔍 Sopa de Letras · Valores</h2>
-            <p class="sopa-subtitulo"><i class="fas fa-heart" style="color:#9b59b6;"></i> Encuentra las 7 palabras ocultas <i class="fas fa-heart" style="color:#9b59b6;"></i></p>
+            <h2 class="sopa-titulo">💼 Sopa de Letras · Profesiones</h2>
+            <p class="sopa-subtitulo"><i class="fas fa-briefcase" style="color:#9b59b6;"></i> Encuentra las 7 profesiones ocultas <i class="fas fa-briefcase" style="color:#9b59b6;"></i></p>
 
             <div class="progreso-wrapper">
                 <div class="progreso-bar" id="progresoBar"></div>
@@ -317,7 +366,6 @@
             <div class="mensaje-victoria" id="mensajeVictoria" style="text-align:center; font-weight:600; color:#9b59b6; margin-top:5px;"></div>
         </div>
 
-        <!-- ===== FOOTER ===== -->
         <footer class="footer">
             <div>
                 <i class="fas fa-heart"></i> Medicurativo · medicina que cultiva <i class="fas fa-heart"></i>
@@ -352,7 +400,7 @@
 
     <script>
         // ============================================================
-        // INICIALIZAR SUPABASE DIRECTAMENTE
+        // INICIALIZAR SUPABASE
         // ============================================================
         const supabaseUrl = 'https://eryakdyoscrctqunqkvt.supabase.co';
         const supabaseKey = 'sb_publishable_ekj-F2tgLWWOGHuFCSyx-g_8_moXDKa';
@@ -364,7 +412,8 @@
         // ============================================================
         // CONFIGURACIÓN
         // ============================================================
-        const SOPA_ID = 1;
+        const SOPA_ID = 2;
+        const PUNTOS_A_GANAR = 2;
         const ADMIN_NOMBRE = 'Admin';
 
         // ============================================================
@@ -372,15 +421,16 @@
         // ============================================================
         let usuarioActual = null;
         let esAdmin = false;
+        let esCierreManual = false;
 
         // ============================================================
-        // FUNCIONES DE PUNTOS - Actualizado con mejor manejo de errores
+        // FUNCIONES DE PUNTOS
         // ============================================================
         async function obtenerPuntosUsuario(usuarioId) {
             try {
                 const { data, error } = await supabaseClient
                     .from('puntos')
-                    .select('puntos, tiempo')
+                    .select('puntos, tiempo, sopa_id')
                     .eq('usuario_id', usuarioId)
                     .eq('sopa_id', SOPA_ID)
                     .maybeSingle();
@@ -396,12 +446,31 @@
             }
         }
 
+        async function obtenerTotalPuntos(usuarioId) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('total_puntos')
+                    .select('total_puntos, tiempo_total')
+                    .eq('usuario_id', usuarioId)
+                    .maybeSingle();
+
+                if (error) {
+                    console.error('Error al obtener total:', error);
+                    return { total_puntos: 0, tiempo_total: 0 };
+                }
+                return data || { total_puntos: 0, tiempo_total: 0 };
+            } catch (error) {
+                console.error('Error al obtener total:', error);
+                return { total_puntos: 0, tiempo_total: 0 };
+            }
+        }
+
         async function guardarPuntaje(usuarioId, tiempoSegundos) {
             try {
                 console.log('💾 Guardando puntaje para usuario:', usuarioId);
                 console.log('⏱️ Tiempo:', tiempoSegundos, 'segundos');
+                console.log('⭐ Puntos a ganar:', PUNTOS_A_GANAR);
                 
-                // Verificar si ya existe
                 const { data: existente, error: checkError } = await supabaseClient
                     .from('puntos')
                     .select('id, puntos, tiempo')
@@ -417,16 +486,10 @@
                 console.log('📊 Registro existente:', existente);
 
                 if (existente) {
-                    // Ya tiene registro
                     const tiempoAnterior = existente.tiempo;
                     const mejoroTiempo = (tiempoAnterior === null || tiempoAnterior === undefined) || tiempoSegundos < tiempoAnterior;
                     
-                    console.log('⏱️ Tiempo anterior:', tiempoAnterior);
-                    console.log('⏱️ Tiempo nuevo:', tiempoSegundos);
-                    console.log('📈 ¿Mejoró tiempo?', mejoroTiempo);
-                    
                     if (mejoroTiempo) {
-                        // Actualizar solo el tiempo, no los puntos
                         console.log('🔄 Actualizando tiempo...');
                         const { error: updateError } = await supabaseClient
                             .from('puntos')
@@ -442,33 +505,38 @@
                         }
                         
                         console.log('✅ Tiempo actualizado correctamente');
+                        const total = await obtenerTotalPuntos(usuarioId);
+                        
                         return { 
                             success: true, 
                             yaTenia: true, 
                             puntos: existente.puntos || 0,
+                            totalPuntos: total.total_puntos || 0,
+                            tiempoTotal: total.tiempo_total || 0,
                             mejoroTiempo: true,
                             tiempoAnterior: tiempoAnterior,
                             tiempoNuevo: tiempoSegundos
                         };
                     }
                     
-                    console.log('⏭️ No mejoró el tiempo, no se actualiza');
+                    const total = await obtenerTotalPuntos(usuarioId);
                     return { 
                         success: true, 
                         yaTenia: true, 
                         puntos: existente.puntos || 0,
+                        totalPuntos: total.total_puntos || 0,
+                        tiempoTotal: total.tiempo_total || 0,
                         mejoroTiempo: false,
                         tiempoAnterior: tiempoAnterior
                     };
                 }
 
-                // Insertar nuevo registro
-                console.log('🆕 Insertando nuevo registro...');
+                console.log('🆕 Insertando nuevo registro con', PUNTOS_A_GANAR, 'puntos...');
                 const { data, error } = await supabaseClient
                     .from('puntos')
                     .insert({
                         usuario_id: usuarioId,
-                        puntos: 1,
+                        puntos: PUNTOS_A_GANAR,
                         sopa_id: SOPA_ID,
                         tiempo: tiempoSegundos,
                         creado_en: new Date().toISOString()
@@ -482,10 +550,15 @@
                 }
 
                 console.log('✅ Nuevo registro insertado:', data);
+                
+                const total = await obtenerTotalPuntos(usuarioId);
+                
                 return { 
                     success: true, 
                     yaTenia: false, 
-                    puntos: 1,
+                    puntos: PUNTOS_A_GANAR,
+                    totalPuntos: total.total_puntos || PUNTOS_A_GANAR,
+                    tiempoTotal: total.tiempo_total || tiempoSegundos,
                     mejoroTiempo: false,
                     tiempoNuevo: tiempoSegundos,
                     data: data
@@ -504,19 +577,17 @@
             try {
                 console.log('📊 Obteniendo ranking...');
                 const { data, error } = await supabaseClient
-                    .from('puntos')
+                    .from('total_puntos')
                     .select(`
                         usuario_id,
-                        puntos,
-                        tiempo,
-                        creado_en,
+                        total_puntos,
+                        tiempo_total,
                         usuarios!inner (
                             nombre
                         )
                     `)
-                    .eq('sopa_id', SOPA_ID)
-                    .order('puntos', { ascending: false })
-                    .order('tiempo', { ascending: true, nullsLast: true })
+                    .order('total_puntos', { ascending: false })
+                    .order('tiempo_total', { ascending: true, nullsLast: true })
                     .limit(10);
 
                 if (error) {
@@ -529,6 +600,46 @@
             } catch (error) {
                 console.error('Error al obtener ranking:', error);
                 return [];
+            }
+        }
+
+        // ============================================================
+        // CERRAR SESIÓN MANUAL - Sin mensaje de expiración
+        // ============================================================
+        async function cerrarSesion() {
+            try {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                usuarioActual = null;
+                esAdmin = false;
+                
+                const container = document.getElementById('usuarioContainer');
+                if (container) {
+                    container.innerHTML = `<a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>`;
+                }
+                const wrapperNotif = document.getElementById('wrapperNotificacion');
+                if (wrapperNotif) wrapperNotif.style.display = 'none';
+                
+                // Mostrar mensaje de éxito (no de expiración)
+                Swal.fire({
+                    title: '👋 Sesión cerrada',
+                    text: 'Has cerrado sesión correctamente.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: document.body.classList.contains('dark-mode') ? '#1e1e30' : '#fff',
+                    color: document.body.classList.contains('dark-mode') ? '#e0d0f0' : '#2c1b4e'
+                });
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo cerrar sesión. Inténtalo de nuevo.',
+                    icon: 'error',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#9b59b6'
+                });
             }
         }
 
@@ -556,9 +667,18 @@
                         esAdmin: esAdmin
                     };
 
-                    // Obtener puntos y mejor tiempo
-                    const datos = await obtenerPuntosUsuario(session.user.id);
-                    console.log('📊 Datos del usuario:', datos);
+                    const container = document.getElementById('usuarioContainer');
+                    if (container) {
+                        container.innerHTML = `
+                            <button class="btn-logout" id="btnCerrarSesion" title="Cerrar sesión">
+                                <i class="fas fa-sign-out-alt"></i> Salir
+                            </button>
+                        `;
+                        document.getElementById('btnCerrarSesion')?.addEventListener('click', function() {
+                            esCierreManual = true;
+                            cerrarSesion();
+                        });
+                    }
 
                     const wrapperNotif = document.getElementById('wrapperNotificacion');
                     if (wrapperNotif) {
@@ -572,6 +692,10 @@
                 } else {
                     usuarioActual = null;
                     esAdmin = false;
+                    const container = document.getElementById('usuarioContainer');
+                    if (container) {
+                        container.innerHTML = `<a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>`;
+                    }
                     const wrapperNotif = document.getElementById('wrapperNotificacion');
                     if (wrapperNotif) wrapperNotif.style.display = 'none';
                 }
@@ -612,13 +736,13 @@
         }
 
         // ============================================================
-        // MOSTRAR RANKING CON TIEMPO
+        // MOSTRAR RANKING
         // ============================================================
         async function mostrarRanking() {
             const isDarkMode = document.body.classList.contains('dark-mode');
             
             Swal.fire({
-                title: '🏆 Ranking de Estrellas',
+                title: '🏆 Ranking de Puntos',
                 imageUrl: 'imganes/logosmedi.png',
                 imageWidth: 80,
                 imageHeight: 80,
@@ -650,9 +774,9 @@
                             <div style="text-align:center; padding:10px 0;">
                                 <p style="color:#7f8c8d; font-size:1.1rem;">
                                     <i class="fas fa-star" style="color:#f1c40f;"></i>
-                                    Aún no hay estrellas ganadas.
+                                    Aún no hay puntos ganados.
                                 </p>
-                                <p style="color:#9b59b6; font-size:0.9rem;">¡Sé el primero en completar la sopa!</p>
+                                <p style="color:#9b59b6; font-size:0.9rem;">¡Completa las sopas para ganar puntos!</p>
                             </div>
                         `,
                         confirmButtonText: 'Entendido 💜',
@@ -673,22 +797,21 @@
                         <div class="ranking-header">
                             <span>#</span>
                             <span>Jugador</span>
-                            <span>⭐</span>
-                            <span>⏱️</span>
+                            <span>⭐ Total</span>
+                            <span>⏱️ Total</span>
                         </div>
                 `;
                 
                 rankingData.forEach((item, index) => {
                     const pos = index + 1;
                     const nombre = item.usuarios?.nombre || 'Usuario';
-                    const puntos = item.puntos || 0;
-                    const tiempo = item.tiempo;
+                    const totalPuntos = item.total_puntos || 0;
+                    const tiempoTotal = item.tiempo_total || 0;
                     
-                    // Formatear tiempo
                     let tiempoStr = '--';
-                    if (tiempo !== null && tiempo !== undefined && tiempo > 0) {
-                        const minutos = Math.floor(tiempo / 60);
-                        const segundos = tiempo % 60;
+                    if (tiempoTotal > 0) {
+                        const minutos = Math.floor(tiempoTotal / 60);
+                        const segundos = tiempoTotal % 60;
                         tiempoStr = `${minutos}m ${segundos}s`;
                     }
                     
@@ -700,7 +823,7 @@
                             <span class="posicion">${medalla}</span>
                             <span class="nombre-rank">${nombre}</span>
                             <span class="puntos-rank">
-                                <i class="fas fa-star" style="color:#f1c40f;"></i> ${puntos}
+                                <i class="fas fa-star" style="color:#f1c40f;"></i> ${totalPuntos}
                             </span>
                             <span class="tiempo-rank">${tiempoStr}</span>
                         </div>
@@ -709,7 +832,7 @@
                 rankingHtml += `</div>`;
 
                 Swal.fire({
-                    title: '🏆 Ranking de Estrellas',
+                    title: '🏆 Ranking de Puntos',
                     imageUrl: 'imganes/logosmedi.png',
                     imageWidth: 80,
                     imageHeight: 80,
@@ -764,21 +887,20 @@
         document.getElementById('btnAyuda').addEventListener('click', function() {
             const isDarkMode = document.body.classList.contains('dark-mode');
             Swal.fire({
-                title: '🔍 Sopa de Valores',
+                title: '💼 Sopa de Profesiones',
                 imageUrl: 'imganes/logosmedi.png',
                 imageWidth: 80,
                 imageHeight: 80,
                 imageAlt: 'Medicurativo',
                 html: `
                     <div style="text-align:left; line-height:1.9; max-width:400px; margin:12px auto; background:${isDarkMode ? 'rgba(155,89,182,0.08)' : 'rgba(155,89,182,0.05)'}; padding:16px 20px; border-radius:24px; border:1px solid ${isDarkMode ? '#4d3a66' : '#e8d9f5'};">
-                        <p><b>🎯 Objetivo:</b> Encuentra las 7 palabras relacionadas con VALORES.</p>
+                        <p><b>🎯 Objetivo:</b> Encuentra las 7 profesiones ocultas.</p>
                         <p><b>🖱️ Cómo jugar:</b> Haz clic y arrastra sobre las letras para formar la palabra.</p>
                         <p><b>❤️ Vidas:</b> Tienes 3 intentos fallidos.</p>
                         <p><b>💡 Pistas:</b> 3 pistas que resaltan una palabra.</p>
                         <p><b>⏱️ Tiempo:</b> 5 minutos para completar.</p>
-                        <p style="margin-top:8px; color:#9b59b6;"><b>✨ ¡Las palabras pueden cruzarse! Puedes seleccionar sobre letras ya encontradas.</b></p>
-                        <p style="margin-top:8px; color:#f1c40f;"><b>⭐ Gana 1 estrella al completar la sopa por PRIMERA VEZ.</b></p>
-                        <p style="margin-top:4px; color:#7f8c8d;"><b>⏱️ Si repites, MEJORAS tu tiempo pero NO ganas más estrellas.</b></p>
+                        <p style="margin-top:8px; color:#9b59b6;"><b>✨ ¡Las palabras pueden cruzarse!</b></p>
+                        <p style="margin-top:8px; color:#f1c40f;"><b>⭐ Gana ${PUNTOS_A_GANAR} puntos que se acumulan.</b></p>
                     </div>
                 `,
                 confirmButtonText: '¡Entendido! 💜',
@@ -793,16 +915,15 @@
             });
         });
 
-        // Ranking Button
         document.getElementById('btnRankingHeader').addEventListener('click', mostrarRanking);
 
         // ============================================================
-        // SOPA DE LETRAS
+        // SOPA DE LETRAS - PROFESIONES
         // ============================================================
         (function() {
             const PALABRAS = [
-                'HONESTIDAD', 'RESPETO', 'SERVIDOR', 'EMPATIA',
-                'TOLERANCIA', 'PAZ', 'AMISTAD'
+                'ABOGADO', 'ARQUITECTO', 'INGENIERO', 'MEDICO',
+                'ENFERMERA', 'MAESTRO', 'CONTADOR'
             ];
 
             const COLORES = [
@@ -1107,125 +1228,120 @@
             }
 
             function usarPista() {
-    if (juegoTerminadoLocal) return;
-    
-    if (pistasDisponibles <= 0) {
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        Swal.fire({
-            title: 'Sin pistas',
-            imageUrl: 'imganes/logosmedi.png',
-            imageWidth: 80,
-            imageHeight: 80,
-            imageAlt: 'Medicurativo',
-            text: 'Ya no tienes más pistas.',
-            confirmButtonText: 'Entendido 💜',
-            confirmButtonColor: '#9b59b6',
-            background: isDarkMode ? '#1e1e30' : '#fff',
-            color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
-            customClass: { popup: 'swal-info-popup' }
-        });
-        return;
-    }
-    
-    // Buscar palabras que NO han sido encontradas
-    const pendientes = PALABRAS.filter(p => !palabrasEncontradas.has(p));
-    if (pendientes.length === 0) {
-        Swal.fire({
-            title: '🎉 Ya encontraste todas',
-            text: '¡Has encontrado todas las palabras!',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false
-        });
-        return;
-    }
+                if (juegoTerminadoLocal) return;
+                
+                if (pistasDisponibles <= 0) {
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: 'Sin pistas',
+                        imageUrl: 'imganes/logosmedi.png',
+                        imageWidth: 80,
+                        imageHeight: 80,
+                        imageAlt: 'Medicurativo',
+                        text: 'Ya no tienes más pistas.',
+                        confirmButtonText: 'Entendido 💜',
+                        confirmButtonColor: '#9b59b6',
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
+                    });
+                    return;
+                }
+                
+                const pendientes = PALABRAS.filter(p => !palabrasEncontradas.has(p));
+                if (pendientes.length === 0) {
+                    Swal.fire({
+                        title: '🎉 Ya encontraste todas',
+                        text: '¡Has encontrado todas las profesiones!',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
 
-    // Elegir una palabra aleatoria de las pendientes
-    const palabraPista = pendientes[Math.floor(Math.random() * pendientes.length)];
-    console.log('🔍 Pista para:', palabraPista);
-    
-    // Buscar la palabra en la grilla
-    let encontradaPos = null;
-    for (let i = 0; i < FILAS; i++) {
-        for (let j = 0; j < COLUMNAS; j++) {
-            if (grilla[i][j] === palabraPista[0]) {
-                const dirs = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
-                for (const d of dirs) {
-                    let r = i, c = j;
-                    let ok = true;
-                    for (let k = 0; k < palabraPista.length; k++) {
-                        if (r < 0 || r >= FILAS || c < 0 || c >= COLUMNAS || grilla[r][c] !== palabraPista[k]) {
-                            ok = false;
-                            break;
+                const palabraPista = pendientes[Math.floor(Math.random() * pendientes.length)];
+                console.log('🔍 Pista para:', palabraPista);
+                
+                let encontradaPos = null;
+                for (let i = 0; i < FILAS; i++) {
+                    for (let j = 0; j < COLUMNAS; j++) {
+                        if (grilla[i][j] === palabraPista[0]) {
+                            const dirs = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+                            for (const d of dirs) {
+                                let r = i, c = j;
+                                let ok = true;
+                                for (let k = 0; k < palabraPista.length; k++) {
+                                    if (r < 0 || r >= FILAS || c < 0 || c >= COLUMNAS || grilla[r][c] !== palabraPista[k]) {
+                                        ok = false;
+                                        break;
+                                    }
+                                    r += d[0];
+                                    c += d[1];
+                                }
+                                if (ok) {
+                                    encontradaPos = { fila: i, col: j, dir: d };
+                                    break;
+                                }
+                            }
                         }
-                        r += d[0];
-                        c += d[1];
+                        if (encontradaPos) break;
                     }
-                    if (ok) {
-                        encontradaPos = { fila: i, col: j, dir: d };
-                        break;
+                    if (encontradaPos) break;
+                }
+
+                if (encontradaPos) {
+                    pistasDisponibles--;
+                    actualizarEstado();
+                    
+                    const { fila, col, dir } = encontradaPos;
+                    const celdas = [];
+                    
+                    for (let k = 0; k < palabraPista.length; k++) {
+                        const nf = fila + k * dir[0];
+                        const nc = col + k * dir[1];
+                        const cel = obtenerCelda(nf, nc);
+                        if (cel) {
+                            const key = `${nf},${nc}`;
+                            if (!celdasEncontradasMap.has(key)) {
+                                cel.classList.add('pista-destacada');
+                                celdas.push(cel);
+                            }
+                        }
                     }
+                    
+                    setTimeout(() => {
+                        celdas.forEach(c => c.classList.remove('pista-destacada'));
+                    }, 2500);
+
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: '🌸 Pista',
+                        imageUrl: 'imganes/logosmedi.png',
+                        imageWidth: 80,
+                        imageHeight: 80,
+                        imageAlt: 'Medicurativo',
+                        text: `Busca: "${palabraPista}"`,
+                        timer: 1800,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
+                    });
+                } else {
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: '😅 No encontré la palabra',
+                        text: 'Intenta con otra pista',
+                        icon: 'info',
+                        confirmButtonText: 'Entendido 💜',
+                        confirmButtonColor: '#9b59b6',
+                        background: isDarkMode ? '#1e1e30' : '#fff',
+                        color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
+                        customClass: { popup: 'swal-info-popup' }
+                    });
                 }
             }
-            if (encontradaPos) break;
-        }
-        if (encontradaPos) break;
-    }
-
-    if (encontradaPos) {
-        pistasDisponibles--;
-        actualizarEstado();
-        
-        const { fila, col, dir } = encontradaPos;
-        const celdas = [];
-        
-        // Marcar las celdas de la palabra (solo si no están encontradas)
-        for (let k = 0; k < palabraPista.length; k++) {
-            const nf = fila + k * dir[0];
-            const nc = col + k * dir[1];
-            const cel = obtenerCelda(nf, nc);
-            if (cel) {
-                const key = `${nf},${nc}`;
-                if (!celdasEncontradasMap.has(key)) {
-                    cel.classList.add('pista-destacada');
-                    celdas.push(cel);
-                }
-            }
-        }
-        
-        // Limpiar el resaltado después de 2.5 segundos
-        setTimeout(() => {
-            celdas.forEach(c => c.classList.remove('pista-destacada'));
-        }, 2500);
-
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        Swal.fire({
-            title: '🌸 Pista',
-            imageUrl: 'imganes/logosmedi.png',
-            imageWidth: 80,
-            imageHeight: 80,
-            imageAlt: 'Medicurativo',
-            text: `Busca: "${palabraPista}"`,
-            timer: 1800,
-            showConfirmButton: false,
-            background: isDarkMode ? '#1e1e30' : '#fff',
-            color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
-            customClass: { popup: 'swal-info-popup' }
-        });
-    } else {
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        Swal.fire({
-            title: '😅 No encontré la palabra',
-            text: 'Intenta con otra pista',
-            icon: 'info',
-            confirmButtonText: 'Entendido 💜',
-            confirmButtonColor: '#9b59b6',
-            background: isDarkMode ? '#1e1e30' : '#fff',
-            color: isDarkMode ? '#e0d0f0' : '#2c1b4e',
-            customClass: { popup: 'swal-info-popup' }
-        });
-    }
-}
 
             function iniciarTemporizador() {
                 if (temporizador) clearInterval(temporizador);
@@ -1274,6 +1390,13 @@
                 }
             }
 
+            function formatTime(segundos) {
+                if (!segundos || segundos === 0) return '0s';
+                const minutos = Math.floor(segundos / 60);
+                const segs = segundos % 60;
+                return minutos > 0 ? `${minutos}m ${segs}s` : `${segs}s`;
+            }
+
             async function victoria() {
                 if (juegoTerminadoLocal) return;
                 juegoTerminadoLocal = true;
@@ -1284,24 +1407,29 @@
                 let esPrimeraVez = false;
                 let mejoroTiempo = false;
                 let errorGuardado = false;
+                let totalPuntosMostrar = 0;
+                let tiempoTotalMostrar = 0;
 
                 if (usuarioActual) {
                     const resultado = await guardarPuntaje(usuarioActual.id, tiempoUsado);
                     console.log('📊 Resultado de guardar puntaje:', resultado);
                     
                     if (resultado.success) {
+                        totalPuntosMostrar = resultado.totalPuntos || 0;
+                        tiempoTotalMostrar = resultado.tiempoTotal || 0;
+                        
                         if (!resultado.yaTenia) {
                             esPrimeraVez = true;
-                            mensaje = '⭐ ¡Has ganado 1 estrella por completar la sopa!';
+                            mensaje = `⭐ ¡Has ganado ${PUNTOS_A_GANAR} puntos! Ahora tienes ${totalPuntosMostrar} en total.`;
                         } else if (resultado.mejoroTiempo) {
                             mejoroTiempo = true;
                             const antMin = Math.floor(resultado.tiempoAnterior / 60);
                             const antSeg = resultado.tiempoAnterior % 60;
                             const newMin = Math.floor(resultado.tiempoNuevo / 60);
                             const newSeg = resultado.tiempoNuevo % 60;
-                            mensaje = `⏱️ ¡Mejoraste tu tiempo! ${antMin}m ${antSeg}s → ${newMin}m ${newSeg}s`;
+                            mensaje = `⏱️ ¡Mejoraste tu tiempo! ${antMin}m ${antSeg}s → ${newMin}m ${newSeg}s<br>⏱️ Tiempo total: ${formatTime(tiempoTotalMostrar)}`;
                         } else {
-                            mensaje = '💪 ¡Completaste la sopa de nuevo! Sigue practicando.';
+                            mensaje = `💪 ¡Completaste la sopa de nuevo!<br>⭐ Total de puntos: ${totalPuntosMostrar}<br>⏱️ Tiempo total: ${formatTime(tiempoTotalMostrar)}`;
                         }
                     } else {
                         errorGuardado = true;
@@ -1309,7 +1437,7 @@
                         console.error('❌ Error detallado:', resultado.detalles);
                     }
                 } else {
-                    mensaje = '🔑 Inicia sesión para guardar tu tiempo y ganar estrellas.';
+                    mensaje = '🔑 Inicia sesión para guardar tu progreso y acumular puntos.';
                 }
 
                 const isDarkMode = document.body.classList.contains('dark-mode');
@@ -1324,14 +1452,12 @@
                     imageAlt: 'Medicurativo',
                     html: `
                         <div style="text-align:center; padding:5px 0;">
-                            <p style="color:${isDarkMode ? '#d0c0e0' : '#6a5a8a'}; font-size:1.1rem;">¡Encontraste todas las palabras!</p>
+                            <p style="color:${isDarkMode ? '#d0c0e0' : '#6a5a8a'}; font-size:1.1rem;">¡Encontraste todas las profesiones!</p>
                             <p style="color:#7f8c8d; font-size:0.9rem;">⏱️ Tiempo: ${min}m ${seg}s</p>
                             <div style="margin-top:12px; background:${errorGuardado ? 'rgba(231,76,60,0.08)' : 'rgba(46,204,113,0.08)'}; border-radius:24px; padding:12px; border:1px solid ${errorGuardado ? 'rgba(231,76,60,0.15)' : 'rgba(46,204,113,0.15)'};">
                                 <p style="color:${errorGuardado ? '#e74c3c' : '#9b59b6'}; font-size:0.9rem; margin:0;">
                                     ${mensaje}
                                 </p>
-                                ${esPrimeraVez ? '<p style="color:#f1c40f; font-size:0.9rem; margin-top:4px;"><i class="fas fa-star"></i> 1 estrella ganada</p>' : ''}
-                                ${mejoroTiempo ? '<p style="color:#2ecc71; font-size:0.9rem; margin-top:4px;"><i class="fas fa-clock"></i> ¡Mejor marca personal!</p>' : ''}
                             </div>
                         </div>
                     `,
@@ -1399,32 +1525,48 @@
         })();
 
         // ============================================================
-        // INICIALIZAR - Verificar sesión al cargar
+        // INICIALIZAR - Con listener mejorado
         // ============================================================
         document.addEventListener('DOMContentLoaded', async function() {
             await verificarSesion();
             
+            // Listener de autenticación - Mejorado
             supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                console.log('🔐 Evento de autenticación:', event);
+                
                 if (event === 'SIGNED_IN') {
+                    esCierreManual = false;
                     await verificarSesion();
                 } else if (event === 'SIGNED_OUT') {
-                    usuarioActual = null;
-                    esAdmin = false;
-                    const wrapperNotif = document.getElementById('wrapperNotificacion');
-                    if (wrapperNotif) wrapperNotif.style.display = 'none';
-                    
-                    Swal.fire({
-                        title: '⏰ Sesión expirada',
-                        text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
-                        icon: 'info',
-                        confirmButtonText: 'Iniciar sesión',
-                        confirmButtonColor: '#9b59b6',
-                        background: document.body.classList.contains('dark-mode') ? '#1e1e30' : '#fff',
-                        color: document.body.classList.contains('dark-mode') ? '#e0d0f0' : '#2c1b4e'
-                    }).then(() => {
-                        window.location.href = 'login.html';
-                    });
+                    // Solo mostrar mensaje de expiración si NO fue cierre manual
+                    if (!esCierreManual) {
+                        usuarioActual = null;
+                        esAdmin = false;
+                        const wrapperNotif = document.getElementById('wrapperNotificacion');
+                        if (wrapperNotif) wrapperNotif.style.display = 'none';
+                        
+                        const container = document.getElementById('usuarioContainer');
+                        if (container) {
+                            container.innerHTML = `<a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>`;
+                        }
+                        
+                        Swal.fire({
+                            title: '⏰ Sesión expirada',
+                            text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+                            icon: 'info',
+                            confirmButtonText: 'Iniciar sesión',
+                            confirmButtonColor: '#9b59b6',
+                            background: document.body.classList.contains('dark-mode') ? '#1e1e30' : '#fff',
+                            color: document.body.classList.contains('dark-mode') ? '#e0d0f0' : '#2c1b4e'
+                        }).then(() => {
+                            window.location.href = 'login.html';
+                        });
+                    } else {
+                        // Resetear flag
+                        esCierreManual = false;
+                    }
                 } else if (event === 'TOKEN_REFRESHED') {
+                    esCierreManual = false;
                     await verificarSesion();
                 }
             });
@@ -1446,20 +1588,12 @@
             window.location.href = 'admin_publicaciones.html';
         });
 
-        console.log('✅ Sopa de letras cargada');
+        console.log('✅ Sopa de Profesiones cargada');
         console.log('📊 SOPA_ID:', SOPA_ID);
-        console.log('📋 Estructura de tabla puntos:');
-        console.log('   - id: bigserial (PK)');
-        console.log('   - usuario_id: uuid (FK → usuarios)');
-        console.log('   - puntos: integer (default 1)');
-        console.log('   - tiempo: integer (tiempo en segundos) ⬅️ NUEVO');
-        console.log('   - creado_en: timestamp (default now())');
-        console.log('   - sopa_id: integer (default 1)');
-        console.log('   - Unique: (usuario_id, sopa_id)');
-        console.log('⭐ Reglas:');
-        console.log('   - Primera vez: +1 estrella');
-        console.log('   - Repetir: mejora tiempo, NO da estrella');
-        console.log('🔒 RLS: Asegúrate de tener las políticas configuradas');
+        console.log('⭐ Puntos a ganar:', PUNTOS_A_GANAR);
+        console.log('🔐 Sistema de sesión mejorado:');
+        console.log('   - Cierre manual: mensaje de éxito');
+        console.log('   - Expiración de token: mensaje de expiración');
     </script>
 </body>
-</html> 
+</html>
